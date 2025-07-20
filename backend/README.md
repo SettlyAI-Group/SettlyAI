@@ -6,7 +6,7 @@ This is the backend service for SettlyAI.
 
 ### Prerequisites
 
--   [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
+-   [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
 -   [Postman](https://www.postman.com/downloads/)
 
 ### Running the application
