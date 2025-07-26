@@ -1,0 +1,11 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "ApiConfigs": {
+    "DBConnection": "Host=localhost;Port=5432;Database=settly;User Id=your_username;Password=your_password"
+  }
+}
