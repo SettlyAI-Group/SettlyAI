@@ -94,50 +94,16 @@ public class Program
                     },
                     new List<string>()
                 }
-<<<<<<< HEAD
-                    });
+            });
                 });
-||||||| parent of a98176e (refactor LimitRater configuration)
-            });
-        });
 
-        // JWT configration
-        builder.Services.Configure<JWTConfig>(builder.Configuration.GetSection(JWTConfig.Section));
-        var jwtConfig = builder.Configuration.GetSection(JWTConfig.Section).Get<JWTConfig>();
-        builder.Services.AddJWT(jwtConfig);
+                // JWT configration
+                builder.Services.Configure<JWTConfig>(builder.Configuration.GetSection(JWTConfig.Section));
+                var jwtConfig = builder.Configuration.GetSection(JWTConfig.Section).Get<JWTConfig>();
+                builder.Services.AddJWT(jwtConfig);
 
-        // Add a rate-limiter policy: 5 requests per 15 minutes per client IP
-        builder.Services.AddRateLimiter(options =>
-        {
-            options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
-
-            options.AddPolicy("LoginIpFixedWindow", httpContext =>
-            {
-                var ip = httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
-
-                return RateLimitPartition.GetFixedWindowLimiter(
-                    partitionKey: ip,
-                    factory: _ => new FixedWindowRateLimiterOptions
-                    {
-                        PermitLimit = 5,                       // <= 5 attempts ...
-                        Window = TimeSpan.FromMinutes(15),     // ... every 15 minutes
-                        QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
-                        QueueLimit = 0                         // don't queue, just reject
-                    });
-            });
-        });
-=======
-            });
-        });
-
-        // JWT configration
-        builder.Services.Configure<JWTConfig>(builder.Configuration.GetSection(JWTConfig.Section));
-        var jwtConfig = builder.Configuration.GetSection(JWTConfig.Section).Get<JWTConfig>();
-        builder.Services.AddJWT(jwtConfig);
-
-        // Add a Login rate-limiter policy: 5 requests per 15 minutes per client IP
-        builder.Services.AddLoginLimitRater(attempts: 5, miniutes: 15);
->>>>>>> a98176e (refactor LimitRater configuration)
+                // Add a Login rate-limiter policy: 5 requests per 15 minutes per client IP
+                builder.Services.AddLoginLimitRater(attempts: 5, miniutes: 15);
 
                 // JWT configration
                 builder.Services.Configure<JWTConfig>(builder.Configuration.GetSection(JWTConfig.Section));
@@ -151,18 +117,18 @@ public class Program
 
                         options.AddPolicy("LoginIpFixedWindow", httpContext =>
                 {
-                            var ip = httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+                        var ip = httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
 
-                            return RateLimitPartition.GetFixedWindowLimiter(
-                        partitionKey: ip,
-                        factory: _ => new FixedWindowRateLimiterOptions
-                            {
-                                    PermitLimit = 5,                       // <= 5 attempts ...
-                                    Window = TimeSpan.FromMinutes(15),     // ... every 15 minutes
-                                    QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
-                                    QueueLimit = 0                         // don't queue, just reject
-                            });
+                        return RateLimitPartition.GetFixedWindowLimiter(
+                    partitionKey: ip,
+                    factory: _ => new FixedWindowRateLimiterOptions
+                    {
+                            PermitLimit = 5,                       // <= 5 attempts ...
+                            Window = TimeSpan.FromMinutes(15),     // ... every 15 minutes
+                            QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                            QueueLimit = 0                         // don't queue, just reject
                     });
+                });
                 });
 
                 var app = builder.Build();
