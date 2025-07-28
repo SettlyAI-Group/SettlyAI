@@ -38,6 +38,7 @@ artifacts/
 # Entity Framework
 *.edmx.diagram
 *.edmx.sql
+**/Migrations/
 
 # Temporary files
 *.tmp
