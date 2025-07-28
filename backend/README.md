@@ -26,7 +26,7 @@ This solution consists of four main projects:
    ```bash
    git clone <repository-url>
    cd backend
-   dotnet restore SettlyApi.sln
+   dotnet restore backend.sln
    ```
 
 2. **Configure database connection**
