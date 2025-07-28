@@ -1,0 +1,1 @@
+export { RegistrationIntro } from './RegistrationIntro';
