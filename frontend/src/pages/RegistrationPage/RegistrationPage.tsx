@@ -1,17 +1,24 @@
-import { CenteredContainer } from '@/components/CenteredContainer';
+import { FormPageContainer } from '../../components/FormPageContainer';
+import Box from '@mui/material/Box';
 import { RegistrationIntro, RegistrationForm } from './Components';
+import { styled } from '@mui/material/styles';
 
-export const RegistrationPage: React.FC = () => {
+const RegistrationPageContainer = styled(Box)({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: 2,
+});
+
+export const RegistrationPage = () => {
+
   return (
-    <CenteredContainer
-      maxWidth="sm"
-      sx={{
-        alignItems: 'center',
-        flexDirection: 'column',
-      }}
-    >
-      <RegistrationIntro />
-      <RegistrationForm />
-    </CenteredContainer>
+    <FormPageContainer>
+      <RegistrationPageContainer>
+        <RegistrationIntro />
+        <RegistrationForm />
+      </RegistrationPageContainer>
+    </FormPageContainer>
   );
 };

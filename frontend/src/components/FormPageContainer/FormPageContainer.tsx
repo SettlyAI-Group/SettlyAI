@@ -1,9 +1,8 @@
 import styled from '@emotion/styled';
 import { Container } from '@mui/material';
 
-
-export const CenteredContainer = styled(Container)({
-  flex: 1,
+export const FormPageContainer = styled(Container)({
   display: 'flex',
-  justifyContent: 'center'
+  justifyContent: 'center',
+  alignItems: 'center',
 });
