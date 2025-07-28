@@ -1,7 +1,17 @@
+import { CenteredContainer } from '@/components/CenteredContainer';
+import { RegistrationIntro, RegistrationForm } from './Components';
+
 export const RegistrationPage: React.FC = () => {
   return (
-    <div>
-      Registration Page
-    </div>
-  )
-}
+    <CenteredContainer
+      maxWidth="sm"
+      sx={{
+        alignItems: 'center',
+        flexDirection: 'column',
+      }}
+    >
+      <RegistrationIntro />
+      <RegistrationForm />
+    </CenteredContainer>
+  );
+};
