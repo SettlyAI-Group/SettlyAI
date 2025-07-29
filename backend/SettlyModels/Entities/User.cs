@@ -19,8 +19,14 @@ public class User
     [Required]
     [MaxLength(255)]
     public string PasswordHash { get; set; } = null!;
+<<<<<<< HEAD
     public DateTime CreatedAt { get; set; }
     public bool IsActive { get; set; } = false;
+||||||| parent of b5183b1 (static version draft)
+    public DateTime CreatedAt { get; set; }
+=======
+    // public DateTime CreatedAt { get; set; }
+>>>>>>> b5183b1 (static version draft)
 
     public ICollection<Verification> EmailVerifications { get; set; } = new List<Verification>();
     public ICollection<Favourite> Favourites { get; set; } = new List<Favourite>();

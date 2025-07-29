@@ -1,54 +1,39 @@
-import { Typography, Box, Link } from '@mui/material';
+import { Typography, Box } from '@mui/material';
+import { Link } from 'react-router-dom';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { styled } from '@mui/material/styles';
 
-  const RegistrationIntroContainer = styled(Box)({
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 2,
-  })
+const RegistrationIntroContainer = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: theme.spacing(1),
+}));
 
-  const RegistrationIntroTitle = styled(Typography)({
-    fontWeight: 'bold',
-  })
-
-  const RegistrationIntroSubtitle = styled(Typography)({
-    fontWeight: 'bold',
-  }) as typeof Typography;
-
-  const BackToLoginLink = styled(Link)({
-    display: 'flex',
-    alignItems: 'center',
-    gap: 0.5,
-    borderBottom: '1px solid transparent',
-    '&:hover': {
-      borderBottom: '1px solid',
-      borderColor: 'secondary.main',
-    },
-  })
+const BackToLoginLink = styled(Link)(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  gap: theme.spacing(1),
+  fontsize: theme.typography.button,
+  color: theme.palette.secondary.main,
+  textDecoration: 'none',
+  borderBottom: '1px solid transparent',
+  '&:hover': {
+    borderBottom: `1px solid ${theme.palette.secondary.main}`,
+  },
+}));
 
 export const RegistrationIntro = () => {
-
-        
   return (
     <RegistrationIntroContainer>
-      <RegistrationIntroTitle variant="h4">
-        Welcome to{' '}
-        <RegistrationIntroSubtitle component="span" color="secondary" variant="h4">
-          Settly AI
-        </RegistrationIntroSubtitle>
-      </RegistrationIntroTitle>
-      <Typography color="textPrimary" align="justify">
-        Create your free account to unlock suburb insights, personalized
-        reports, and smart financial tools.
+      <Typography variant="h1" component="h4">
+        Get Started for Free
       </Typography>
-      <BackToLoginLink
-        href="/login"
-        color="secondary"
-        underline="none"
-      >
+      <Typography color="textPrimary" align="justify" variant="body1">
+        Create your Settly AI account
+      </Typography>
+      <BackToLoginLink to="/login">
         <ArrowBackIcon />
         Back to Login
       </BackToLoginLink>
