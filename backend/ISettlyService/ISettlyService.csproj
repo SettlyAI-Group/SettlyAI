@@ -6,4 +6,8 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\SettlyApi\SettlyApi.csproj" />
+    </ItemGroup>
+
 </Project>
