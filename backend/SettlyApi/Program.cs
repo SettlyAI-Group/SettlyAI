@@ -1,7 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using SettlyModels;
-using ISettlyService;
-using SettlyService;
 namespace SettlyApi;
 
 public class Program

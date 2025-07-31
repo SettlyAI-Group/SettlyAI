@@ -7,14 +7,17 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\SettlyModels\SettlyModels.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
       <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.18">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\ISettlyService\ISettlyService.csproj" />
+      <ProjectReference Include="..\Settly.DTOs\Settly.DTOs.csproj" />
+      <ProjectReference Include="..\SettlyModels\SettlyModels.csproj" />
+      <ProjectReference Include="..\SettlyService\SettlyService.csproj" />
     </ItemGroup>
 
 </Project>

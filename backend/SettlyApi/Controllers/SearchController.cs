@@ -1,8 +1,6 @@
-using Bogus.DataSets;
 using ISettlyService;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using SettlyApi.DTOs;
+using Settly.DTOs;
 
 namespace SettlyApi.Controllers
 {
