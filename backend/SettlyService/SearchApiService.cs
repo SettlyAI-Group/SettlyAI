@@ -1,18 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using ISettlyService;
 using Microsoft.EntityFrameworkCore;
 using SettlyApi.DTOs;
 using SettlyModels;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 namespace SettlyService
 {
-    public class SearchApiService : ISearchApi
+    public class SearchApiService : ISearchApiService
     {
         private readonly SettlyDbContext _context;
 

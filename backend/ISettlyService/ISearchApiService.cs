@@ -8,7 +8,7 @@ using SettlyApi.DTOs;
 
 namespace ISettlyService
 {
-    public interface ISearchApi
+    public interface ISearchApiService
     {
         public Task<List<SearchOutputDto>> QuerySearch(string query);
 
