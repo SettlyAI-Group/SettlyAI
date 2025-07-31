@@ -14,7 +14,7 @@ type Story = StoryObj<typeof Banner>;
 
 export const Default: Story = {
   args: {
-    title: 'Welcome to Syndey',
-    description: 'smart data...',
+    title: 'Welcome to Syndey, NSW 2000',
+    description: 'Smart data to help you decide — from affordability to growth to lifestyle.',
   },
 };
