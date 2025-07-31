@@ -4,11 +4,11 @@ using SettlyApi.DTOs;
 using SettlyModels;
 namespace SettlyService
 {
-    public class SearchApiService : ISearchApiService
+    public class SearchService : ISearchService
     {
         private readonly SettlyDbContext _context;
 
-        public SearchApiService(SettlyDbContext context)
+        public SearchService(SettlyDbContext context)
         {
             _context = context;
         }
@@ -36,7 +36,10 @@ namespace SettlyService
         public async Task<List<SearchOutputDto>> QuerySearchAsync(string query)
         {
             #region Handle empty input
-            if (string.IsNullOrWhiteSpace(query)) return new List<SearchOutputDto>();
+            if (string.IsNullOrWhiteSpace(query))
+            {
+                throw new ArgumentException("Please provide a suburb name, state or postcode.");
+            }
             #endregion
 
 
