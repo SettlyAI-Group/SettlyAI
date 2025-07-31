@@ -22,7 +22,7 @@ namespace SettlyService
             return australianStates.Contains(term.ToUpper());
         }
 
-        private bool isCommonWord(string term)
+        private bool IsCommonWord(string term)
         {
             var commonWords = new[] {
                 "avenue", "ave", "street", "st", "road", "rd",
@@ -33,7 +33,7 @@ namespace SettlyService
         }
         #endregion
 
-        public async Task<List<SearchOutputDto>> QuerySearch(string query)
+        public async Task<List<SearchOutputDto>> QuerySearchAsync(string query)
         {
             #region Handle empty input
             if (string.IsNullOrWhiteSpace(query)) return new List<SearchOutputDto>();
@@ -62,7 +62,7 @@ namespace SettlyService
             {
                 if (IsPostcode(term)) postcode = term;
                 else if (IsState(term)) state = term.ToUpper();
-                else if (!isCommonWord(term)) nameTerms.Add(term);
+                else if (!IsCommonWord(term)) nameTerms.Add(term);
             }
             #endregion
 
@@ -112,7 +112,7 @@ namespace SettlyService
             return result;
         }
 
-        public async Task<BotResponseDto> AskBot(string query)
+        public async Task<BotResponseDto> AskBotAsync(string query)
         {
             return await Task.FromResult(new BotResponseDto
             {

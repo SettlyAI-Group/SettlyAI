@@ -10,8 +10,8 @@ namespace ISettlyService
 {
     public interface ISearchApiService
     {
-        public Task<List<SearchOutputDto>> QuerySearch(string query);
+        public Task<List<SearchOutputDto>> QuerySearchAsync(string query);
 
-        public Task<BotResponseDto> AskBot(string query);
+        public Task<BotResponseDto> AskBotAsync(string query);
     }
 }
