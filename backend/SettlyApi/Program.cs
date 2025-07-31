@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using SettlyModels;
-
+using ISettlyService;
+using SettlyService;
 namespace SettlyApi;
 
 public class Program
@@ -18,6 +19,10 @@ public class Program
                 .EnableSensitiveDataLogging()
                 .EnableDetailedErrors()
         );
+
+
+        //Register ISearchApi with SearchApiService
+        builder.Services.AddScoped<ISettlyService.ISearchService, SettlyService.SearchService>();
 
         // Add services to the container.
         builder.Services.AddControllers();
