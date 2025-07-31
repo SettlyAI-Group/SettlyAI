@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace SettlyApi.DTOs
+namespace Settly.DTOs
 {
     public class SearchRequestDto
     {

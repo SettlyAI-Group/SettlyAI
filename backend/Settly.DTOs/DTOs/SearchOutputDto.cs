@@ -1,4 +1,4 @@
-namespace SettlyApi.DTOs
+namespace Settly.DTOs
 {
     public class SearchOutputDto
     {
