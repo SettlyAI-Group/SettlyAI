@@ -1,7 +1,7 @@
 import { Box, Button, styled, Typography, useMediaQuery } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
-import SearchInput from '../TextFiled/SearchInput';
+import SearchInput from '../TextField/SearchInput';
 import theme from '@/styles/theme';
 
 type BannerProps = {
@@ -10,6 +10,7 @@ type BannerProps = {
   backgroundImage?: string;
   withBackButton?: boolean;
   withSearchSection?: boolean;
+  searchPlaceholder: string;
   children?: React.ReactNode;
 };
 
@@ -28,7 +29,7 @@ const BannerRoot = styled(Box)<{ backgroundImage?: string }>(
   })
 );
 
-const BannerOverlay = styled(Box)<BannerProps>(({ theme }) => ({
+const BannerOverlay = styled(Box)(({ theme }) => ({
   width: '100%',
   height: '100%',
   display: 'flex',
@@ -69,14 +70,20 @@ const BackButton = styled(Button)(({ theme }) => ({
   },
 }));
 
-const ContentWrapper = styled(Box)(({ theme }) => ({
+const ContentWrapper = styled(Box, {
+  shouldForwardProp: prop => prop !== 'withBackButton',
+})<{ withBackButton?: boolean }>(({ theme, withBackButton }) => ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  width: '85%',
   marginBottom: theme.spacing(10),
   marginTop: theme.spacing(4),
   gap: theme.spacing(2),
+  width: withBackButton ? '85%' : '100%',
+  // Always full width on mobile
+  [theme.breakpoints.down('sm')]: {
+    width: '100%',
+  },
 }));
 const BannerSearchSection = styled(Box)(({ theme }) => ({
   color: theme.palette.background.paper,
@@ -89,8 +96,7 @@ const BannerSearchSection = styled(Box)(({ theme }) => ({
   justifyContent: 'center',
   [theme.breakpoints.down('sm')]: {
     flexDirection: 'column',
-     gap: theme.spacing(2), 
-    // alignItems: 'stretch',
+    gap: theme.spacing(2),
     width: '100%',
   },
 }));
@@ -109,8 +115,9 @@ function Banner({
   title,
   description,
   backgroundImage,
-  withBackButton,
-  withSearchSection,
+  withBackButton = true,
+  withSearchSection = true,
+  searchPlaceholder,
   children,
 }: BannerProps) {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -124,7 +131,7 @@ function Banner({
             </BackButton>
           </BackButtonContainer>
         )}
-        <ContentWrapper>
+        <ContentWrapper withBackButton={withBackButton}>
           {title && (
             <Typography variant="h4" color="white" fontWeight="bold">
               {title}
@@ -137,7 +144,7 @@ function Banner({
           )}
           {withSearchSection && (
             <BannerSearchSection>
-              <SearchInput placeholder="Paste your property address or suburb to get insights..." />
+              <SearchInput placeholder={searchPlaceholder} />
               <BannerSearchButton>Search</BannerSearchButton>
             </BannerSearchSection>
           )}

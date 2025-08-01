@@ -18,6 +18,8 @@ export const Default: Story = {
     title: 'Welcome to Syndey, NSW 2000',
     description:
       'Smart data to help you decide — from affordability to growth to lifestyle.',
+    searchPlaceholder:
+      'Paste your property address or suburb to get insights...',
     withBackButton: true,
     backgroundImage: bgImage,
     withSearchSection: true,
@@ -28,6 +30,8 @@ export const withNoBackButton: Story = {
     title: 'Welcome to Syndey, NSW 2000',
     description:
       'Smart data to help you decide — from affordability to growth to lifestyle.',
+    searchPlaceholder:
+      'Paste your property address or suburb to get insights...',
     withBackButton: false,
     backgroundImage: bgImage,
     withSearchSection: true,
