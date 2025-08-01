@@ -143,8 +143,52 @@ dotnet ef migrations remove --startup-project ../SettlyApi
 Currently available endpoints:
 
 -   `GET /weatherforecast` - Sample endpoint for testing
+-   `GET /api/features` - Returns available application features
 
 _Additional endpoints will be added as business logic is implemented._
+
+## Testing
+
+### Testing the Features Endpoint
+
+1. **Start the API Server:**
+
+    ```bash
+    cd SettlyApi
+    dotnet run
+    ```
+
+2. **Test the Endpoint (once server is running):**
+
+    **Using curl:**
+
+    ```bash
+    curl -X GET "http://localhost:5100/api/features" -H "accept: application/json"
+    ```
+
+    **Using PowerShell:**
+
+    ```powershell
+    Invoke-RestMethod -Uri "http://localhost:5100/api/features" -Method GET
+    ```
+
+    **Using HTTPie:**
+
+    ```bash
+    http GET http://localhost:5100/api/features
+    ```
+
+3. **Alternative - Use the existing HTTP file:**
+   The project already has `SettlyApi/backend.http` - you can add this line to it:
+
+    ```
+    GET http://localhost:5100/api/features
+    ```
+
+4. **Check the correct port:**
+   If the default port isn't 5100, check `SettlyApi/Properties/launchSettings.json` for the correct port.
+
+    The endpoint should return your 3 Settly features as JSON!
 
 ## Development Workflow
 
