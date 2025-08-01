@@ -1,35 +1,40 @@
-import { Box, Button, Input, styled, Typography } from '@mui/material';
-import bgImage from '@/assets/images/BannerBg.jpg';
+import { Box, Button, styled, Typography, useMediaQuery } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+
 import SearchInput from '../TextFiled/SearchInput';
+import theme from '@/styles/theme';
+
 type BannerProps = {
   title?: string;
   description?: string;
-  children?: string;
+  backgroundImage?: string;
+  withBackButton?: boolean;
+  withSearchSection?: boolean;
+  children?: React.ReactNode;
 };
 
-const BannerRoot = styled(Box)(({ theme }) => ({
-  backgroundColor: theme.palette.primary.light,
-  width: '100%',
-  height: '100%',
-  display: 'flex',
-  // flexDirection: 'row',
-  alignItems: 'flex-start',
-  justifyContent: 'space-between',
-  backgroundImage: `url(${bgImage})`,
-  backgroundSize: 'cover',
-  backgroundRepeat: 'no-repeat',
-  backgroundPosition: 'center',
-}));
+const BannerRoot = styled(Box)<{ backgroundImage?: string }>(
+  ({ theme, backgroundImage }) => ({
+    backgroundColor: theme.palette.primary.light,
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    backgroundImage: backgroundImage ? `url(${backgroundImage})` : 'none',
+    backgroundSize: 'cover',
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'center',
+  })
+);
 
-const BannerOverly = styled(Box)(({ theme }) => ({
+const BannerOverlay = styled(Box)<BannerProps>(({ theme }) => ({
   width: '100%',
   height: '100%',
   display: 'flex',
   alignItems: 'flex-start',
   justifyContent: 'space-between',
   padding: theme.spacing(2),
-  // flexDirection: 'row',
   background:
     'linear-gradient(90deg, rgba(79, 70, 229, 0.6) 0%, rgba(111, 66, 193, 0.6) 100%)',
   zIndex: 1,
@@ -43,13 +48,25 @@ const BannerOverly = styled(Box)(({ theme }) => ({
 const BackButtonContainer = styled(Box)(() => ({
   display: 'flex',
   width: '15%',
-  maxHeight: '40px',
+  maxHeight: 40,
 }));
 
 const BackButton = styled(Button)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
   alignItems: 'flex-start',
-  color: '#374151',
+  color: theme.palette.text.primary,
+  padding: theme.spacing(1, 2),
+  minWidth: 'auto',
+  textTransform: 'capitalize',
+  [theme.breakpoints.down('sm')]: {
+    padding: theme.spacing(1),
+    minWidth: 0,
+    width: 40,
+    height: 40,
+    alignItems: 'center',
+    display: 'flex',
+    justifyContent: 'center',
+  },
 }));
 
 const ContentWrapper = styled(Box)(({ theme }) => ({
@@ -68,8 +85,14 @@ const BannerSearchSection = styled(Box)(({ theme }) => ({
   gap: theme.spacing(1),
   width: '90%',
   alignItems: 'center',
+  textTransform: 'capitalize',
   justifyContent: 'center',
-
+  [theme.breakpoints.down('sm')]: {
+    flexDirection: 'column',
+     gap: theme.spacing(2), 
+    // alignItems: 'stretch',
+    width: '100%',
+  },
 }));
 
 const BannerSearchButton = styled(Button)(({ theme }) => ({
@@ -79,34 +102,49 @@ const BannerSearchButton = styled(Button)(({ theme }) => ({
   borderRadius: '6px',
   paddingLeft: theme.spacing(2),
   paddingRight: theme.spacing(2),
+  textTransform: 'capitalize',
 }));
 
-function Banner({ title, description, children }: BannerProps) {
+function Banner({
+  title,
+  description,
+  backgroundImage,
+  withBackButton,
+  withSearchSection,
+  children,
+}: BannerProps) {
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   return (
-    <BannerRoot>
-      <BannerOverly>
-        <BackButtonContainer>
-          <BackButton variant="contained" startIcon={<ArrowBackIcon />}>
-            Back
-          </BackButton>
-        </BackButtonContainer>
+    <BannerRoot backgroundImage={backgroundImage}>
+      <BannerOverlay>
+        {withBackButton && (
+          <BackButtonContainer>
+            <BackButton variant="contained" startIcon={<ArrowBackIcon />}>
+              {!isMobile && 'Back'}
+            </BackButton>
+          </BackButtonContainer>
+        )}
         <ContentWrapper>
-          <Typography variant="h4" color="white" fontWeight="bold">
-            {title}
-          </Typography>
-          <Typography variant="subtitle2" color="white">
-            {description}
-          </Typography>
-          <BannerSearchSection>
-            {/* <Search/InputWrapper> */}
+          {title && (
+            <Typography variant="h4" color="white" fontWeight="bold">
+              {title}
+            </Typography>
+          )}
+          {description && (
+            <Typography variant="subtitle2" color="white">
+              {description}
+            </Typography>
+          )}
+          {withSearchSection && (
+            <BannerSearchSection>
               <SearchInput placeholder="Paste your property address or suburb to get insights..." />
-            {/* </SearchInputWrapper> */}
-
-            <BannerSearchButton>Search</BannerSearchButton>
-          </BannerSearchSection>
+              <BannerSearchButton>Search</BannerSearchButton>
+            </BannerSearchSection>
+          )}
         </ContentWrapper>
-      </BannerOverly>
-      {children}
+
+        {children}
+      </BannerOverlay>
     </BannerRoot>
   );
 }

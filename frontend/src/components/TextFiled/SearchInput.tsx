@@ -27,6 +27,7 @@ const SearchInput = ({ placeholder}: SearchInputProps) => {
     return (
     <StyledSearchInput
       variant="outlined"
+      fullWidth
       placeholder={placeholder}
       InputProps={{
         startAdornment: (
