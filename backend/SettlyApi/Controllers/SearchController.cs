@@ -8,20 +8,20 @@ namespace SettlyApi.Controllers
     [ApiController]
     public class SearchController : ControllerBase
     {
-        private readonly ISearchService _searchApiService;
+        private readonly ISearchService _searchService;
 
         public SearchController(ISearchService searchApiService)
         {
-            _searchApiService = searchApiService;
+            _searchService = searchApiService;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SearchOutputDto>>> GetAsync(
-            [FromQuery(Name = "q")] string query)
+            [FromQuery] SearchRequestDto dto)
         {
             try
             {
-                var result = await _searchApiService.QuerySearchAsync(query);
+                var result = await _searchService.QuerySearchAsync(dto.Query);
                 return Ok(result);
             }
             catch (ArgumentException ex)
@@ -38,7 +38,7 @@ namespace SettlyApi.Controllers
         {
             try
             {
-                var reply = await _searchApiService.AskBotAsync(query);
+                var reply = await _searchService.AskBotAsync(query);
                 return Ok(reply);
             }
             catch (ArgumentException ex)
