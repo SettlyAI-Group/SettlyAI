@@ -4,10 +4,13 @@ import { RegistrationPage } from './pages';
 
 const App = () => {
   return (
-    <Routes>
-      <Route path="/" element={<div>page</div>} />
-      <Route path="/registration" element={<RegistrationPage />}></Route>
-    </Routes>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Routes>
+        <Route path="/" element={<ThemeDemo />} />
+        <Route path="/registration" element={<RegistrationPage />} />
+      </Routes>
+    </ThemeProvider>
   );
 };
 

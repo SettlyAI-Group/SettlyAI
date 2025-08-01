@@ -15,6 +15,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import type { AxiosError } from 'axios';
+import { useState } from 'react';
 
 // import { useMutation } from '@tanstack/react-query';
 const userFormSchema = z
@@ -45,13 +46,14 @@ const RegistrationFormContainer = styled(Box)<
   maxWidth: '440px',
 }));
 
-const StyledLink = styled(Link)(({ theme }) => ({
-  textDecoration: 'none',
-  fontSize: theme.typography.body2.fontSize,
-  color: theme.palette.secondary.main,
-}));
+const TextButton = styled(Button)({
+  padding: 0,
+  minWidth: 'unset',
+  textTransform: 'none', // 防止变成全大写
+});
 
 export const RegistrationForm = () => {
+  const [isTermsOfServiceOpen, setIsTermsOfServiceOpen] = useState(false);
   const navigate = useNavigate();
   const { handleSubmit, control, setError, reset } = useForm({
     resolver: zodResolver(userFormSchema),
@@ -65,57 +67,67 @@ export const RegistrationForm = () => {
     },
   });
 
+  const triggerTermsOfService = () => {
+    setIsTermsOfServiceOpen(prev => !prev);
+  };
+
   type User = {
     id: string;
     email: string;
     fullName: string;
   };
 
-  const { mutateAsync, isPending } = useMutation<
-    User,
-    AxiosError,
-    z.infer<typeof userFormSchema>
-  >({
-    mutationFn: registerUser, // ✅ 发送注册请求
+  // const { mutateAsync, isPending } = useMutation<
+  //   User,
+  //   AxiosError,
+  //   z.infer<typeof userFormSchema>
+  // >({
+  //   mutationFn: registerUser, // ✅ 发送注册请求
 
-    onSuccess: () => {
-      reset();
-      navigate('/login'); // ✅ 注册成功后清空表单
-    },
+  //   onSuccess: () => {
+  //     reset();
+  //     navigate('/login'); // ✅ 注册成功后清空表单
+  //   },
 
-    onError: (error: AxiosError) => {
-      if (error?.response?.status === 409) {
-        setError('email', {
-          type: 'server',
-          message: '该邮箱已被注册',
-        });
-      } else {
-        // 可选：显示其他错误信息
-        setError('email', {
-          type: 'server',
-          message: '注册失败，请稍后再试',
-        });
-      }
-    },
-  });
+  //   onError: (error: AxiosError) => {
+  //     if (error?.response?.status === 409) {
+  //       setError('email', {
+  //         type: 'server',
+  //         message: '该邮箱已被注册',
+  //       });
+  //     } else {
+  //       // 可选：显示其他错误信息
+  //       setError('email', {
+  //         type: 'server',
+  //         message: '注册失败，请稍后再试',
+  //       });
+  //     }
+  //   },
+  // });
 
-  return isPending ? (
-    <Box
-      display="flex"
-      justifyContent="center"
-      alignItems="center"
-      minHeight="300px"
-    >
-      <CircularProgress />
-    </Box>
-  ) : (
+  return (
+    // isPending ? (
+    //   <Box
+    //     display="flex"
+    //     justifyContent="center"
+    //     alignItems="center"
+    //     minHeight="300px"
+    //   >
+    //     <CircularProgress />
+    //   </Box>
+    // ) : (
     <RegistrationFormContainer
       component="form"
       noValidate
       autoComplete="off"
-      onSubmit={handleSubmit(async data => {
-        await mutateAsync(data);
-      })}
+      onSubmit={handleSubmit(
+        // async data => {
+        // await mutateAsync(data);
+        // }
+        data => {
+          console.log(data);
+        }
+      )}
     >
       <FormInput label="Full Name" name="fullName" control={control} />
       <FormInput label="Email" name="email" control={control} />
@@ -136,11 +148,11 @@ export const RegistrationForm = () => {
       <FormControlLabel
         control={<Checkbox />}
         label={
-          <Typography variant="body2">
+          <Typography variant="body1">
             I agree to the{' '}
-            <StyledLink to="./TermsOfService">Terms of Service</StyledLink>
-            {' and '}
-            <StyledLink to="./PrivacyPolicy">Privacy Policy</StyledLink>
+            <TextButton variant="text" onClick={triggerTermsOfService}>
+              Terms of Service and Privacy Policy
+            </TextButton>
           </Typography>
         }
       />
