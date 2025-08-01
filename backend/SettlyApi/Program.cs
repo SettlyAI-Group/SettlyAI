@@ -1,5 +1,7 @@
+using ISettlyService;
 using Microsoft.EntityFrameworkCore;
 using SettlyModels;
+using SettlyService;
 
 namespace SettlyApi;
 
@@ -21,6 +23,8 @@ public class Program
 
         // Add services to the container.
         builder.Services.AddControllers();
+
+        builder.Services.AddTransient<IPopulationSupplyService, PopulationSupplyService>();
 
         var app = builder.Build();
 

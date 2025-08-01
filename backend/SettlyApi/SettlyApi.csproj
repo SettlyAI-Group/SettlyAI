@@ -7,7 +7,9 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\ISettlyService\ISettlyService.csproj" />
       <ProjectReference Include="..\SettlyModels\SettlyModels.csproj" />
+      <ProjectReference Include="..\SettlyService\SettlyService.csproj" />
     </ItemGroup>
 
     <ItemGroup>
