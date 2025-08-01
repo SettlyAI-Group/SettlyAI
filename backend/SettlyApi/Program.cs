@@ -30,6 +30,11 @@ public class Program
         app.MapControllers();
 
         Console.WriteLine("Starting SettlyAI API server...");
-        app.Run();
+        
+        // Don't run the server during testing
+        if (!builder.Environment.IsEnvironment("Test"))
+        {
+            app.Run();
+        }
     }
 }
