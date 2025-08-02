@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Settly.DTOs
 {
-    public class SearchRequestDto
+    public class SearchInputDto
     {
         [FromQuery(Name = "q")]
         [Required(ErrorMessage = "Your input can't be empty")]        

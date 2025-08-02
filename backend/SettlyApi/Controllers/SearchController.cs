@@ -1,6 +1,7 @@
 using ISettlyService;
 using Microsoft.AspNetCore.Mvc;
 using Settly.DTOs;
+using Settly.DTOs.DTOs;
 
 namespace SettlyApi.Controllers
 {
@@ -16,8 +17,7 @@ namespace SettlyApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<SearchOutputDto>>> GetAsync(
-            [FromQuery] SearchRequestDto dto)
+        public async Task<ActionResult<IEnumerable<SearchOutputDto>>> GetAsync(SearchInputDto dto)
         {
             try
             {
@@ -32,13 +32,11 @@ namespace SettlyApi.Controllers
         }
 
         [HttpGet("chat")]
-        public async Task<ActionResult<BotResponseDto>> Chat(
-            [FromQuery(Name = "intent")] string query = "start"
-            )
+        public async Task<ActionResult<BotOutputDto>> Chat(BotInputDto input)
         {
             try
             {
-                var reply = await _searchService.AskBotAsync(query);
+                var reply = await _searchService.AskBotAsync(input.Intent);
                 return Ok(reply);
             }
             catch (ArgumentException ex)

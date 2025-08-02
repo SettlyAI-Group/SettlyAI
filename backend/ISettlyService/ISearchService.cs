@@ -11,6 +11,6 @@ namespace ISettlyService
     {
         public Task<List<SearchOutputDto>> QuerySearchAsync(string query);
 
-        public Task<BotResponseDto> AskBotAsync(string query);
+        public Task<BotOutputDto> AskBotAsync(string query);
     }
 }
