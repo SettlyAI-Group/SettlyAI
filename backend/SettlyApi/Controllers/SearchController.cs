@@ -1,7 +1,6 @@
 using ISettlyService;
 using Microsoft.AspNetCore.Mvc;
 using Settly.DTOs;
-using Settly.DTOs.DTOs;
 
 namespace SettlyApi.Controllers
 {
