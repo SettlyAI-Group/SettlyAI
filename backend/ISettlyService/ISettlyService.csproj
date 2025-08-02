@@ -6,4 +6,8 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Settly.DTOs\Settly.DTOs.csproj" />
+    </ItemGroup>
+
 </Project>
