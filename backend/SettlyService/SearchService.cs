@@ -12,7 +12,7 @@ namespace SettlyService
         {
             _context = context;
         }
-    
+
         #region Function QuerySearchAsync
         public async Task<List<SearchOutputDto>> QuerySearchAsync(string query)
         {
@@ -27,12 +27,8 @@ namespace SettlyService
 
             // 3. Parse postcode, state & remaining keywords, return empty list if nothing match with our Database
             var (postcode, state, searchKeywords) = ExtractSearchKeywords(inputTokens);
-            if (string.IsNullOrEmpty(postcode)
-             && string.IsNullOrEmpty(state)
-             && !searchKeywords.Any())
-            {
+            if (!HasSearchCriteria(postcode, state, searchKeywords))
                 return new List<SearchOutputDto>();
-            }
 
             // 4. Build and refine the Suburb query for Database
             var suburbQ = BuildSuburbQuery(postcode, state, searchKeywords)
@@ -58,9 +54,9 @@ namespace SettlyService
         }
         #endregion
 
-        public async Task<BotResponseDto> AskBotAsync(string query)
+        public async Task<BotOutputDto> AskBotAsync(string query)
         {
-            return await Task.FromResult(new BotResponseDto
+            return await Task.FromResult(new BotOutputDto
             {
                 Response = $"Hello! You asked about: {query}. This chatbot feature is coming soon!",
                 Timestamp = DateTime.UtcNow
@@ -107,7 +103,12 @@ namespace SettlyService
                 .ToArray();
         }
 
-        // 5) Classify tokens
+        // 5) Returns true if the user supplied at least one search criterion (postcode, state, or free-text keywords).
+
+        private bool HasSearchCriteria(string postcode, string state, List<string> keywords)
+            => !string.IsNullOrEmpty(postcode) || !string.IsNullOrEmpty(state) || keywords.Any();
+
+        // 6) Classify tokens
         //    Extract postcode, state; collect everything else as keywords.
         private (string Postcode, string State, List<string> Keywords) ExtractSearchKeywords(string[] tokens)
         {
@@ -124,7 +125,7 @@ namespace SettlyService
             return (postcode, state, keywords);
         }
 
-        // 6) Build ILIKE pattern
+        // 7) Build ILIKE pattern
         //    Escape SQL wildcards, then wrap in % for a contains-style search.
         private string BuildLikePattern(string token)
         {
@@ -134,7 +135,7 @@ namespace SettlyService
             return $"%{escaped}%";
         }
 
-        // 7) Build Suburb query
+        // 8) Build Suburb query
         //    Apply postcode, state and name-keyword filters to Suburbs set.
         private IQueryable<Suburb> BuildSuburbQuery(
             string postcode,
@@ -158,7 +159,7 @@ namespace SettlyService
             return q;
         }
 
-        // 8) Search Properties
+        // 9) Search Properties
         //    In the given suburb IDs, filter properties by type/address keywords,
         //    then project top 10 by price into DTOs.
         private async Task<List<SearchOutputDto>> SearchPropertiesAsync(
@@ -193,7 +194,7 @@ namespace SettlyService
                 .ToListAsync();
         }
 
-        // 9) Search Suburbs
+        // 10) Search Suburbs
         //    Project the Suburb query into DTOs and return top 10.
         private Task<List<SearchOutputDto>> SearchSuburbsAsync(IQueryable<Suburb> suburbQ)
             => suburbQ
