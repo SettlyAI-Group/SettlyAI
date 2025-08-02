@@ -19,30 +19,15 @@ namespace SettlyApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SearchOutputDto>>> GetAsync(SearchInputDto dto)
         {
-            try
-            {
-                var result = await _searchService.QuerySearchAsync(dto.Query);
-                return Ok(result);
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(new { error = ex.Message });
-            }
-
+            var result = await _searchService.QuerySearchAsync(dto.Query);
+            return Ok(result);
         }
 
         [HttpGet("chat")]
         public async Task<ActionResult<BotOutputDto>> Chat(BotInputDto input)
         {
-            try
-            {
-                var reply = await _searchService.AskBotAsync(input.Intent);
-                return Ok(reply);
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(new { error = ex.Message });
-            }
+            var reply = await _searchService.AskBotAsync(input.Intent);
+            return Ok(reply);
         }
 
     }
