@@ -8,133 +8,178 @@ namespace SettlyService
     public class SearchService : ISearchService
     {
         private readonly SettlyDbContext _context;
-
         public SearchService(SettlyDbContext context)
         {
             _context = context;
         }
-
-        #region Define functions needed to check the user query elements with our Database
-        private bool IsPostcode(string inputToken) => (inputToken.Length == 4 && int.TryParse(inputToken, out _));
-
-        private bool IsState(string inputToken)
+    
+        #region Function QuerySearchAsync
+        public async Task<List<SearchOutputDto>> QuerySearchAsync(string query)
         {
-            var australianStates = new[] { "NSW", "VIC", "QLD", "WA", "SA", "TAS", "ACT", "NT" };
-            return australianStates.Contains(inputToken.ToUpper());
-        }
+            // 1. Validate raw input from user, throw error with empty input
+            if (string.IsNullOrWhiteSpace(query))
+                throw new ArgumentException("Please provide a suburb name, state, postcode or property address.");
 
-        private bool IsCommonWord(string inputToken)
-        {
-            var commonWords = new[] {
-                "avenue", "ave", "street", "st", "road", "rd",
-                "drive", "dr", "lane", "ln", "court", "ct",
-                "place", "pl", "way", "crescent", "cres"
-            };
-            return commonWords.Contains(inputToken.ToLower());
+            // 2. Tokenize & filter out trivial terms
+            var inputTokens = GetInputTokens(query);
+            if (!inputTokens.Any())
+                return new List<SearchOutputDto>();
+
+            // 3. Parse postcode, state & remaining keywords, return empty list if nothing match with our Database
+            var (postcode, state, searchKeywords) = ExtractSearchKeywords(inputTokens);
+            if (string.IsNullOrEmpty(postcode)
+             && string.IsNullOrEmpty(state)
+             && !searchKeywords.Any())
+            {
+                return new List<SearchOutputDto>();
+            }
+
+            // 4. Build and refine the Suburb query for Database
+            var suburbQ = BuildSuburbQuery(postcode, state, searchKeywords)
+                             .AsNoTracking()
+                             .OrderBy(s => s.Name);
+
+            // 5. Execute to get matching suburb IDs in our Suburb table
+            var suburbIds = await suburbQ.Select(s => s.Id).ToListAsync();
+            if (!suburbIds.Any())
+                return new List<SearchOutputDto>();
+
+            // 6. If any keyword is a property type, attempt a Property search using suburb IDs we obtained in step 5.
+            var propertyTypes = new[] { "House", "Apartment", "Townhouse", "Unit", "Villa" };
+            if (searchKeywords.Any(k => propertyTypes.Contains(k, StringComparer.OrdinalIgnoreCase)))
+            {
+                var props = await SearchPropertiesAsync(suburbIds, searchKeywords);
+                if (props.Any())
+                    return props;
+            }
+
+            // 7. Fallback: return Suburb-only results if no keyword matches with Properties table
+            return await SearchSuburbsAsync(suburbQ);
         }
         #endregion
 
-        #region Helper Functions
-        //Splits the raw query into trimmed tokens of length ≥2, or throws if the query is blank
+        public async Task<BotResponseDto> AskBotAsync(string query)
+        {
+            return await Task.FromResult(new BotResponseDto
+            {
+                Response = $"Hello! You asked about: {query}. This chatbot feature is coming soon!",
+                Timestamp = DateTime.UtcNow
+            });
+        }
+
+        #region Helper Functions for Function QuerySearchAsync
+
+        // 1) Australian postcode: exactly 4 numeric digits
+        private bool IsPostcode(string inputToken)
+            => inputToken.Length == 4
+               && int.TryParse(inputToken, out _);
+
+        // 2) Australian state code (NSW, VIC, QLD, etc.)
+        private static readonly HashSet<string> _states = new(StringComparer.OrdinalIgnoreCase)
+        {
+            "NSW","VIC","QLD","WA","SA","TAS","ACT","NT"
+        };
+        private bool IsState(string inputToken)
+            => _states.Contains(inputToken);
+
+        // 3) Common address terms to ignore (ave, st, rd, etc.)
+        private static readonly HashSet<string> _commonWords = new(StringComparer.OrdinalIgnoreCase)
+        {
+            "avenue","ave","street","st","road","rd",
+            "drive","dr","lane","ln","court","ct",
+            "place","pl","way","crescent","cres"
+        };
+        private bool IsCommonWord(string inputToken)
+            => _commonWords.Contains(inputToken);
+
+        // 4) Tokenize & clean
+        //    Split raw query by common separators, trim, drop <2-char tokens.
         private string[] GetInputTokens(string query)
         {
-            // Handle empty input
             if (string.IsNullOrWhiteSpace(query))
-            {
                 throw new ArgumentException("Please provide a suburb name, state, postcode or property.");
-            }
 
-            // Split query into inputTokens for searching
-            var separators = new char[] { ' ', ',', '-', '/' };
-            var inputTokens = query
+            var separators = new[] { ' ', ',', '-', '/' };
+            return query
                 .Split(separators, StringSplitOptions.RemoveEmptyEntries)
-                .Select(inputToken => inputToken.Trim())
-                .Where(inputToken => inputToken.Length >= 2)
+                .Select(t => t.Trim())
+                .Where(t => t.Length >= 2)
                 .ToArray();
-
-            return inputTokens;
         }
 
-        //From a list of inputTokens, extract postcode, state, and free-text keywords.
-        private (string postcode, string state, List<string> searchKeywords) ExtractSearchKeywords(string[] inputTokens)
+        // 5) Classify tokens
+        //    Extract postcode, state; collect everything else as keywords.
+        private (string Postcode, string State, List<string> Keywords) ExtractSearchKeywords(string[] tokens)
         {
-            string postcode = "";
-            string state = "";
-            var searchKeywords = new List<string>();
+            string postcode = "", state = "";
+            var keywords = new List<string>();
 
-            foreach (var inputToken in inputTokens)
+            foreach (var t in tokens)
             {
-                if (IsPostcode(inputToken)) postcode = inputToken;
-                else if (IsState(inputToken)) state = inputToken.ToUpper();
-                else if (!IsCommonWord(inputToken)) searchKeywords.Add(inputToken);
+                if (IsPostcode(t)) postcode = t;
+                else if (IsState(t)) state = t.ToUpper();
+                else if (!IsCommonWord(t)) keywords.Add(t);
             }
-            return (postcode, state, searchKeywords);
+
+            return (postcode, state, keywords);
         }
 
-        //Escapes SQL wildcards in the token and wraps it with % for an ILIKE pattern.
+        // 6) Build ILIKE pattern
+        //    Escape SQL wildcards, then wrap in % for a contains-style search.
         private string BuildLikePattern(string token)
         {
-            // Escape literal % and _ so they don’t act as wildcards
             var escaped = token
                 .Replace("%", "\\%")
                 .Replace("_", "\\_");
-
-            // Surround with % to match anywhere in the string
             return $"%{escaped}%";
         }
 
-        //Constructs an IQueryablefor Suburb filtered by postcode, state, and name-keywords
+        // 7) Build Suburb query
+        //    Apply postcode, state and name-keyword filters to Suburbs set.
         private IQueryable<Suburb> BuildSuburbQuery(
             string postcode,
             string state,
             List<string> searchKeywords)
         {
-            // Start from the full Suburbs set
-            var suburbQ = _context.Suburbs.AsQueryable();
+            var q = _context.Suburbs.AsQueryable();
 
-            // Filter by postcode if provided
             if (!string.IsNullOrEmpty(postcode))
-            {
-                suburbQ = suburbQ.Where(s => s.Postcode == postcode);
-            }
+                q = q.Where(s => s.Postcode == postcode);
 
-            // Filter by state if provided
             if (!string.IsNullOrEmpty(state))
-            {
-                suburbQ = suburbQ.Where(s =>
-                    EF.Functions.ILike(s.State, state));
-            }
+                q = q.Where(s => EF.Functions.ILike(s.State, state));
 
-            // For each search keyword, add an ILIKE on the Name
             foreach (var kw in searchKeywords)
             {
-                var pattern = BuildLikePattern(kw);
-                suburbQ = suburbQ.Where(s =>
-                    EF.Functions.ILike(s.Name, pattern));
+                var pat = BuildLikePattern(kw);
+                q = q.Where(s => EF.Functions.ILike(s.Name, pat));
             }
 
-            return suburbQ;
+            return q;
         }
 
-        //Searches Properties in the given suburbs matching any of the keywords against PropertyType or Address, then projects into DTOs.
-        private async Task<List<SearchOutputDto>> SearchPropertiesAsync(IEnumerable<int> suburbIds,List<string> searchKeywords)
+        // 8) Search Properties
+        //    In the given suburb IDs, filter properties by type/address keywords,
+        //    then project top 10 by price into DTOs.
+        private async Task<List<SearchOutputDto>> SearchPropertiesAsync(
+            IEnumerable<int> suburbIds,
+            List<string> searchKeywords)
         {
-            // Start from properties in those suburbs
-            var propQ = _context.Properties
-                .AsNoTracking()              // read-only
+            var q = _context.Properties
+                .AsNoTracking()
                 .Include(p => p.Suburb)
                 .Where(p => suburbIds.Contains(p.SuburbId));
 
-            // Apply each keyword as an ILIKE filter on both type and address
-            foreach (var inputToken in searchKeywords)
+            foreach (var kw in searchKeywords)
             {
-                var pattern = BuildLikePattern(inputToken);
-                propQ = propQ.Where(p =>EF.Functions.ILike(p.PropertyType, pattern) ||
-                                        EF.Functions.ILike(p.Address, pattern));
+                var pat = BuildLikePattern(kw);
+                q = q.Where(p =>
+                    EF.Functions.ILike(p.PropertyType, pat) ||
+                    EF.Functions.ILike(p.Address, pat));
             }
 
-            // Execute: order by price, take top 10, project to DTOs
-            return await propQ                
+            return await q
+                .OrderBy(p => p.Price)
                 .Take(10)
                 .Select(p => new SearchOutputDto
                 {
@@ -148,10 +193,10 @@ namespace SettlyService
                 .ToListAsync();
         }
 
-        //Projects the given suburb query into SearchOutputDto, takes top 10 and materializes.
+        // 9) Search Suburbs
+        //    Project the Suburb query into DTOs and return top 10.
         private Task<List<SearchOutputDto>> SearchSuburbsAsync(IQueryable<Suburb> suburbQ)
-        {
-            return suburbQ
+            => suburbQ
                 .Take(10)
                 .Select(s => new SearchOutputDto
                 {
@@ -160,151 +205,7 @@ namespace SettlyService
                     Postcode = s.Postcode
                 })
                 .ToListAsync();
-        }
         #endregion
-
-        #region Function QuerySearchAsync
-        public async Task<List<SearchOutputDto>> QuerySearchAsync(string query)
-        {
-            //Handle empty input
-            if (string.IsNullOrWhiteSpace(query))
-            {
-                throw new ArgumentException("Please provide a suburb name, state, postcode or property.");
-            }
-
-
-            //Split query into inputTokens for searching
-            //var separators = new char[] { ' ', ',', '-', '/' };
-            //var inputTokens = query.Split(separators, StringSplitOptions.RemoveEmptyEntries)
-            //            .Select(inputToken => inputToken.Trim())
-            //            .Where(inputToken => inputToken.Length >= 2)
-            //            .ToArray();
-
-            var inputTokens = GetInputTokens(query);
-
-            //No valid inputTokens → empty
-            if (!inputTokens.Any()) return new List<SearchOutputDto>();
-
-            //Extract postcode / state / searchKeywords
-            //string postcode = "";
-            //string state = "";
-            //var searchKeywords = new List<string>();
-
-            //foreach (var inputToken in inputTokens)
-            //{
-            //    if (IsPostcode(inputToken)) postcode = inputToken;
-            //    else if (IsState(inputToken)) state = inputToken.ToUpper();
-            //    else if (!IsCommonWord(inputToken)) searchKeywords.Add(inputToken);
-            //}
-            var (postcode, state, searchKeywords) = ExtractSearchKeywords(inputTokens);
-
-
-            //No valid inputTokens, return empty List
-            if (string.IsNullOrEmpty(postcode) && string.IsNullOrEmpty(state) && !searchKeywords.Any())
-            {
-                return new List<SearchOutputDto>();
-            }
-
-            //Build the suburb query for Database
-            //var suburbQ = _context.Suburbs.AsQueryable();
-
-            //if (!string.IsNullOrEmpty(postcode))
-            //{
-            //    suburbQ = suburbQ.Where(s => s.Postcode == postcode);
-            //}
-
-            //if (!string.IsNullOrEmpty(state))
-            //{
-            //    suburbQ = suburbQ.Where(s => EF.Functions
-            //                                                .ILike(s.State, state));
-            //}
-
-            //if (searchKeywords.Any())
-            //{
-            //    foreach (var inputToken in searchKeywords)
-            //    {
-            //        var pattern = $"%{inputToken.Replace("%", "\\%")}%";
-            //        suburbQ = suburbQ.Where(s => EF.Functions
-            //                                                    .ILike(s.Name, pattern));
-            //    }
-            //}
-
-            //Build suburb query (uses helper functions)
-            var suburbQ = BuildSuburbQuery(postcode, state, searchKeywords)
-             .AsNoTracking()
-             .OrderBy(s => s.Name);
-
-            //Materialise the matching suburb IDs
-            var suburbIds = await suburbQ.Select(s => s.Id).ToListAsync();
-            if (!suburbIds.Any()) return new List<SearchOutputDto>();
-
-            //Look for property-type keyword
-            var propertyTypes = new[] { "House", "Apartment", "Townhouse", "Unit", "Villa" };
-            //if (searchKeywords.Any(t => propertyTypes.Contains(t, StringComparer.OrdinalIgnoreCase)))
-            //{
-            //    //Porperty serach within those suburbs
-            //    var propQ = _context.Properties
-            //                        .Include(p => p.Suburb)
-            //                        .Where(p => suburbIds
-            //                        .Contains(p.SuburbId));
-
-            //    foreach (var inputToken in searchKeywords)
-            //    {
-            //        var pattern = $"%{inputToken.Replace("%", "\\%")}%";
-            //        propQ = propQ.Where(p => EF.Functions.ILike(p.PropertyType, pattern)
-            //        ||
-            //        EF.Functions.ILike(p.Address, pattern));
-            //    }
-
-            //    //Getting result of Properties
-            //    var properties = await propQ.Take(10).Select(p => new SearchOutputDto
-            //    {
-            //        Address = p.Address,
-            //        PropertyType = p.PropertyType,
-            //        Price = p.Price,
-            //        Name = p.Suburb.Name,
-            //        State = p.Suburb.State,
-            //        Postcode = p.Suburb.Postcode
-            //    }).ToListAsync();
-
-            //    if (properties.Any())
-            //    {
-            //        return properties;
-            //    }
-            //}
-            if (searchKeywords.Any(t => propertyTypes.Contains(t, StringComparer.OrdinalIgnoreCase)))
-            {
-                var properties = await SearchPropertiesAsync(suburbIds, searchKeywords);
-                if (properties.Any())
-                {
-                    return properties;
-                }
-            }
-
-
-
-            //Return Suburb result, since User query does not have property keywords
-            //var suburbs = await suburbQ.Select(s => new SearchOutputDto
-            //{
-            //    Name = s.Name,
-            //    State = s.State,
-            //    Postcode = s.Postcode
-            //})
-            //.Take(10)
-            //.ToListAsync();
-            //return suburbs;
-            return await SearchSuburbsAsync(suburbQ);
-        }
-        #endregion
-
-        public async Task<BotResponseDto> AskBotAsync(string query)
-        {
-            return await Task.FromResult(new BotResponseDto
-            {
-                Response = $"Hello! You asked about: {query}. This chatbot feature is coming soon!",
-                Timestamp = DateTime.UtcNow
-            });
-        }
 
     }
 }
