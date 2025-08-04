@@ -63,7 +63,76 @@ const FeatureCardsSection: React.FC = () => {
             {/* Feature Cards Grid - Responsive layout */}
             <Grid container spacing={3} justifyContent="center">
                 {features.map((feature) => (
+                    <Grid
+                        item
+                        xs={12} // Full width on mobile
+                        sm={6}   // Half width on small screens
+                        md={4}   // One-third width on desktop
+                        key={feature.id}
+                    >
+                        <Card
+                            sx={{
+                                height: '100%',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
+                                '&:hover': {
+                                    transform: 'translateY(-4px)',
+                                    boxShadow: 3,
+                                    cursor: 'pointer'
+                                }
+                            }}
+                            onClick={() => handleFeatureClick(feature.route)}
+                        >
+                            <CardContent sx={{ flexGrow: 1, textAlign: 'center', p: 3 }}>
+                                {/* Feature Icon - Purple accent color */}
+                                <Box sx={{
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    mb: 2,
+                                    color: 'primary.main' // Uses theme's primary color (purple)
+                                }}>
+                                    <Box sx={{ fontSize: 48 }}>
+                                        {feature.icon}
+                                    </Box>
+                                </Box>
 
+                                {/* Feature Title */}
+                                <Typography
+                                    variant="h6"
+                                    component="h3"
+                                    gutterBottom
+                                    sx={{ fontWeight: 'bold' }}
+                                >
+                                    {feature.title}
+                                </Typography>
+
+                                {/* Feature Description */}
+                                <Typography
+                                    variant="body2"
+                                    color="text.secondary"
+                                    sx={{ mb: 2 }}
+                                >
+                                    {feature.description}
+                                </Typography>
+                            </CardContent>
+
+                            {/* CTA Button */}
+                            <CardActions sx={{ justifyContent: 'center', pb: 2 }}>
+                                <Button
+                                    variant="text"
+                                    color="primary"
+                                    endIcon={<span>→</span>}
+                                    sx={{
+                                        textTransform: 'none',
+                                        fontWeight: 'medium'
+                                    }}
+                                >
+                                    Explore →
+                                </Button>
+                            </CardActions>
+                        </Card>
+                    </Grid>
                 ))}
             </Grid>
         </Box>
