@@ -60,7 +60,12 @@ const FeatureCardsSection: React.FC = () => {
                 </Typography>
             </Box>
 
+            {/* Feature Cards Grid - Responsive layout */}
+            <Grid container spacing={3} justifyContent="center">
+                {features.map((feature) => (
 
+                ))}
+            </Grid>
         </Box>
     );
 };

@@ -8,7 +8,7 @@ const HomePage: React.FC = () => {
             <Box sx={{ py: 4 }}>
                 {/* Hero Section */}
                 <Box sx={{ textAlign: 'center', mb: 6 }}>
-                    <h1 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>
+                    <h1 style={{ fontSize: '2.5rem', marginBottom: '1rem', lineHeight: '1.4' }}>
                         Your AI-Powered Guide for{' '}
                         <span style={{ color: '#6B46C1' }}>Property, Loan & Super Planning</span>
                     </h1>
