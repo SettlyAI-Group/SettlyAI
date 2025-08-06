@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="../SettlyModels/SettlyModels.csproj" />
+    <ProjectReference Include="..\SettlyApi\SettlyApi.csproj" />
   </ItemGroup>
 
   <ItemGroup>

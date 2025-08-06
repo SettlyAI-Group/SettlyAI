@@ -9,4 +9,8 @@
   <ProjectReference Include="..\SettlyModels\SettlyModels.csproj" />
 </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\SettlyModels\SettlyModels.csproj" />
+    </ItemGroup>
+
 </Project>
