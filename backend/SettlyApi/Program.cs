@@ -2,6 +2,7 @@ using ISettlyService;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using SettlyModels;
+using SettlyApi.Configuration;
 using SettlyService;
 using SettlyService.Mapping;
 
@@ -23,6 +24,16 @@ public class Program
                 .EnableDetailedErrors()
         );
 
+        // Add CORS services
+        builder.Services.AddCorsPolicies();
+
+        // Add application services
+        builder.Services.AddScoped<IUserService, UserService>();
+        builder.Services.AddScoped<IEmailSender, StubEmailSender>();
+        builder.Services.AddScoped<IVerificationCodeService, VerificationCodeService>();
+        builder.Services.AddScoped<IAuthService, AuthService>();
+
+
         // Add services to the container.
         builder.Services.AddControllers();
         builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -31,6 +42,7 @@ public class Program
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
+        app.UseCors("AllowAll");
         app.UseAuthorization();
         app.MapControllers();
 
