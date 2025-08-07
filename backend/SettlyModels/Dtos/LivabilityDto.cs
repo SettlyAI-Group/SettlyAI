@@ -2,10 +2,10 @@ namespace SettlyModels.Dtos;
 
 public class LivabilityDto
 {
-    public float DistSupermarket { get; set; }
-    public float DistHospital { get; set; }
-    public float TransportScore { get; set; }
-    public float PrimarySchoolRating { get; set; }
-    public float SecondarySchoolRating { get; set; }
-    public float HospitalDensity { get; set; }
+    public decimal TransportScore { get; set; }
+    public int SupermarketQuantity { get; set; }
+    public int HospitalQuantity { get; set; }
+    public decimal PrimarySchoolRating { get; set; }
+    public decimal SecondarySchoolRating { get; set; }
+    public decimal HospitalDensity { get; set; }
 }
