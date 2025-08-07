@@ -24,6 +24,10 @@ public class Program
                 .EnableDetailedErrors()
         );
 
+
+        //Register ISearchApi with SearchApiService
+        builder.Services.AddScoped<ISettlyService.ISearchService, SettlyService.SearchService>();
+
         // Add services to the container.
         builder.Services.AddControllers();
         builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
