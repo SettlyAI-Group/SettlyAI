@@ -26,7 +26,7 @@ namespace SettlyService
             var populationSupplyDto = new PopulationSupplyDto
             {
                 SuburbId = suburbId,
-                RentersRatio = populationSupply.RentersRatio,
+                RentersRatio = (float)populationSupply.RentersRatio,
                 DemandSupplyRatio = populationSupply.DemandSupplyRatio,
                 BuildingApprovals12M = populationSupply.BuildingApprovals12M,
                 DevProjectsCount = populationSupply.DevProjectsCount

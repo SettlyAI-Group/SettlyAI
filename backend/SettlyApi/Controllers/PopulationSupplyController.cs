@@ -1,4 +1,5 @@
 using ISettlyService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SettlyModels.Dtos;
@@ -14,7 +15,7 @@ namespace SettlyApi.Controllers
         {
             _populationSupplyService = populationSupplyService;
         }
-
+        [Authorize]
         [HttpGet("{suburbId}")]
         public async Task<ActionResult<PopulationSupplyDto>> Get(int suburbId)
         {

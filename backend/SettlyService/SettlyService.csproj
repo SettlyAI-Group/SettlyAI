@@ -6,11 +6,35 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+<<<<<<< HEAD
   <ItemGroup>
   <!-- NuGet package dependencies -->
+||||||| parent of 8327843 (JWT configuration and Login feature)
+
+<ItemGroup>
+  <ProjectReference Include="..\SettlyModels\SettlyModels.csproj" />
+  <ProjectReference Include="..\ISettlyService\ISettlyService.csproj" />
+</ItemGroup>
+
+<ItemGroup>
+=======
+
+<ItemGroup>
+  <ProjectReference Include="..\SettlyModels\SettlyModels.csproj" />
+  <ProjectReference Include="..\ISettlyService\ISettlyService.csproj" />
+</ItemGroup>
+
+<ItemGroup>
+  <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+>>>>>>> 8327843 (JWT configuration and Login feature)
   <PackageReference Include="AutoMapper" Version="12.0.1" />
   <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+<<<<<<< HEAD
   <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+||||||| parent of 8327843 (JWT configuration and Login feature)
+=======
+  <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.13.0" />
+>>>>>>> 8327843 (JWT configuration and Login feature)
 </ItemGroup>
 
 <ItemGroup>
