@@ -21,7 +21,7 @@ const SaveButton: React.FC<Props> = ({
       const res = await toggleFavourite(targetType, targetId);
       onToggle(res.isSaved);
     } catch (error) {
-      console.error('Toggle favourite faild', error);
+      console.error('Toggle favourite failed', error);
     }
   };
   return (
