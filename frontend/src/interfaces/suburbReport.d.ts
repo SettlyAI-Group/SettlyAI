@@ -3,7 +3,7 @@ export interface ISuburbReport {
   suburbId: number;
   postcode: string;
   state: string;
-  suburbName:string;
+  suburbName: string;
   incomeEmployment: {
     medianIncome: number;
     employmentRate: number;

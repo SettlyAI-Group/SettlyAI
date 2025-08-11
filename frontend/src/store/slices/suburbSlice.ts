@@ -6,7 +6,6 @@ import {
   type PayloadAction,
 } from '@reduxjs/toolkit';
 
-
 interface SuburbState {
   suburbId: number | null;
   report: ISuburbReport | null;
@@ -59,5 +58,3 @@ const suburbSlice = createSlice({
 
 export const { setSuburbId } = suburbSlice.actions;
 export default suburbSlice.reducer;
-
-

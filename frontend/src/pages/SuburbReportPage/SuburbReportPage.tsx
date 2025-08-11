@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import MetricCardsSection from './components/MetricCardsSection';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import IncomeEmploymentCardsSection from './components/IncomeEmploymentCardsSection';
 
 const PageContainer = styled(Box)(({ theme }) => ({
   maxWidth: '1440px',
@@ -111,7 +112,11 @@ const SuburbReportPage = () => {
         </Typography>
       </BannerWrapper>
       {/* todo: replace with real card content */}
-
+      <IncomeEmploymentCardsSection
+        suburbId={report.suburbId}
+        title="Income & Employment"
+        // suburbId={104}
+      />
       <MetricCardsSection
         title="Lifestyle Accessibility"
         data={metricCardsData}
