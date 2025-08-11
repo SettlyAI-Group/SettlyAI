@@ -10,13 +10,13 @@ import {
 } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import { FormInput, SocialLoginButtons } from './component';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import type { AxiosError } from 'axios';
-import { useState } from 'react';
-
+// import { useState } from 'react';
+import { registerUser } from '@/api/authApi';
 // import { useMutation } from '@tanstack/react-query';
 const userFormSchema = z
   .object({
@@ -31,6 +31,7 @@ const userFormSchema = z
         'Password must include uppercase, lowercase, and number'
       ),
     confirmPassword: z.string(),
+    acceptTerms: z.boolean().refine(v => v, { message: 'Please accept Terms' }),
   })
   .refine(data => data.password === data.confirmPassword, {
     path: ['confirmPassword'],
@@ -53,23 +54,30 @@ const TextButton = styled(Button)({
 });
 
 export const RegistrationForm = () => {
-  const [isTermsOfServiceOpen, setIsTermsOfServiceOpen] = useState(false);
+  // const [isTermsOfServiceOpen, setIsTermsOfServiceOpen] = useState(false);
   const navigate = useNavigate();
-  const { handleSubmit, control, setError, reset } = useForm({
+  const {
+    handleSubmit,
+    control,
+    setError,
+    reset,
+    formState: { errors },
+  } = useForm({
     resolver: zodResolver(userFormSchema),
-    mode: 'onBlur',
+    mode: 'onSubmit',
     reValidateMode: 'onChange',
     defaultValues: {
       fullName: '',
       email: '',
       password: '',
       confirmPassword: '',
+      acceptTerms: false,
     },
   });
 
-  const triggerTermsOfService = () => {
-    setIsTermsOfServiceOpen(prev => !prev);
-  };
+  // const triggerTermsOfService = () => {
+  //   setIsTermsOfServiceOpen(prev => !prev);
+  // };
 
   type User = {
     id: string;
@@ -77,58 +85,68 @@ export const RegistrationForm = () => {
     fullName: string;
   };
 
-  // const { mutateAsync, isPending } = useMutation<
-  //   User,
-  //   AxiosError,
-  //   z.infer<typeof userFormSchema>
-  // >({
-  //   mutationFn: registerUser, // ✅ 发送注册请求
+  const { mutateAsync, isPending } = useMutation<
+    User,
+    AxiosError,
+    z.infer<typeof userFormSchema>
+  >({
+    mutationFn: data =>
+      registerUser({
+        fullName: data.fullName,
+        email: data.email,
+        password: data.password,
+      }),
 
-  //   onSuccess: () => {
-  //     reset();
-  //     navigate('/login'); // ✅ 注册成功后清空表单
-  //   },
+    onSuccess: () => {
+      // dispatch(setEmail(vars.email));
+      reset();
+      navigate('/verify-email');
+    },
 
-  //   onError: (error: AxiosError) => {
-  //     if (error?.response?.status === 409) {
-  //       setError('email', {
-  //         type: 'server',
-  //         message: '该邮箱已被注册',
-  //       });
-  //     } else {
-  //       // 可选：显示其他错误信息
-  //       setError('email', {
-  //         type: 'server',
-  //         message: '注册失败，请稍后再试',
-  //       });
-  //     }
-  //   },
-  // });
+    onError: (error: AxiosError) => {
+      if (error?.response?.status === 409) {
+        setError('email', {
+          type: 'server',
+          message: '该邮箱已被注册',
+        });
+      } else {
+        // 可选：显示其他错误信息
+        setError('root', {
+          type: 'server',
+          message: '注册失败，请稍后再试',
+        });
+      }
+    },
+  });
 
-  return (
-    // isPending ? (
-    //   <Box
-    //     display="flex"
-    //     justifyContent="center"
-    //     alignItems="center"
-    //     minHeight="300px"
-    //   >
-    //     <CircularProgress />
-    //   </Box>
-    // ) : (
+  return isPending ? (
+    <Box
+      display="flex"
+      justifyContent="center"
+      alignItems="center"
+      minHeight="300px"
+    >
+      <CircularProgress />
+    </Box>
+  ) : (
     <RegistrationFormContainer
       component="form"
       noValidate
       autoComplete="off"
       onSubmit={handleSubmit(
-        // async data => {
-        // await mutateAsync(data);
-        // }
-        data => {
-          console.log(data);
+        async data => {
+          await mutateAsync(data);
         }
+        // data => {
+        //   console.log(data);
+        // }
       )}
     >
+      {errors.root && (
+        <Typography color="error" sx={{ mb: 2 }}>
+          {errors.root.message}
+        </Typography>
+      )}
       <FormInput label="Full Name" name="fullName" control={control} />
       <FormInput label="Email" name="email" control={control} />
       <FormInput
@@ -145,16 +163,39 @@ export const RegistrationForm = () => {
         type="password"
       />
 
-      <FormControlLabel
-        control={<Checkbox />}
-        label={
-          <Typography variant="body1">
-            I agree to the{' '}
-            <TextButton variant="text" onClick={triggerTermsOfService}>
-              Terms of Service and Privacy Policy
-            </TextButton>
-          </Typography>
-        }
+      <Controller
+        name="acceptTerms"
+        control={control}
+        render={({ field }) => (
+          <>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  {...field}
+                  checked={field.value}
+                  onChange={e => field.onChange(e.target.checked)}
+                />
+              }
+              label={
+                <Typography variant="body1">
+                  I agree to the{' '}
+                  <TextButton variant="text">
+                    Terms of Service and Privacy Policy
+                  </TextButton>
+                </Typography>
+              }
+            />
+            {errors.acceptTerms && (
+              <Typography
+                color="error"
+                variant="caption"
+                sx={{ mt: -1, mb: 1, display: 'block' }}
+              >
+                {errors.acceptTerms.message}
+              </Typography>
+            )}
+          </>
+        )}
       />
 
       <Button
@@ -163,6 +204,7 @@ export const RegistrationForm = () => {
         size="medium"
         fullWidth
         type="submit"
+        disabled={isPending}
       >
         Create Account
       </Button>
