@@ -17,7 +17,6 @@ import { useMutation } from '@tanstack/react-query';
 import type { AxiosError } from 'axios';
 // import { useState } from 'react';
 import { registerUser } from '@/api/authApi';
-// import { useMutation } from '@tanstack/react-query';
 const userFormSchema = z
   .object({
     fullName: z.string().min(2, 'Full name is required'),
@@ -230,6 +229,12 @@ export const RegistrationForm = () => {
 
       <Divider>OR</Divider>
       <SocialLoginButtons />
+      <Typography variant="p1" component="p" textAlign="center" marginTop={6}>
+        Already have an account?{'  '}
+        <Link to="/login">
+          <TextButton>Login here</TextButton>
+        </Link>
+      </Typography>
     </RegistrationFormContainer>
   );
 };
