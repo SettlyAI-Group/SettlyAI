@@ -9,7 +9,7 @@ const GrayOutlinedButton = styled(Button)(({ theme }) => ({
 
 export const SocialLoginButtons = () => {
   return (
-    <Stack spacing={1}>
+    <Stack spacing={3} sx={{ width: '100%' }}>
       <GrayOutlinedButton fullWidth variant="outlined">
         Sign In with Google
       </GrayOutlinedButton>

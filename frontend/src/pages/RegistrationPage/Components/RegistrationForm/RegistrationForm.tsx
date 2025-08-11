@@ -41,17 +41,30 @@ const userFormSchema = z
 const RegistrationFormContainer = styled(Box)<
   BoxProps & React.ComponentProps<'form'>
 >(({ theme }) => ({
-  padding: theme.spacing(2, 1),
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+
+  padding: theme.spacing(6, 7),
   border: '1px solid #ccc',
   borderRadius: (theme.shape.borderRadius as number) * 2,
   maxWidth: '440px',
+  backgroundColor: theme.palette.background.paper,
 }));
 
-const TextButton = styled(Button)({
+const TextButton = styled('button')(({ theme }) => ({
+  ...theme.typography.p1,
   padding: 0,
-  minWidth: 'unset',
-  textTransform: 'none', // 防止变成全大写
-});
+  border: 'none',
+  background: 'none',
+  color: theme.palette.primary.main,
+  cursor: 'pointer',
+  textTransform: 'none',
+  '&:hover': {
+    textDecoration: 'underline',
+  },
+}));
 
 export const RegistrationForm = () => {
   // const [isTermsOfServiceOpen, setIsTermsOfServiceOpen] = useState(false);
@@ -142,6 +155,12 @@ export const RegistrationForm = () => {
         // }
       )}
     >
+      <Typography variant="h4" component="h3" marginBottom={2}>
+        Get Started for Free
+      </Typography>
+      <Typography variant="body2" component="p" marginBottom={11}>
+        Create your Settly AI account.
+      </Typography>
       {errors.root && (
         <Typography color="error" sx={{ mb: 2 }}>
           {errors.root.message}
@@ -177,9 +196,9 @@ export const RegistrationForm = () => {
                 />
               }
               label={
-                <Typography variant="body1">
+                <Typography variant="p1" component="span">
                   I agree to the{' '}
-                  <TextButton variant="text">
+                  <TextButton type="button">
                     Terms of Service and Privacy Policy
                   </TextButton>
                 </Typography>
@@ -200,7 +219,7 @@ export const RegistrationForm = () => {
 
       <Button
         variant="contained"
-        color="secondary"
+        color="primary"
         size="medium"
         fullWidth
         type="submit"

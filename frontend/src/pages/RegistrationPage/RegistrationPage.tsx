@@ -3,13 +3,13 @@ import Box from '@mui/material/Box';
 import { RegistrationIntro, RegistrationForm } from './Components';
 import { styled } from '@mui/material/styles';
 
-const RegistrationPageContainer = styled(Box)({
+const RegistrationPageContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
-  gap: 2,
-});
+  gap: theme.spacing(21),
+}));
 
 export const RegistrationPage = () => {
   return (
