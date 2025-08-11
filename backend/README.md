@@ -162,6 +162,17 @@ Currently available endpoints:
    - Test endpoints: Use `backend.http` file or Postman
    - Generate fresh data: `cd SettlyDbManager && dotnet run -- --reset-seed`
 
+5. **Unit Test**
+   - run test
+   ```bash
+      dotnet test
+   ```
+   - clean & build if has issues
+   ```bash
+      dotnet clean
+      dotnet build
+   ```
+
 ## Architecture Notes
 
 - **Layered Architecture**: Clear separation between API, business logic, and data layers
