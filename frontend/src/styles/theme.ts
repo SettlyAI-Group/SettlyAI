@@ -16,7 +16,8 @@ const paperColor = '#ffffff';
 const textPrimaryColor = '#1F2937';
 const textSecondaryColor = '#4B5563';
 const textDisabledColor = '#8C8D8B';
-const dividerColor = "#E5E7EB";
+const textHint = '#6B7280';
+const dividerColor = '#E5E7EB';
 
 // Spacing and shape
 const spacing = 4;
@@ -64,20 +65,44 @@ const typographySubtitle1 = {
 
 const typographySubtitle2 = {
   fontSize: '16px',
-  fontWeight: 400,
+  fontWeight: 500,
   lineHeight: '22px',
 };
 
 const typographyBody1 = {
+  fontSize: '16px',
+  fontWeight: 600,
+  lineHeight: '24px',
+};
+
+const typographyBody2 = {
+  fontSize: '16px',
+  fontWeight: 400,
+  lineHeight: '24px',
+};
+
+const typographyP1 = {
   fontSize: '14px',
   fontWeight: 400,
   lineHeight: '20px',
 };
 
-const typographyBody2 = {
+const typographyP2 = {
   fontSize: '12px',
   fontWeight: 400,
-  lineHeight: '13.54px',
+  lineHeight: '16px',
+};
+
+const typographyCardTitle = {
+  fontSize: '16px',
+  fontWeight: 500,
+  lineHeight: '24px',
+};
+
+const typographyCardValue = {
+  fontSize: '24px',
+  fontWeight: 700,
+  lineHeight: '32px',
 };
 
 export const themeOptions: ThemeOptions = {
@@ -91,6 +116,7 @@ export const themeOptions: ThemeOptions = {
       primary: textPrimaryColor,
       secondary: textSecondaryColor,
       disabled: textDisabledColor,
+      cardHint: textHint,
     },
     primary: createColorSet(primaryBase),
     secondary: createColorSet(secondaryBase),
@@ -111,6 +137,10 @@ export const themeOptions: ThemeOptions = {
     subtitle2: typographySubtitle2,
     body1: typographyBody1,
     body2: typographyBody2,
+    cardTitle: typographyCardTitle,
+    cardValue: typographyCardValue,
+    p1: typographyP1,
+    p2: typographyP2,
   },
   spacing: spacing,
   shape: {

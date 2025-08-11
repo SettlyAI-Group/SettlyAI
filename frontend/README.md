@@ -112,3 +112,17 @@ The project configuration supports multiple deployment environments:
 - Development: Local development server
 - Testing: CI integration tests
 - Production: Optimized static assets
+
+## Storybook
+- update dependency 
+```bash
+pnpm install
+```
+- run storybook
+```bash
+npm run storybook
+```
+- check in browser(http://localhost:6006/)
+
+- new component
+  use file name xxx.stories.tsx
