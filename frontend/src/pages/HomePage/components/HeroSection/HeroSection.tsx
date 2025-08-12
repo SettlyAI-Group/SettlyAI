@@ -10,11 +10,9 @@ const HeroSectionContainer = () => {
   const HeroContainer = styled(Container)(({ theme }) => ({
     paddingTop: theme.spacing(25),
     paddingInline: theme.spacing(6),
-
     [theme.breakpoints.between('sm', 'md')]: {
       paddingInline: theme.spacing(8),
     },
-
     [theme.breakpoints.up('md')]: {
       paddingInline: theme.spacing(0),
     },
@@ -36,7 +34,6 @@ const HeroSectionContainer = () => {
     whiteSpace: 'nowrap',
     color: '#fff',
     ...theme.typography.subtitle1,
-
     [theme.breakpoints.up(1150)]: {
       position: 'absolute',
       width: 200,
@@ -55,7 +52,6 @@ const HeroSectionContainer = () => {
     boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.3)',
     ...theme.typography.subtitle2,
   }));
-
   const RotbotButton = styled(Button)(({ theme }) => ({
     ...theme.typography.p1,
   }));
@@ -115,6 +111,7 @@ const HeroSectionContainer = () => {
             <TextField
               variant="outlined"
               fullWidth
+              id="fullWidth"
               placeholder="Paste your property address or suburb to get insights..."
               slotProps={{
                 input: {
@@ -132,7 +129,9 @@ const HeroSectionContainer = () => {
                 },
               })}
             />
-            <ReportButton variant="contained">GET MY REPORT</ReportButton>
+            <ReportButton variant="contained" onClick={() => navigate('/report')}>
+              GET MY REPORT
+            </ReportButton>
           </Box>
         </Box>
 
@@ -152,7 +151,7 @@ const HeroSectionContainer = () => {
             pb: 8,
           })}
         >
-          <ExploreButton>Explore Suburb</ExploreButton>
+          <ExploreButton variant="text">Explore Suburb</ExploreButton>
 
           <RotbotButton>Not sure where to begin? Chat with Settly Robot</RotbotButton>
         </Box>
