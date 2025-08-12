@@ -1,5 +1,10 @@
+using ISettlyService;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using SettlyModels;
+using SettlyService;
+using SettlyService.Mapping;
+
 
 namespace SettlyApi;
 
@@ -19,12 +24,21 @@ public class Program
                 .EnableDetailedErrors()
         );
 
+
+        //Register ISearchApi with SearchApiService
+        builder.Services.AddScoped<ISettlyService.ISearchService, SettlyService.SearchService>();
+
         // Add services to the container.
         builder.Services.AddControllers();
+        builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+        builder.Services.AddScoped<ISuburbReportService, SuburbReportService>();
+        builder.Services.AddScoped<IFavouriteService, FavouriteService>();
+        builder.Services.AddTransient<IPopulationSupplyService, PopulationSupplyService>();
 
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
+        app.UseRouting();
         app.UseAuthorization();
         app.MapControllers();
 

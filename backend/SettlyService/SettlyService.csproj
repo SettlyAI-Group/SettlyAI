@@ -6,4 +6,16 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
-</Project>
+    <ItemGroup>
+
+        <PackageReference Include="AutoMapper" Version="12.0.1" />
+        <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+        
+        <ProjectReference Include="..\ISettlyService\ISettlyService.csproj" />        
+        <ProjectReference Include="..\SettlyModels\SettlyModels.csproj" />
+    </ItemGroup>
+<ItemGroup>
+  <PackageReference Include="AutoMapper" Version="12.0.1" />
+  <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+</ItemGroup>
+

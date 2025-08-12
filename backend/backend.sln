@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# 
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36301.6
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SettlyApi", "SettlyApi\SettlyApi.csproj", "{D8D2F5F9-8C8A-46D8-BB56-3E4D797B006E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ISettlyService", "ISettlyService\ISettlyService.csproj", "{2062F196-BFC2-41A0-B8CC-5FF5AC8FF23B}"
@@ -37,5 +39,11 @@ Global
 		{03FA2DA9-4FF8-4043-ABBE-5DDA7E9FEDA6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{03FA2DA9-4FF8-4043-ABBE-5DDA7E9FEDA6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{03FA2DA9-4FF8-4043-ABBE-5DDA7E9FEDA6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {96440E43-BD46-4AD1-A4F2-78BF3263FF61}
 	EndGlobalSection
 EndGlobal
