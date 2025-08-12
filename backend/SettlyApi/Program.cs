@@ -34,7 +34,7 @@ public class Program
         builder.Services.AddScoped<IPropertyDetailService, PropertyDetailService>();
         builder.Services.AddScoped<IFavouriteService, FavouriteService>();
         builder.Services.AddTransient<IPopulationSupplyService, PopulationSupplyService>();
-
+        builder.Services.AddScoped<IIncomeEmploymentService, IncomeEmploymentService>();
 
         var app = builder.Build();
 

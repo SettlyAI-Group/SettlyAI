@@ -3,6 +3,7 @@ namespace SettlyModels.Dtos;
 
 public class IncomeEmploymentDto
 {
+    public int SuburbId { get; set; }
     public int MedianIncome { get; set; }
     public decimal EmploymentRate { get; set; }
     public decimal WhiteCollarRatio { get; set; }
