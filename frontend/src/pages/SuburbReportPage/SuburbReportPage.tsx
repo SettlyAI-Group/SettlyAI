@@ -1,35 +1,14 @@
-<<<<<<< HEAD
-import { useState } from 'react';
-import SaveButton from '@/components/SaveButton/SaveButton';
-
-const SuburbReportPage = () => {
-  const [isSaved, setIsSaved] = useState(false);
-
-  return (
-    <div style={{ padding: '2rem' }}>
-      <h1>Suburb Report - Save Button Test</h1>
-      <SaveButton
-        isSaved={isSaved}
-        onToggle={setIsSaved}
-        targetType="suburb"
-        targetId={3} // for testing
-      />
-    </div>
-  );
-};
-
-export default SuburbReportPage;
-||||||| 2d621c8
-=======
 import ActionButtonWrapper from '@/pages/SuburbReportPage/components/ActionButtonGroup/ActionButtonWrapper';
 import BannerWrapper from '@/pages/SuburbReportPage/components/Banner/BannerWrapper';
 import type { AppDispatch, RootState } from '@/store';
 import { fetchSuburbReport, setSuburbId } from '@/store/slices/suburbSlice';
 import { Box, Button, styled, Typography } from '@mui/material';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import MetricCardsSection from './components/MetricCardsSection';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import SaveButton from '@/components/SaveButton/SaveButton';
+import { getFavouriteByTarget, toggleFavourite } from '@/utils/api/favourite';
 
 const PageContainer = styled(Box)(({ theme }) => ({
   maxWidth: '1440px',
@@ -104,7 +83,7 @@ const SuburbReportPage = () => {
       subtitle: 'Superannuation',
     },
   ];
-
+  const [isSaved, setIsSaved] = useState(false);
   useEffect(() => {
     let id = suburbId;
 
@@ -115,12 +94,31 @@ const SuburbReportPage = () => {
         dispatch(setSuburbId(id));
       }
     }
-
     if (id) {
       dispatch(fetchSuburbReport(id));
+      (async () => {
+        try {
+          const fav = await getFavouriteByTarget('suburb', id);
+          setIsSaved(Boolean(fav?.isSaved));
+        } catch {
+          //
+        }
+      })();
     }
   }, [suburbId, dispatch]);
 
+  const handleToggleSave = async (next: boolean) => {
+    if (!suburbId) return;
+    const prev = isSaved;
+    setIsSaved(next);
+    try {
+      const res = await toggleFavourite('suburb', suburbId);
+      if (typeof res?.isSaved === 'boolean') setIsSaved(res.isSaved);
+    } catch (e) {
+      console.error('Toggle favourite failed:', e);
+      setIsSaved(prev);
+    }
+  };
   if (loading) return <p>Loading report...</p>;
   if (error) return <p>Error: {error}</p>;
   if (!report) return <p>No report found.</p>;
@@ -141,7 +139,12 @@ const SuburbReportPage = () => {
       />
       {/* todo:  replace with real action buttons , feel free to modify*/}
       <ActionButtonWrapper>
-        <Button>save this suburb</Button>
+        <SaveButton
+          isSaved={isSaved}
+          onToggle={handleToggleSave}
+          targetType="suburb"
+          targetId={suburbId ?? 0}
+        />
         <Button>Export PDF</Button>
       </ActionButtonWrapper>
     </PageContainer>
@@ -149,4 +152,3 @@ const SuburbReportPage = () => {
 };
 
 export default SuburbReportPage;
->>>>>>> origin/main
