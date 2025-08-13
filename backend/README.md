@@ -161,6 +161,21 @@ Currently available endpoints:
    - Run API: `cd SettlyApi && dotnet run`
    - Test endpoints: Use `backend.http` file or Postman
    - Generate fresh data: `cd SettlyDbManager && dotnet run -- --reset-seed`
+  
+5. **Unit Test**
+   - run test
+   ```bash
+   dotnet test
+   ```
+   - clean & build if has issues
+   ```bash
+      dotnet clean
+      dotnet build
+   ```
+6. **Format**
+```bash
+dotnet format
+```
 
 ## Architecture Notes
 

@@ -34,5 +34,12 @@ public class SettlyDbContext : DbContext
 
     public DbSet<PolicyRule> PolicyRules { get; set; } = null!;
 
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
 
+        modelBuilder.Entity<Property>()
+            .Property(p => p.Features)
+            .HasColumnType("text[]");
+    }
 }

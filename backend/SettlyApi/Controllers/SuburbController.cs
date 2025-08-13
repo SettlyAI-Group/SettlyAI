@@ -7,7 +7,7 @@ namespace SettlyApi.Controllers
 
 {
     [ApiController]
-    [Route("api/suburb")]
+    [Route("api/[controller]")]
     public class SuburbController : ControllerBase
     {
         private readonly ISuburbReportService _suburbReportService;

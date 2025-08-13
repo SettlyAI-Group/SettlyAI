@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SettlyModels;
@@ -11,9 +12,11 @@ using SettlyModels;
 namespace SettlyModels.Migrations
 {
     [DbContext(typeof(SettlyDbContext))]
-    partial class SettlyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250811013448_updateProperty")]
+    partial class updateProperty
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -426,9 +429,9 @@ namespace SettlyModels.Migrations
                     b.Property<int>("CarSpaces")
                         .HasColumnType("integer");
 
-                    b.Property<string[]>("Features")
+                    b.Property<string>("Features")
                         .IsRequired()
-                        .HasColumnType("text[]");
+                        .HasColumnType("text");
 
                     b.Property<string>("ImageUrl")
                         .IsRequired()
