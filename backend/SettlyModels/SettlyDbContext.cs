@@ -34,6 +34,8 @@ public class SettlyDbContext : DbContext
 
     public DbSet<PolicyRule> PolicyRules { get; set; } = null!;
 
+    public DbSet<Verification> Verifications { get; set; } = default!;
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
