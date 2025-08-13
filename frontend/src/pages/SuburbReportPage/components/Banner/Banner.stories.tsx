@@ -1,8 +1,6 @@
-// Banner.stories.tsx
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-
 import Banner from './Banner';
 import theme from '@/styles/theme';
 
