@@ -7,18 +7,23 @@ const GrayOutlinedButton = styled(Button)(({ theme }) => ({
   borderColor: ' #E0E0E0', // 边框颜色
 }));
 
+const CustomGrayOutlinedButton = styled(GrayOutlinedButton)(({ theme }) => ({
+  ...theme.typography.body2,
+  textTransform: 'none',
+}));
+
 export const SocialLoginButtons = () => {
   return (
     <Stack spacing={3} sx={{ width: '100%' }}>
-      <GrayOutlinedButton fullWidth variant="outlined">
+      <CustomGrayOutlinedButton fullWidth variant="outlined">
         Sign In with Google
-      </GrayOutlinedButton>
-      <GrayOutlinedButton fullWidth variant="outlined">
+      </CustomGrayOutlinedButton>
+      <CustomGrayOutlinedButton fullWidth variant="outlined">
         Sign In with Facebook
-      </GrayOutlinedButton>
-      <GrayOutlinedButton fullWidth variant="outlined">
+      </CustomGrayOutlinedButton>
+      <CustomGrayOutlinedButton fullWidth variant="outlined">
         Sign In with LinkedIn
-      </GrayOutlinedButton>
+      </CustomGrayOutlinedButton>
     </Stack>
   );
 };

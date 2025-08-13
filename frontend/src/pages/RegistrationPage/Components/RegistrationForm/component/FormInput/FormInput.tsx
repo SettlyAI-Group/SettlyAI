@@ -7,7 +7,7 @@ import {
 
 interface FormInputProps extends Omit<TextFieldProps, 'name'> {
   name: string;
-  control: Control<any>;
+  control: Control<any>; // eslint-disable-line @typescript-eslint/no-explicit-any
   rules?: RegisterOptions;
 }
 

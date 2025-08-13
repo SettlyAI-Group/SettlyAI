@@ -10,12 +10,13 @@ import {
 } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import { FormInput, SocialLoginButtons } from './component';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import type { AxiosError } from 'axios';
-// import { useState } from 'react';
+import { PasswordStrength } from './component';
+import { useState } from 'react';
 import { registerUser } from '@/api/authApi';
 const userFormSchema = z
   .object({
@@ -28,6 +29,10 @@ const userFormSchema = z
       .regex(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/,
         'Password must include uppercase, lowercase, and number'
+      )
+      .regex(
+        /[^A-Za-z0-9]/,
+        'Password must include at least one special character'
       ),
     confirmPassword: z.string(),
     acceptTerms: z.boolean().refine(v => v, { message: 'Please accept Terms' }),
@@ -52,6 +57,12 @@ const RegistrationFormContainer = styled(Box)<
   backgroundColor: theme.palette.background.paper,
 }));
 
+const CreateAccountButton = styled(Button)(({ theme }) => ({
+  ...theme.typography.body2,
+  textTransform: 'none',
+  color: '#fff',
+}));
+
 const TextButton = styled('button')(({ theme }) => ({
   ...theme.typography.p1,
   padding: 0,
@@ -67,6 +78,7 @@ const TextButton = styled('button')(({ theme }) => ({
 
 export const RegistrationForm = () => {
   // const [isTermsOfServiceOpen, setIsTermsOfServiceOpen] = useState(false);
+  const [showPasswordStrength, setShowPasswordStrength] = useState(false);
   const navigate = useNavigate();
   const {
     handleSubmit,
@@ -86,6 +98,7 @@ export const RegistrationForm = () => {
       acceptTerms: false,
     },
   });
+  const passwordValue = useWatch({ control, name: 'password' });
 
   // const triggerTermsOfService = () => {
   //   setIsTermsOfServiceOpen(prev => !prev);
@@ -110,7 +123,6 @@ export const RegistrationForm = () => {
       }),
 
     onSuccess: () => {
-      // dispatch(setEmail(vars.email));
       reset();
       navigate('/verify-email');
     },
@@ -121,13 +133,11 @@ export const RegistrationForm = () => {
           type: 'server',
           message: '该邮箱已被注册',
         });
-      } else {
-        // 可选：显示其他错误信息
-        setError('root', {
-          type: 'server',
-          message: '注册失败，请稍后再试',
-        });
       }
+      setError('root', {
+        type: 'server',
+        message: '注册失败，请稍后再试',
+      });
     },
   });
 
@@ -145,14 +155,9 @@ export const RegistrationForm = () => {
       component="form"
       noValidate
       autoComplete="off"
-      onSubmit={handleSubmit(
-        async data => {
-          await mutateAsync(data);
-        }
-        // data => {
-        //   console.log(data);
-        // }
-      )}
+      onSubmit={handleSubmit(async data => {
+        await mutateAsync(data);
+      })}
     >
       <Typography variant="h4" component="h3" marginBottom={2}>
         Get Started for Free
@@ -172,7 +177,13 @@ export const RegistrationForm = () => {
         name="password"
         control={control}
         type="password"
-        helperText="Use 8+ characters, with uppercase, lowercase and number"
+        onFocus={() => setShowPasswordStrength(true)}
+        onBlur={() => setShowPasswordStrength(false)}
+        helperText={
+          showPasswordStrength ? (
+            <PasswordStrength value={passwordValue} />
+          ) : null
+        }
       />
       <FormInput
         label="Confirm Password"
@@ -204,6 +215,7 @@ export const RegistrationForm = () => {
               }
             />
             {errors.acceptTerms && (
+              // 抽成styled component
               <Typography
                 color="error"
                 variant="caption"
@@ -216,7 +228,7 @@ export const RegistrationForm = () => {
         )}
       />
 
-      <Button
+      <CreateAccountButton
         variant="contained"
         color="primary"
         size="medium"
@@ -225,14 +237,14 @@ export const RegistrationForm = () => {
         disabled={isPending}
       >
         Create Account
-      </Button>
+      </CreateAccountButton>
 
       <Divider>OR</Divider>
       <SocialLoginButtons />
       <Typography variant="p1" component="p" textAlign="center" marginTop={6}>
         Already have an account?{'  '}
         <Link to="/login">
-          <TextButton>Login here</TextButton>
+          <TextButton>Log in here</TextButton>
         </Link>
       </Typography>
     </RegistrationFormContainer>
