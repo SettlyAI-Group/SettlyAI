@@ -12,29 +12,6 @@ const queryClient = new QueryClient({
 
 const App = () => {
   return (
-<<<<<<< HEAD
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Routes>
-        <Route path="/" element={<ThemeDemo />} />
-        <Route path="/registration" element={<RegistrationPage />} />
-      </Routes>
-    </ThemeProvider>
-||||||| parent of 97a1c6c (add auth api and add react query)
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route path="/theme" element={<ThemeDemo />} />
-          <Route index element={<HomePage />} />
-
-          <Route path="/suburb/:location" element={<SuburbReportPage />} />
-        </Route>
-        <Route path="/" element={<ThemeDemo />} />
-        <Route path="/registration" element={<RegistrationPage />} />
-      </Routes>
-    </ThemeProvider>
-=======
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
@@ -50,7 +27,6 @@ const App = () => {
         </Routes>
       </ThemeProvider>
     </QueryClientProvider>
->>>>>>> 97a1c6c (add auth api and add react query)
   );
 };
 
