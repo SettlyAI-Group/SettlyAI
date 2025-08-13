@@ -23,7 +23,6 @@ namespace SettlyService
             {
                 return null;
             }
-            Console.WriteLine(BCrypt.Net.BCrypt.HashPassword(loginInput.Password));
             if (BCrypt.Net.BCrypt.HashPassword(loginInput.Password) != user.PasswordHash)
             {
                 return null;
