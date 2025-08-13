@@ -33,3 +33,9 @@ export const Default: Story = {
   },
 };
 
+export const NoDescription: Story = {
+  args: {
+    title: 'Welcome to Perth, WA 6000',
+  },
+};
+

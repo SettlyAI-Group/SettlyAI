@@ -8,6 +8,7 @@ import bgImage from '@/assets/images/BannerBg.jpg';
 type BannerProps = {
   title?: string;
   description?: string;
+
 };
 
 const BannerContainer = styled(Box)(({ theme }) => {
@@ -82,10 +83,19 @@ const Banner = ({ title, description }: BannerProps) => {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const placeholder =
     'Paste your property address or suburb to get insights...';
+  
+  const handleBack = () => {
+    window.history.back();
+  };
+
   return (
     <BannerContainer>
       <BackButtonWrapper>
-        <BackButton variant="contained" startIcon={<ArrowBackIcon />}>
+        <BackButton 
+          variant="contained" 
+          startIcon={<ArrowBackIcon />}
+          onClick={handleBack}
+        >
           {!isMobile && 'Back'}
         </BackButton>
       </BackButtonWrapper>

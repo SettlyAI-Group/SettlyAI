@@ -110,6 +110,50 @@ describe('Banner', () => {
     expect(backButton).not.toHaveTextContent('Back');
   });
 
+  it('back button navigates to previous page when clicked', () => {
+    // Mock window.history.back
+    const mockHistoryBack = vi.fn();
+    Object.defineProperty(window, 'history', {
+      value: {
+        back: mockHistoryBack,
+      },
+      writable: true,
+    });
+
+    renderWithTheme(<Banner />);
+    
+    const backButton = screen.getByRole('button', { name: /back/i });
+    fireEvent.click(backButton);
+    
+    expect(mockHistoryBack).toHaveBeenCalledTimes(1);
+  });
+
+  it('back button has correct styling and icon', () => {
+    renderWithTheme(<Banner />);
+    
+    const backButton = screen.getByRole('button', { name: /back/i });
+    
+    // Check that the button has the back icon
+    expect(backButton).toBeInTheDocument();
+    
+    // Check button styling classes
+    expect(backButton).toHaveClass('MuiButton-root');
+    expect(backButton).toHaveClass('MuiButton-contained');
+  });
+
+  it('back button is clickable and accessible', () => {
+    renderWithTheme(<Banner />);
+    
+    const backButton = screen.getByRole('button', { name: /back/i });
+    
+    // Check button is enabled and clickable
+    expect(backButton).toBeEnabled();
+    expect(backButton).toHaveAttribute('type', 'button');
+    
+    // Check button has proper ARIA attributes
+    expect(backButton).toHaveAttribute('role', 'button');
+  });
+
   it('renders search input with correct placeholder', () => {
     renderWithTheme(<Banner />);
     
