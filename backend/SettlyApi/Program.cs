@@ -2,10 +2,11 @@ using System.Text;
 using ISettlyService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using SettlyModels;
 using SettlyApi.Configuration;
-using SettlyService;
+using SettlyService; // Add this if IAuthService is in ISettlyService.Auth namespace
 
 
 namespace SettlyApi;
