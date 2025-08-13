@@ -45,7 +45,7 @@ export const RegistrationIntro = () => {
       </Typography>
       <BackToLoginLink to="/login">
         <ArrowBackIcon />
-        Back to Login
+        Back to Log in
       </BackToLoginLink>
     </RegistrationIntroContainer>
   );

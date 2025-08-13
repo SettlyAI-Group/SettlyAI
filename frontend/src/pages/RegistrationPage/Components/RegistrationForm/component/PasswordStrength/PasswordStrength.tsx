@@ -1,6 +1,5 @@
 import { Stack, Typography, LinearProgress } from '@mui/material';
 
-/** 单条规则类型 */
 export type PasswordRule = {
   code: string;
   label: string;
@@ -70,6 +69,7 @@ export const PasswordStrength = ({
   compact = false,
 }: PasswordStrengthProps) => {
   const { results, strength } = evaluatePassword(value, rules);
+  const hasValue = (value?.trim()?.length ?? 0) > 0;
 
   const colorMap: Record<
     typeof strength.level,
@@ -86,7 +86,7 @@ export const PasswordStrength = ({
 
   return (
     <Stack spacing={gapY}>
-      {showMeter && (
+      {showMeter && hasValue && (
         <Stack spacing={0.5}>
           <Typography variant={titleVariant} color={colorMap[strength.level]}>
             Password Strength: {strength.text}

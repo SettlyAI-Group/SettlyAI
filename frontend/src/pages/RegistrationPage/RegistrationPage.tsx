@@ -15,7 +15,6 @@ export const RegistrationPage = () => {
   return (
     <FormPageContainer>
       <RegistrationPageContainer>
-        {/*RegistrationIntro 响应式 */}
         <RegistrationIntro />
         <RegistrationForm />
       </RegistrationPageContainer>

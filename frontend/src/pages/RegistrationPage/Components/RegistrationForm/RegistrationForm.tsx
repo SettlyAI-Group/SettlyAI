@@ -1,16 +1,9 @@
 import { Box, type BoxProps } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import {
-  Checkbox,
-  FormControlLabel,
-  Typography,
-  Button,
-  Divider,
-  CircularProgress,
-} from '@mui/material';
+import { Typography, Button, Divider, CircularProgress } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
-import { FormInput, SocialLoginButtons } from './component';
-import { Controller, useForm, useWatch } from 'react-hook-form';
+import { FormInput, SocialLoginButtons, FormCheckbox } from './component';
+import { useForm, useWatch } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
@@ -18,6 +11,8 @@ import type { AxiosError } from 'axios';
 import { PasswordStrength } from './component';
 import { useState } from 'react';
 import { registerUser } from '@/api/authApi';
+import type { IUser } from '@/interfaces/user';
+
 const userFormSchema = z
   .object({
     fullName: z.string().min(2, 'Full name is required'),
@@ -77,7 +72,6 @@ const TextButton = styled('button')(({ theme }) => ({
 }));
 
 export const RegistrationForm = () => {
-  // const [isTermsOfServiceOpen, setIsTermsOfServiceOpen] = useState(false);
   const [showPasswordStrength, setShowPasswordStrength] = useState(false);
   const navigate = useNavigate();
   const {
@@ -100,18 +94,8 @@ export const RegistrationForm = () => {
   });
   const passwordValue = useWatch({ control, name: 'password' });
 
-  // const triggerTermsOfService = () => {
-  //   setIsTermsOfServiceOpen(prev => !prev);
-  // };
-
-  type User = {
-    id: string;
-    email: string;
-    fullName: string;
-  };
-
   const { mutateAsync, isPending } = useMutation<
-    User,
+    IUser,
     AxiosError,
     z.infer<typeof userFormSchema>
   >({
@@ -131,12 +115,12 @@ export const RegistrationForm = () => {
       if (error?.response?.status === 409) {
         setError('email', {
           type: 'server',
-          message: '该邮箱已被注册',
+          message: 'This email has already been registered',
         });
       }
       setError('root', {
         type: 'server',
-        message: '注册失败，请稍后再试',
+        message: 'Registration failed, please try again later',
       });
     },
   });
@@ -192,42 +176,18 @@ export const RegistrationForm = () => {
         type="password"
       />
 
-      <Controller
+      <FormCheckbox
         name="acceptTerms"
         control={control}
-        render={({ field }) => (
-          <>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  {...field}
-                  checked={field.value}
-                  onChange={e => field.onChange(e.target.checked)}
-                />
-              }
-              label={
-                <Typography variant="p1" component="span">
-                  I agree to the{' '}
-                  <TextButton type="button">
-                    Terms of Service and Privacy Policy
-                  </TextButton>
-                </Typography>
-              }
-            />
-            {errors.acceptTerms && (
-              // 抽成styled component
-              <Typography
-                color="error"
-                variant="caption"
-                sx={{ mt: -1, mb: 1, display: 'block' }}
-              >
-                {errors.acceptTerms.message}
-              </Typography>
-            )}
-          </>
-        )}
+        label={
+          <Typography variant="p1" component="span">
+            I agree to the{' '}
+            <TextButton type="button">
+              Terms of Service and Privacy Policy
+            </TextButton>
+          </Typography>
+        }
       />
-
       <CreateAccountButton
         variant="contained"
         color="primary"
