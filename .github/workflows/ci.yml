@@ -42,5 +42,8 @@ jobs:
       # - name: Unit Test
       #   run: pnpm run test
 
+      # - name: Build
+      #   run: pnpm run build
+
       - name: Build
-        run: pnpm run build
+        run: pnpm exec tsc --noEmit --noUnusedLocals false && pnpm run build
