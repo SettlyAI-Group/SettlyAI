@@ -1,7 +1,7 @@
 import React from 'react';
 
 const ReportPage = () => {
-  return <div>Report Page</div>;
+  return <div></div>;
 };
 
 export default ReportPage;
