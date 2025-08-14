@@ -1,4 +1,8 @@
+import Layout from '@/components/Layout/Layout';
+import { setSuburbId } from '@/store/slices/suburbSlice';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import HeroSectionContainer from './components/HeroSection';
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -8,7 +12,6 @@ const HomePage = () => {
     state: string;
     suburbId: number;
   };
-
   //todo: change to fetch suburb id by suburb name and state
   //check database to match for testing
   const melbourne = { suburbName: 'Melbourn', state: 'VIC', suburbId: 1 };
@@ -24,7 +27,10 @@ const HomePage = () => {
 
   return (
     <>
+      <HeroSectionContainer />
       <h1>Home</h1>
+      <button onClick={() => checkSuburb(sydney)}>Go to Sydney</button>
+      <button onClick={() => checkSuburb(melbourne)}>Go to Melbourne</button>
       <button onClick={() => checkSuburb(sydney)}>Go to Sydney</button>
       <button onClick={() => checkSuburb(melbourne)}>Go to Melbourne</button>
     </>
