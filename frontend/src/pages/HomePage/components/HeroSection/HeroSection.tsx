@@ -2,59 +2,81 @@ import { InputAdornment, Container, Box, TextField, Button, Typography, styled, 
 import { lighten } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import SearchIcon from '@mui/icons-material/Search';
+import { useAppDispatch, useAppSelector } from '@/redux/store';
+import { exploreSuburbs } from '@/api/exploreApi';
+import { useState } from 'react';
+import { setQuery } from '@/store/slices/exploreSlice';
+
+const HeroContainer = styled(Container)(({ theme }) => ({
+  paddingTop: theme.spacing(25),
+  paddingInline: theme.spacing(6),
+  [theme.breakpoints.between('sm', 'md')]: {
+    paddingInline: theme.spacing(8),
+  },
+  [theme.breakpoints.up('md')]: {
+    paddingInline: theme.spacing(0),
+  },
+}));
+
+const MainHeader = styled(Typography)(({ theme }) => ({
+  textAlign: 'center',
+  ...theme.typography.h2,
+}));
+
+const Accent = styled('span')(({ theme }) => ({
+  color: theme.palette.primary.main,
+}));
+
+const ReportButton = styled(Button)(({ theme }) => ({
+  position: 'static',
+  width: '100%',
+  height: 48,
+  whiteSpace: 'nowrap',
+  color: '#fff',
+  ...theme.typography.subtitle1,
+  [theme.breakpoints.up(1150)]: {
+    position: 'absolute',
+    width: 200,
+    left: '100%',
+    height: 56,
+    transform: 'translateX(36px)',
+  },
+}));
+
+const ExploreButton = styled(Button)(({ theme }) => ({
+  width: 'min(100%, 220px)',
+  height: 60,
+  backgroundColor: lighten(theme.palette.secondary.light, 0.75),
+  color: theme.palette.primary.main,
+  borderRadius: theme.shape.borderRadius,
+  boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.3)',
+  ...theme.typography.subtitle2,
+}));
+const RotbotButton = styled(Button)(({ theme }) => ({
+  ...theme.typography.p1,
+}));
 
 const HeroSectionContainer = () => {
   const navigate = useNavigate();
   const theme = useTheme();
+  const dispatch = useAppDispatch();
+  const { query } = useAppSelector(s => s.explore);
+  const [exploring, setExploring] = useState(false);
 
-  const HeroContainer = styled(Container)(({ theme }) => ({
-    paddingTop: theme.spacing(25),
-    paddingInline: theme.spacing(6),
-    [theme.breakpoints.between('sm', 'md')]: {
-      paddingInline: theme.spacing(8),
-    },
-    [theme.breakpoints.up('md')]: {
-      paddingInline: theme.spacing(0),
-    },
-  }));
-
-  const MainHeader = styled(Typography)(({ theme }) => ({
-    textAlign: 'center',
-    ...theme.typography.h2,
-  }));
-
-  const Accent = styled('span')(({ theme }) => ({
-    color: theme.palette.primary.main,
-  }));
-
-  const ReportButton = styled(Button)(({ theme }) => ({
-    position: 'static',
-    width: '100%',
-    height: 48,
-    whiteSpace: 'nowrap',
-    color: '#fff',
-    ...theme.typography.subtitle1,
-    [theme.breakpoints.up(1150)]: {
-      position: 'absolute',
-      width: 200,
-      left: '100%',
-      height: 56,
-      transform: 'translateX(36px)',
-    },
-  }));
-
-  const ExploreButton = styled(Button)(({ theme }) => ({
-    width: 'min(100%, 220px)',
-    height: 60,
-    backgroundColor: lighten(theme.palette.secondary.light, 0.75),
-    color: theme.palette.primary.main,
-    borderRadius: theme.shape.borderRadius,
-    boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.3)',
-    ...theme.typography.subtitle2,
-  }));
-  const RotbotButton = styled(Button)(({ theme }) => ({
-    ...theme.typography.p1,
-  }));
+  const handleExplore = async () => {
+    const q = query.trim();
+    if (!q) return;
+    try {
+      setExploring(true);
+      const json = await exploreSuburbs(q);
+      console.log('exploreSuburbs ->', json);
+      navigate('/explore/' + encodeURIComponent(q));
+    } catch (err) {
+      console.error('searchSuburbs error', err);
+    } finally {
+      setExploring(false);
+    }
+  };
 
   return (
     <Box
@@ -113,6 +135,8 @@ const HeroSectionContainer = () => {
               fullWidth
               id="fullWidth"
               placeholder="Paste your property address or suburb to get insights..."
+              value={query}
+              onChange={e => dispatch(setQuery(e.target.value))}
               slotProps={{
                 input: {
                   startAdornment: (
@@ -129,7 +153,7 @@ const HeroSectionContainer = () => {
                 },
               })}
             />
-            <ReportButton variant="contained" onClick={() => navigate('/report')}>
+            <ReportButton variant="contained" onClick={() => navigate('/suburb/id')}>
               GET MY REPORT
             </ReportButton>
           </Box>
@@ -151,7 +175,9 @@ const HeroSectionContainer = () => {
             pb: 8,
           })}
         >
-          <ExploreButton variant="text">Explore Suburb</ExploreButton>
+          <ExploreButton variant="text" onClick={handleExplore} disabled={exploring || !query.trim()}>
+            {exploring ? 'Exploring...' : 'Explore Suburb'}
+          </ExploreButton>
 
           <RotbotButton>Not sure where to begin? Chat with Settly Robot</RotbotButton>
         </Box>
