@@ -33,6 +33,13 @@ const StyledSearchInput = styled(TextField)(({ theme }) => ({
   fontSize: 14,
   '& .MuiInputBase-input': {
     padding: theme.spacing(4, 2),
+    fontFamily:theme.typography.fontFamily,
+  },
+  '& .MuiInputBase-input::placeholder': {
+    fontFamily: theme.typography.fontWeightLight, 
+    color: theme.palette.text.secondary,
+    opacity: 1,
+    fontSize: '14px',
   },
 }));
 

@@ -9,7 +9,6 @@ import {
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 import SearchInput from '@/components/SearchInput/SearchInput';
-// import theme from '@/styles/theme';
 import bgImage from '@/assets/images/BannerBg.jpg';
 import theme from '@/styles/theme';
 
