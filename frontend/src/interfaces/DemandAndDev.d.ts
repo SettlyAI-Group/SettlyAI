@@ -1,7 +1,7 @@
 export interface IDemandAndDev {
   suburbId: number;
-  renterRation: number;
-  demandSupplyRation:number;
-  buildingApprovals:number;
-  devProjectCount:number;
+  rentersRatio: number;
+  demandSupplyRatio:number;
+  buildingApprovals12M:number;
+  devProjectsCount:number;
 }

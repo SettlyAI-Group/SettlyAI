@@ -1,8 +1,13 @@
 import ActionButtonWrapper from '@/pages/SuburbReportPage/components/ActionButtonGroup/ActionButtonWrapper';
 import BannerWrapper from '@/pages/SuburbReportPage/components/Banner/BannerWrapper';
 import { Box, Button, styled, Typography } from '@mui/material';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import MetricCardsSection from './components/MetricCardsSection';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import { getDemandAndDev } from '@/api/suburbApi';
+import {mapDevCardData} from '@/pages/SuburbReportPage/utils/MakeCards'
+import type { IMetricCardData } from './components/MetricCardsSection/MetricCardsSection';
 
 const PageContainer = styled(Box)(({ theme }) => ({
   maxWidth: '1440px',
@@ -32,7 +37,15 @@ const SuburbReportPage = () => {
     lifeStyle: 'LifeStyle & Accessibility',
     safetyScore: 'Safety & Score',
   };
+  const dispatch = useDispatch<AppDispatch>();
+  const { suburbId, report, loading, error } = useSelector(
+    (state: RootState) => state.suburb
+  );
 
+  // const [demandAndDev, setDemandAndDev] = useState<IDemandAndDev | null>(null);
+  const [demandAndDevCards, setDemandAndDevCards] = useState<IMetricCardData[]>([]);
+
+  //todo: replace it with real data
   const metricCardsData = [
     {
       icon: <AccountBalanceIcon />,
@@ -84,6 +97,34 @@ const SuburbReportPage = () => {
     },
   ];
 
+  useEffect(() => {
+    let id = suburbId;
+
+    if (!id) {
+      const fromStorage = localStorage.getItem('suburbId');
+      if (fromStorage) {
+        id = parseInt(fromStorage);
+        dispatch(setSuburbId(id));
+      }
+    }
+
+    if (id) {
+      dispatch(fetchSuburbReport(id));
+    }
+    if (id) {
+      const fetchDemandAndDevData = async() => {
+        const data = await getDemandAndDev(id);
+        setDemandAndDevCards(mapDevCardData(data));
+      }
+      fetchDemandAndDevData();
+    }
+
+  }, [suburbId, dispatch]);
+
+  if (loading) return <p>Loading report...</p>;
+  if (error) return <p>Error: {error}</p>;
+  if (!report) return <p>No report found.</p>;
+
   return (
     <PageContainer>
       {/* todo: replace with real banner content */}
@@ -93,17 +134,19 @@ const SuburbReportPage = () => {
         </Typography>
       </BannerWrapper>
       {/* todo: replace with real card content */}
-      <ContextContainer>
-        <MetricCardsSection
-          title="Lifestyle Accessibility"
-          data={metricCardsData}
-        />
-        {/* todo:  replace with real action buttons , feel free to modify*/}
-        <ActionButtonWrapper>
-          <Button>save this suburb</Button>
-          <Button>Export PDF</Button>
-        </ActionButtonWrapper>
-      </ContextContainer>
+      <MetricCardsSection
+        title = {TITLES.demandDevelopment}
+        data={demandAndDevCards}
+      />
+      <MetricCardsSection
+        title="Lifestyle Accessibility"
+        data={metricCardsData}
+      />
+      {/* todo:  replace with real action buttons , feel free to modify*/}
+      <ActionButtonWrapper>
+        <Button>save this suburb</Button>
+        <Button>Export PDF</Button>
+      </ActionButtonWrapper>
     </PageContainer>
   );
 };

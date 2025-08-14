@@ -10,7 +10,7 @@ import {
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
 
-interface IMetricCardData {
+export interface IMetricCardData {
   icon: React.ReactNode;
   title: string;
   value: string;
