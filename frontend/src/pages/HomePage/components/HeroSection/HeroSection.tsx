@@ -179,7 +179,7 @@ const HeroSectionContainer = () => {
             {exploring ? 'Exploring...' : 'Explore Suburb'}
           </ExploreButton>
 
-          <RotbotButton>Not sure where to begin? Chat with Settly Robot</RotbotButton>
+          <RotbotButton onClick={() => navigate('/chat')}>Not sure where to begin? Chat with Settly Robot</RotbotButton>
         </Box>
       </HeroContainer>
     </Box>
