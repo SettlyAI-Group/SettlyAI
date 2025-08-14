@@ -30,6 +30,7 @@ const CardsGroupDesktop = styled(Box)(({ theme }) => ({
 }));
 
 const CardsGroupMobile = styled(Swiper)(({ theme }) => ({
+  
   position: 'relative',
   '& .swiper-button-next, & .swiper-button-prev': {
     width: theme.spacing(10),
@@ -67,7 +68,7 @@ const MetricCardsSection = ({ title, data }: IMetricCardsSectionProps) => {
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   return (
-    <Stack direction="column" spacing={8} sx={{ overflow: 'hidden' }}>
+    <Stack direction="column" spacing={8} sx={{ overflow: 'hidden',width:"100%", }}>
       <Typography variant="h4">{title}</Typography>
       {!isSmallScreen ? (
         <CardsGroupDesktop>

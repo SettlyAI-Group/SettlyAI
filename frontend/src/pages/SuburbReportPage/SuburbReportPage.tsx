@@ -12,10 +12,19 @@ const PageContainer = styled(Box)(({ theme }) => ({
   maxWidth: '1440px',
   display: 'flex',
   flexDirection: 'column',
-  justifyContent: 'center',
   alignItems: 'center',
   margin: '0 auto',
   padding: theme.spacing(8),
+}));
+
+const ContextContainer = styled(Box)(({ theme }) => ({
+  maxWidth: '936px',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems:"center",
+  gap:theme.spacing(8),
+  width:"100%",
+  paddingTop:theme.spacing(8)
 }));
 
 const SuburbReportPage = () => {
@@ -111,16 +120,18 @@ const SuburbReportPage = () => {
         </Typography>
       </BannerWrapper>
       {/* todo: replace with real card content */}
+      <ContextContainer>
+        <MetricCardsSection
+            title="Lifestyle Accessibility"
+            data={metricCardsData}
+        />
+        {/* todo:  replace with real action buttons , feel free to modify*/}
+        <ActionButtonWrapper>
+          <Button>save this suburb</Button>
+          <Button>Export PDF</Button>
+        </ActionButtonWrapper>
+      </ContextContainer>
 
-      <MetricCardsSection
-        title="Lifestyle Accessibility"
-        data={metricCardsData}
-      />
-      {/* todo:  replace with real action buttons , feel free to modify*/}
-      <ActionButtonWrapper>
-        <Button>save this suburb</Button>
-        <Button>Export PDF</Button>
-      </ActionButtonWrapper>
     </PageContainer>
   );
 };
