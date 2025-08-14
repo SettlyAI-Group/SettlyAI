@@ -6,6 +6,7 @@ import ThemeDemo from '@/pages/ThemeDemo';
 import HomePage from '@/pages/HomePage/HomePage';
 import SuburbReportPage from './pages/SuburbReportPage';
 import Layout from './components/Layout/Layout';
+import ExplorePage from '@/pages/ExplorePage/ExplorePage';
 
 const App = () => {
   return (
@@ -13,8 +14,10 @@ const App = () => {
       <CssBaseline />
       <Routes>
         <Route path="/" element={<Layout />}>
+        <Route path="/" element={<Layout />}>
           <Route path="/theme" element={<ThemeDemo />} />
           <Route index element={<HomePage />} />
+          <Route path="/explore/:location" element={<ExplorePage />} />
           <Route path="/suburb/:location" element={<SuburbReportPage />} />
         </Route>
       </Routes>
