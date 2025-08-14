@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { startChat } from '@/api/chatApi';
+import { startChat } from '@/api/chatBotApi';
 
 const ChatBotPage = () => {
   const [data, setData] = useState<any>(null);
