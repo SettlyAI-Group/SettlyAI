@@ -1,6 +1,6 @@
 namespace SettlyModels.Dtos;
 
-public class SuburbReportDto
+public class SuburbDto
 {
     public string Id { get; set; } = string.Empty;
     public int SuburbId { get; set; }
