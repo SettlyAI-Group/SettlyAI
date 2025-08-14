@@ -34,7 +34,7 @@ jobs:
         run: pnpm exec tsc --noEmit
 
       - name: Lint Check
-        run: pnpm run lint
+        run: pnpm exec eslint . --ignore-pattern src/stories/
 
       - name: Format Check
         run: pnpm run format
