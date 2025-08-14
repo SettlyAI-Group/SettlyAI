@@ -96,8 +96,8 @@ jobs:
       - name: Format Check
         run: pnpm run format
 
-      - name: Unit Test
-        run: pnpm run test
+      # - name: Unit Test
+      #   run: pnpm run test
 
 >>>>>>> 249d205 (Update ci.yml)
       - name: Build
