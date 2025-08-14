@@ -25,18 +25,21 @@ jobs:
         uses: pnpm/action-setup@v4
         with:
           version: 9
-          run_install: true
+          run_install: false
 
-      - name: Type Check
-        run: pnpm exec tsc -p tsconfig.json --noEmit
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
-      - name: Lint (ignore errors)
-        run: pnpm run lint || true
+      - name: Type Check (tsc)
+        run: pnpm exec tsc --noEmit
 
-      - name: Install Playwright Browsers
-        run: pnpm exec playwright install --with-deps
+      - name: Lint Check
+        run: pnpm run lint
 
-      - name: Test
+      - name: Format Check
+        run: pnpm run format
+
+      - name: Unit Test
         run: pnpm run test
 
       - name: Build
