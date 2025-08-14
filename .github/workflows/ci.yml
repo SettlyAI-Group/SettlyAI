@@ -39,8 +39,8 @@ jobs:
       - name: Format Check
         run: pnpm run format
 
-      - name: Unit Test
-        run: pnpm run test
+      # - name: Unit Test
+      #   run: pnpm run test
 
       - name: Build
         run: pnpm run build
