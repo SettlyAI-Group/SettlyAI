@@ -15,7 +15,6 @@ const App = () => {
         <Route path='/' element={<Layout/>}>
           <Route path="/theme" element={<ThemeDemo />} />
           <Route index element={<HomePage />} />
-  
           <Route path="/suburb/:location" element={<SuburbReportPage />} />
         </Route>
       </Routes>

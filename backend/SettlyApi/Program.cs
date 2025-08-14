@@ -3,6 +3,7 @@ using ISettlyService;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using SettlyModels;
+using SettlyApi.Configuration;
 using SettlyService;
 
 namespace SettlyApi;
@@ -23,6 +24,16 @@ public class Program
                 .EnableDetailedErrors()
         );
 
+        // Add CORS services
+        builder.Services.AddCorsPolicies();
+
+        // Add application services
+        builder.Services.AddScoped<IUserService, UserService>();
+        builder.Services.AddScoped<IEmailSender, StubEmailSender>();
+        builder.Services.AddScoped<IVerificationCodeService, VerificationCodeService>();
+        builder.Services.AddScoped<IAuthService, AuthService>();
+
+
 
         //Register ISearchApi with SearchApiService
         builder.Services.AddScoped<ISettlyService.ISearchService, SettlyService.SearchService>();
@@ -40,6 +51,7 @@ public class Program
 
         // Configure the HTTP request pipeline.
         app.UseRouting();
+        app.UseCors("AllowAll");
         app.UseAuthorization();
         app.MapControllers();
 
