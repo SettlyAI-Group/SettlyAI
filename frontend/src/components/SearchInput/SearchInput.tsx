@@ -37,7 +37,7 @@ const StyledSearchInput = styled(TextField)(({ theme }) => ({
 }));
 
 const SearchButton = styled(Button)(({ theme }) => ({
-  backgroundColor: theme.palette.searchButton,
+  backgroundColor: theme.palette.primary.dark,
   width: 130,
   height: 42,
   color: 'white',

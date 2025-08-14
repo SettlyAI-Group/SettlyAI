@@ -2,15 +2,6 @@ import { createTheme } from '@mui/material/styles';
 import type { ThemeOptions } from '@mui/material/styles';
 import { createColorSet } from '../utils/themeUtils';
 
-declare module '@mui/material/styles' {
-  interface Palette {
-    searchButton: string;
-  }
-  interface PaletteOptions {
-    searchButton?: string;
-  }
-}
-
 // Base colors
 const primaryBase = '#7B61FF';
 const secondaryBase = '#4F88F7';
@@ -27,7 +18,6 @@ const textSecondaryColor = '#4B5563';
 const textDisabledColor = '#8C8D8B';
 const textHint = '#6B7280';
 const dividerColor = '#E5E7EB';
-const searchButtonColor = '#4F46E5';
 
 // Spacing and shape
 const spacing = 4;
@@ -47,10 +37,6 @@ const typographyH2 = {
   fontSize: '48px',
   fontWeight: 400,
   lineHeight: '60px',
-  '@media (max-width: 600px)': {
-    fontSize: '32px',
-    lineHeight: '40px',
-  },
 };
 
 const typographyH3 = {
@@ -75,10 +61,6 @@ const typographySubtitle1 = {
   fontSize: '18px',
   fontWeight: 400,
   lineHeight: '27.57px',
-  '@media (max-width: 600px)': {
-    fontSize: '14px',
-    lineHeight: '20px',
-  },
 };
 
 const typographySubtitle2 = {
@@ -143,7 +125,6 @@ export const themeOptions: ThemeOptions = {
     info: createColorSet(infoBase),
     success: createColorSet(successBase),
     divider: dividerColor,
-    searchButton: searchButtonColor,
   },
   typography: {
     fontFamily: fontFamily,

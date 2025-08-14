@@ -1,19 +1,28 @@
-import { Box, Button, styled, Typography, useMediaQuery } from '@mui/material';
+import {
+  Box,
+  Button,
+  styled,
+  Typography,
+  useMediaQuery,
+  alpha,
+} from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 import SearchInput from '@/components/SearchInput/SearchInput';
-import theme from '@/styles/theme';
+// import theme from '@/styles/theme';
 import bgImage from '@/assets/images/BannerBg.jpg';
+import theme from '@/styles/theme';
 
 type BannerProps = {
   title?: string;
   description?: string;
-
 };
 
 const BannerContainer = styled(Box)(({ theme }) => {
-  const gradientOverlay =
-    'linear-gradient(90deg, rgba(79, 70, 229, 0.6) 0%, rgba(111, 66, 193, 0.6) 100%)';
+  const gradientOverlay = `linear-gradient(90deg, ${alpha(
+    theme.palette.primary.dark,
+    0.6
+  )} 0%, ${alpha(theme.palette.secondary.dark, 0.6)} 100%)`;
   const composedBackgroundImage = `${gradientOverlay}, url(${bgImage})`;
   return {
     backgroundColor: theme.palette.primary.light,
@@ -75,6 +84,14 @@ const ContentWrapper = styled(Box)<{ withBackButton?: boolean }>(
       width: '100%',
       margin: theme.spacing(2),
       justifyContent: 'center',
+      '& .MuiTypography-h2': {
+        fontSize: '32px',
+        lineHeight: '40px',
+      },
+      '& .MuiTypography-subtitle1': {
+        fontSize: '14px',
+        lineHeight: '20px',
+      },
     },
   })
 );
@@ -83,7 +100,7 @@ const Banner = ({ title, description }: BannerProps) => {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const placeholder =
     'Paste your property address or suburb to get insights...';
-  
+
   const handleBack = () => {
     window.history.back();
   };
@@ -91,8 +108,8 @@ const Banner = ({ title, description }: BannerProps) => {
   return (
     <BannerContainer>
       <BackButtonWrapper>
-        <BackButton 
-          variant="contained" 
+        <BackButton
+          variant="contained"
           startIcon={<ArrowBackIcon />}
           onClick={handleBack}
         >
