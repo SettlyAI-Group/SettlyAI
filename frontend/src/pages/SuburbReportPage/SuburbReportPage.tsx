@@ -3,10 +3,13 @@ import BannerWrapper from '@/pages/SuburbReportPage/components/Banner/BannerWrap
 import type { AppDispatch, RootState } from '@/store';
 import { fetchSuburbReport, setSuburbId } from '@/store/slices/suburbSlice';
 import { Box, Button, styled, Typography } from '@mui/material';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import MetricCardsSection from './components/MetricCardsSection';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import { getDemandAndDev } from '@/api/suburbApi';
+import {mapDevCardData} from '@/pages/SuburbReportPage/utils/MakeCards'
+import type { IMetricCardData } from './components/MetricCardsSection/MetricCardsSection';
 
 const PageContainer = styled(Box)(({ theme }) => ({
   maxWidth: '1440px',
@@ -39,6 +42,10 @@ const SuburbReportPage = () => {
   const { suburbId, report, loading, error } = useSelector(
     (state: RootState) => state.suburb
   );
+
+  // const [demandAndDev, setDemandAndDev] = useState<IDemandAndDev | null>(null);
+  const [demandAndDevCards, setDemandAndDevCards] = useState<IMetricCardData[]>([]);
+
   //todo: replace it with real data
   const metricCardsData = [
     {
@@ -105,6 +112,14 @@ const SuburbReportPage = () => {
     if (id) {
       dispatch(fetchSuburbReport(id));
     }
+    if (id) {
+      const fetchDemandAndDevData = async() => {
+        const data = await getDemandAndDev(id);
+        setDemandAndDevCards(mapDevCardData(data));
+      }
+      fetchDemandAndDevData();
+    }
+
   }, [suburbId, dispatch]);
 
   if (loading) return <p>Loading report...</p>;
@@ -121,6 +136,10 @@ const SuburbReportPage = () => {
       </BannerWrapper>
       {/* todo: replace with real card content */}
       <ContextContainer>
+        <MetricCardsSection
+            title={TITLES.demandDevelopment}
+            data={demandAndDevCards}
+        />        
         <MetricCardsSection
             title="Lifestyle Accessibility"
             data={metricCardsData}
