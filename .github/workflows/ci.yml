@@ -33,6 +33,9 @@ jobs:
       - name: Lint (ignore errors)
         run: pnpm run lint || true
 
+      - name: Install Playwright Browsers
+        run: pnpm exec playwright install --with-deps
+
       - name: Test
         run: pnpm run test
 
