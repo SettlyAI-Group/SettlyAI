@@ -38,16 +38,3 @@ export function mapDevCardData(apiData: IDemandAndDev): IMetricCardData[] {
         };        
     });
 }
-
-
-// let value = apiData[cfg.key];
-// if (typeof value === 'number' && !Number.isInteger(value)) {
-//     value = value.toFixed(3);
-// }
-// return {
-//     icon: cfg.icon,
-//     title: cfg.title,
-//     value: value.toString(),
-//     subtitle: cfg.subtitle
-// };
-
