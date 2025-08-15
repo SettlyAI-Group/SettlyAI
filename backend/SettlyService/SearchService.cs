@@ -1,8 +1,8 @@
 using ISettlyService;
 using Microsoft.EntityFrameworkCore;
-using Settly.DTOs;
+using Settly.Dtos;
 using SettlyModels;
-using SettlyModels.DTOs;
+using SettlyModels.Dtos;
 using SettlyModels.Entities;
 namespace SettlyService
 {

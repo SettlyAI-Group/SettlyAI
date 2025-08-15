@@ -114,14 +114,19 @@ The project configuration supports multiple deployment environments:
 - Production: Optimized static assets
 
 ## Storybook
-- update dependency 
+
+- update dependency
+
 ```bash
 pnpm install
 ```
+
 - run storybook
+
 ```bash
 npm run storybook
 ```
+
 - check in browser(http://localhost:6006/)
 
 - new component

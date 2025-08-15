@@ -1,10 +1,6 @@
 import ActionButtonWrapper from '@/pages/SuburbReportPage/components/ActionButtonGroup/ActionButtonWrapper';
 import BannerWrapper from '@/pages/SuburbReportPage/components/Banner/BannerWrapper';
-import type { AppDispatch, RootState } from '@/store';
-import { fetchSuburbReport, setSuburbId } from '@/store/slices/suburbSlice';
 import { Box, Button, styled, Typography } from '@mui/material';
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import MetricCardsSection from './components/MetricCardsSection';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import IncomeEmploymentCardsSection from './components/IncomeEmploymentCardsSection';
@@ -13,13 +9,23 @@ const PageContainer = styled(Box)(({ theme }) => ({
   maxWidth: '1440px',
   display: 'flex',
   flexDirection: 'column',
-  justifyContent: 'center',
   alignItems: 'center',
   margin: '0 auto',
   padding: theme.spacing(8),
 }));
 
+const ContextContainer = styled(Box)(({ theme }) => ({
+  maxWidth: '936px',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  gap: theme.spacing(8),
+  width: '100%',
+  paddingTop: theme.spacing(8),
+}));
+
 const SuburbReportPage = () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const TITLES = {
     incomeEmployment: 'Income & Employment',
     propertyMarketInsights: 'Property Market Insghts',
@@ -27,11 +33,7 @@ const SuburbReportPage = () => {
     lifeStyle: 'LifeStyle & Accessibility',
     safetyScore: 'Safety & Score',
   };
-  const dispatch = useDispatch<AppDispatch>();
-  const { suburbId, report, loading, error } = useSelector(
-    (state: RootState) => state.suburb
-  );
-  //todo: replace it with real data
+
   const metricCardsData = [
     {
       icon: <AccountBalanceIcon />,
@@ -83,49 +85,33 @@ const SuburbReportPage = () => {
     },
   ];
 
-  useEffect(() => {
-    let id = suburbId;
-
-    if (!id) {
-      const fromStorage = localStorage.getItem('suburbId');
-      if (fromStorage) {
-        id = parseInt(fromStorage);
-        dispatch(setSuburbId(id));
-      }
-    }
-
-    if (id) {
-      dispatch(fetchSuburbReport(id));
-    }
-  }, [suburbId, dispatch]);
-
-  if (loading) return <p>Loading report...</p>;
-  if (error) return <p>Error: {error}</p>;
-  if (!report) return <p>No report found.</p>;
-
   return (
     <PageContainer>
       {/* todo: replace with real banner content */}
       <BannerWrapper>
         <Typography variant="h3" fontWeight={700}>
-          Welcome to {report.suburbName},{report.state},{report.postcode}
+          Welcome to xxx
         </Typography>
       </BannerWrapper>
       {/* todo: replace with real card content */}
-      <IncomeEmploymentCardsSection
+
+      <ContextContainer>
+        <IncomeEmploymentCardsSection
         suburbId={report.suburbId}
         title="Income & Employment"
         // suburbId={104}
-      />
-      <MetricCardsSection
-        title="Lifestyle Accessibility"
-        data={metricCardsData}
-      />
-      {/* todo:  replace with real action buttons , feel free to modify*/}
-      <ActionButtonWrapper>
-        <Button>save this suburb</Button>
-        <Button>Export PDF</Button>
-      </ActionButtonWrapper>
+        />
+        <MetricCardsSection
+          title="Lifestyle Accessibility"
+          data={metricCardsData}
+        />
+        {/* todo:  replace with real action buttons , feel free to modify*/}
+        <ActionButtonWrapper>
+          <Button>save this suburb</Button>
+          <Button>Export PDF</Button>
+        </ActionButtonWrapper>
+      </ContextContainer>
+
     </PageContainer>
   );
 };

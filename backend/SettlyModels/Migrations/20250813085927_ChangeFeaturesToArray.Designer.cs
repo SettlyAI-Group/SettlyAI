@@ -12,8 +12,8 @@ using SettlyModels;
 namespace SettlyModels.Migrations
 {
     [DbContext(typeof(SettlyDbContext))]
-    [Migration("20250730234159_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250813085927_ChangeFeaturesToArray")]
+    partial class ChangeFeaturesToArray
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -64,8 +64,21 @@ namespace SettlyModels.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("PropertyId")
+                    b.Property<string>("Notes")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("Priority")
                         .HasColumnType("integer");
+
+                    b.Property<int?>("PropertyId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TargetId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("TargetType")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
@@ -429,7 +442,11 @@ namespace SettlyModels.Migrations
                     b.Property<int>("CarSpaces")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Features")
+                    b.Property<string[]>("Features")
+                        .IsRequired()
+                        .HasColumnType("text[]");
+
+                    b.Property<string>("ImageUrl")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -448,6 +465,10 @@ namespace SettlyModels.Migrations
 
                     b.Property<int>("SuburbId")
                         .HasColumnType("integer");
+
+                    b.Property<string>("Summary")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<int>("YearBuilt")
                         .HasColumnType("integer");
@@ -736,19 +757,15 @@ namespace SettlyModels.Migrations
 
             modelBuilder.Entity("SettlyModels.Entities.Favourite", b =>
                 {
-                    b.HasOne("SettlyModels.Entities.Property", "Property")
+                    b.HasOne("SettlyModels.Entities.Property", null)
                         .WithMany("Favourites")
-                        .HasForeignKey("PropertyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("PropertyId");
 
                     b.HasOne("SettlyModels.Entities.User", "User")
                         .WithMany("Favourites")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Property");
 
                     b.Navigation("User");
                 });
