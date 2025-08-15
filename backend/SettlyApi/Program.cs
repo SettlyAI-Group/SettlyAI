@@ -4,6 +4,7 @@ using Microsoft.OpenApi.Models;
 using SettlyApi.Configuration;
 using SettlyModels;
 using SettlyService;
+using SettlyModels.Entities;
 
 namespace SettlyApi;
 
@@ -47,7 +48,8 @@ public class Program
                 builder.Services.AddScoped<IAuthService, AuthService>();
 
 
-
+                //Register ISearchApi with SearchApiService
+                builder.Services.AddScoped<ISettlyService.ISearchService, SettlyService.SearchService>();
 
                 //Register ISearchApi with SearchApiService
                 builder.Services.AddScoped<ISettlyService.ISearchService, SettlyService.SearchService>();
