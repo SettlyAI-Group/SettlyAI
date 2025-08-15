@@ -15,15 +15,15 @@ services:
   db-migrate:
     build:
       context: ./SettlyModels
-      dockerfile: SettlyModels/Dockerfile
+      dockerfile: Dockerfile
     depends_on:
       - db
     command: ["dotnet", "ef", "database", "update"]
 
   db-seed:
     build:
-      context: ./SettlyDbManagerd
-      dockerfile: SettlyDbManager/Dockerfile
+      context: ./SettlyDbManager
+      dockerfile: Dockerfile
     depends_on:
       - db-migrate
     command: ["dotnet", "run"]
@@ -31,7 +31,7 @@ services:
   api:
     build:
       context: ./SettlyApi
-      dockerfile: SettlyApi/Dockerfile
+      dockerfile: Dockerfile
     depends_on:
       - db-seed
     ports:
