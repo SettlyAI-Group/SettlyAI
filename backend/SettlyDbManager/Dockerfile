@@ -1,16 +1,16 @@
-FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
-WORKDIR /app
-
+# backend/SettlyDbManager/Dockerfile
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
-WORKDIR /src
-COPY . .
-RUN dotnet restore
-RUN dotnet build --no-restore
-
-FROM build AS publish
-RUN dotnet publish --no-restore -o /app/publish
-
-FROM base AS final
 WORKDIR /app
-COPY --from=publish /app/publish .
+
+COPY . ../
+
+WORKDIR /app/../
+RUN dotnet restore backend.sln
+
+WORKDIR /app/SettlyDbManager
+RUN dotnet publish -c Release -o /publish
+
+FROM mcr.microsoft.com/dotnet/aspnet:7.0
+WORKDIR /app
+COPY --from=build /publish .
 ENTRYPOINT ["dotnet", "SettlyDbManager.dll"]

@@ -22,8 +22,7 @@ services:
       - db
     working_dir: /app/SettlyModels
     volumes:
-      - ./SettlyModels:/app/SettlyModels
-      - ./SettlyApi:/app/SettlyApi
+      - .:/app
     command: >
       sh -c "
       dotnet tool install --global dotnet-ef &&
@@ -35,7 +34,8 @@ services:
 
   settlyapi:
     build:
-      context: ./SettlyApi
+      context: .
+      dockerfile: SettlyApi/Dockerfile
     container_name: settly_api
     environment:
       ASPNETCORE_ENVIRONMENT: Development
@@ -46,14 +46,11 @@ services:
       - migrator
     networks:
       - settly_network
-    volumes:
-      - ./SettlyApi:/app
-    working_dir: /app
-    command: dotnet run --urls=http://0.0.0.0:5100
 
   dbmanager:
     build:
-      context: ./SettlyDbManager
+      context: .
+      dockerfile: SettlyDbManager/Dockerfile
     container_name: settly_dbmanager
     environment:
       ASPNETCORE_ENVIRONMENT: Development
@@ -62,10 +59,6 @@ services:
       - migrator
     networks:
       - settly_network
-    volumes:
-      - ./SettlyDbManager:/app
-    working_dir: /app
-    command: dotnet run -- --seed
 
 volumes:
   postgres_data:
