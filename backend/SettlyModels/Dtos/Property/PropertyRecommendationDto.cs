@@ -10,6 +10,6 @@ public class PropertyRecommendationDto
     public string Address { get; set; } = String.Empty;
     public int Bedrooms { get; set; }
     public int Bathrooms { get; set; }
-    public int Carpark { get; set; }
+    public int CarSpaces { get; set; }
     public int SuburbId { get; set; }
 }

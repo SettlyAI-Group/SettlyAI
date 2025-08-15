@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore; 
 using System.Collections.Generic;
 
-public class PropertyDetailServiceTests
+public class PropertyDetailApiTests
 {
     private readonly IMapper _mapper;
 
-    public PropertyDetailServiceTests()
+    public PropertyDetailApiTests()
     {
         var config = new MapperConfiguration(cfg =>
         {
