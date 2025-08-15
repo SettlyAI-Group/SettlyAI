@@ -1,8 +1,9 @@
-FROM node:20
+FROM mcr.microsoft.com/dotnet/sdk:8.0
 
 WORKDIR /app
 COPY . .
-RUN corepack enable && corepack prepare pnpm@latest --activate
-RUN pnpm install
 
-CMD ["pnpm", "run", "migrate"]
+RUN dotnet restore
+RUN dotnet build --no-restore
+
+CMD ["dotnet", "ef", "database", "update"]
