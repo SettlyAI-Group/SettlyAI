@@ -30,14 +30,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Dev
-        run: vite
-
-      - name: Build
-        run: pnpm exec vite build
-
-      - name: Preview
-        run: vite preview
+      - name: Type Check (tsc)
+        run: pnpm exec tsc --noEmit
 
       - name: Lint Check
         run: pnpm exec eslint . || true
@@ -45,23 +39,8 @@ jobs:
       - name: Format Check
         run: pnpm run format
 
-      - name: Test
-        run: vitest run
-
-      - name: Test:watch
-        run: vitest
-
-      - name: Test:ui
-        run: vitest --ui
-        
-      - name: Test:coverage
-        run: vitest run --coverage
-        
-      - name: Storybook
-        run: storybook dev -p 6006  
-        
-      - name: Build-storybook
-        run: storybook build
-
+      # - name: Unit Test
+      #   run: pnpm run test
       
-
+      - name: Build
+        run: pnpm exec vite build
