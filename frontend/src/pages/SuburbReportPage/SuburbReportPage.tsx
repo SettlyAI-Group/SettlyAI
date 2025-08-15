@@ -5,9 +5,15 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import MetricCardsSection from './components/MetricCardsSection';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+<<<<<<< HEAD
 import { getDemandAndDev } from '@/api/suburbApi';
 import {mapDevCardData} from '@/pages/SuburbReportPage/components/MetricCardsSection/utils/MakeCards'
 import type { IMetricCardData } from './components/MetricCardsSection/MetricCardsSection';
+||||||| parent of bbe4021 (setup react query)
+=======
+import { useQuery } from '@tanstack/react-query';
+import { getSuburbLivability } from '@/api/suburbApi';
+>>>>>>> bbe4021 (setup react query)
 
 const PageContainer = styled(Box)(({ theme }) => ({
   maxWidth: '1440px',
@@ -96,6 +102,7 @@ const SuburbReportPage = () => {
     },
   ];
 
+<<<<<<< HEAD
   useEffect(() => {
     let id = suburbId;
 
@@ -124,6 +131,15 @@ const SuburbReportPage = () => {
   if (error) return <p>Error: {error}</p>;
   if (!report) return <p>No report found.</p>;
 
+||||||| parent of bbe4021 (setup react query)
+=======
+  const query = useQuery({
+    queryKey: [''],
+    queryFn: () => getSuburbLivability(1),
+  });
+  console.log(query.data);
+
+>>>>>>> bbe4021 (setup react query)
   return (
     <PageContainer>
       {/* todo: replace with real banner content */}

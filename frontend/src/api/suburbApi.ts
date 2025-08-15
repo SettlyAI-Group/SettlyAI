@@ -1,4 +1,4 @@
-import type { ISuburbReport } from '@/interfaces/suburbReport';
+import type { ILivability, ISuburbReport } from '@/interfaces/suburbReport';
 import httpClient from './httpClient';
 import type { IDemandAndDev } from '@/interfaces/DemandAndDev';
 
@@ -10,6 +10,7 @@ export const getSuburbReport = async (
   return response.data;
 <<<<<<< HEAD
 };
+<<<<<<< HEAD
 
 // Get Demand and Development data by suburb ID
 export const getDemandAndDev = async (suburbId:number): Promise<IDemandAndDev> => {
@@ -21,3 +22,13 @@ export const getDemandAndDev = async (suburbId:number): Promise<IDemandAndDev> =
 =======
 };
 >>>>>>> dafc419 (format prettier)
+||||||| parent of bbe4021 (setup react query)
+=======
+
+export const getSuburbLivability = async (suburbId: number) => {
+  const response = await httpClient.get<ILivability>(
+    `/suburb/${suburbId}/livability`
+  );
+  return response.data;
+};
+>>>>>>> bbe4021 (setup react query)
