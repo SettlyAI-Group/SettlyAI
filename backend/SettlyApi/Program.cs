@@ -46,7 +46,6 @@ public class Program
         builder.Services.AddScoped<IFavouriteService, FavouriteService>();
         builder.Services.AddTransient<IPopulationSupplyService, PopulationSupplyService>();
 
-
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.

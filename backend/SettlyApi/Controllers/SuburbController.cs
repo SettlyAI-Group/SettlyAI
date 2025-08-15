@@ -26,9 +26,10 @@ namespace SettlyApi.Controllers
         }
 
         [HttpGet("income")]
-        public async Task<ActionResult> GetIncome(int id)
+        public async Task<ActionResult<IncomeEmploymentDto>> GetIncome(int id)
         {
-            return Ok();
+            var incomeEmploymentDto = await _suburbService.GetIncomeAsync(id);
+            return Ok(incomeEmploymentDto);
         }
 
         [HttpGet("market")]
