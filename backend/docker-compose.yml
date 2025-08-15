@@ -1,43 +1,54 @@
+version: '3.8'
+
 services:
   db:
-    image: postgres:16
-    container_name: dev-postgres
-    ports:
-      - "5432:5432"
+    image: postgres:15
+    container_name: settly_postgres
     environment:
+      POSTGRES_DB: settly
       POSTGRES_USER: your_username
       POSTGRES_PASSWORD: your_password
-      POSTGRES_DB: Settly
+    ports:
+      - "5432:5432"
     volumes:
-      - postgres-data:/var/lib/postgresql/data
-    restart: unless-stopped
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - settly_network
 
-  db-migrate:
-    build:
-      context: ./SettlyModels
-      dockerfile: Dockerfile
-    depends_on:
-      - db
-    command: ["dotnet", "ef", "database", "update"]
-
-  db-seed:
-    build:
-      context: ./SettlyDbManager
-      dockerfile: Dockerfile
-    depends_on:
-      - db-migrate
-    command: ["dotnet", "run"]
-
-  api:
+  settlyapi:
     build:
       context: ./SettlyApi
-      dockerfile: Dockerfile
-    depends_on:
-      - db-seed
+    container_name: settly_api
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
     ports:
       - "5100:5100"
-    command: ["dotnet", "run", "--urls", "http://0.0.0.0:5100"]
+    depends_on:
+      - db
+    networks:
+      - settly_network
+    volumes:
+      - ./SettlyApi:/app
+    working_dir: /app
+    command: dotnet run --urls=http://0.0.0.0:5100
 
+  dbmanager:
+    build:
+      context: ./SettlyDbManager
+    container_name: settly_dbmanager
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+    depends_on:
+      - db
+    networks:
+      - settly_network
+    volumes:
+      - ./SettlyDbManager:/app
+    working_dir: /app
+    command: dotnet run -- --seed
 
 volumes:
-  postgres-data:
+  postgres_data:
+
+networks:
+  settly_network:
