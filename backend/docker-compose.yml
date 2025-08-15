@@ -21,7 +21,8 @@ services:
 
   db-seed:
     build:
-      context: ./SettlyDbManager
+      context: ./backend
+      dockerfile: SettlyDbManager/Dockerfile
     depends_on:
       - db-migrate
     command: ["dotnet", "run"]
