@@ -11,4 +11,5 @@ public class PropertyRecommendationDto
     public int Bedrooms { get; set; }
     public int Bathrooms { get; set; }
     public int Carpark { get; set; }
+    public int SuburbId { get; set; }
 }
