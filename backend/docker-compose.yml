@@ -21,7 +21,7 @@ services:
 
   db-seed:
     build:
-      context: ./backend
+      context: .
       dockerfile: SettlyDbManager/Dockerfile
     depends_on:
       - db-migrate
