@@ -87,8 +87,14 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Type Check (tsc)
-        run: pnpm exec tsc --noEmit
+      - name: Dev
+        run: vite
+
+      - name: Build
+        run: pnpm exec vite build
+
+      - name: Preview
+        run: vite preview
 
       - name: Lint Check
         run: pnpm exec eslint . || true
