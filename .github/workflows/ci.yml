@@ -14,7 +14,6 @@ jobs:
   changes:
     name: detect changes
     runs-on: ubuntu-latest
-<<<<<<< HEAD
     outputs:
       fe: ${{ steps.filter.outputs.fe }}
       be: ${{ steps.filter.outputs.be }}
@@ -59,53 +58,16 @@ jobs:
 
     env:
       ConnectionStrings__DefaultConnection: Host=localhost;Port=5432;Database=testdb;User Id=testuser;Password=testpass
-=======
-    defaults:
-      run:
-        working-directory: frontend
->>>>>>> 1100e5a (Update ci.yml)
 
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
         with:
-<<<<<<< HEAD
           dotnet-version: '8.0.x'
       - name: Install dotnet-ef
         run: dotnet tool install --global dotnet-ef
       - name: Restore
         run: dotnet restore backend.sln
-=======
-          node-version: 22
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9
-          run_install: false
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Dev
-        run: vite
-
-      - name: Build
-        run: pnpm exec vite build
-
-      - name: Preview
-        run: vite preview
-
-      - name: Lint Check
-        run: pnpm exec eslint . || true
-
-      - name: Format Check
-        run: pnpm run format
-
-      # - name: Unit Test
-      #   run: pnpm run test
-
->>>>>>> 249d205 (Update ci.yml)
       - name: Build
         run: dotnet build backend.sln --no-restore --configuration Release
       - name: Test

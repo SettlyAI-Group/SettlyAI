@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16
+    container_name: dev-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: your_username
+      POSTGRES_PASSWORD: your_password
+      POSTGRES_DB: Settly
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  db-migrate:
+    build:
+      context: ./backend/SettlyModels
+    depends_on:
+      - db
+    command: ["dotnet", "ef", "database", "update"]
+
+  db-seed:
+    build:
+      context: ./backend/SettlyDbManager
+    depends_on:
+      - db-migrate
+    command: ["dotnet", "run"]
+
+  api:
+    build:
+      context: ./backend/SettlyApi
+    depends_on:
+      - db-seed
+    ports:
+      - "5100:5100"
+    command: ["dotnet", "run", "--urls", "http://0.0.0.0:5100"]
+
+
+volumes:
+  postgres-data:
