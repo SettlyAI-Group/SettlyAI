@@ -58,7 +58,7 @@ public class PropertyDetailServiceTests
         };
 
         var context = GetDbContextMock(new List<Property> { property });
-        var service = new PropertyDetailService(context, _mapper);
+        var service = new PropertyService(context, _mapper);
 
         // Act
         var result = await service.GeneratePropertyDetailAsync(1);
@@ -76,7 +76,7 @@ public class PropertyDetailServiceTests
     {
         // Arrange
         var context = GetDbContextMock(new List<Property>());
-        var service = new PropertyDetailService(context, _mapper);
+        var service = new PropertyService(context, _mapper);
 
         // Act & Assert
         await Assert.ThrowsAsync<KeyNotFoundException>(() => service.GeneratePropertyDetailAsync(999));

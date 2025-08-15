@@ -2,9 +2,10 @@ using SettlyModels.Dtos;
 
 namespace ISettlyService
 {
-    public interface IPropertyDetailService
+    public interface IPropertyService
     {
         Task<PropertyDetailDto> GeneratePropertyDetailAsync(int id);
+        Task<List<PropertyRecommendationDto>> GetSimilarPropertiesAsync(int id);
     }
 }
 

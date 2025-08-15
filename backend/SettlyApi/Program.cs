@@ -1,9 +1,7 @@
-using System.Text;
+
 using ISettlyService;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
 using SettlyModels;
 using SettlyApi.Configuration;
 using SettlyService; // Add this if IAuthService is in ISettlyService.Auth namespace
@@ -44,8 +42,9 @@ public class Program
                 // Add services to the container.
                 builder.Services.AddControllers();
                 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-                builder.Services.AddScoped<ISuburbReportService, SuburbReportService>();
-
+                builder.Services.AddScoped<ISuburbService, SuburbService>();
+                builder.Services.AddScoped<IPropertyService, PropertyService>();
+                builder.Services.AddScoped<IFavouriteService, FavouriteService>();
                 builder.Services.AddTransient<IPopulationSupplyService, PopulationSupplyService>();
 
 
