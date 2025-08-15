@@ -1,10 +1,9 @@
-# backend/SettlyDbManager/Dockerfile
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /app
 
-COPY . ../
+COPY . ./backend
 
-WORKDIR /app/../
+WORKDIR /app/backend
 RUN dotnet restore backend.sln
 
 WORKDIR /app/SettlyDbManager
