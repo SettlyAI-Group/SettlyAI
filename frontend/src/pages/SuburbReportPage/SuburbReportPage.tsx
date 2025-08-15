@@ -1,20 +1,19 @@
 import ActionButtonWrapper from '@/pages/SuburbReportPage/components/ActionButtonGroup/ActionButtonWrapper';
-import BannerWrapper from '@/pages/SuburbReportPage/components/Banner/BannerWrapper';
 import type { AppDispatch, RootState } from '@/store';
 import { fetchSuburbReport, setSuburbId } from '@/store/slices/suburbSlice';
-import { Box, Button, styled, Typography } from '@mui/material';
+import { Box, Button, styled } from '@mui/material';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import MetricCardsSection from './components/MetricCardsSection';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import Banner from '@/pages/SuburbReportPage/components/Banner/Banner';
 
-const PageContainer = styled(Box)(({ theme }) => ({
+const PageContainer = styled(Box)(() => ({
   maxWidth: '1440px',
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
   margin: '0 auto',
-  padding: theme.spacing(8),
 }));
 
 const ContextContainer = styled(Box)(({ theme }) => ({
@@ -113,12 +112,11 @@ const SuburbReportPage = () => {
 
   return (
     <PageContainer>
-      {/* todo: replace with real banner content */}
-      <BannerWrapper>
-        <Typography variant="h3" fontWeight={700}>
-          Welcome to {report.suburbName},{report.state},{report.postcode}
-        </Typography>
-      </BannerWrapper>
+   
+        <Banner
+          title={`Welcome to ${report.suburbName}, ${report.state}, ${report.postcode}`}
+          description='Smart data to help you decide — from affordability to growth to lifestyle.'
+        />
       {/* todo: replace with real card content */}
       <ContextContainer>
         <MetricCardsSection

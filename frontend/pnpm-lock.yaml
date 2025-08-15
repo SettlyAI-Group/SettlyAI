@@ -150,12 +150,12 @@ importers:
       prettier:
         specifier: ^3.6.2
         version: 3.6.2
-      storybook:
-        specifier: ^9.1.0
-        version: 9.1.0(@testing-library/dom@10.4.0)(prettier@3.6.2)(vite@7.0.6(@types/node@24.1.0))
       redux-mock-store:
         specifier: ^1.5.5
         version: 1.5.5(redux@5.0.1)
+      storybook:
+        specifier: ^9.1.0
+        version: 9.1.0(@testing-library/dom@10.4.0)(prettier@3.6.2)(vite@7.0.6(@types/node@24.1.0))
       typescript:
         specifier: ~5.8.3
         version: 5.8.3
@@ -2159,6 +2159,7 @@ packages:
   locate-path@7.2.0:
     resolution: {integrity: sha512-gvVijfZvn7R+2qyPX8mAuKcFGDf6Nc61GdvGafQsHL0sBIxfKzA+usWn4GFC/bk+QdwPUD4kWFJLhElipq+0VA==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
+
   lodash.isplainobject@4.0.6:
     resolution: {integrity: sha512-oSXzaWypCMHkPC3NvBEaPHf0KsA5mvPrOPgQWDsbg8n7orZ290M0BmC/jgRZ4vcJ6DTAhjrsSYgdsW/F+MFOBA==}
 
@@ -5189,6 +5190,7 @@ snapshots:
   locate-path@7.2.0:
     dependencies:
       p-locate: 6.0.0
+
   lodash.isplainobject@4.0.6: {}
 
   lodash.merge@4.6.2: {}
