@@ -15,6 +15,24 @@ services:
     networks:
       - settly_network
 
+  migrator:
+    image: mcr.microsoft.com/dotnet/sdk:7.0
+    container_name: settly_migrator
+    depends_on:
+      - db
+    working_dir: /app/SettlyModels
+    volumes:
+      - ./SettlyModels:/app/SettlyModels
+      - ./SettlyApi:/app/SettlyApi
+    command: >
+      sh -c "
+      dotnet tool install --global dotnet-ef &&
+      export PATH=\"$PATH:/root/.dotnet/tools\" &&
+      dotnet ef database update --startup-project ../SettlyApi
+      "
+    networks:
+      - settly_network
+
   settlyapi:
     build:
       context: ./SettlyApi
@@ -25,6 +43,7 @@ services:
       - "5100:5100"
     depends_on:
       - db
+      - migrator
     networks:
       - settly_network
     volumes:
@@ -40,6 +59,7 @@ services:
       ASPNETCORE_ENVIRONMENT: Development
     depends_on:
       - db
+      - migrator
     networks:
       - settly_network
     volumes:
