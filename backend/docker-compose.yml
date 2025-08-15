@@ -14,21 +14,21 @@ services:
 
   db-migrate:
     build:
-      context: ./backend/SettlyModels
+      context: ./SettlyModels
     depends_on:
       - db
     command: ["dotnet", "ef", "database", "update"]
 
   db-seed:
     build:
-      context: ./backend/SettlyDbManager
+      context: ./SettlyDbManager
     depends_on:
       - db-migrate
     command: ["dotnet", "run"]
 
   api:
     build:
-      context: ./backend/SettlyApi
+      context: ./SettlyApi
     depends_on:
       - db-seed
     ports:
