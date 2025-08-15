@@ -13,7 +13,6 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-        builder.WebHost.UseUrls("http://0.0.0.0:5100");
         var apiConfigs = builder.Configuration.GetSection("ApiConfigs").Get<ApiConfigs>();
         builder.Services.AddDbContext<SettlyDbContext>(
             options => options
