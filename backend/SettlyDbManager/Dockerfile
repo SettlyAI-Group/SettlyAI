@@ -7,7 +7,7 @@ WORKDIR /app/backend
 RUN dotnet restore backend.sln
 
 WORKDIR /app/backend/SettlyDbManager
-RUN dotnet publish -c Release -o /publish
+RUN dotnet publish -c Release -o /publish/dbmanager
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
