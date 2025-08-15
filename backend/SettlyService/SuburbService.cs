@@ -57,9 +57,17 @@ namespace SettlyService
             throw new NotImplementedException();
         }
 
-        public async Task<HousingMarketDto?> GetMarketAsync(int id)
+        public async Task<HousingMarketDto?> GetHousingMarketAsync(int id)
         {
-            throw new NotImplementedException();
+            var housingMarket = await _context.HousingMarkets
+            .AsNoTracking()
+            .Where(hm => hm.SuburbId == id)
+            .OrderByDescending(hm => hm.SnapshotDate)
+            .FirstOrDefaultAsync();
+            if (housingMarket == null)
+                //TODO:Change to global error handling middleware once it's done
+                throw new KeyNotFoundException($"Housing market not found.");
+            return _mapper.Map<HousingMarketDto>(housingMarket);
         }
 
         public async Task<PopulationSupplyDto?> GetDemandDevAsync(int id)

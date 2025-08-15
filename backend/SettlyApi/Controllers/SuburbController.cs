@@ -31,10 +31,18 @@ namespace SettlyApi.Controllers
             return Ok();
         }
 
-        [HttpGet("market")]
-        public async Task<ActionResult> GetMarket(int id)
+        [HttpGet("housingmarket")]
+        public async Task<ActionResult<HousingMarketDto>> GetHousingMarket(int id)
         {
-            return Ok();
+            try
+            {
+                var dto = await _suburbService.GetHousingMarketAsync(id);
+                return Ok(dto);
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
         }
 
         [HttpGet("demand-development")]

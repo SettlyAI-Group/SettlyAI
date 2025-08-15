@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using SettlyModels;
 using SettlyApi.Configuration;
 using SettlyService;
+using SettlyModels.Entities;
 
 namespace SettlyApi;
 
@@ -32,7 +33,6 @@ public class Program
         builder.Services.AddScoped<IEmailSender, StubEmailSender>();
         builder.Services.AddScoped<IVerificationCodeService, VerificationCodeService>();
         builder.Services.AddScoped<IAuthService, AuthService>();
-
 
 
         //Register ISearchApi with SearchApiService
