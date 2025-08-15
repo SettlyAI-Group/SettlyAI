@@ -13,4 +13,4 @@ RUN dotnet publish -c Release -o /publish/api
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 COPY --from=build /publish/api .
-ENTRYPOINT ["dotnet", "SettlyApi.dll"]
+ENTRYPOINT ["dotnet", "SettlyApi.dll", "--urls", "http://0.0.0.0:5100"]
