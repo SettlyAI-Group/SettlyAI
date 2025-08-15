@@ -61,6 +61,7 @@ services:
       - migrator
     networks:
       - settly_network
+    command: dotnet run -- --seed
 
 volumes:
   postgres_data:
