@@ -1,23 +1,98 @@
-import { AppBar, Toolbar, Typography, styled } from '@mui/material';
+import { AppBar, Toolbar, Typography, Button, Box, styled, Container } from '@mui/material';
+import { Home as HomeIcon } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 
-const StyledAppBar = styled(AppBar)(({ theme }) => ({
-  backgroundColor: theme.palette.background.default,
-  height: 72,
-  justifyContent: 'center',
+const StyledAppBar = styled(AppBar)(() => ({
+  background: '#FFFFFF',
+  boxShadow: 'none',
 }));
 
 const StyledToolbar = styled(Toolbar)({
   minHeight: 72,
+  justifyContent: 'space-between',
+  paddingLeft: 0,
+  paddingRight: 0,
+});
+
+const Logo = styled(Box)({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '8px',
+  cursor: 'pointer',
+});
+
+const LogoIcon = styled(Box)({
+  width: 40,
+  height: 40,
+  background: '#7B61FF',
+  borderRadius: 8,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  color: '#fff',
+  fontWeight: 'bold',
+  flexShrink: 0,
+});
+
+const NavLinks = styled(Box)({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '24px',
+});
+
+const NavButton = styled(Button)({
+  color: '#6B7280',
+  textTransform: 'none',
+  fontSize: 15,
+  fontWeight: 400,
+  padding: '8px 16px',
+  '&:hover': {
+    backgroundColor: 'transparent',
+    color: '#4F46E5',
+  },
+});
+
+const JoinButton = styled(Button)({
+  backgroundColor: '#7B61FF',
+  color: 'white',
+  textTransform: 'none',
+  fontSize: 15,
+  fontWeight: 500,
+  padding: '8px 32px', // longer
+  borderRadius: 8,    // rounder
+  '&:hover': {
+    backgroundColor: '#6B51E8',
+  },
 });
 
 const Navbar = () => {
+  const navigate = useNavigate();
+
   return (
-    <StyledAppBar position="static" color="transparent" elevation={0}>
-      <StyledToolbar>
-        <Typography variant="h6" component="div">
-          SettlyAI
-        </Typography>
-      </StyledToolbar>
+    <StyledAppBar position="static" elevation={0}>
+      {/* Center content and clamp width here (not on AppBar) */}
+      <Container maxWidth={false} sx={{ maxWidth: 1440, mx: 'auto' }}>
+        <StyledToolbar disableGutters>
+          <Logo onClick={() => navigate('/')}>
+            <LogoIcon><HomeIcon fontSize="small" /></LogoIcon>
+            <Typography
+              variant="h6"
+              sx={{ color: '#1F2937', fontWeight: 600, fontSize: 20 }}
+            >
+              Settly AI
+            </Typography>
+          </Logo>
+
+          <NavLinks>
+            <NavButton onClick={() => navigate('/about')}>About</NavButton>
+            <NavButton onClick={() => navigate('/features')}>Features</NavButton>
+            <NavButton onClick={() => navigate('/ask-robot')}>Ask Robot</NavButton>
+            <NavButton onClick={() => navigate('/favorites')}>Favorites</NavButton>
+            <NavButton onClick={() => navigate('/login')}>Login</NavButton>
+            <JoinButton onClick={() => navigate('/join')}>Join</JoinButton>
+          </NavLinks>
+        </StyledToolbar>
+      </Container>
     </StyledAppBar>
   );
 };
