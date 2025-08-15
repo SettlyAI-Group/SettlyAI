@@ -10,7 +10,7 @@ RUN dotnet restore backend.sln
 
 # 编译发布 SettlyApi 项目
 WORKDIR /app/backend/SettlyApi
-RUN dotnet publish -c Release -o /publish
+RUN dotnet publish -c Release -o /publish/api
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
