@@ -40,7 +40,6 @@ services:
       dockerfile: SettlyApi/Dockerfile
     ports:
       - "5100:5100"
-    command: dotnet SettlyApi.dll --urls=http://0.0.0.0:5100
     environment:
       ASPNETCORE_ENVIRONMENT: Development
     networks:

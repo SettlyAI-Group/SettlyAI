@@ -24,6 +24,20 @@ public class Program
                         .EnableSensitiveDataLogging()
                         .EnableDetailedErrors()
                 );
+    public static void Main(string[] args)
+        {
+                var builder = WebApplication.CreateBuilder(args);
+                builder.WebHost.UseUrls("http://0.0.0.0:5100");
+                var apiConfigs = builder.Configuration.GetSection("ApiConfigs").Get<ApiConfigs>();
+                builder.Services.AddDbContext<SettlyDbContext>(
+                    options => options
+                        .UseNpgsql(apiConfigs?.DBConnection ?? throw new InvalidOperationException("Database connection string not found"))
+                        // The following three options help with debugging, but should
+                        // be changed or removed for production.
+                        .LogTo(Console.WriteLine, Microsoft.Extensions.Logging.LogLevel.Information)
+                        .EnableSensitiveDataLogging()
+                        .EnableDetailedErrors()
+                );
 
                 // Add CORS services
                 builder.Services.AddCorsPolicies();
