@@ -2,7 +2,7 @@ FROM node:20
 
 WORKDIR /app
 COPY . .
-RUN corepack enable && corepack prepare pnpm@latest --activate
-RUN pnpm install
+RUN dotnet restore
+RUN dotnet build --no-restore
 
-CMD ["pnpm", "run", "seed"]
+CMD ["dotnet", "run"]
