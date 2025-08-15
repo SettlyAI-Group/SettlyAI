@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, styled } from '@mui/material';
+import { Box } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { 
   Home as HomeIcon,
@@ -8,7 +8,7 @@ import {
 } from '@mui/icons-material';
 import Card from './Card';
 
-interface IFeatureCard {
+interface FeatureCard {
   title: string;
   description: string;
   icon: React.ReactElement;
@@ -18,25 +18,25 @@ interface IFeatureCard {
 
 const FeatureCardsSection: React.FC = () => {
 
-  const featureCards: IFeatureCard[] = [
+  const featureCards: FeatureCard[] = [
     {
       title: 'SettlyHome',
       description: 'Discover your perfect home with smart property insights and market analysis.',
-      icon: <HomeIcon />,
+      icon: <HomeIcon sx={{ fontSize: 48, color: '#6366f1' }} />, // Purple icon
       route: '#home',
       ctaText: 'Explore Suburb & Homes'
     },
     {
       title: 'SettlyLoan',
       description: 'Get personalized loan recommendations and calculate your borrowing capacity.',
-      icon: <AttachMoneyIcon />,
+      icon: <AttachMoneyIcon sx={{ fontSize: 48, color: '#6366f1' }} />, // Purple icon
       route: '#loan',
       ctaText: 'Calculate Loan'
     },
     {
       title: 'SettlySuper',
       description: 'Optimize your superannuation strategy for property investment and retirement.',
-      icon: <SavingsIcon />,
+      icon: <SavingsIcon sx={{ fontSize: 48, color: '#6366f1' }} />, // Purple icon
       route: '#super',
       ctaText: 'Optimize Super'
     }
@@ -56,7 +56,7 @@ const FeatureCardsSection: React.FC = () => {
   };
 
   return (
-    <Box sx={{ width: '100%', maxWidth: 1200, mx: 'auto' }}>
+    <Box sx={{ width: '100%', maxWidth: 1200, mx: 'auto' }}> {/* Responsive container */}
       <Grid container spacing={4} justifyContent="center">
         {featureCards.map((card, index) => (
           <Grid size={{ xs: 12, sm: 12, md: 4 }} key={index}>
