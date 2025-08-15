@@ -1,7 +1,7 @@
 import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
 import DomainOutlinedIcon from '@mui/icons-material/DomainOutlined';
 import HandymanOutlinedIcon from '@mui/icons-material/HandymanOutlined';
-import type { IMetricCardData } from '../components/MetricCardsSection/MetricCardsSection';
+import type { IMetricCardData } from '../MetricCardsSection';
 import type { IDemandAndDev } from '@/interfaces/DemandAndDev';
 
 
@@ -9,12 +9,12 @@ interface DemandCardConfig {
   key: keyof IDemandAndDev;
   icon: React.ReactNode;
   title: string;
-  subtitle:string;
+  subtitle?:string;
 }
 
 const DemandAndDevCardsConfig: DemandCardConfig[] = [
-    {key:"rentersRatio", icon: <PeopleAltOutlinedIcon fontSize='large'/>, title:"Renters Ratio", subtitle:""},
-    {key:"demandSupplyRatio", icon: <DomainOutlinedIcon fontSize='large'/>, title:"Demand Supply Ratio", subtitle:""},
+    {key:"rentersRatio", icon: <PeopleAltOutlinedIcon fontSize='large'/>, title:"Renters Ratio"},
+    {key:"demandSupplyRatio", icon: <DomainOutlinedIcon fontSize='large'/>, title:"Demand Supply Ratio"},
     {key:"buildingApprovals12M", icon: <HandymanOutlinedIcon fontSize='large'/>, title:"Building Approvals", subtitle:"(12 months)"},
     {key:"devProjectsCount", icon: <DomainOutlinedIcon fontSize='large'/>, title:"Development Projects", subtitle:"(current)"},
 ]
@@ -27,7 +27,6 @@ export function mapDevCardData(apiData: IDemandAndDev): IMetricCardData[] {
                 icon: cfg.icon,
                 title: cfg.title,
                 value: (value * 100).toFixed(2) + "%",
-                subtitle: cfg.subtitle
             }
         } 
         return {

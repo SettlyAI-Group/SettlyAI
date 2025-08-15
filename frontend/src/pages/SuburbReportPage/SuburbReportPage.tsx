@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import MetricCardsSection from './components/MetricCardsSection';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import { getDemandAndDev } from '@/api/suburbApi';
-import {mapDevCardData} from '@/pages/SuburbReportPage/utils/MakeCards'
+import {mapDevCardData} from '@/pages/SuburbReportPage/components/MetricCardsSection/utils/MakeCards'
 import type { IMetricCardData } from './components/MetricCardsSection/MetricCardsSection';
 
 const PageContainer = styled(Box)(({ theme }) => ({
@@ -42,7 +42,6 @@ const SuburbReportPage = () => {
     (state: RootState) => state.suburb
   );
 
-  // const [demandAndDev, setDemandAndDev] = useState<IDemandAndDev | null>(null);
   const [demandAndDevCards, setDemandAndDevCards] = useState<IMetricCardData[]>([]);
 
   //todo: replace it with real data
