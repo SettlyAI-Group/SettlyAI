@@ -38,11 +38,11 @@ services:
     build:
       context: .
       dockerfile: SettlyApi/Dockerfile
-    container_name: settly_api
-    environment:
-      ASPNETCORE_ENVIRONMENT: Development
     ports:
       - "5100:5100"
+    command: dotnet SettlyApi.dll --urls=http://0.0.0.0:5100
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
     depends_on:
       - db
       - migrator
