@@ -43,11 +43,10 @@ services:
     command: dotnet SettlyApi.dll --urls=http://0.0.0.0:5100
     environment:
       ASPNETCORE_ENVIRONMENT: Development
-    depends_on:
-      - db
-      - migrator
     networks:
       - settly_network
+    depends_on:
+      - db
 
   dbmanager:
     build:
