@@ -1,9 +1,10 @@
 name: Build and Test
 
 on:
-  pull_request:
-    branches:
-      - main
+  push:
+    branches: [ main ]        # push 到 main：构建 + 部署
+  # pull_request:
+  #   branches: [ main ]        # PR：只构建/测试
 
 permissions:
   id-token: write
@@ -11,8 +12,13 @@ permissions:
 
 env:
   AWS_REGION: ap-southeast-2
-  AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+  S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}     # 统一变量名
+  CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.CF_DIST_ID }}
   BUILD_DIR: dist
+
+defaults:
+  run:
+    working-directory: frontend               # 之后的 run 都在 frontend 下执行
 
 jobs:
   build:
@@ -20,7 +26,7 @@ jobs:
     concurrency:
       group: build
       cancel-in-progress: true
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -30,9 +36,7 @@ jobs:
         with:
           node-version: '22'
           cache: 'pnpm'
-
-      - name: cd to frontend
-        run: cd frontend
+          cache-dependency-path: frontend/pnpm-lock.yaml
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -40,23 +44,29 @@ jobs:
           version: '9'
           run_install: false
 
-      - name: Install dependencies
+      - name: Install deps
         run: pnpm install
 
       - name: Build
         run: pnpm build
 
-      # - name: Test
-      #   run: pnpm test
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    # 只在 push 到 main 时部署（PR 不部署，避免 secrets 在外部 fork PR 里不可用导致失败）
+    if: github.event_name == 'push' && env.S3_BUCKET != ''
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Configure AWS (OIDC + AssumeRole)
-        if: env.AWS_S3_BUCKET != ''
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
           role-session-name: frontend-deploy
-      - name: Sync to s3
+
+      - name: Sync to S3
         run: |
           aws s3 sync "${BUILD_DIR}" "s3://${S3_BUCKET}/" \
             --delete \
@@ -64,7 +74,10 @@ jobs:
             --only-show-errors \
             --metadata-directive REPLACE \
             --cache-control "max-age=300"
+
       - name: Invalidate CloudFront
         if: env.CLOUDFRONT_DISTRIBUTION_ID != ''
         run: |
-          aws cloudfront create-invalidation --distribution-id "${CLOUDFRONT_DISTRIBUTION_ID}" --paths "/*"
+          aws cloudfront create-invalidation \
+            --distribution-id "${CLOUDFRONT_DISTRIBUTION_ID}" \
+            --paths "/index.html" "/"
