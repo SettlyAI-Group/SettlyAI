@@ -16,19 +16,19 @@ export interface ColorSet {
  * @returns Object containing main, light, dark, and contrast text colors
  */
 export const createColorSet = (
-  baseColor: string, 
-  lightFactor = 0.5, 
+  baseColor: string,
+  lightFactor = 0.5,
   darkFactor = 0.2
 ): ColorSet => {
   const main = baseColor;
   const light = alpha(baseColor, lightFactor);
   const dark = darken(baseColor, darkFactor);
   const contrastText = getContrastRatio(main, '#fff') > 4.5 ? '#fff' : '#111';
-  
+
   return {
     main,
     light,
     dark,
-    contrastText
+    contrastText,
   };
-}; 
+};

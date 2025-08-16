@@ -13,7 +13,9 @@ public class Property
     public int InternalArea { get; set; }
     public int LandSize { get; set; }
     public int YearBuilt { get; set; }
-    public string Features { get; set; } = null!;
+    public string[] Features { get; set; } = [];
+    public string Summary { get; set; } = string.Empty;
+    public string ImageUrl { get; set; } = string.Empty;
 
     public Suburb Suburb { get; set; } = null!;
     public ICollection<Favourite> Favourites { get; set; } = new List<Favourite>();

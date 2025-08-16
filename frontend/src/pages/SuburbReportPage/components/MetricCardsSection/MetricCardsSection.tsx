@@ -67,7 +67,11 @@ const MetricCardsSection = ({ title, data }: IMetricCardsSectionProps) => {
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   return (
-    <Stack direction="column" spacing={8} sx={{ overflow: 'hidden' }}>
+    <Stack
+      direction="column"
+      spacing={8}
+      sx={{ overflow: 'hidden', width: '100%' }}
+    >
       <Typography variant="h4">{title}</Typography>
       {!isSmallScreen ? (
         <CardsGroupDesktop>

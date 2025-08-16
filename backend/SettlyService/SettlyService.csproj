@@ -6,16 +6,16 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
-
-<ItemGroup>
-  <ProjectReference Include="..\SettlyModels\SettlyModels.csproj" />
-  <ProjectReference Include="..\ISettlyService\ISettlyService.csproj" />
-</ItemGroup>
-
-<ItemGroup>
+  <ItemGroup>
+  <!-- NuGet package dependencies -->
   <PackageReference Include="AutoMapper" Version="12.0.1" />
   <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+  <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
 </ItemGroup>
-   
 
+<ItemGroup>
+  <!-- Local project dependencies -->
+  <ProjectReference Include="..\ISettlyService\ISettlyService.csproj" />        
+  <ProjectReference Include="..\SettlyModels\SettlyModels.csproj" />
+</ItemGroup>
 </Project>
