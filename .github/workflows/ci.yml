@@ -1,0 +1,70 @@
+name: Build and Test
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: ap-southeast-2
+  AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+  BUILD_DIR: dist
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: build
+      cancel-in-progress: true
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      - name: cd to frontend
+        run: cd frontend
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: '9'
+          run_install: false
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build
+        run: pnpm build
+
+      # - name: Test
+      #   run: pnpm test
+
+      - name: Configure AWS (OIDC + AssumeRole)
+        if: env.AWS_S3_BUCKET != ''
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+          role-session-name: frontend-deploy
+      - name: Sync to s3
+        run: |
+          aws s3 sync "${BUILD_DIR}" "s3://${S3_BUCKET}/" \
+            --delete \
+            --exact-timestamps \
+            --only-show-errors \
+            --metadata-directive REPLACE \
+            --cache-control "max-age=300"
+      - name: Invalidate CloudFront
+        if: env.CLOUDFRONT_DISTRIBUTION_ID != ''
+        run: |
+          aws cloudfront create-invalidation --distribution-id "${CLOUDFRONT_DISTRIBUTION_ID}" --paths "/*"
