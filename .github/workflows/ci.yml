@@ -2,9 +2,9 @@ name: Build and Test
 
 on:
   push:
-    branches: [ main ]        # push 到 main：构建 + 部署
+    branches: [ main ]          # push 到 main：构建 + 部署
   # pull_request:
-  #   branches: [ main ]        # PR：只构建/测试
+  #   branches: [ main ]          # PR：只构建/测试（不部署）
 
 permissions:
   id-token: write
@@ -12,13 +12,9 @@ permissions:
 
 env:
   AWS_REGION: ap-southeast-2
-  S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}     # 统一变量名
+  S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}      # 统一变量名
   CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.CF_DIST_ID }}
   BUILD_DIR: dist
-
-defaults:
-  run:
-    working-directory: frontend               # 之后的 run 都在 frontend 下执行
 
 jobs:
   build:
@@ -26,6 +22,10 @@ jobs:
     concurrency:
       group: build
       cancel-in-progress: true
+
+    defaults:
+      run:
+        working-directory: frontend            # 所有 run 都在 frontend 下
 
     steps:
       - name: Checkout code
@@ -50,16 +50,29 @@ jobs:
       - name: Build
         run: pnpm build
 
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-dist
+          path: frontend/${{ env.BUILD_DIR }}
+          if-no-files-found: error
+
   deploy:
     needs: build
     runs-on: ubuntu-latest
-    # 只在 push 到 main 时部署（PR 不部署，避免 secrets 在外部 fork PR 里不可用导致失败）
-    if: github.event_name == 'push' && env.S3_BUCKET != ''
+    # 这里只判断事件，不用 env
+    if: ${{ github.event_name == 'push' }}
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: web-dist
+          path: ./web-dist
 
       - name: Configure AWS (OIDC + AssumeRole)
+        # 在 step 里判断 env 就没问题了
+        if: ${{ env.S3_BUCKET != '' }}
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
@@ -67,6 +80,9 @@ jobs:
           role-session-name: frontend-deploy
 
       - name: Sync to S3
+        if: ${{ env.S3_BUCKET != '' }}
+        env:
+          BUILD_DIR: ./web-dist                  # 本 job 的构建目录在这里
         run: |
           aws s3 sync "${BUILD_DIR}" "s3://${S3_BUCKET}/" \
             --delete \
@@ -76,7 +92,7 @@ jobs:
             --cache-control "max-age=300"
 
       - name: Invalidate CloudFront
-        if: env.CLOUDFRONT_DISTRIBUTION_ID != ''
+        if: ${{ env.CLOUDFRONT_DISTRIBUTION_ID != '' }}
         run: |
           aws cloudfront create-invalidation \
             --distribution-id "${CLOUDFRONT_DISTRIBUTION_ID}" \
