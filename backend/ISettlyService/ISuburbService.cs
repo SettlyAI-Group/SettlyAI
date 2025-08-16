@@ -1,4 +1,5 @@
 using SettlyModels.Dtos;
+using SettlyModels.Dtos.Suburb;
 
 namespace ISettlyService
 {
@@ -10,5 +11,6 @@ namespace ISettlyService
         Task<PopulationSupplyDto?> GetDemandDevAsync(int id);
         Task<LivabilityDto?> GetLivabilityAsync(int id);
         Task<RiskDevelopmentDto?> GetSafetyAsync(int id);
+        Task<SafetyScoreOutputDto?> GetSafetyScoresAsync(int id);
     }
 }

@@ -1,0 +1,1 @@
+export { UniversalScoreCard, type ICardConfig } from './ScoresCards';
