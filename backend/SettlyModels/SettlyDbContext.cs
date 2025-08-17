@@ -1,8 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using SettlyModels.Entities;
-using Microsoft.Extensions.Configuration;
-using System;
-using System.IO;
 
 namespace SettlyModels;
 
