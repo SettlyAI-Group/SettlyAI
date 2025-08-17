@@ -1,0 +1,56 @@
+name: Backend CI
+
+on:
+  push:
+    branches: [Eleanor/CI-#154]
+    paths:
+      - 'backend/**'
+  pull_request:
+    paths:
+      - 'backend/**'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: testuser
+          POSTGRES_PASSWORD: testpass
+          POSTGRES_DB: testdb
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U testuser"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    env:
+      # Set connection string for test DB
+      ConnectionStrings__DefaultConnection: Host=localhost;Port=5432;Database=testdb;User Id=testuser;Password=testpass
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore backend/backend.sln
+
+      - name: Build
+        run: dotnet build backend/backend.sln --no-restore --configuration Release
+
+      - name: Run database migrations
+        run: dotnet ef database update --startup-project backend/SettlyApi --project backend/SettlyModels
+
+      - name: Test
+        run: dotnet test backend/backend.sln --no-build --configuration Release --logger trx
