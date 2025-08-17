@@ -44,13 +44,13 @@ jobs:
           dotnet-version: '8.0.x'
 
       - name: Restore dependencies
-        run: dotnet restore backend/backend.sln
+        run: dotnet restore backend.sln
 
       - name: Build
-        run: dotnet build backend/backend.sln --no-restore --configuration Release
+        run: dotnet build backend.sln --no-restore --configuration Release
 
       - name: Run database migrations
-        run: dotnet ef database update --startup-project backend/SettlyApi --project backend/SettlyModels
+        run: dotnet ef database update --startup-project SettlyApi --project SettlyModels
 
       - name: Test
-        run: dotnet test backend/backend.sln --no-build --configuration Release --logger trx
+        run: dotnet test backend.sln --no-build --configuration Release --logger trx
