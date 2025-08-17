@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    tools {
+        nodejs "Node22" // 这里是你在 Jenkins 中配置的 NodeJS 安装名称
+    }
+
     environment {
         WORKDIR = 'frontend'
     }
