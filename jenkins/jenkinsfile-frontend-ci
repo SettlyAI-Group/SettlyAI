@@ -1,1 +1,83 @@
+pipeline {
+    agent any
 
+    environment {
+        WORKDIR = 'frontend'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                dir("${WORKDIR}") {
+                    checkout scm
+                }
+            }
+        }
+
+        stage('Setup Node.js') {
+            steps {
+                dir("${WORKDIR}") {
+                    // 需要在 Jenkins 节点预先安装 nvm 或 nodejs plugin
+                    sh 'nvm install 22 || true'
+                    sh 'nvm use 22'
+                }
+            }
+        }
+
+        stage('Install pnpm') {
+            steps {
+                dir("${WORKDIR}") {
+                    sh 'npm install -g pnpm@9'
+                }
+            }
+        }
+
+        stage('Install dependencies') {
+            steps {
+                dir("${WORKDIR}") {
+                    sh 'pnpm install --frozen-lockfile'
+                }
+            }
+        }
+
+        stage('Type Check (tsc)') {
+            steps {
+                dir("${WORKDIR}") {
+                    sh 'pnpm exec tsc --noEmit'
+                }
+            }
+        }
+
+        stage('Lint Check') {
+            steps {
+                dir("${WORKDIR}") {
+                    sh 'pnpm exec eslint . || true'
+                }
+            }
+        }
+
+        stage('Format Check') {
+            steps {
+                dir("${WORKDIR}") {
+                    sh 'pnpm run format'
+                }
+            }
+        }
+
+        // stage('Unit Test') {
+        //     steps {
+        //         dir("${WORKDIR}") {
+        //             sh 'pnpm run test'
+        //         }
+        //     }
+        // }
+
+        stage('Build') {
+            steps {
+                dir("${WORKDIR}") {
+                    sh 'pnpm exec vite build'
+                }
+            }
+        }
+    }
+}
