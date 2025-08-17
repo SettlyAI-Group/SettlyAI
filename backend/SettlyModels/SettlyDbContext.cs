@@ -1,37 +1,50 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
+using SettlyModels.Entities;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.IO;
 
-namespace SettlyModels
+namespace SettlyModels;
+
+public class SettlyDbContext : DbContext
 {
-    public class SettlyDbContextFactory : IDesignTimeDbContextFactory<SettlyDbContext>
+    public SettlyDbContext(DbContextOptions<SettlyDbContext> options) : base(options)
     {
-        public SettlyDbContext CreateDbContext(string[] args)
-        {
-            // Build configuration with environment variables support
-            var configuration = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", optional: true)
-                .AddEnvironmentVariables()
-                .Build();
 
-            // Try to get connection string from multiple sources
-            var dbConnection =
-                configuration.GetSection("ApiConfigs").GetValue<string>("DBConnection")
-                ?? configuration.GetConnectionString("DefaultConnection")
-                ?? Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection");
+    }
 
-            if (string.IsNullOrEmpty(dbConnection))
-            {
-                throw new InvalidOperationException("Database connection string not found in configuration or environment variables.");
-            }
+    public DbSet<User> Users { get; set; } = null!;
+    public DbSet<Favourite> Favourites { get; set; } = null!;
+    public DbSet<InspectionPlan> InspectionPlans { get; set; } = null!;
+    public DbSet<LoanCalculation> LoanCalculations { get; set; } = null!;
+    public DbSet<ChatLog> ChatLogs { get; set; } = null!;
 
-            var optionsBuilder = new DbContextOptionsBuilder<SettlyDbContext>();
-            optionsBuilder.UseNpgsql(dbConnection);
+    public DbSet<Property> Properties { get; set; } = null!;
+    public DbSet<Suburb> Suburbs { get; set; } = null!;
 
-            return new SettlyDbContext(optionsBuilder.Options);
-        }
+    public DbSet<HousingMarket> HousingMarkets { get; set; } = null!;
+    public DbSet<IncomeEmployment> IncomeEmployments { get; set; } = null!;
+    public DbSet<PopulationSupply> PopulationSupplies { get; set; } = null!;
+    public DbSet<Livability> Livabilities { get; set; } = null!;
+    public DbSet<RiskDevelopment> RiskDevelopments { get; set; } = null!;
+    public DbSet<SettlyAIScore> SettlyAIScores { get; set; } = null!;
+
+    public DbSet<SuperProjectionInput> SuperProjectionInputs { get; set; } = null!;
+    public DbSet<SuperProjectionResult> SuperProjectionResults { get; set; } = null!;
+    public DbSet<SuperProjectionInsight> SuperProjectionInsights { get; set; } = null!;
+    public DbSet<SuperFund> SuperFunds { get; set; } = null!;
+    public DbSet<UserFundSelection> UserFundSelections { get; set; } = null!;
+
+    public DbSet<PolicyRule> PolicyRules { get; set; } = null!;
+
+    public DbSet<Verification> Verifications { get; set; } = default!;
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<Property>()
+            .Property(p => p.Features)
+            .HasColumnType("text[]");
     }
 }
