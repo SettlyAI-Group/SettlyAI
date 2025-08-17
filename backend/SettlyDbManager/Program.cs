@@ -33,24 +33,20 @@ public class Program
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: false)
                 .AddJsonFile("appsettings.Development.json", optional: true)
-                .AddEnvironmentVariables() 
                 .Build();
 
             // Build services
             var services = new ServiceCollection();
             var apiConfigs = configuration.GetSection("ApiConfigs").Get<ApiConfigs>();
-            var dbConnection = apiConfigs?.DBConnection 
-                ?? configuration.GetConnectionString("DefaultConnection")
-                ?? Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection");
-            
-            if (string.IsNullOrEmpty(dbConnection))
+
+            if (apiConfigs?.DBConnection == null)
             {
                 Console.WriteLine("ERROR: Database connection string not found in configuration.");
                 return 1;
             }
 
             services.AddDbContext<SettlyDbContext>(options => options
-                .UseNpgsql(dbConnection)
+                .UseNpgsql(apiConfigs.DBConnection)
                 .LogTo(Console.WriteLine, Microsoft.Extensions.Logging.LogLevel.Information)
                 .EnableSensitiveDataLogging()
                 .EnableDetailedErrors()
