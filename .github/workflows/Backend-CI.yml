@@ -3,11 +3,11 @@ name: Backend CI
 on:
   push:
     branches: [Eleanor/CI-#154]
-    paths:
-      - 'backend/**'
+    # paths:
+    #   - 'backend/**'
   pull_request:
-    paths:
-      - 'backend/**'
+    # paths:
+    #   - 'backend/**'
 
 jobs:
   build-and-test:
