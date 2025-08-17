@@ -3,6 +3,7 @@ import DomainOutlinedIcon from '@mui/icons-material/DomainOutlined';
 import HandymanOutlinedIcon from '@mui/icons-material/HandymanOutlined';
 import type { IMetricCardData } from '../MetricCardsSection';
 import type { IDemandAndDev } from '@/interfaces/DemandAndDev';
+import { mapValueToPercentageString } from './tools';
 
 
 interface DemandCardConfig {
@@ -26,7 +27,7 @@ export function mapDevCardData(apiData: IDemandAndDev): IMetricCardData[] {
             return {
                 icon: cfg.icon,
                 title: cfg.title,
-                value: (value * 100).toFixed(2) + "%",
+                value: mapValueToPercentageString(value),
             }
         } 
         return {
