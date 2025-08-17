@@ -2,6 +2,7 @@ name: Backend CI
 
 on:
   push:
+    branches: [Eleanor/CI-#154]
     paths:
       - 'backend/**'
   pull_request:
@@ -42,17 +43,14 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      - name: Install dotnet-ef
-        run: dotnet tool install --global dotnet-ef          
-
       - name: Restore dependencies
-        run: dotnet restore backend.sln
+        run: dotnet restore backend/backend.sln
 
       - name: Build
-        run: dotnet build backend.sln --no-restore --configuration Release
+        run: dotnet build backend/backend.sln --no-restore --configuration Release
 
-      # - name: Run database migrations
-      #   run: dotnet ef database update --startup-project SettlyApi --project SettlyModels
+      - name: Run database migrations
+        run: dotnet ef database update --startup-project backend/SettlyApi --project backend/SettlyModels
 
       - name: Test
-        run: dotnet test backend.sln --no-build --configuration Release --logger trx
+        run: dotnet test backend/backend.sln --no-build --configuration Release --logger trx
