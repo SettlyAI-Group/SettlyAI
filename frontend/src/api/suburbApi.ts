@@ -25,7 +25,9 @@ export const getDemandAndDev = async (suburbId:number): Promise<IDemandAndDev> =
 ||||||| parent of bbe4021 (setup react query)
 =======
 
-export const getSuburbLivability = async (suburbId: string) => {
+export const getSuburbLivability = async (
+  suburbId: string
+): Promise<ILivability> => {
   const response = await httpClient.get<ILivability>(
     `/suburb/${suburbId}/livability`
   );

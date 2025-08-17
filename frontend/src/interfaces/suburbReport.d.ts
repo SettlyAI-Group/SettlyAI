@@ -41,9 +41,9 @@ export interface ISuburbReport {
 }
 
 export interface ILivability {
-  distSupermarket: number;
-  distHospital: number;
   transportScore: number;
+  supermarketQuantity: number;
+  hospitalQuantity: number;
   primarySchoolRating: number;
   secondarySchoolRating: number;
   hospitalDensity: number;
