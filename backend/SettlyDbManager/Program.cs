@@ -39,7 +39,10 @@ public class Program
             // Build services
             var services = new ServiceCollection();
             var apiConfigs = configuration.GetSection("ApiConfigs").Get<ApiConfigs>();
-
+            var dbConnection = apiConfigs?.DBConnection 
+                ?? configuration.GetConnectionString("DefaultConnection")
+                ?? Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection");
+            
             if (apiConfigs?.DBConnection == null)
             {
                 Console.WriteLine("ERROR: Database connection string not found in configuration.");
@@ -47,7 +50,7 @@ public class Program
             }
 
             services.AddDbContext<SettlyDbContext>(options => options
-                .UseNpgsql(apiConfigs.DBConnection)
+                .UseNpgsql(dbConnection)
                 .LogTo(Console.WriteLine, Microsoft.Extensions.Logging.LogLevel.Information)
                 .EnableSensitiveDataLogging()
                 .EnableDetailedErrors()
