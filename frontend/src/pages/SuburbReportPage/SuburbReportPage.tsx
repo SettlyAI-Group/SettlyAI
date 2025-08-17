@@ -13,7 +13,12 @@ import type { IMetricCardData } from './components/MetricCardsSection/MetricCard
 =======
 import { useQuery } from '@tanstack/react-query';
 import { getSuburbLivability } from '@/api/suburbApi';
+<<<<<<< HEAD
 >>>>>>> bbe4021 (setup react query)
+||||||| parent of f480937 (updating datamapper)
+=======
+import { Navigate, useParams } from 'react-router-dom';
+>>>>>>> f480937 (updating datamapper)
 
 const PageContainer = styled(Box)(({ theme }) => ({
   maxWidth: '1440px',
@@ -24,7 +29,7 @@ const PageContainer = styled(Box)(({ theme }) => ({
   padding: theme.spacing(8),
 }));
 
-const ContextContainer = styled(Box)(({ theme }) => ({
+const ContentContainer = styled(Box)(({ theme }) => ({
   maxWidth: '936px',
   display: 'flex',
   flexDirection: 'column',
@@ -103,6 +108,7 @@ const SuburbReportPage = () => {
   ];
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   useEffect(() => {
     let id = suburbId;
 
@@ -133,9 +139,18 @@ const SuburbReportPage = () => {
 
 ||||||| parent of bbe4021 (setup react query)
 =======
+||||||| parent of f480937 (updating datamapper)
+=======
+  const { suburbId } = useParams<{ suburbId: string }>();
+
+  if (!suburbId || Number.isNaN(suburbId)) {
+    return <Navigate to="/" replace />;
+  }
+
+>>>>>>> f480937 (updating datamapper)
   const query = useQuery({
     queryKey: [''],
-    queryFn: () => getSuburbLivability(1),
+    queryFn: () => getSuburbLivability(suburbId),
   });
   console.log(query.data);
 
@@ -149,6 +164,7 @@ const SuburbReportPage = () => {
         </Typography>
       </BannerWrapper>
       {/* todo: replace with real card content */}
+<<<<<<< HEAD
       <MetricCardsSection
         title = {TITLES.demandDevelopment}
         data={demandAndDevCards}
@@ -162,6 +178,31 @@ const SuburbReportPage = () => {
         <Button>save this suburb</Button>
         <Button>Export PDF</Button>
       </ActionButtonWrapper>
+||||||| parent of f480937 (updating datamapper)
+      <ContextContainer>
+        <MetricCardsSection
+          title="Lifestyle Accessibility"
+          data={metricCardsData}
+        />
+        {/* todo:  replace with real action buttons , feel free to modify*/}
+        <ActionButtonWrapper>
+          <Button>save this suburb</Button>
+          <Button>Export PDF</Button>
+        </ActionButtonWrapper>
+      </ContextContainer>
+=======
+      <ContentContainer>
+        <MetricCardsSection
+          title="Lifestyle Accessibility"
+          data={metricCardsData}
+        />
+        {/* todo:  replace with real action buttons , feel free to modify*/}
+        <ActionButtonWrapper>
+          <Button>save this suburb</Button>
+          <Button>Export PDF</Button>
+        </ActionButtonWrapper>
+      </ContentContainer>
+>>>>>>> f480937 (updating datamapper)
     </PageContainer>
   );
 };
