@@ -43,7 +43,7 @@ public class Program
                 ?? configuration.GetConnectionString("DefaultConnection")
                 ?? Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection");
             
-            if (apiConfigs?.DBConnection == null)
+            if (string.IsNullOrEmpty(dbConnection))
             {
                 Console.WriteLine("ERROR: Database connection string not found in configuration.");
                 return 1;
