@@ -18,15 +18,7 @@ pipeline {
             }
         }
 
-        stage('Setup Node.js') {
-            steps {
-                dir("${WORKDIR}") {
-                    // 需要在 Jenkins 节点预先安装 nvm 或 nodejs plugin
-                    sh 'nvm install 22 || true'
-                    sh 'nvm use 22'
-                }
-            }
-        }
+    
 
         stage('Install pnpm') {
             steps {
