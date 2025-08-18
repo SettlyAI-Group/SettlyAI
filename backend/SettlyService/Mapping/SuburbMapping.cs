@@ -4,9 +4,9 @@ using SettlyModels.Entities;
 
 namespace SettlyService.Mapping
 {
-    public class SuburbReportMappingProfile : Profile
+    public class SuburbMappingProfile : Profile
     {
-        public SuburbReportMappingProfile()
+        public SuburbMappingProfile()
         {
             CreateMap<IncomeEmployment, IncomeEmploymentDto>();
             CreateMap<HousingMarket, HousingMarketDto>();

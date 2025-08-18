@@ -10,7 +10,7 @@ import {
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
 
-interface IMetricCardData {
+export interface IMetricCardData {
   icon: React.ReactNode;
   title: string;
   value: string;
@@ -30,7 +30,6 @@ const CardsGroupDesktop = styled(Box)(({ theme }) => ({
 }));
 
 const CardsGroupMobile = styled(Swiper)(({ theme }) => ({
-  
   position: 'relative',
   '& .swiper-button-next, & .swiper-button-prev': {
     width: theme.spacing(10),
@@ -68,7 +67,11 @@ const MetricCardsSection = ({ title, data }: IMetricCardsSectionProps) => {
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   return (
-    <Stack direction="column" spacing={8} sx={{ overflow: 'hidden',width:"100%", }}>
+    <Stack
+      direction="column"
+      spacing={8}
+      sx={{ overflow: 'hidden', width: '100%' }}
+    >
       <Typography variant="h4">{title}</Typography>
       {!isSmallScreen ? (
         <CardsGroupDesktop>

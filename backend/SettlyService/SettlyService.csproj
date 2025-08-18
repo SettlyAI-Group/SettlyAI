@@ -18,6 +18,4 @@
   <ProjectReference Include="..\ISettlyService\ISettlyService.csproj" />        
   <ProjectReference Include="..\SettlyModels\SettlyModels.csproj" />
 </ItemGroup>
-
 </Project>
-

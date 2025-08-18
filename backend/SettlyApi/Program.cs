@@ -41,7 +41,7 @@ public class Program
         // Add services to the container.
         builder.Services.AddControllers();
         builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-        builder.Services.AddScoped<ISuburbReportService, SuburbReportService>();
+        builder.Services.AddScoped<ISuburbService, SuburbService>();
         builder.Services.AddScoped<IPropertyDetailService, PropertyDetailService>();
         builder.Services.AddScoped<IFavouriteService, FavouriteService>();
         builder.Services.AddTransient<IPopulationSupplyService, PopulationSupplyService>();

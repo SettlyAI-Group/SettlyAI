@@ -30,16 +30,16 @@ This solution consists of four main projects:
    ```
 
 2. **Configure database connection**
-   
+
    Copy the example configuration files and update with your database settings:
    ```bash
    # Copy API configuration
    cp SettlyApi/appsettings.Development.json.example SettlyApi/appsettings.Development.json
-   
-   # Copy database manager configuration  
+
+   # Copy database manager configuration
    cp SettlyDbManager/appsettings.Development.json.example SettlyDbManager/appsettings.Development.json
    ```
-   
+
    Then update both files with your PostgreSQL connection details:
    ```json
    {
@@ -137,9 +137,7 @@ dotnet ef migrations remove --startup-project ../SettlyApi
 
 Currently available endpoints:
 
-- `GET /weatherforecast` - Sample endpoint for testing
-
-*Additional endpoints will be added as business logic is implemented.*
+*API endpoints will be added as business logic is implemented.*
 
 ## Development Workflow
 
@@ -161,7 +159,7 @@ Currently available endpoints:
    - Run API: `cd SettlyApi && dotnet run`
    - Test endpoints: Use `backend.http` file or Postman
    - Generate fresh data: `cd SettlyDbManager && dotnet run -- --reset-seed`
-  
+
 5. **Unit Test**
    - run test
    ```bash
