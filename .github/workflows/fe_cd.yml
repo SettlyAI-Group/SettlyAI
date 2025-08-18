@@ -1,7 +1,9 @@
 name: CD
 on:
   pull_request:
-    branches: [ main ]   # 也可以改成 tags: [ 'v*' ] 走发布流
+    branches: [ main ]
+    paths:
+      - 'frontend/**'
 
 permissions:
   id-token: write
