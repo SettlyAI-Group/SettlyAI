@@ -1,4 +1,6 @@
 version: '3.8'
+# Usage: to start only the database service for local development
+# Run: docker-compose up -d db
 
 services:
   db:
