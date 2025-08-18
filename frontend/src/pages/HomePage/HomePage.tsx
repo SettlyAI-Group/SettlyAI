@@ -1,14 +1,11 @@
 import React, { useState } from 'react';
 import { 
   Box, 
-  Container, 
   Typography, 
   TextField, 
-  Button, 
-  InputAdornment,
-  Paper
+  Button,
+  styled
 } from '@mui/material';
-import { styled } from '@mui/material';
 import { Search as SearchIcon } from '@mui/icons-material';
 import { setSuburbId } from '@/store/slices/suburbSlice';
 import { useDispatch } from 'react-redux';
@@ -22,18 +19,23 @@ import {
 } from '@mui/icons-material';
 
 // Styled Components - Theme-aware approach
-const PageContainer = styled(Box)(() => ({}));
+const PageContainer = styled(Box)(({ theme }) => ({
+  maxWidth: '1440px',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  margin: '0 auto',
+}));
 
 const HeroSection = styled(Box)(({ theme }) => ({
   minHeight: '548px',
-  background: '#F8F9FB',
+  background: theme.palette.background.default,
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
   alignItems: 'center',
   padding: theme.spacing(4, 2),
-  maxWidth: '1440px',
-  margin: '0 auto',
+  width: '100%',
   
   [theme.breakpoints.up('sm')]: {
     padding: theme.spacing(4, 4),
@@ -45,13 +47,8 @@ const HeroSection = styled(Box)(({ theme }) => ({
 }));
 
 const MainHeading = styled(Typography)(({ theme }) => ({
-  fontFamily: 'Poppins',
-  fontStyle: 'normal',
-  fontWeight: 400,
-  fontSize: '32px',
-  lineHeight: '40px',
   textAlign: 'center',
-  color: '#1F2937',
+  color: theme.palette.text.primary,
   maxWidth: '768px',
   marginBottom: theme.spacing(4),
   
@@ -66,18 +63,13 @@ const MainHeading = styled(Typography)(({ theme }) => ({
   },
 }));
 
-const HighlightSpan = styled(Box)(() => ({
-  color: '#6366f1',
+const HighlightSpan = styled(Box)(({ theme }) => ({
+  color: theme.palette.primary.main,
 }));
 
 const Subtitle = styled(Typography)(({ theme }) => ({
-  fontFamily: 'Poppins',
-  fontStyle: 'normal',
-  fontWeight: 400,
-  fontSize: '16px',
-  lineHeight: '24px',
   textAlign: 'center',
-  color: '#4B5563',
+  color: theme.palette.text.secondary,
   maxWidth: '653px',
   marginBottom: theme.spacing(5),
   
@@ -109,8 +101,8 @@ const InputContainer = styled(Box)(({ theme }) => ({
   alignItems: 'center',
   width: '100%',
   height: '59px',
-  background: '#FFFFFF',
-  border: '1px solid #D1D5DB',
+  background: theme.palette.background.paper,
+  border: `1px solid ${theme.palette.divider}`,
   borderRadius: theme.spacing(1),
   padding: theme.spacing(0, 2),
   
@@ -120,35 +112,31 @@ const InputContainer = styled(Box)(({ theme }) => ({
 }));
 
 const StyledSearchIcon = styled(SearchIcon)(({ theme }) => ({
-  color: '#9CA3AF',
+  color: theme.palette.text.disabled,
   marginRight: theme.spacing(2),
 }));
 
-const StyledTextField = styled(TextField)(() => ({
+const StyledTextField = styled(TextField)(({ theme }) => ({
   '& .MuiInput-root': {
-    fontFamily: 'Poppins',
-    fontWeight: 400,
     fontSize: '14px',
     lineHeight: '22px',
-    color: '#8C8D8B',
+    color: theme.palette.text.secondary,
   },
 }));
 
 const GetReportButton = styled(Button)(({ theme }) => ({
   width: '100%',
   height: '60px',
-  background: '#7B61FF',
-  boxShadow: '0px 0px 2px rgba(23, 26, 31, 0.12), 0px 4px 9px rgba(23, 26, 31, 0.11)',
+  background: theme.palette.primary.main,
+  boxShadow: theme.shadows[2],
   borderRadius: theme.spacing(1),
-  fontFamily: 'Poppins',
-  fontWeight: 400,
   fontSize: '18px',
   lineHeight: '28px',
-  color: '#FFFFFF',
+  color: theme.palette.primary.contrastText,
   textTransform: 'none',
   
   '&:hover': {
-    background: '#6B51E8',
+    background: theme.palette.primary.dark,
   },
   
   [theme.breakpoints.up('sm')]: {
@@ -174,19 +162,18 @@ const ActionButtonsContainer = styled(Box)(({ theme }) => ({
 const ExploreSuburbButton = styled(Button)(({ theme }) => ({
   width: '100%',
   height: '60px',
-  background: '#E0E7FF',
-  boxShadow: '0px 0px 2px rgba(23, 26, 31, 0.12), 0px 8px 17px rgba(23, 26, 31, 0.15)',
+  background: theme.palette.action.hover,
+  boxShadow: theme.shadows[4],
   borderRadius: theme.spacing(1),
-  fontFamily: 'Poppins',
   fontWeight: 500,
   fontSize: '18px',
   lineHeight: '28px',
-  color: '#4F46E5',
+  color: theme.palette.primary.main,
   textTransform: 'none',
   border: 'none',
   
   '&:hover': {
-    background: '#D1D9FF',
+    background: theme.palette.action.selected,
   },
   
   [theme.breakpoints.up('sm')]: {
@@ -195,11 +182,10 @@ const ExploreSuburbButton = styled(Button)(({ theme }) => ({
 }));
 
 const ChatButton = styled(Button)(({ theme }) => ({
-  fontFamily: 'Poppins',
   fontWeight: 400,
   fontSize: '14px',
   lineHeight: '26px',
-  color: '#4F46E5',
+  color: theme.palette.primary.main,
   textTransform: 'none',
   textAlign: 'center',
   
@@ -214,10 +200,9 @@ const ChatButton = styled(Button)(({ theme }) => ({
 }));
 
 const ToolsSection = styled(Box)(({ theme }) => ({
-  maxWidth: '1440px',
+  width: '100%',
   height: '576px',
-  background: '#F8F9FB',
-  margin: '0 auto',
+  background: theme.palette.background.default,
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
@@ -238,11 +223,11 @@ const ToolsTextContainer = styled(Box)(({ theme }) => ({
 const ToolsHeading = styled(Typography)(({ theme }) => ({
   fontWeight: 600,
   marginBottom: theme.spacing(2),
-  color: '#1f2937',
+  color: theme.palette.text.primary,
 }));
 
-const ToolsSubtitle = styled(Typography)(() => ({
-  color: '#6b7280',
+const ToolsSubtitle = styled(Typography)(({ theme }) => ({
+  color: theme.palette.text.secondary,
   fontSize: '1rem',
   fontWeight: 400,
   maxWidth: '600px',
@@ -251,8 +236,7 @@ const ToolsSubtitle = styled(Typography)(() => ({
 }));
 
 const FeatureSection = styled(Box)(({ theme }) => ({
-  maxWidth: '1440px',
-  margin: '0 auto',
+  width: '100%',
   padding: theme.spacing(8, 2),
   
   [theme.breakpoints.up('sm')]: {
@@ -260,8 +244,8 @@ const FeatureSection = styled(Box)(({ theme }) => ({
   },
 }));
 
-const LoanSection = styled(FeatureSection)(() => ({
-  backgroundColor: '#f8f9fa',
+const LoanSection = styled(FeatureSection)(({ theme }) => ({
+  backgroundColor: theme.palette.background.default,
 }));
 
 const ComingSoonContainer = styled(Box)(({ theme }) => ({
@@ -282,11 +266,11 @@ const HomePage: React.FC = () => {
     const dispatch = useDispatch();
     const [searchValue, setSearchValue] = useState('');
 
-    type Suburb = {
+    interface ISuburb {
         suburbName: string;
         state: string;
         suburbId: number;
-    };
+    }
     
     // Keep existing suburb logic for backwards compatibility
     const melbourne = { suburbName: 'Melbourn', state: 'VIC', suburbId: 1 };
@@ -305,7 +289,7 @@ const HomePage: React.FC = () => {
             {/* Hero Section - Refactored with Flexbox for Responsive Centering */}
             <HeroSection>
                 {/* Main Heading - Centered with Flexbox */}
-                <MainHeading>
+                <MainHeading variant="h2">
                     Your AI-Powered Guide for<br />
                     <HighlightSpan component="span">
                         Property, Loan & Super
@@ -313,7 +297,7 @@ const HomePage: React.FC = () => {
                 </MainHeading>
 
                 {/* Subtitle - Centered with Flexbox */}
-                <Subtitle>
+                <Subtitle variant="body1">
                     No jargon, just clarity. Plan your future with confidence using smart 
                     reports and tools built for first-home buyers and everyday Australians.
                 </Subtitle>
@@ -364,8 +348,7 @@ const HomePage: React.FC = () => {
             <ToolsSection>
                 <ToolsTextContainer>
                     <ToolsHeading 
-                        variant="h4" 
-                        component="h2"
+                        variant="h4"
                     >
                         All-in-One Tools to Simplify Your Journey
                     </ToolsHeading>
