@@ -32,19 +32,19 @@ jobs:
           run_install: false
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install
 
-      - name: Type Check (tsc)
-        run: pnpm exec tsc --noEmit
+      - name: Start development server
+        run: pnpm run dev
 
-      - name: Lint Check
-        run: pnpm exec eslint . || true
+      - name: Build production version
+        run: pnpm run build
 
-      - name: Format Check
+      - name: Run code linting
+        run: pnpm run lint
+
+      - name: Format code
         run: pnpm run format
 
-      # - name: Unit Test
-      #   run: pnpm run test
-      
-      - name: Build
-        run: pnpm exec vite build
+      - name: Run Test
+        run: pnpm run test
