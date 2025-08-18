@@ -1,0 +1,50 @@
+name: Frontend CI
+
+on:
+  push:
+    branches: [Eleanor/CI-#154]
+    paths:
+      - 'frontend/**'
+  pull_request:
+    paths:
+      - 'frontend/**'
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+          run_install: false
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Start development server
+        run: pnpm run dev
+
+      - name: Build production version
+        run: pnpm run build
+
+      - name: Run code linting
+        run: pnpm run lint
+
+      - name: Format code
+        run: pnpm run format
+
+      - name: Run Test
+        run: pnpm run test
