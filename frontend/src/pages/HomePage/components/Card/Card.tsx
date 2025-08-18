@@ -8,10 +8,10 @@ import {
 } from '@mui/material';
 
 interface CardProps {
-  title: string;
-  description: string;
+  title: string | React.ReactElement;
+  description: string | React.ReactElement;
   icon: React.ReactElement;
-  ctaText: string;
+  ctaText: string | React.ReactElement;
   onClick?: () => void;
   variant?: 'preview' | 'full';
 }
