@@ -1,11 +1,10 @@
 import React from 'react';
 import { Box, styled } from '@mui/material';
 import Grid from '@mui/material/Grid';
-import {
-  Home as HomeIcon,
-  AttachMoney as AttachMoneyIcon,
-  TrendingUp as StockIcon
-} from '@mui/icons-material';
+// Import custom icons
+import homeIcon from '../../../../assets/home.png';
+import moneyIcon from '../../../../assets/money.png';
+import stockIcon from '../../../../assets/stock.png';
 import Card from '../Card';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { Typography } from '@mui/material';
@@ -25,58 +24,56 @@ const CardsContainer = styled(Box)(() => ({
   marginRight: 'auto',
 }));
 
-const StyledHomeIcon = styled(HomeIcon)(() => ({
-  fontSize: 48,
-  color: '#6366f1',
-}));
+// Styled image components
+const StyledHomeIcon = () => (
+  <img src={homeIcon} alt="Home" style={{ width: 48, height: 48 }} />
+);
 
-const StyledAttachMoneyIcon = styled(AttachMoneyIcon)(() => ({
-  fontSize: 48,
-  color: '#6366f1',
-}));
+const StyledMoneyIcon = () => (
+  <img src={moneyIcon} alt="Money" style={{ width: 48, height: 48 }} />
+);
 
-const StyledStockIcon = styled(StockIcon)(() => ({
-  fontSize: 48,
-  color: '#6366f1',
-}));
+const StyledStockIcon = () => (
+  <img src={stockIcon} alt="Stock" style={{ width: 48, height: 48 }} />
+);
 
 const FeatureCardsSection: React.FC = () => {
 
-const featureCards: FeatureCard[] = [
-  {
-    title: 'SettlyHome',
-    description: 'Explore smart suburbs picks and lifestyle-friendly neighbourhoods.',
-    icon: <StyledHomeIcon />,
-    route: '#home',
-    ctaText: (
-      <Typography component="span" sx={{ color: 'black' }}>
-        Explore Suburb & Homes <ArrowForwardIcon fontSize="small" />
-      </Typography>
-    )
-  },
-  {
-    title: 'SettlyLoan',
-    description: 'Compare fixed vs variable, estimate repayments, and test loan stress scenarios.',
-    icon: <StyledAttachMoneyIcon />,
-    route: '#loan',
-    ctaText: (
-      <Typography component="span" sx={{ color: 'black' }}>
-        Simulate Loan <ArrowForwardIcon fontSize="small" />
-      </Typography>
-    )
-  },
-  {
-    title: 'SettlySuper',
-    description: 'Use your Super Wisely to Boost Your Home Plan',
-    icon: <StyledStockIcon />,
-    route: '#super',
-    ctaText: (
-      <Typography component="span" sx={{ color: 'black' }}>
-        Compare Super Strategy <ArrowForwardIcon fontSize="small" />
-      </Typography>
-    )
-  }
-];
+  const featureCards: FeatureCard[] = [
+    {
+      title: 'SettlyHome',
+      description: 'Explore smart suburbs picks and lifestyle-friendly neighbourhoods.',
+      icon: <StyledHomeIcon />,
+      route: '#home',
+      ctaText: (
+        <Typography component="span" sx={{ color: 'black' }}>
+          Explore Suburb & Homes <ArrowForwardIcon fontSize="small" />
+        </Typography>
+      )
+    },
+    {
+      title: 'SettlyLoan',
+      description: 'Compare fixed vs variable, estimate repayments, and test loan stress scenarios.',
+      icon: <StyledMoneyIcon />,
+      route: '#loan',
+      ctaText: (
+        <Typography component="span" sx={{ color: 'black' }}>
+          Simulate Loan <ArrowForwardIcon fontSize="small" />
+        </Typography>
+      )
+    },
+    {
+      title: 'SettlySuper',
+      description: 'Use your Super Wisely to Boost Your Home Plan',
+      icon: <StyledStockIcon />,
+      route: '#super',
+      ctaText: (
+        <Typography component="span" sx={{ color: 'black' }}>
+          Compare Super Strategy <ArrowForwardIcon fontSize="small" />
+        </Typography>
+      )
+    }
+  ];
   const handleCardClick = (route: string) => {
     // Extract section name from route (e.g., '#home' -> 'home')
     const sectionId = route.replace('#', '') + '-section';

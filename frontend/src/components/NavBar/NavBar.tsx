@@ -1,6 +1,6 @@
 import { AppBar, Toolbar, Typography, Button, Box, styled, Container } from '@mui/material';
-import { Home as HomeIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import navhomeImage from '../../assets/navhome.png';
 
 const StyledAppBar = styled(AppBar)(() => ({
   background: '#FFFFFF',
@@ -74,7 +74,7 @@ const Navbar = () => {
       <Container maxWidth={false} sx={{ maxWidth: 1440, mx: 'auto' }}>
         <StyledToolbar disableGutters>
           <Logo onClick={() => navigate('/')}>
-            <LogoIcon><HomeIcon fontSize="small" /></LogoIcon>
+            <LogoIcon><img src={navhomeImage} alt="Settly AI Logo" style={{ width: 24, height: 24 }} /></LogoIcon>
             <Typography
               variant="h6"
               sx={{ color: '#1F2937', fontWeight: 600, fontSize: 20 }}

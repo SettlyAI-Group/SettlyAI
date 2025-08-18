@@ -50,7 +50,10 @@ const Card: React.FC<CardProps> = ({
           }}
         >
           <Box sx={{ mb: 4 }}>
-            {React.cloneElement(icon, { sx: { fontSize: 80, color: 'primary.main' } })}
+            {React.isValidElement(icon) && icon.type === 'img' 
+              ? React.cloneElement(icon, { style: { width: 80, height: 80, ...icon.props.style } })
+              : React.cloneElement(icon, { sx: { fontSize: 80, color: 'primary.main' } })
+            }
           </Box>
           
           <Typography 
@@ -100,7 +103,8 @@ const Card: React.FC<CardProps> = ({
     <MuiCard
       onClick={onClick}
       sx={{
-        height: '100%',
+        width: 380,
+        height: 268,
         display: 'flex',
         flexDirection: 'column',
         cursor: onClick ? 'pointer' : 'default',
@@ -126,7 +130,10 @@ const Card: React.FC<CardProps> = ({
         }}
       >
         <Box sx={{ mb: 3 }}>
-          {React.cloneElement(icon, { sx: { fontSize: 48, color: '#6366f1' } })}
+          {React.isValidElement(icon) && icon.type === 'img' 
+            ? React.cloneElement(icon, { style: { width: 48, height: 48, ...icon.props.style } })
+            : React.cloneElement(icon, { sx: { fontSize: 48, color: '#6366f1' } })
+          }
         </Box>
         
         <Typography 

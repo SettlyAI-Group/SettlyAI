@@ -1,11 +1,10 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
 import { styled } from '@mui/material';
-import {
-  Home as HomeIcon,
-  AttachMoney as AttachMoneyIcon,
-  TrendingUp as StockIcon
-} from '@mui/icons-material';
+// Import custom icons
+import homeIcon from '../../../../assets/home.png';
+import moneyIcon from '../../../../assets/money.png';
+import stockIcon from '../../../../assets/stock.png';
 import Card from '../Card';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
@@ -51,10 +50,10 @@ const FeatureDetailSections: React.FC = () => {
           description={
             <Typography variant="body1" sx={{ fontWeight: 200, textAlign: 'left' }}>
               Discover your perfect home with smart property insights and market analysis. 
-              Explore smart suburb picks and lifestyle-friendly neighbourhoods.
+          
             </Typography>
           }
-          icon={<HomeIcon />}
+          icon={<img src={homeIcon} alt="Home" style={{ width: 24, height: 24 }} />}
           ctaText={
             <>
               Explore Suburb & Homes <ArrowForwardIcon fontSize="small" />
@@ -83,10 +82,9 @@ const FeatureDetailSections: React.FC = () => {
           description={
             <Typography variant="body1" sx={{ fontWeight: 200, textAlign: 'left' }}>
               Get personalized loan recommendations and calculate your borrowing capacity. 
-              Compare fixed vs variable, estimate repayments, and test loan stress scenarios.
             </Typography>
           }
-          icon={<AttachMoneyIcon />}
+          icon={<img src={moneyIcon} alt="Money" style={{ width: 24, height: 24 }} />}
           ctaText={
             <>
               Simulate Loan <ArrowForwardIcon fontSize="small" />
@@ -114,11 +112,10 @@ const FeatureDetailSections: React.FC = () => {
           }
           description={
             <Typography variant="body1" sx={{ fontWeight: 200, textAlign: 'left' }}>
-              Optimize your superannuation strategy for property investment and retirement. 
               Maximize your superannuation potential with smart property investment strategies.
             </Typography>
           }
-          icon={<StockIcon />}
+          icon={<img src={stockIcon} alt="Stock" style={{ width: 24, height: 24 }} />}
           ctaText={
             <>
               Compare Super Strategy <ArrowForwardIcon fontSize="small" />
