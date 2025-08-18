@@ -1,13 +1,11 @@
 import React from 'react';
-import { Box, styled } from '@mui/material';
-import Grid from '@mui/material/Grid';
+import { Box, styled, Grid, Typography } from '@mui/material';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 // Import custom icons
 import homeIcon from '../../../../assets/home.png';
 import moneyIcon from '../../../../assets/money.png';
 import stockIcon from '../../../../assets/stock.png';
 import Card from '../Card';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import { Typography } from '@mui/material';
 
 interface FeatureCard {
   title: string;
@@ -24,18 +22,6 @@ const CardsContainer = styled(Box)(() => ({
   marginRight: 'auto',
 }));
 
-// Styled image components
-const StyledHomeIcon = () => (
-  <img src={homeIcon} alt="Home" style={{ width: 48, height: 48 }} />
-);
-
-const StyledMoneyIcon = () => (
-  <img src={moneyIcon} alt="Money" style={{ width: 48, height: 48 }} />
-);
-
-const StyledStockIcon = () => (
-  <img src={stockIcon} alt="Stock" style={{ width: 48, height: 48 }} />
-);
 
 const FeatureCardsSection: React.FC = () => {
 
@@ -43,7 +29,7 @@ const FeatureCardsSection: React.FC = () => {
     {
       title: 'SettlyHome',
       description: 'Explore smart suburbs picks and lifestyle-friendly neighbourhoods.',
-      icon: <StyledHomeIcon />,
+      icon: <img src={homeIcon} alt="Home" style={{ width: 48, height: 48 }} />,
       route: '#home',
       ctaText: (
         <Typography component="span" sx={{ color: 'black' }}>
@@ -54,7 +40,7 @@ const FeatureCardsSection: React.FC = () => {
     {
       title: 'SettlyLoan',
       description: 'Compare fixed vs variable, estimate repayments, and test loan stress scenarios.',
-      icon: <StyledMoneyIcon />,
+      icon: <img src={moneyIcon} alt="Money" style={{ width: 48, height: 48 }} />,
       route: '#loan',
       ctaText: (
         <Typography component="span" sx={{ color: 'black' }}>
@@ -65,7 +51,7 @@ const FeatureCardsSection: React.FC = () => {
     {
       title: 'SettlySuper',
       description: 'Use your Super Wisely to Boost Your Home Plan',
-      icon: <StyledStockIcon />,
+      icon: <img src={stockIcon} alt="Stock" style={{ width: 48, height: 48 }} />,
       route: '#super',
       ctaText: (
         <Typography component="span" sx={{ color: 'black' }}>
