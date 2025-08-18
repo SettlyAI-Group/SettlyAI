@@ -1,6 +1,7 @@
 using ISettlyService;
 using Microsoft.AspNetCore.Mvc;
 using SettlyModels.Dtos;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace SettlyApi.Controllers;
 
@@ -16,6 +17,8 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("register")]
+    [SwaggerOperation(Summary = "Register a new user")]
+    [SwaggerResponse(200, "User registered successfully", typeof(ResponseUserDto))]
     public async Task<ActionResult<ResponseUserDto>> Register([FromBody] RegisterUserDto registerUser)
     {
         var user = await _authService.RegisterAsync(registerUser);

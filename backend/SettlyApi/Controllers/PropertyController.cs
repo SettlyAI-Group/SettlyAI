@@ -2,6 +2,7 @@ using ISettlyService;
 using Microsoft.AspNetCore.Mvc;
 using SettlyModels;
 using SettlyModels.Dtos;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace SettlyApi.Controllers
 
@@ -19,7 +20,13 @@ namespace SettlyApi.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<PropertyDetailDto>> GetPropertyDetail(int id)
+        [SwaggerOperation(
+            Summary = "Get property details",
+            Description = "Returns the full PropertyDetailDto for a given property ID."
+        )]
+        [SwaggerResponse(200, "Successfully returned property details", typeof(PropertyDetailDto))]
+        [SwaggerResponse(404, "Property not found")]
+        public async Task<ActionResult<PropertyDetailDto>> GetPropertyDetail([SwaggerParameter("The unique ID of the property")] int id)
         {
             var result = await _propertyService.GeneratePropertyDetailAsync(id);
 
