@@ -6,6 +6,8 @@ import homeIcon from '../../../../assets/home.png';
 import moneyIcon from '../../../../assets/money.png';
 import stockIcon from '../../../../assets/stock.png';
 import Card from '../Card';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import { Typography } from '@mui/material';
 
 interface FeatureCard {
   title: string;

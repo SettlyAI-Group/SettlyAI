@@ -1,109 +1,29 @@
-import React, { useState } from 'react';
-import { 
-  Box, 
-  Container, 
-  Typography, 
-  TextField, 
-  Button, 
-  InputAdornment,
-  Paper
-} from '@mui/material';
-import { styled } from '@mui/material';
-import { Search as SearchIcon } from '@mui/icons-material';
-import { setSuburbId } from '@/store/slices/suburbSlice';
-import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import FeatureCardsSection from './components/FeatureCardsSection';
-import Card from './components/Card';
-import { 
-  Home as HomeIcon,
-  AttachMoney as AttachMoneyIcon,
-  Savings as SavingsIcon
-} from '@mui/icons-material';
 
-// Styled Components - Theme-aware approach
-const PageContainer = styled(Box)(() => ({}));
+const HomePage = () => {
+  const navigate = useNavigate();
 
-const HeroSection = styled(Box)(({ theme }) => ({
-  minHeight: '548px',
-  background: '#F8F9FB',
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'center',
-  alignItems: 'center',
-  padding: theme.spacing(4, 2),
-  maxWidth: '1440px',
-  margin: '0 auto',
-  
-  [theme.breakpoints.up('sm')]: {
-    padding: theme.spacing(4, 4),
-  },
-  
-  [theme.breakpoints.up('md')]: {
-    padding: theme.spacing(8, 4),
-  },
-}));
+  type Suburb = {
+    suburbName: string;
+    state: string;
+    suburbId: number;
+  };
 
-const MainHeading = styled(Typography)(({ theme }) => ({
-  fontFamily: 'Poppins',
-  fontStyle: 'normal',
-  fontWeight: 400,
-  fontSize: '32px',
-  lineHeight: '40px',
-  textAlign: 'center',
-  color: '#1F2937',
-  maxWidth: '768px',
-  marginBottom: theme.spacing(4),
-  
-  [theme.breakpoints.up('sm')]: {
-    fontSize: '40px',
-    lineHeight: '50px',
-  },
-  
-  [theme.breakpoints.up('md')]: {
-    fontSize: '48px',
-    lineHeight: '60px',
-  },
-}));
+  //todo: change to fetch suburb id by suburb name and state
+  //check database to match for testing
+  const melbourne = { suburbName: 'Melbourn', state: 'VIC', suburbId: 1 };
+  const sydney = { suburbName: 'Sydney', state: 'NSW', suburbId: 2 };
 
-const HighlightSpan = styled(Box)(() => ({
-  color: '#6366f1',
-}));
+  const checkSuburb = (suburb: Suburb) => {
+    const { suburbName, state, suburbId } = suburb;
 
-const Subtitle = styled(Typography)(({ theme }) => ({
-  fontFamily: 'Poppins',
-  fontStyle: 'normal',
-  fontWeight: 400,
-  fontSize: '16px',
-  lineHeight: '24px',
-  textAlign: 'center',
-  color: '#4B5563',
-  maxWidth: '653px',
-  marginBottom: theme.spacing(5),
-  
-  [theme.breakpoints.up('md')]: {
-    fontSize: '18px',
-    lineHeight: '28px',
-  },
-}));
+    localStorage.setItem('suburbId', suburbId.toString());
 
-const SearchContainer = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
-  gap: theme.spacing(2),
-  width: '100%',
-  maxWidth: '100%',
-  marginBottom: theme.spacing(4),
-  
-  [theme.breakpoints.up('sm')]: {
-    flexDirection: 'row',
-    gap: theme.spacing(1),
-    maxWidth: '900px',
-  },
-}));
+    const encodedLocation = `${state}+${suburbName}`;
+    navigate(`/suburb/${encodedLocation}`, { state: { suburbId } });
+  };
 
+<<<<<<< HEAD
 const InputContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
@@ -436,6 +356,15 @@ const HomePage: React.FC = () => {
             </FeatureSection>
         </PageContainer>
     );
+=======
+  return (
+    <>
+      <h1>Home</h1>
+      <button onClick={() => checkSuburb(sydney)}>Go to Sydney</button>
+      <button onClick={() => checkSuburb(melbourne)}>Go to Melbourne</button>
+    </>
+  );
+>>>>>>> 06d7f0d (finish structure)
 };
 
 export default HomePage;
