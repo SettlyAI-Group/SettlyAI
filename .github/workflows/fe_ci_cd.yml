@@ -61,7 +61,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     # 这里只判断事件，不用 env
-    if: ${{ github.event_name == 'push' }}
+    if: ${{ github.event_name == 'pull_request' }}
 
     steps:
       - name: Download build artifact
