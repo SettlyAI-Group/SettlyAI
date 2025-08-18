@@ -26,7 +26,7 @@ const ToolsContainer = styled(Box)(({ theme }) => ({
 const ToolsTextContainer = styled(Box)(({ theme }) => ({
   textAlign: 'center',
   marginBottom: theme.spacing(4), // Reduce spacing between heading and cards
-  maxWidth: '800px',
+  maxWidth: '731px',
 }));
 
 const ToolsHeading = styled(Typography)(({ theme }) => ({
@@ -34,13 +34,18 @@ const ToolsHeading = styled(Typography)(({ theme }) => ({
   marginBottom: theme.spacing(2),
   fontSize: '36px',
   color: '#1f2937',
+  width: '766px',
+  height: '40px',
+  margin: '0 auto',
+  marginBottom: theme.spacing(2),
 }));
 
 const ToolsSubtitle = styled(Typography)(() => ({
   color: '#6b7280',
   fontSize: '1rem',
   fontWeight: 400,
-  maxWidth: '900px',
+  width: '766px',
+  height: '28px',
   margin: '0 auto',
   lineHeight: 1.6,
 }));

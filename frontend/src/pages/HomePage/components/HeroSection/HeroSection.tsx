@@ -16,12 +16,10 @@ const HeroContainer = styled(Box)(({ theme }) => ({
   flexDirection: 'column',
   justifyContent: 'center',
   alignItems: 'center',
-  padding: theme.spacing(4, 2),
-  maxWidth: '960px',
-  margin: '0 auto',
   textAlign: 'center',
-  [theme.breakpoints.up('sm')]: { padding: theme.spacing(4, 4) },
-  [theme.breakpoints.up('md')]: { padding: theme.spacing(8, 4) },
+  padding: theme.spacing(4, 2),
+  maxWidth: '1440px',
+  margin: '0 auto',
 }));
 
 // H1
@@ -33,6 +31,7 @@ const MainHeading = styled(Typography)(({ theme }) => ({
   textAlign: 'center',
   color: '#1F2937',
   maxWidth: '768px',
+  maxHeight:'180px',
   margin: '0 auto',
   marginBottom: theme.spacing(14),
   letterSpacing: '-0.01em',
@@ -55,30 +54,27 @@ const Subtitle = styled(Typography)(({ theme }) => ({
   fontFamily: 'Poppins',
   fontStyle: 'normal',
   fontWeight: 400,
-  fontSize: '19px',
-  lineHeight: 1.5,
+  fontSize: '18px',
+  lineHeight: '28px',
+  color: '#4B5563',
+  width: '653px',
+  height: '84px',
+  marginBottom: theme.spacing(4),
   textAlign: 'left',
-  color: '#6B7280',
-  maxWidth: '700px',
-  marginBottom: theme.spacing(7),
 }));
 
 // Search row
-const SearchContainer = styled(Box)(({ theme }) => ({
+const SearchContainer = styled(Box)(() => ({
   display: 'flex',
-  flexDirection: 'column',
+  flexDirection: 'row',
   alignItems: 'center',
   justifyContent: 'center',
-  gap: theme.spacing(3),
-  width: '100%',
-  maxWidth: '100%',
-  marginBottom: theme.spacing(2),
-  [theme.breakpoints.up('sm')]: {
-    flexDirection: 'row',
-    gap: theme.spacing(1),
-    maxWidth: '800px',
-  },
+  gap: 8,
+  width: '653px',
+  height: '59px',
+  marginBottom: 16,
 }));
+
 
 const InputContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -109,12 +105,12 @@ const StyledTextField = styled(TextField)(() => ({
 
 // Primary CTA
 const GetReportButton = styled(Button)(({ theme }) => ({
-  width: '100%',
-  height: 56,
+  width: '206px',
+  height: '60px',
   background: '#7B61FF',
   boxShadow:
     '0px 0px 2px rgba(23, 26, 31, 0.12), 0px 4px 9px rgba(23, 26, 31, 0.11)',
-  borderRadius: 12,
+  borderRadius: '12px',
   fontFamily: 'Poppins',
   fontWeight: 500,
   fontSize: '16px',
@@ -122,42 +118,46 @@ const GetReportButton = styled(Button)(({ theme }) => ({
   color: '#FFFFFF',
   textTransform: 'none',
   '&:hover': { background: '#6B51E8' },
-  [theme.breakpoints.up('sm')]: { width: '206px' },
 }));
 
 const ActionButtonsContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
-  justifyContent: 'flex-start',   
-  gap: theme.spacing(15),          
-  marginTop: theme.spacing(4),
-  width: '100%',
-  maxWidth: '750px',              
-  marginLeft: 'auto',
-  marginRight: 'auto',
+  justifyContent: 'flex-start',
+  gap: '30px',
+  marginTop: theme.spacing(2),
+  width: '653px',
+  height: '60px',
 }));
 
 
 const ChatLink = styled('a')(({ theme }) => ({
   fontFamily: 'Poppins',
+  fontStyle: 'normal',
   fontWeight: 400,
-  fontSize: '14px',
+  fontSize: '16px',
   lineHeight: '26px',
   color: '#4F46E5',
   textDecoration: 'none',
   cursor: 'pointer',
+  whiteSpace: 'nowrap',
+  display: 'flex',
+  alignItems: 'center',
   '&:hover': {
     textDecoration: 'underline',
   },
 }));
 
 const ExploreSuburbButton = styled(Button)(({ theme }) => ({
-  height: 44,
+  boxSizing: 'border-box',
+  width: '213px !important',
+  height: '60px !important',
+  minWidth: '213px !important',
+  minHeight: '60px !important',
   background: '#E0E7FF',
-  boxShadow:
-    '0px 0px 2px rgba(23, 26, 31, 0.12), 0px 8px 17px rgba(23, 26, 31, 0.15)',
-  borderRadius: 12,
+  boxShadow: '0px 0px 2px rgba(23, 26, 31, 0.12), 0px 8px 17px rgba(23, 26, 31, 0.15)',
+  borderRadius: '8px',
   fontFamily: 'Poppins',
   fontWeight: 500,
   fontSize: '16px',
@@ -165,8 +165,7 @@ const ExploreSuburbButton = styled(Button)(({ theme }) => ({
   color: '#4F46E5',
   textTransform: 'none',
   border: 'none',
-  px: 7,
-    padding: theme.spacing(4, 7),
+  padding: '0 !important',
 }));
 
 const HeroSection: React.FC = () => {
