@@ -53,12 +53,8 @@ const FeatureDetailSections: React.FC = () => {
           
             </Typography>
           }
-          icon={<img src={homeIcon} alt="Home" style={{ width: 24, height: 24 }} />}
-          ctaText={
-            <>
-              Explore Suburb & Homes <ArrowForwardIcon fontSize="small" />
-            </>
-          }
+          icon={<img src={homeIcon} alt="Home" style={{ width: 40, height: 40 }} />}
+          ctaText={"Explore Suburb & Homes"}
           variant="full"
         />
         <ComingSoonContainer>
@@ -84,12 +80,8 @@ const FeatureDetailSections: React.FC = () => {
               Get personalized loan recommendations and calculate your borrowing capacity. 
             </Typography>
           }
-          icon={<img src={moneyIcon} alt="Money" style={{ width: 24, height: 24 }} />}
-          ctaText={
-            <>
-              Simulate Loan <ArrowForwardIcon fontSize="small" />
-            </>
-          }
+          icon={<img src={moneyIcon} alt="Money" style={{ width: 40, height: 40 }} />}
+          ctaText={"Simulate Loan"}
           variant="full"
         />
         <ComingSoonContainer>
@@ -106,7 +98,7 @@ const FeatureDetailSections: React.FC = () => {
       <FeatureSection id="super-section">
         <Card
           title={
-            <Typography variant="h3" sx={{ fontWeight: 400, textAlign: 'lcentereft' }}>
+            <Typography variant="h3" sx={{ fontWeight: 400, textAlign: 'center' }}>
               SettlySuper
             </Typography>
           }
@@ -115,12 +107,8 @@ const FeatureDetailSections: React.FC = () => {
               Maximize your superannuation potential with smart property investment strategies.
             </Typography>
           }
-          icon={<img src={stockIcon} alt="Stock" style={{ width: 24, height: 24 }} />}
-          ctaText={
-            <>
-              Compare Super Strategy <ArrowForwardIcon fontSize="small" />
-            </>
-          }
+          icon={<img src={stockIcon} alt="Stock" style={{ width: 40, height: 40 }} />}
+          ctaText={"Compare Super Strategy"}
           variant="full"
         />
         <ComingSoonContainer>

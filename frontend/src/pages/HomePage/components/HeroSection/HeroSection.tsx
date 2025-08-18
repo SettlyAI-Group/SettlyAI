@@ -5,7 +5,7 @@ import {
   TextField,
   Button
 } from '@mui/material';
-import { Link, styled } from '@mui/material';
+import { styled } from '@mui/material';
 import { Search as SearchIcon } from '@mui/icons-material';
 
 // Hero container
@@ -151,10 +151,10 @@ const ChatLink = styled('a')(({ theme }) => ({
 
 const ExploreSuburbButton = styled(Button)(({ theme }) => ({
   boxSizing: 'border-box',
-  width: '213px !important',
-  height: '60px !important',
-  minWidth: '213px !important',
-  minHeight: '60px !important',
+  width: '213px',
+  height: '60px',
+  minWidth: '213px',
+  minHeight: '60px',
   background: '#E0E7FF',
   boxShadow: '0px 0px 2px rgba(23, 26, 31, 0.12), 0px 8px 17px rgba(23, 26, 31, 0.15)',
   borderRadius: '8px',
@@ -165,7 +165,14 @@ const ExploreSuburbButton = styled(Button)(({ theme }) => ({
   color: '#4F46E5',
   textTransform: 'none',
   border: 'none',
-  padding: '0 !important',
+  padding: 0,
+  '&.MuiButton-root': {
+    width: '213px',
+    height: '60px',
+    minWidth: '213px',
+    minHeight: '60px',
+    padding: 0,
+  },
 }));
 
 const HeroSection: React.FC = () => {

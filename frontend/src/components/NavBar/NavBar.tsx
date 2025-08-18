@@ -10,18 +10,17 @@ const StyledAppBar = styled(AppBar)(() => ({
 const StyledToolbar = styled(Toolbar)({
   minHeight: 72,
   justifyContent: 'space-between',
-  paddingLeft: 0,
-  paddingRight: 0,
+  padding: 0,
 });
 
-const Logo = styled(Box)({
+const HomeSection = styled(Box)({
   display: 'flex',
   alignItems: 'center',
-  gap: '8px',
+  gap: 8,
   cursor: 'pointer',
 });
 
-const LogoIcon = styled(Box)({
+const HomeIconContainer = styled(Box)({
   width: 40,
   height: 40,
   background: '#7B61FF',
@@ -29,15 +28,12 @@ const LogoIcon = styled(Box)({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  color: '#fff',
-  fontWeight: 'bold',
-  flexShrink: 0,
 });
 
 const NavLinks = styled(Box)({
   display: 'flex',
   alignItems: 'center',
-  gap: '24px',
+  gap: 24,
 });
 
 const NavButton = styled(Button)({
@@ -58,8 +54,8 @@ const JoinButton = styled(Button)({
   textTransform: 'none',
   fontSize: 15,
   fontWeight: 500,
-  padding: '8px 32px', // longer
-  borderRadius: 8,    // rounder
+  padding: '8px 32px',
+  borderRadius: 8,
   '&:hover': {
     backgroundColor: '#6B51E8',
   },
@@ -73,15 +69,15 @@ const Navbar = () => {
       {/* Center content and clamp width here (not on AppBar) */}
       <Container maxWidth={false} sx={{ maxWidth: 1440, mx: 'auto' }}>
         <StyledToolbar disableGutters>
-          <Logo onClick={() => navigate('/')}>
-            <LogoIcon><img src={navhomeImage} alt="Settly AI Logo" style={{ width: 24, height: 24 }} /></LogoIcon>
+          <HomeSection onClick={() => navigate('/')}>
+            <HomeIconContainer><img src={navhomeImage} alt="Home" style={{ width: 24, height: 24 }} /></HomeIconContainer>
             <Typography
               variant="h6"
               sx={{ color: '#1F2937', fontWeight: 600, fontSize: 20 }}
             >
               Settly AI
             </Typography>
-          </Logo>
+          </HomeSection>
 
           <NavLinks>
             <NavButton onClick={() => navigate('/about')}>About</NavButton>
