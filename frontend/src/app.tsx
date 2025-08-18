@@ -3,7 +3,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import theme from './styles/theme';
 import ThemeDemo from '@/pages/ThemeDemo';
-import HomePage from '@/pages/HomePage/HomePage';
+import AltHomePage from '@/pages/HomePage/AltHomePage';
 import SuburbReportPage from './pages/SuburbReportPage';
 import Layout from './components/Layout/Layout';
 import './App.css';
@@ -19,6 +19,7 @@ const queryClient = new QueryClient({
 
 const App = () => {
   return (
+<<<<<<< HEAD
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
@@ -34,6 +35,18 @@ const App = () => {
         </Routes>
       </ThemeProvider>
     </QueryClientProvider>
+=======
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route path="/theme" element={<ThemeDemo />} />
+          <Route index element={<AltHomePage />} />
+          <Route path="/suburb/:location" element={<SuburbReportPage />} />
+        </Route>
+      </Routes>
+    </ThemeProvider>
+>>>>>>> 6c3727c (finish structure)
   );
 };
 

@@ -4,7 +4,7 @@ import Grid from '@mui/material/Grid';
 import { 
   Home as HomeIcon,
   AttachMoney as AttachMoneyIcon,
-  Savings as SavingsIcon
+  TrendingUp as StockIcon
 } from '@mui/icons-material';
 import Card from './Card';
 
@@ -36,7 +36,7 @@ const FeatureCardsSection: React.FC = () => {
     {
       title: 'SettlySuper',
       description: 'Optimize your superannuation strategy for property investment and retirement.',
-      icon: <SavingsIcon sx={{ fontSize: 48, color: '#6366f1' }} />, // Purple icon
+      icon: <StockIcon sx={{ fontSize: 48, color: '#6366f1' }} />,
       route: '#super',
       ctaText: 'Optimize Super'
     }
