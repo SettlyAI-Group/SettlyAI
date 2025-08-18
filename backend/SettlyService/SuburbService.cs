@@ -77,7 +77,6 @@ namespace SettlyService
                 //TODO:Change to global error handling middleware once it's done
                 throw new KeyNotFoundException($"Livability not found.");
             return _mapper.Map<LivabilityDto>(lifeStyle);
-
         }
 
         public async Task<RiskDevelopmentDto?> GetSafetyAsync(int id)

@@ -71,7 +71,14 @@ const SuburbReportPage = () => {
   if (anyError) {
     return (
       /* todo: update error UI */
-      <div>
+      <div
+        style={{
+          textAlign: 'center',
+          padding: '50px',
+          height: '100vh',
+          paddingTop: '30%',
+        }}
+      >
         <div style={{ color: 'red' }}>Error: {anyError.error?.message}</div>
         <div>❌</div>
         <button onClick={() => window.location.reload()}>Retry</button>
@@ -94,9 +101,15 @@ const SuburbReportPage = () => {
       </BannerWrapper>
       {/* todo: update loading UI */}
       {allLoading ? (
-        <div style={{ textAlign: 'center', padding: '50px' }}>
-          <div>Loading all data...</div>
-          <div style={{ fontSize: '48px' }}>⏳</div>
+        <div
+          style={{
+            textAlign: 'center',
+            padding: '50px',
+            height: '100vh',
+            paddingTop: '30%',
+          }}
+        >
+          <Typography variant="h4">Loading all data...</Typography>
         </div>
       ) : (
         <ContentContainer>
