@@ -1,11 +1,10 @@
-import { InputAdornment, Container, Box, TextField, Button, Typography, styled, useTheme } from '@mui/material';
+import { Container, Box, Button, Typography, styled, useTheme } from '@mui/material';
 import { lighten } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
-import SearchIcon from '@mui/icons-material/Search';
 import { useAppDispatch, useAppSelector } from '@/redux/store';
-import { exploreSuburbs } from '@/api/exploreApi';
-import { useState } from 'react';
-import { setQuery } from '@/store/slices/exploreSlice';
+import { useEffect, useRef } from 'react';
+import { fetchSuggestion } from '@/store/slices/searchSuggestSlice';
+import SuggestAutocomplete from '@/components/Search/SuggestAutocomplete';
 
 const HeroContainer = styled(Container)(({ theme }) => ({
   paddingTop: theme.spacing(25),
@@ -34,6 +33,11 @@ const ReportButton = styled(Button)(({ theme }) => ({
   whiteSpace: 'nowrap',
   color: '#fff',
   ...theme.typography.subtitle1,
+  [theme.breakpoints.between(900, 1150)]: {
+    width: '48%',
+    position: 'static',
+    height: 56,
+  },
   [theme.breakpoints.up(1150)]: {
     position: 'absolute',
     width: 200,
@@ -60,23 +64,28 @@ const HeroSectionContainer = () => {
   const navigate = useNavigate();
   const theme = useTheme();
   const dispatch = useAppDispatch();
-  const { query } = useAppSelector(s => s.explore);
-  const [exploring, setExploring] = useState(false);
+  const { query } = useAppSelector(selector => selector.explore);
+  const lastReqRef = useRef<any>(null);
 
-  const handleExplore = async () => {
-    const q = query.trim();
-    if (!q) return;
-    try {
-      setExploring(true);
-      const json = await exploreSuburbs(q);
-      console.log('exploreSuburbs ->', json);
-      navigate('/explore/' + encodeURIComponent(q));
-    } catch (err) {
-      console.error('searchSuburbs error', err);
-    } finally {
-      setExploring(false);
-    }
-  };
+  useEffect(() => {
+    const timeInterval = setTimeout(() => {
+      const trimmedQuery = query.trim();
+
+      if (trimmedQuery.length < 3) {
+        lastReqRef.current?.abort?.();
+        return;
+      }
+
+      lastReqRef.current?.abort?.();
+      const p = dispatch(fetchSuggestion(trimmedQuery));
+      lastReqRef.current = p;
+    }, 300);
+
+    return () => {
+      clearTimeout(timeInterval);
+      lastReqRef.current?.abort?.();
+    };
+  }, [query, dispatch]);
 
   return (
     <Box
@@ -130,29 +139,7 @@ const HeroSectionContainer = () => {
               },
             })}
           >
-            <TextField
-              variant="outlined"
-              fullWidth
-              id="fullWidth"
-              placeholder="Paste your property address or suburb to get insights..."
-              value={query}
-              onChange={e => dispatch(setQuery(e.target.value))}
-              slotProps={{
-                input: {
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon color="disabled" />
-                    </InputAdornment>
-                  ),
-                },
-              }}
-              sx={theme => ({
-                height: { xs: 48, md: 56 },
-                '& .MuiOutlinedInput-root': {
-                  borderRadius: theme.shape.borderRadius,
-                },
-              })}
-            />
+            <SuggestAutocomplete />
             <ReportButton variant="contained" onClick={() => navigate('/suburb/id')}>
               GET MY REPORT
             </ReportButton>
@@ -175,8 +162,8 @@ const HeroSectionContainer = () => {
             pb: 8,
           })}
         >
-          <ExploreButton variant="text" onClick={handleExplore} disabled={exploring || !query.trim()}>
-            {exploring ? 'Exploring...' : 'Explore Suburb'}
+          <ExploreButton variant="text" onClick={() => navigate('/explore/:location')}>
+            Explore Suburb
           </ExploreButton>
 
           <RotbotButton onClick={() => navigate('/chat')}>Not sure where to begin? Chat with Settly Robot</RotbotButton>
