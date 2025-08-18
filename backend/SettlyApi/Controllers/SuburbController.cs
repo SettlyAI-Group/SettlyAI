@@ -66,5 +66,12 @@ namespace SettlyApi.Controllers
         {
             return Ok();
         }
+
+        [HttpGet("snapshot")]
+        public async Task<ActionResult<SuburbSnapshotDto>> GetSnapshot(int id)
+        {
+            var snapshot = await _suburbService.GetSnapshotAsync(id);
+            return Ok(snapshot);
+        }
     }
 }

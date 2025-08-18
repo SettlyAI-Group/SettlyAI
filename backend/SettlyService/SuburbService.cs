@@ -85,6 +85,7 @@ namespace SettlyService
             throw new NotImplementedException();
         }
 
+<<<<<<< HEAD
         public async Task<SafetyScoreOutputDto?> GetSafetyScoresAsync(int suburbId)
         {
             var report = await GetSuburbsByIdAsync(suburbId);
@@ -170,6 +171,27 @@ namespace SettlyService
             };
         }
 
+||||||| parent of 6769b48 (feat: add suburb snapshot api)
+=======
+        public async Task<SuburbSnapshotDto> GetSnapshotAsync(int id)
+        {
+            var suburb = await _context.Suburbs.FindAsync(id);
+            if (suburb == null)
+                throw new NotImplementedException($"No Snapshot found for suburb id {id}.");
+            var housingMarket = await _context.HousingMarkets.AsNoTracking().Where(l => l.SuburbId == id).OrderByDescending(l => l.SnapshotDate).FirstOrDefaultAsync();
+            var now = DateTime.UtcNow;
+            var snapshot = new SuburbSnapshotDto
+            {
+                Id = $"{suburb.Id}_{now:yyyyMMdd}",
+                State = suburb.State,
+                Postcode = suburb.Postcode,
+                SuburbName = suburb.Name,
+                MedianPrice = housingMarket?.MedianPrice,
+                VacancyRatePct = housingMarket?.VacancyRate,
+            };
+            return snapshot;
+        }
+>>>>>>> 6769b48 (feat: add suburb snapshot api)
     }
 }
 
