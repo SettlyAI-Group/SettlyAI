@@ -99,7 +99,7 @@ jobs:
   gate:
     name: gate
     runs-on: ubuntu-latest
-    needs: [backend, frontend]
+    needs: [backend, frontend, changes]
     if: ${{ always() }}   # 不管前面是否 skipped/失败，gate 都会执行
     steps:
       - name: summarize results
