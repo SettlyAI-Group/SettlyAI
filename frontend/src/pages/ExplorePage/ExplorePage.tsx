@@ -1,4 +1,4 @@
-import { readSelectedSuggestion } from '@/utils/storage';
+import { readSelectedSuggestion } from '../../utils/storage';
 
 const ExplorePage = () => {
   const savedData = readSelectedSuggestion();

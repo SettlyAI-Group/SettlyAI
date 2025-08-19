@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import type { SuggestionOutputDto } from '@/interfaces/searchSuggestion';
-import { searchSuggestion } from '@/api/searchSuggestApi';
+import { searchSuggestion } from '../../api/searchSuggestApi';
 
 export const fetchSuggestion = createAsyncThunk<SuggestionOutputDto[], string>(
   'searchSuggest/fetch',

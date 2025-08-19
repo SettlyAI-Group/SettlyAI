@@ -6,10 +6,7 @@ import { resolve } from 'path';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
-const dirname =
-  typeof __dirname !== 'undefined'
-    ? __dirname
-    : path.dirname(fileURLToPath(import.meta.url));
+const dirname = typeof __dirname !== 'undefined' ? __dirname : path.dirname(fileURLToPath(import.meta.url));
 export default defineConfig(({ mode }) => {
   const isDev = mode === 'development';
   return {
@@ -26,6 +23,16 @@ export default defineConfig(({ mode }) => {
       // setupFiles: ["./src/test/setup.ts"],
       reporters: ['verbose'],
       projects: [
+        {
+          test: {
+            name: 'unit',
+            include: ['src/**/*.{test,spec}.{js,ts,jsx,tsx}'],
+            exclude: ['node_modules', 'dist', 'coverage', 'src/**/*.stories.*', 'src/**/*.mdx'],
+            environment: 'jsdom',
+            globals: true,
+            // setupFiles: ['./src/test/setup.ts'],
+          },
+        },
         {
           extends: true,
           plugins: [
