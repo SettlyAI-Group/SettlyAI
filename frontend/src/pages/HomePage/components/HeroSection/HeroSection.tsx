@@ -1,10 +1,10 @@
 import { Container, Box, Button, Typography, styled, useTheme } from '@mui/material';
 import { lighten } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from '@/redux/store';
+import { useAppDispatch, useAppSelector } from '../../../../redux/store';
 import { useEffect, useRef } from 'react';
-import { fetchSuggestion } from '@/store/slices/searchSuggestSlice';
-import SuggestAutocomplete from '@/components/Search/SuggestAutocomplete';
+import { fetchSuggestion } from '../../../../store/slices/searchSuggestSlice';
+import SuggestAutocomplete from '../../../../components/Search/SuggestAutocomplete';
 
 const HeroContainer = styled(Container)(({ theme }) => ({
   paddingTop: theme.spacing(25),

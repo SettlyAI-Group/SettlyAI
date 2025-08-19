@@ -4,7 +4,7 @@ import { render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material';
 import ExplorePage from './ExplorePage';
-import { SUGGESTION_STORAGE_KEY } from '@/utils/storage';
+import { SUGGESTION_STORAGE_KEY } from '../../utils/storage';
 
 function renderAt(path: string) {
   const theme = createTheme();
@@ -35,7 +35,7 @@ it('renders the saved selection label from localStorage', () => {
   };
   localStorage.setItem(SUGGESTION_STORAGE_KEY, JSON.stringify(payload));
   renderAt('/explore/:location');
-  expect(screen.getByTestId(/123 Fake St, Testville, NSW 2000/i));
+  expect(screen.getByText(/123 Fake St, Testville, NSW 2000/i)).toBeInTheDocument();
 });
 
 it('does not crash and renders gracefully when no saved selection exists', () => {
