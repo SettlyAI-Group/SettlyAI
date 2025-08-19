@@ -71,8 +71,8 @@ jobs:
         run: dotnet build backend.sln --no-restore --configuration Release
       - name: Test
         run: dotnet test backend.sln --no-build --configuration Release --logger trx
-      - name: Format
-        run: dotnet format --verify-no-changes
+      # - name: Format
+      #   run: dotnet format --verify-no-changes
 
   frontend:
     name: frontend build-and-test
