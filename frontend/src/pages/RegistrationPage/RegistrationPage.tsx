@@ -1,6 +1,7 @@
 import { FormPageContainer } from '../../components/FormPageContainer';
 import Box from '@mui/material/Box';
-import { RegistrationIntro, RegistrationForm } from './Components';
+import { RegistrationIntro} from './Components/RegistrationIntro';
+import { RegistrationForm } from './Components/RegistrationForm';
 import { styled } from '@mui/material/styles';
 
 const RegistrationPageContainer = styled(Box)(({ theme }) => ({
