@@ -97,9 +97,9 @@ const SuburbReportPage = () => {
 
       <ContextContainer>
         <IncomeEmploymentCardsSection
-        suburbId={report.suburbId}
+        //suburbId={report.suburbId}
         title="Income & Employment"
-        // suburbId={104}
+        suburbId={104}
         />
         <MetricCardsSection
           title="Lifestyle Accessibility"
