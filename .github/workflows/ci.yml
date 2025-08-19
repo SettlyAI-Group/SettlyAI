@@ -71,6 +71,8 @@ jobs:
         run: dotnet build backend.sln --no-restore --configuration Release
       - name: Test
         run: dotnet test backend.sln --no-build --configuration Release --logger trx
+      - name: Format
+        run: dotnet format --verify-no-changes
 
   frontend:
     name: frontend build-and-test
@@ -95,6 +97,8 @@ jobs:
       - run: pnpm install
       - run: pnpm build
       # - run: pnpm test -- --ci   # 有测试就打开
+      # - run: pnpm lint.         # fix完语法错打开
+      # - run: pnpm type-check
 
   gate:
     name: gate
