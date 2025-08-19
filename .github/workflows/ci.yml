@@ -1,0 +1,98 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [ main ]         # PR 一定触发
+  push:
+    branches: [ main ]         # 可选：合到 main 后也跑一遍
+
+jobs:
+  changes:
+    name: detect changes
+    runs-on: ubuntu-latest
+    outputs:
+      fe: ${{ steps.filter.outputs.fe }}
+      be: ${{ steps.filter.outputs.be }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            fe:
+              - 'frontend/**'
+            be:
+              - 'backend/**'
+
+  backend:
+    name: backend build-and-test
+    runs-on: ubuntu-latest
+    needs: changes
+    if: ${{ needs.changes.outputs.be == 'true' }}
+    defaults:
+      run:
+        working-directory: backend
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: testuser
+          POSTGRES_PASSWORD: testpass
+          POSTGRES_DB: testdb
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U testuser"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    env:
+      ConnectionStrings__DefaultConnection: Host=localhost;Port=5432;Database=testdb;User Id=testuser;Password=testpass
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Install dotnet-ef
+        run: dotnet tool install --global dotnet-ef
+      - name: Restore
+        run: dotnet restore backend.sln
+      - name: Build
+        run: dotnet build backend.sln --no-restore --configuration Release
+      - name: Test
+        run: dotnet test backend.sln --no-build --configuration Release --logger trx
+
+  frontend:
+    name: frontend build-and-test
+    runs-on: ubuntu-latest
+    needs: changes
+    if: ${{ needs.changes.outputs.fe == 'true' }}
+    concurrency:
+      group: pr-ci-${{ github.event.pull_request.number || github.run_id }}
+      cancel-in-progress: true
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: pnpm/action-setup@v4
+        with:
+          version: '9'
+          run_install: false
+      - run: pnpm install
+      - run: pnpm build
+      # - run: pnpm test -- --ci   # 有测试就打开
+
+  gate:
+    name: gate
+    runs-on: ubuntu-latest
+    needs: [backend, frontend]
+    if: ${{ always() }}         # 即使前面被 skip 或失败也会执行（用于作为唯一 Required 检查）
+    steps:
+      - run: echo "CI finished"
