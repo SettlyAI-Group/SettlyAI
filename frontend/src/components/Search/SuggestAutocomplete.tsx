@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Autocomplete, TextField, Box, Typography, InputAdornment } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import { useAppDispatch, useAppSelector } from '@/redux/store';
-import { setQuery } from '@/store/slices/exploreSlice';
+import { useAppDispatch, useAppSelector } from '../../redux/store';
+import { setQuery } from '../../store/slices/exploreSlice';
 
 import type { SuggestionList } from '@/interfaces/searchSuggestion';
 
