@@ -2,5 +2,5 @@ namespace SettlyModels.Dtos;
 
 public class RiskDevelopmentDto
 {
-    public decimal CrimeRate { get; set; }
+    public float CrimeRate { get; set; }
 }
