@@ -75,8 +75,8 @@ const MetricCardsSection = ({ title, data }: IMetricCardsSectionProps) => {
       <Typography variant="h4">{title}</Typography>
       {!isSmallScreen ? (
         <CardsGroupDesktop>
-          {data?.map((card, index) => (
-            <MetricCard key={index} {...card} />
+          {data?.map(card => (
+            <MetricCard key={card.title} {...card} />
           ))}
         </CardsGroupDesktop>
       ) : (
@@ -86,8 +86,8 @@ const MetricCardsSection = ({ title, data }: IMetricCardsSectionProps) => {
           slidesPerView="auto"
           navigation
         >
-          {data?.map((card, index) => (
-            <SwiperSlide style={{ width: '220px' }} key={index}>
+          {data?.map(card => (
+            <SwiperSlide style={{ width: '220px' }} key={card.title}>
               <MetricCard {...card} />
             </SwiperSlide>
           ))}
