@@ -34,7 +34,8 @@ namespace SettlyApi.Controllers
         [SwaggerResponse(200, "Successfully returned suburb income & employment data", typeof(IncomeEmploymentDto))]
         public async Task<ActionResult<IncomeEmploymentDto>> GetIncome(int id)
         {
-            return Ok();
+            var incomeEmploymentDto = await _suburbService.GetIncomeAsync(id);
+            return Ok(incomeEmploymentDto);
         }
 
         [HttpGet("market")]
