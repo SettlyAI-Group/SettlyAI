@@ -15,9 +15,10 @@ const formatSuggestList = (option: SuggestionList) => {
 const SuggestAutocomplete = () => {
   const dispatch = useAppDispatch();
   const { query } = useAppSelector(selector => selector.explore);
-
   const { suggestions, loading } = useAppSelector(selector => selector.searchSuggest);
   const [focused, setFocused] = useState(false);
+  const SUGGESTION_STORAGE_KEY = 'settly:selectedSuggestion';
+
   return (
     <Autocomplete
       sx={theme => ({
@@ -39,6 +40,11 @@ const SuggestAutocomplete = () => {
       open={focused && query.length >= 3 && suggestions.length > 0}
       inputValue={query}
       onInputChange={(_, value) => dispatch(setQuery(value))}
+      onChange={(_, option, reason) => {
+        if (reason !== 'selectOption' || !option || typeof option === 'string') return;
+        const label = formatSuggestList(option);
+        localStorage.setItem(SUGGESTION_STORAGE_KEY, JSON.stringify({ label, option }));
+      }}
       onOpen={() => setFocused(true)}
       onClose={() => setFocused(false)}
       slotProps={{
