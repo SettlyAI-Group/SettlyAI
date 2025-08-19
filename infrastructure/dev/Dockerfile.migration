@@ -1,0 +1,48 @@
+# Use the full SDK image for better compatibility
+FROM mcr.microsoft.com/dotnet/sdk:8.0
+
+# Install necessary packages
+RUN apt-get update && \
+    apt-get install -y postgresql-client && \
+    rm -rf /var/lib/apt/lists/*
+
+WORKDIR /src
+
+# Copy solution and project files first for better layer caching
+COPY backend.sln ./
+COPY SettlyApi/SettlyApi.csproj ./SettlyApi/
+COPY SettlyModels/SettlyModels.csproj ./SettlyModels/
+COPY SettlyService/SettlyService.csproj ./SettlyService/
+COPY ISettlyService/ISettlyService.csproj ./ISettlyService/
+COPY SettlyDbManager/SettlyDbManager.csproj ./SettlyDbManager/
+COPY SettlyApiTests/SettlyApiTests.csproj ./SettlyApiTests/
+
+# Restore packages
+RUN dotnet restore backend.sln
+
+# Install EF Core tools globally with specific version
+RUN dotnet tool install --global dotnet-ef --version 8.0.0
+
+# Add dotnet tools to PATH
+ENV PATH="$PATH:/root/.dotnet/tools"
+
+# Verify installation
+RUN dotnet tool list --global
+RUN dotnet-ef --version
+
+# Copy source files
+COPY SettlyApi/ ./SettlyApi/
+COPY SettlyModels/ ./SettlyModels/
+COPY SettlyService/ ./SettlyService/
+COPY ISettlyService/ ./ISettlyService/
+COPY SettlyDbManager/ ./SettlyDbManager/
+
+# Build the projects
+RUN dotnet build SettlyModels/SettlyModels.csproj -c Release --no-restore
+RUN dotnet build SettlyDbManager/SettlyDbManager.csproj -c Release --no-restore
+
+# Set working directory for migrations
+WORKDIR /src
+
+# Default command
+CMD ["sleep", "30"]

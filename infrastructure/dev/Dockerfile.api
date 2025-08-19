@@ -1,0 +1,51 @@
+# Multi-stage build for smaller production image
+FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS build
+
+WORKDIR /src
+
+# Copy solution and project files first for better layer caching
+COPY backend.sln ./
+COPY SettlyApi/SettlyApi.csproj ./SettlyApi/
+COPY SettlyModels/SettlyModels.csproj ./SettlyModels/
+COPY SettlyService/SettlyService.csproj ./SettlyService/
+COPY ISettlyService/ISettlyService.csproj ./ISettlyService/
+COPY SettlyDbManager/SettlyDbManager.csproj ./SettlyDbManager/
+COPY SettlyApiTests/SettlyApiTests.csproj ./SettlyApiTests/
+
+# Restore packages (this layer will be cached if project files don't change)
+RUN dotnet restore backend.sln
+
+# Copy only the source code (exclude tests, docs, etc.)
+COPY SettlyApi/ ./SettlyApi/
+COPY SettlyModels/ ./SettlyModels/
+COPY SettlyService/ ./SettlyService/
+COPY ISettlyService/ ./ISettlyService/
+COPY SettlyDbManager/ ./SettlyDbManager/
+
+# Build and publish the application
+RUN dotnet publish SettlyApi/SettlyApi.csproj -c Release -o /app/publish --no-restore --self-contained false
+
+# Final stage - runtime image
+FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine AS runtime
+
+# Install only necessary runtime dependencies
+RUN apk add --no-cache curl postgresql-client
+
+# Create non-root user for security
+RUN addgroup -g 1001 -S appgroup && \
+    adduser -S appuser -u 1001 -G appgroup
+
+WORKDIR /app
+
+# Copy only the published application
+COPY --from=build /app/publish .
+
+# Change ownership to non-root user
+RUN chown -R appuser:appgroup /app
+
+USER appuser
+
+EXPOSE 8080
+
+# Use exec form for better signal handling
+ENTRYPOINT ["dotnet", "SettlyApi.dll"]

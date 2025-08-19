@@ -1,0 +1,67 @@
+# Multi-stage build for smaller production image
+FROM node:22-alpine AS base
+RUN npm install -g pnpm@latest
+WORKDIR /app
+
+# Dependencies stage
+FROM base AS deps
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
+
+# Build stage
+FROM base AS build
+COPY package.json pnpm-lock.yaml ./
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+
+# Remove unnecessary files before build
+RUN rm -rf .git .gitignore README.md *.md
+
+# Build the application
+RUN pnpm run build
+
+# Development stage (for docker-compose dev environment)
+FROM base AS development
+RUN apk add --no-cache curl bash
+
+# Copy package files
+COPY package.json pnpm-lock.yaml ./
+
+# Install all dependencies (including dev dependencies for development)
+RUN pnpm install
+
+# Copy source code
+COPY . .
+
+# Create non-root user
+RUN addgroup -g 1001 -S nodegroup && \
+    adduser -S nodeuser -u 1001 -G nodegroup && \
+    chown -R nodeuser:nodegroup /app
+
+USER nodeuser
+
+EXPOSE 3000
+
+# Default command for development
+CMD ["pnpm", "run", "dev", "--host", "0.0.0.0", "--port", "3000"]
+
+# Production stage (smallest image)
+FROM nginx:alpine AS production
+RUN apk add --no-cache curl
+
+# Copy built application from build stage
+COPY --from=build /app/dist /usr/share/nginx/html
+
+# Copy custom nginx configuration if you have one
+# COPY nginx.conf /etc/nginx/nginx.conf
+
+# Create non-root user for nginx
+RUN addgroup -g 1001 -S nginxgroup && \
+    adduser -S nginxuser -u 1001 -G nginxgroup
+
+EXPOSE 80
+
+# Use nginx as non-root user (requires custom nginx.conf)
+# USER nginxuser
+
+CMD ["nginx", "-g", "daemon off;"]

@@ -1,0 +1,115 @@
+services:
+  postgres:
+    image: postgres:15-alpine  # Use alpine for smaller size
+    container_name: settly_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - settly_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - settly_network
+
+  settly-db-migration:
+    build:
+      context: ../../backend
+      dockerfile: ../infrastructure/dev/Dockerfile.migration
+    container_name: settly_db_migration
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      ASPNETCORE_ENVIRONMENT: Development
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - settly_network
+    volumes:
+      # Only mount the entrypoint script, not the entire backend directory
+      - ./migration-entrypoint.sh:/migration-entrypoint.sh:ro
+    command: ["bash", "/migration-entrypoint.sh"]
+
+  settly-api:
+    build:
+      context: ../../backend
+      dockerfile: ../infrastructure/dev/Dockerfile.api
+      target: runtime  # Use the runtime stage
+    container_name: settly_api
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      # Connection string as environment variable
+      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=${POSTGRES_DB};User Id=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};Include Error Detail=true"
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      settly-db-migration:
+        condition: service_completed_successfully
+    networks:
+      - settly_network
+    # Remove volume mount for production-like setup
+    # volumes:
+    #   - ../../backend:/app
+    #   - ./api-entrypoint.sh:/api-entrypoint.sh:ro
+    # For development with hot reload, you can uncomment the volumes above
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  settly-frontend:
+    build:
+      context: ../../frontend
+      dockerfile: ../infrastructure/dev/Dockerfile.frontend
+      target: development  # Use development stage for dev environment
+    container_name: settly_frontend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      VITE_API_URL: http://localhost:8080
+    ports:
+      - "3000:3000"
+    depends_on:
+      - settly-api
+    networks:
+      - settly_network
+    # For development with hot reload
+    volumes:
+      - ../../frontend:/app
+      - /app/node_modules  # Anonymous volume for node_modules
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+volumes:
+  settly_data:
+
+networks:
+  settly_network:
+    driver: bridge
