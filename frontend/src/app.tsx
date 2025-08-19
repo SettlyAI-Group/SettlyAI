@@ -16,7 +16,6 @@ const App = () => {
       <CssBaseline />
       <Routes>
         <Route path="/" element={<Layout />}>
-        <Route path="/" element={<Layout />}>
           <Route path="/theme" element={<ThemeDemo />} />
           <Route index element={<HomePage />} />
 
@@ -29,5 +28,5 @@ const App = () => {
     </ThemeProvider>
   );
 };
-    
+
 export default App;
