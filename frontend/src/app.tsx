@@ -3,7 +3,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import theme from './styles/theme';
 import ThemeDemo from '@/pages/ThemeDemo';
-import HomePage from '@/pages/HomePage/HomePage';
+import AltHomePage from '@/pages/HomePage/AltHomePage';
 import SuburbReportPage from './pages/SuburbReportPage';
 import Layout from './components/Layout/Layout';
 
@@ -14,7 +14,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route path="/theme" element={<ThemeDemo />} />
-          <Route index element={<HomePage />} />
+          <Route index element={<AltHomePage />} />
           <Route path="/suburb/:location" element={<SuburbReportPage />} />
         </Route>
       </Routes>
