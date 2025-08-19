@@ -1,5 +1,14 @@
+import { readSelectedSuggestion } from '@/utils/storage';
+
 const ExplorePage = () => {
-  return <div>The Explore Page is coming soon!</div>;
+  const savedData = readSelectedSuggestion();
+  const label = savedData?.label;
+  const selectedSuggestion = savedData?.option;
+  return (
+    <div>
+      <p>Selected Suggestion: {label}</p>
+    </div>
+  );
 };
 
 export default ExplorePage;
