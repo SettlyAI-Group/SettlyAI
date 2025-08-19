@@ -20,6 +20,14 @@ This solution consists of four main projects:
 - PostgreSQL database
 - Visual Studio, VS Code, or Rider (recommended)
 
+### Quick Setup using docker
+You can use the following command to start the bakend service using docker containers quickly (including conneting to postgres db, db-migration, db-seed)
+```bash
+ cd backend
+ docker compose build
+ docker compose up
+```
+
 ### Setup
 
 1. **Clone and restore packages**
@@ -172,8 +180,29 @@ Currently available endpoints:
    ```
 6. **Format**
 ```bash
-dotnet format
+      dotnet format
 ```
+7. **Swagger**
+- UI: http://localhost:5100/swagger/index.html
+- Anotations Examples
+  
+1. Add to controller file
+   ```csharp
+   using Swashbuckle.AspNetCore.Annotations;
+   ```
+2. Add Summary && description:
+   ```csharp
+   [SwaggerOperation( Summary = "Get property details", Description = "Returns the full PropertyDetailDto for a given property ID.")]
+   ```
+3. Add response
+   ```csharp
+   [SwaggerResponse(200, "Successfully returned property details", typeo(PropertyDetailDto))]
+   [SwaggerResponse(404, "Property not found")]
+   ```
+4. Add Parameter
+   ```csharp
+   public async Task<ActionResult<PropertyDetailDto>> GetPropertyDetail([SwaggerParameter("The unique ID of the property")] int id)
+   ```
 
 ## Architecture Notes
 

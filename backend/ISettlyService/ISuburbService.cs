@@ -10,5 +10,6 @@ namespace ISettlyService
         Task<PopulationSupplyDto?> GetDemandDevAsync(int id);
         Task<LivabilityDto?> GetLivabilityAsync(int id);
         Task<RiskDevelopmentDto?> GetSafetyAsync(int id);
+        Task<SuburbSnapshotDto> GetSnapshotAsync(int id);
     }
 }

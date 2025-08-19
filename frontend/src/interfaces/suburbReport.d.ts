@@ -3,7 +3,7 @@ export interface ISuburbReport {
   suburbId: number;
   postcode: string;
   state: string;
-  suburbName:string;
+  suburbName: string;
   incomeEmployment: {
     medianIncome: number;
     employmentRate: number;
@@ -31,18 +31,20 @@ export interface ISuburbReport {
     devProjectsCount: number;
     crimeRate: number;
   };
-  livability: {
-    distSupermarket: number;
-    distHospital: number;
-    transportScore: number;
-    primarySchoolRating: number;
-    secondarySchoolRating: number;
-    hospitalDensity: number;
-  };
+  livability: ILivability;
   settlyAIScore: {
     affordabilityScore: number;
     growthPotentialScore: number;
   };
   createdAt: string;
   updatedAt: string;
+}
+
+export interface ILivability {
+  transportScore: number;
+  supermarketQuantity: number;
+  hospitalQuantity: number;
+  primarySchoolRating: number;
+  secondarySchoolRating: number;
+  hospitalDensity: number;
 }
