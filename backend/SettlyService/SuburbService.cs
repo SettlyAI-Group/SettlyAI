@@ -54,7 +54,14 @@ namespace SettlyService
 
         public async Task<IncomeEmploymentDto?> GetIncomeAsync(int id)
         {
-            throw new NotImplementedException();
+            var incomeEmploymentData = await _context.IncomeEmployments
+                .Where(i => i.SuburbId == id)
+                .OrderByDescending(i => i.SnapshotDate)
+                .FirstOrDefaultAsync();
+
+            if (incomeEmploymentData == null)
+                throw new Exception("No income employment data found.");
+            return _mapper.Map<IncomeEmploymentDto>(incomeEmploymentData);
         }
 
         public async Task<HousingMarketDto?> GetMarketAsync(int id)
@@ -76,7 +83,6 @@ namespace SettlyService
                 //TODO:Change to global error handling middleware once it's done
                 throw new KeyNotFoundException($"Livability not found.");
             return _mapper.Map<LivabilityDto>(lifeStyle);
-
         }
 
         public async Task<RiskDevelopmentDto?> GetSafetyAsync(int id)
@@ -84,5 +90,23 @@ namespace SettlyService
             throw new NotImplementedException();
         }
 
+        public async Task<SuburbSnapshotDto> GetSnapshotAsync(int id)
+        {
+            var suburb = await _context.Suburbs.FindAsync(id);
+            if (suburb == null)
+                throw new NotImplementedException($"No Snapshot found for suburb id {id}.");
+            var housingMarket = await _context.HousingMarkets.AsNoTracking().Where(l => l.SuburbId == id).OrderByDescending(l => l.SnapshotDate).FirstOrDefaultAsync();
+            var now = DateTime.UtcNow;
+            var snapshot = new SuburbSnapshotDto
+            {
+                Id = $"{suburb.Id}_{now:yyyyMMdd}",
+                State = suburb.State,
+                Postcode = suburb.Postcode,
+                SuburbName = suburb.Name,
+                MedianPrice = housingMarket?.MedianPrice,
+                VacancyRatePct = housingMarket?.VacancyRate,
+            };
+            return snapshot;
+        }
     }
 }

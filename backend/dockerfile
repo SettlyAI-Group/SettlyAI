@@ -1,0 +1,26 @@
+FROM mcr.microsoft.com/dotnet/sdk:8.0
+
+WORKDIR /app
+
+COPY backend.sln ./
+COPY SettlyApi/SettlyApi.csproj SettlyApi/
+COPY SettlyModels/SettlyModels.csproj SettlyModels/
+COPY SettlyDbManager/SettlyDbManager.csproj SettlyDbManager/
+COPY ISettlyService/ISettlyService.csproj ISettlyService/
+COPY SettlyService/SettlyService.csproj SettlyService/
+COPY SettlyApiTests/SettlyApiTests.csproj SettlyApiTests/
+
+RUN dotnet restore
+
+RUN dotnet tool install --global dotnet-ef
+ENV PATH="$PATH:/root/.dotnet/tools"
+
+COPY . .
+
+ENV ASPNETCORE_ENVIRONMENT=Development
+ENV ASPNETCORE_URLS=http://+:5100
+
+EXPOSE 5100
+
+WORKDIR /app/SettlyApi
+CMD ["dotnet", "run"]

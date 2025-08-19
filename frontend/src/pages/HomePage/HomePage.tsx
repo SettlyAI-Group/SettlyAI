@@ -15,12 +15,11 @@ const HomePage = () => {
   const sydney = { suburbName: 'Sydney', state: 'NSW', suburbId: 2 };
 
   const checkSuburb = (suburb: Suburb) => {
-    const { suburbName, state, suburbId } = suburb;
+    const { suburbId } = suburb;
 
     localStorage.setItem('suburbId', suburbId.toString());
 
-    const encodedLocation = `${state}+${suburbName}`;
-    navigate(`/suburb/${encodedLocation}`, { state: { suburbId } });
+    navigate(`/suburb/1`);
   };
 
   return (
