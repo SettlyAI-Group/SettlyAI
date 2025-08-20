@@ -1,6 +1,5 @@
 import { Button as MuiButton, styled } from '@mui/material';
 import type { ButtonProps as MuiButtonProps } from '@mui/material/Button';
-import shadows from 'node_modules/@mui/material/esm/styles/shadows';
 
 export interface GlobalButtonProps extends Omit<MuiButtonProps, 'size'> {
   width?: '100' | '180' | '240' | 'full';
