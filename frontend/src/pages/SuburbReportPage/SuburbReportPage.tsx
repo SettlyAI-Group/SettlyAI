@@ -5,18 +5,13 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import MetricCardsSection from './components/MetricCardsSection';
 import { useQueries } from '@tanstack/react-query';
-import { getSuburbLivability } from '@/api/suburbApi';
-<<<<<<< HEAD
->>>>>>> bbe4021 (setup react query)
-||||||| parent of f480937 (updating datamapper)
-=======
+import { getSuburbLivability, getDemandAndDev } from '@/api/suburbApi';
 import { Navigate, useParams } from 'react-router-dom';
-import { getDemandAndDev } from '@/api/suburbApi';
 import {
   mapDevCardData,
   mapLivability,
 } from './components/MetricCardsSection/utils/dataMapper';
->>>>>>> 0a25621 (finish utils took)
+import GlobalButton from '@/components/Button/GlobalButton';
 
 const PageContainer = styled(Box)(({ theme }) => ({
   maxWidth: '1440px',

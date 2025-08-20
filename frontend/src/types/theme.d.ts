@@ -21,6 +21,14 @@ declare module '@mui/material/styles' {
   interface TypeTextOptions {
     cardHint?: string;
   }
+
+  interface Palette {
+    black: Palette['primary'];
+  }
+
+  interface PaletteOptions {
+    black?: PaletteOptions['primary'];
+  }
 }
 
 declare module '@mui/material/Typography' {
@@ -29,5 +37,17 @@ declare module '@mui/material/Typography' {
     cardValue: true;
     p1: true;
     p2: true;
+  }
+}
+
+declare module '@mui/material/Button' {
+  interface ButtonPropsColorOverrides {
+    black: true;
+  }
+}
+
+declare module '@mui/material' {
+  interface ButtonPropsColorOverrides {
+    black: true;
   }
 }

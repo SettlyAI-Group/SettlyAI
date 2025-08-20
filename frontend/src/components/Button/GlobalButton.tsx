@@ -1,5 +1,6 @@
-import { Button as MuiButton, styled, Typography } from '@mui/material';
+import { Button as MuiButton, styled } from '@mui/material';
 import type { ButtonProps as MuiButtonProps } from '@mui/material/Button';
+import shadows from 'node_modules/@mui/material/esm/styles/shadows';
 
 export interface GlobalButtonProps extends Omit<MuiButtonProps, 'size'> {
   width?: '100' | '180' | '240' | 'full';
@@ -7,35 +8,40 @@ export interface GlobalButtonProps extends Omit<MuiButtonProps, 'size'> {
 }
 
 interface StyledButtonProps {
-  width?: '100' | '180' | '240' | 'full';
-  height?: '40' | '50';
+  customWidth?: '100' | '180' | '240' | 'full';
+  customHeight?: '40' | '50';
 }
 
-const StyledButton = styled(MuiButton)<StyledButtonProps>(({
-  theme,
-  width,
-  height,
-}) => {
-  return {
-    width: width === 'full' ? '100%' : `${width}px`,
-    height: `${height}px`,
+const StyledButton = styled(MuiButton)<StyledButtonProps>(
+  ({ theme, customWidth = '180', customHeight = '40' }) => ({
+    width: customWidth === 'full' ? '100%' : `${customWidth}px`,
+    height: `${customHeight}px`,
+    textTransform: 'none',
+    fontSize: '16px',
+    fontWeight: 400,
     borderRadius: '8px',
-    fontWeight: 500,
-    fontSize: '14px',
-    fontFamily: theme.typography.fontFamily,
-  };
-});
+    padding: '0px',
+
+    '&.MuiButton-contained': {
+      color: theme.palette.common.white,
+    },
+  })
+);
 
 const GlobalButton = ({
   children,
   width = '180',
   height = '40',
-  variant = 'contained',
   ...props
 }: GlobalButtonProps) => {
   return (
-    <StyledButton width={width} height={height} variant={variant} {...props}>
-      <Typography variant="body1">{children}</Typography>
+    <StyledButton
+      customWidth={width}
+      customHeight={height}
+      disableElevation
+      {...props}
+    >
+      {children}
     </StyledButton>
   );
 };
