@@ -48,6 +48,8 @@ public class Program
         builder.Services.AddScoped<IFavouriteService, FavouriteService>();
         builder.Services.AddTransient<IPopulationSupplyService, PopulationSupplyService>();
 
+        builder.Services.AddScoped<ITestimonialService, TestimonialService>();
+
         //Add Swagger
         builder.Services.AddSwaggerGen(options =>
         {
