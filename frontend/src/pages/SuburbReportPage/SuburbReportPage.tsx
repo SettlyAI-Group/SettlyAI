@@ -1,5 +1,4 @@
 import ActionButtonWrapper from '@/pages/SuburbReportPage/components/ActionButtonGroup/ActionButtonWrapper';
-import BannerWrapper from '@/pages/SuburbReportPage/components/Banner/BannerWrapper';
 import { Box, Button, styled, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,6 +10,7 @@ import {
   mapDevCardData,
   mapLivability,
 } from './components/MetricCardsSection/utils/dataMapper';
+import Banner from './components/Banner';
 
 const PageContainer = styled(Box)(({ theme }) => ({
   maxWidth: '1440px',
@@ -87,43 +87,39 @@ const SuburbReportPage = () => {
 
   return (
     <PageContainer>
-      {/* todo: replace with real banner content */}
-      <BannerWrapper>
-        <Typography variant="h3" fontWeight={700}>
-          Welcome to xxx
-        </Typography>
-      </BannerWrapper>
-      {/* todo: update loading UI */}
-      {allLoading ? (
-        <div
-          style={{
-            textAlign: 'center',
-            padding: '50px',
-            height: '100vh',
-            paddingTop: '30%',
-          }}
-        >
-          <Typography variant="h4">Loading all data...</Typography>
-        </div>
-      ) : (
-        <ContentContainer>
-          <MetricCardsSection
-            title={TITLES.demandDevelopment}
-            data={formattedData.demand}
-          />
+      <Banner />
+      <ContentContainer>
+        {allLoading ? (
+          <div
+            style={{
+              textAlign: 'center',
+              padding: '50px',
+              height: '100vh',
+              paddingTop: '30%',
+            }}
+          >
+            <Typography variant="h4">Loading all data...</Typography>
+          </div>
+        ) : (
+          <>
+            <MetricCardsSection
+              title={TITLES.demandDevelopment}
+              data={formattedData.demand}
+            />
 
-          <MetricCardsSection
-            title={TITLES.lifeStyle}
-            data={formattedData.livability}
-          />
+            <MetricCardsSection
+              title={TITLES.lifeStyle}
+              data={formattedData.livability}
+            />
 
-          {/* todo:  replace with real action buttons , feel free to modify*/}
-          <ActionButtonWrapper>
-            <Button>save this suburb</Button>
-            <Button>Export PDF</Button>
-          </ActionButtonWrapper>
-        </ContentContainer>
-      )}
+            {/* todo:  replace with real action buttons , feel free to modify*/}
+            <ActionButtonWrapper>
+              <Button>save this suburb</Button>
+              <Button>Export PDF</Button>
+            </ActionButtonWrapper>
+          </>
+        )}
+      </ContentContainer>
     </PageContainer>
   );
 };
