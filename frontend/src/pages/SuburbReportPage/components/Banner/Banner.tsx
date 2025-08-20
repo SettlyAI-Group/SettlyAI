@@ -1,17 +1,16 @@
-import { Box, Button, Typography, styled } from '@mui/material';
+import { Box, Typography, styled } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
 import GlobalButton from '@/components/Button/GlobalButton';
+import street from './assets/street.jpg';
 
 const BannerContainer = styled(Box)(({ theme }) => ({
   position: 'relative',
   width: '100%',
   height: '400px',
-  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-  backgroundImage: `
-    linear-gradient(rgba(102, 126, 234, 0.8), rgba(118, 75, 162, 0.8)),
-    url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="cityscape" patternUnits="userSpaceOnUse" width="20" height="20"><rect width="20" height="20" fill="%23ffffff" opacity="0.05"/><rect x="2" y="8" width="3" height="12" fill="%23ffffff" opacity="0.1"/><rect x="6" y="5" width="3" height="15" fill="%23ffffff" opacity="0.1"/><rect x="10" y="10" width="3" height="10" fill="%23ffffff" opacity="0.1"/><rect x="14" y="3" width="3" height="17" fill="%23ffffff" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23cityscape)"/></svg>')
-  `,
+  backgroundImage: ` linear-gradient(to right,${theme.palette.primary.light}, ${theme.palette.primary.light}), url(${street})`,
+  backgroundSize: 'cover',
+  backgroundPosition: 'center',
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
@@ -24,7 +23,6 @@ const ContentContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   gap: theme.spacing(4),
-  border: '1px solid red',
 }));
 
 const BackButton = styled(GlobalButton)(({ theme }) => ({
@@ -33,9 +31,26 @@ const BackButton = styled(GlobalButton)(({ theme }) => ({
   left: theme.spacing(4),
 }));
 
-const MainTitle = styled(Typography)(({ theme }) => ({}));
+const MainTitle = styled(Typography)(({ theme }) => ({
+  [theme.breakpoints.down('md')]: {
+    fontSize: theme.typography.h3.fontSize,
+    lineHeight: theme.typography.h3.lineHeight,
+  },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: theme.typography.h4.fontSize,
+    lineHeight: theme.typography.h4.lineHeight,
+  },
+}));
 
-const SubTitle = styled(Typography)(({ theme }) => ({}));
+// Responsive subtitle
+const Subtitle = styled(Typography)(({ theme }) => ({
+  [theme.breakpoints.down('md')]: {
+    fontSize: theme.typography.subtitle1.fontSize,
+  },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: theme.typography.p1.fontSize,
+  },
+}));
 
 const SearchPlaceholder = styled(Box)(() => ({
   width: '100%',
@@ -76,7 +91,6 @@ const Banner = ({ suburb, state, postcode }: BannerProps) => {
         width="100"
         startIcon={<ArrowBackIcon />}
         onClick={handleBack}
-        color="white"
       >
         Back
       </BackButton>
@@ -84,10 +98,10 @@ const Banner = ({ suburb, state, postcode }: BannerProps) => {
       <ContentContainer>
         <MainTitle variant="h1">{displayTitle}</MainTitle>
 
-        <SubTitle variant="body2">
+        <Subtitle variant="body2">
           Smart data to help you decide — from affordability to growth to
           lifestyle.
-        </SubTitle>
+        </Subtitle>
 
         <SearchPlaceholder>
           <Typography
