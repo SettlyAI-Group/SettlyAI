@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using SettlyModels.Dtos;
 using ISettlyService;
 
 namespace SettlyApi.Controllers
@@ -15,9 +16,9 @@ namespace SettlyApi.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetTestimonials()
+        public async Task<ActionResult<IEnumerable<TestimonialDto>>> GetTestimonials()
         {
-            var testimonials = _testimonialService.GetTestimonials();
+            var testimonials = await _testimonialService.GetTestimonialsAsync();
             return Ok(testimonials);
         }
     }

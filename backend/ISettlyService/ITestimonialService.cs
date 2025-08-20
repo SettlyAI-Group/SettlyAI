@@ -4,6 +4,6 @@ namespace ISettlyService
 {
     public interface ITestimonialService
     {
-        IEnumerable<TestimonialDto> GetTestimonials();
+        Task<IEnumerable<TestimonialDto>> GetTestimonialsAsync();
     }
 }

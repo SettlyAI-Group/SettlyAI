@@ -6,9 +6,9 @@ namespace SettlyService
 {
     public class TestimonialService : ITestimonialService
     {
-        public IEnumerable<TestimonialDto> GetTestimonials()
+        public async Task<IEnumerable<TestimonialDto>> GetTestimonialsAsync()
         {
-            return new List<TestimonialDto>
+            return await Task.FromResult(new List<TestimonialDto>
             {
                 new TestimonialDto
                 {
@@ -31,7 +31,7 @@ namespace SettlyService
                     AvatarUrl = "/static/images/avatar/1.jpg",
                     Quote = "I saved so much time with SettlyAI’s insights."
                 }
-            };
+            });
         }
     }
 }
