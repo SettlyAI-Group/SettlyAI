@@ -94,6 +94,7 @@ const Banner = ({ suburb, state, postcode }: BannerProps) => {
         width="100"
         startIcon={<ArrowBackIcon />}
         onClick={handleBack}
+        color="white"
       >
         Back
       </BackButton>
