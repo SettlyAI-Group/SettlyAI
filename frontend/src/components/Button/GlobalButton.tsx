@@ -16,11 +16,10 @@ const StyledButton = styled(MuiButton)<StyledButtonProps>(
     width: customWidth === 'full' ? '100%' : `${customWidth}px`,
     height: `${customHeight}px`,
     textTransform: 'none',
-    fontSize: '16px',
-    fontWeight: 400,
-    borderRadius: '8px',
-    padding: '0px',
-
+    fontSize: theme.typography.body2.fontSize,
+    fontWeight: theme.typography.body2.fontWeight,
+    borderRadius: theme.shape.borderRadius,
+    padding: theme.spacing(0),
     '&.MuiButton-contained': {
       color: theme.palette.common.white,
     },
