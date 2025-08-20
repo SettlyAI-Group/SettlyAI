@@ -57,7 +57,7 @@ const RegistrationFormContainer = styled(Box)<
 const CreateAccountButton = styled(Button)(({ theme }) => ({
   ...theme.typography.body2,
   textTransform: 'none',
-  color: '#fff',
+  color: theme.palette.common.white,
 }));
 
 const TextButton = styled('button')(({ theme }) => ({

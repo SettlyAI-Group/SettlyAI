@@ -1,8 +1,9 @@
-import styled from '@emotion/styled';
-import { Container } from '@mui/material';
+import { Container, styled } from '@mui/material';
 
-export const FormPageContainer = styled(Container)({
+export const FormPageContainer = styled(Container)(({ theme }) => ({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-});
+  flexDirection: 'column',
+  gap: theme.spacing(21),
+}));
