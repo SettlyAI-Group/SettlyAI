@@ -15,7 +15,7 @@ const BannerContainer = styled(Box)(({ theme }) => ({
   justifyContent: 'center',
   alignItems: 'center',
   color: theme.palette.common.white,
-  padding: theme.spacing(4),
+  padding: theme.spacing(6),
 }));
 
 const ContentContainer = styled(Box)(({ theme }) => ({
@@ -29,6 +29,9 @@ const BackButton = styled(GlobalButton)(({ theme }) => ({
   position: 'absolute',
   top: theme.spacing(8),
   left: theme.spacing(4),
+  [theme.breakpoints.down('md')]: {
+    display: 'none',
+  },
 }));
 
 const MainTitle = styled(Typography)(({ theme }) => ({
@@ -94,22 +97,14 @@ const Banner = ({ suburb, state, postcode }: BannerProps) => {
       >
         Back
       </BackButton>
-
       <ContentContainer>
         <MainTitle variant="h1">{displayTitle}</MainTitle>
-
         <Subtitle variant="body2">
           Smart data to help you decide — from affordability to growth to
           lifestyle.
         </Subtitle>
-
         <SearchPlaceholder>
-          <Typography
-            variant="body2"
-            sx={{ color: 'rgba(255, 255, 255, 0.7)' }}
-          >
-            Search section placeholder
-          </Typography>
+          <Typography variant="body2">Search section placeholder</Typography>
         </SearchPlaceholder>
       </ContentContainer>
     </BannerContainer>
