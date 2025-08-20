@@ -1,6 +1,7 @@
 import { Box, Button, Typography, styled } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
+import GlobalButton from '@/components/Button/GlobalButton';
 
 const BannerContainer = styled(Box)(({ theme }) => ({
   position: 'relative',
@@ -26,11 +27,10 @@ const ContentContainer = styled(Box)(({ theme }) => ({
   border: '1px solid red',
 }));
 
-const BackButton = styled(Button)(({ theme }) => ({
+const BackButton = styled(GlobalButton)(({ theme }) => ({
   position: 'absolute',
   top: theme.spacing(8),
   left: theme.spacing(4),
-  backgroundColor: 'rgba(255, 255, 255, 0.9)',
 }));
 
 const MainTitle = styled(Typography)(({ theme }) => ({}));
@@ -71,7 +71,13 @@ const Banner = ({ suburb, state, postcode }: BannerProps) => {
 
   return (
     <BannerContainer>
-      <BackButton startIcon={<ArrowBackIcon />} onClick={handleBack}>
+      <BackButton
+        variant="contained"
+        width="100"
+        startIcon={<ArrowBackIcon />}
+        onClick={handleBack}
+        color="white"
+      >
         Back
       </BackButton>
 
