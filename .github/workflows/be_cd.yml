@@ -37,7 +37,29 @@ jobs:
 
           echo "Found EC2 instance ID: $INSTANCE_ID"
           echo "INSTANCE_ID=$INSTANCE_ID" >> $GITHUB_ENV
+      - name: Wait for SSM registration
+        run: |
+          echo "Waiting for EC2 to register with SSM..."
+          for i in {1..10}; do
+            MATCHED=$(aws ssm describe-instance-information \
+              --region $AWS_REGION \
+              --query "InstanceInformationList[?InstanceId=='$INSTANCE_ID']" \
+              --output text)
 
+            if [ -n "$MATCHED" ]; then
+              echo "✅ EC2 instance registered with SSM!"
+              break
+            fi
+
+            echo "⏳ Not yet registered... retry in 5 seconds"
+            sleep 5
+          done
+
+          # Fail if not registered after waiting
+          if [ -z "$MATCHED" ]; then
+            echo "❌ EC2 instance did not register with SSM in time."
+            exit 1
+          fi
       - name: Deploy container via SSM
         run: |
           aws ssm send-command \
