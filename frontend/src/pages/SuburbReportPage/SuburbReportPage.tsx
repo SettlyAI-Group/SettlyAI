@@ -87,7 +87,7 @@ const SuburbReportPage = () => {
 
   return (
     <PageContainer>
-      <Banner />
+      <Banner suburb="Point Cook" postcode="3030" state="VIC" />
       <ContentContainer>
         {allLoading ? (
           <div
