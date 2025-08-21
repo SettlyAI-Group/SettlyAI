@@ -172,8 +172,9 @@ vi.mock('@tanstack/react-query', () => ({
 - [x] RegistrationIntro.test.tsx (6/6) ✅
 - [ ] RegistrationForm.test.tsx (0/25)
 - [x] PasswordStrength.test.tsx (37/37) ✅
+- [x] FormInput.test.tsx (27/27) ✅
 
-### 总体进度: 43/73 (58.9%)
+### 总体进度: 70/100 (70.0%)
 
 ## 测试运行命令
 
@@ -194,31 +195,26 @@ npm run test RegistrationPage
 ## 测试设计原则
 
 ### 1. 渲染测试（Rendering）
-- **组件初始渲染**: 确认组件能正常渲染，DOM 结构正确
+- **快照测试**: 确认组件初始渲染的结构和样式没有意外变化
 - **必填 props**: 传入最小必要 props 时是否能正常渲染  
-- **不同 props 场景**: 不同属性值下的渲染表现
-- **条件渲染**: 不同状态下（loading、error、空数据）的 UI 展示
+- **不同 props 场景**: 例如按钮的 disabled、loading、variant 等不同值下的渲染
+- **条件渲染**: 组件在不同条件下（如空数据、loading、error 状态）渲染正确的 UI
 
 ### 2. 交互行为测试（Interaction）
-- **事件触发**: 按钮点击、输入框输入、表单提交等用户操作
-- **状态更新**: 交互后组件状态和 UI 是否正确更新
-- **回调函数**: 事件处理函数是否被正确调用
-- **导航行为**: 路由跳转是否正确触发
+- **事件触发**: 按钮点击、输入框输入、复选框切换、表单提交等
+- **状态更新**: 交互后组件内部 state 是否变化，UI 是否更新
+- **回调函数调用**: 点击按钮是否调用了 onClick，输入是否触发了 onChange
 
 ### 3. 边界情况（Edge Cases）
-- **空数据处理**: null、undefined、空字符串、空数组
-- **异常输入**: 超长文本、特殊字符、无效格式
-- **错误状态**: 网络错误、验证失败等异常情况
+- **空数据处理**: 只测试 null、undefined、空字符串
+- **超长文本、特殊字符**
+- **错误输入**: 例如必填表单未填
 
-### 4. 可访问性（Accessibility）
-- **语义化标签**: 正确的 HTML 元素和 ARIA 属性
-- **键盘导航**: Tab、Enter、Space 键的交互支持
-- **屏幕阅读器**: 合理的标签和描述文本
-
-### 5. 集成与上下文
-- **外部依赖**: Redux store、Context Provider、API 调用
-- **组件协作**: 父子组件间的数据传递和事件通信
-- **路由集成**: React Router 的导航和参数传递
+### 4. 不测试的内容
+- **可访问性（Accessibility）**: 不测试 ARIA 属性、键盘导航、屏幕阅读器支持
+- **Props Forwarding**: 不测试属性传递给子组件的功能
+- **Input Types**: 不测试不同 input type 的基础功能
+- **组件样式**: 不测试 CSS 样式和视觉呈现
 
 ## 注意事项
 
@@ -257,3 +253,4 @@ npm run test RegistrationPage
 - **2025-08-21**: RegistrationIntro.test.tsx 完成 (6/6 测试通过)
 - **2025-08-21**: 优化 Vitest 配置，移除 Storybook 测试依赖
 - **2025-08-21**: PasswordStrength.test.tsx 完成 (37/37 测试通过) - 包含纯函数测试和组件渲染测试
+- **2025-08-21**: FormInput.test.tsx 完成 (27/27 测试通过) - React Hook Form 集成、验证规则、用户交互测试
