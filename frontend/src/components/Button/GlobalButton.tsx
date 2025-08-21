@@ -13,7 +13,9 @@ interface StyledButtonProps {
   textColor?: 'default' | 'white' | 'black';
 }
 
-const StyledButton = styled(MuiButton)<StyledButtonProps>(
+const StyledButton = styled(MuiButton, {
+  shouldForwardProp: prop => prop !== 'customWidth' && prop !== 'customHeight',
+})<StyledButtonProps>(
   ({ theme, customWidth = '180', customHeight = '40' }) => ({
     width: customWidth === 'full' ? '100%' : `${customWidth}px`,
     height: `${customHeight}px`,

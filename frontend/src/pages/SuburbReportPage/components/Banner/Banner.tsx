@@ -51,7 +51,7 @@ const Subtitle = styled(Typography)(({ theme }) => ({
     fontSize: theme.typography.subtitle1.fontSize,
   },
   [theme.breakpoints.down('sm')]: {
-    fontSize: theme.typography.p1.fontSize,
+    fontSize: theme.typography.p1,
   },
 }));
 
