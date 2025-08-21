@@ -14,6 +14,7 @@ namespace SettlyService.Mapping
             CreateMap<PopulationSupply, PopulationSupplyDto>();
             CreateMap<RiskDevelopment, RiskDevelopmentDto>();
             CreateMap<SettlyAIScore, SettlyAIScoreDto>();
+            CreateMap<Suburb, SuburbDto>();
         }
     }
 }
