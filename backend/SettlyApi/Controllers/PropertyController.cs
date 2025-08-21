@@ -8,14 +8,14 @@ namespace SettlyApi.Controllers
 
 {
     [ApiController]
-    [Route("api/properties")]
+    [Route("api/[controller]")]
     public class PropertyController : ControllerBase
     {
-        private readonly IPropertyDetailService _propertyDetailService;
+        private readonly IPropertyService _propertyService;
 
-        public PropertyController(IPropertyDetailService propertyDetailService)
+        public PropertyController(IPropertyService propertyService)
         {
-            _propertyDetailService = propertyDetailService;
+            _propertyService = propertyService;
 
         }
 
@@ -28,11 +28,16 @@ namespace SettlyApi.Controllers
         [SwaggerResponse(404, "Property not found")]
         public async Task<ActionResult<PropertyDetailDto>> GetPropertyDetail([SwaggerParameter("The unique ID of the property")] int id)
         {
+            var result = await _propertyService.GeneratePropertyDetailAsync(id);
 
-            var report = await _propertyDetailService.GeneratePropertyDetailAsync(id);
+            return Ok(result);
+        }
 
-            return Ok(report);
-
+        [HttpGet("{id}/similar")]
+        public async Task<ActionResult<List<PropertyRecommendationDto>>>GetPropertyRecommendation(int id)
+        {
+            var result = await _propertyService.GetSimilarPropertiesAsync(id);
+            return Ok(result);
         }
     }
 }

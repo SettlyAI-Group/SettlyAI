@@ -73,6 +73,19 @@ jobs:
         run: dotnet test backend.sln --no-build --configuration Release --logger trx
       # - name: Format
       #   run: dotnet format --verify-no-changes
+      - name: Configure AWS (OIDC)
+        if: ${{ secrets.AWS_ROLE_ARN != '' }}
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ap-southeast-2
+      - name: Login to Amazon ECR
+        run: aws ecr get-login-password --region ap-southeast-2 | \
+            docker login --username AWS --password-stdin ${{ secrets.ECR_REGISTRY }}
+      - name: Build, Tag, and Push Docker Image
+        run: |
+          docker build -t ${{ secrets.ECR_REGISTRY }}:latest .
+          docker push ${{ secrets.ECR_REGISTRY }}:latest
 
   frontend:
     name: frontend build-and-test

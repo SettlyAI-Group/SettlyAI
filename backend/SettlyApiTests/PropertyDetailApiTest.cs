@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore; 
 using System.Collections.Generic;
 
-public class PropertyDetailServiceTests
+public class PropertyDetailApiTests
 {
     private readonly IMapper _mapper;
 
-    public PropertyDetailServiceTests()
+    public PropertyDetailApiTests()
     {
         var config = new MapperConfiguration(cfg =>
         {
@@ -58,7 +58,7 @@ public class PropertyDetailServiceTests
         };
 
         var context = GetDbContextMock(new List<Property> { property });
-        var service = new PropertyDetailService(context, _mapper);
+        var service = new PropertyService(context, _mapper);
 
         // Act
         var result = await service.GeneratePropertyDetailAsync(1);
@@ -76,7 +76,7 @@ public class PropertyDetailServiceTests
     {
         // Arrange
         var context = GetDbContextMock(new List<Property>());
-        var service = new PropertyDetailService(context, _mapper);
+        var service = new PropertyService(context, _mapper);
 
         // Act & Assert
         await Assert.ThrowsAsync<KeyNotFoundException>(() => service.GeneratePropertyDetailAsync(999));

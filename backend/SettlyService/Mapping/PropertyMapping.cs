@@ -4,9 +4,9 @@ using SettlyModels.Entities;
 
 namespace SettlyService.Mapping
 {
-    public class PropertyDetailMappingProfile : Profile
+    public class PropertyMappingProfile : Profile
     {
-        public PropertyDetailMappingProfile()
+        public PropertyMappingProfile()
         {
             CreateMap<Property, PropertyDetailDto>()
             .AfterMap((src, dest) =>
@@ -14,6 +14,7 @@ namespace SettlyService.Mapping
                 dest.CreatedAt = DateTime.UtcNow;
                 dest.UpdatedAt = DateTime.UtcNow;
             });
+            CreateMap<Property, PropertyRecommendationDto>();
         }
     }
 }
