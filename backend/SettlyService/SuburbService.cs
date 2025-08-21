@@ -33,7 +33,7 @@ namespace SettlyService
 
         public async Task<HousingMarketDto?> GetHousingMarketAsync(int id)
         {
-            var housingMarket = await _context.HousingMarkets
+            var housingMarket = await context.HousingMarkets
             .AsNoTracking()
             .Where(hm => hm.SuburbId == id)
             .OrderByDescending(hm => hm.SnapshotDate)
@@ -41,7 +41,7 @@ namespace SettlyService
             if (housingMarket == null)
                 //TODO:Change to global error handling middleware once it's done
                 throw new KeyNotFoundException($"Housing market not found.");
-            return _mapper.Map<HousingMarketDto>(housingMarket);
+            return mapper.Map<HousingMarketDto>(housingMarket);
         }
 
         public async Task<PopulationSupplyDto?> GetDemandDevAsync(int id)
