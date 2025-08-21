@@ -7,9 +7,7 @@ using SettlyApi.Configuration;
 using SettlyService;
 using System.Reflection;
 using Microsoft.AspNetCore.Builder;
-
 namespace SettlyApi;
-
 public class Program
 {
     public static void Main(string[] args)
@@ -25,21 +23,15 @@ public class Program
                 .EnableSensitiveDataLogging()
                 .EnableDetailedErrors()
         );
-
         // Add CORS services
         builder.Services.AddCorsPolicies();
-
         // Add application services
         builder.Services.AddScoped<IUserService, UserService>();
         builder.Services.AddScoped<IEmailSender, StubEmailSender>();
         builder.Services.AddScoped<IVerificationCodeService, VerificationCodeService>();
         builder.Services.AddScoped<IAuthService, AuthService>();
-
-
-
         //Register ISearchApi with SearchApiService
         builder.Services.AddScoped<ISettlyService.ISearchService, SettlyService.SearchService>();
-
         // Add services to the container.
         builder.Services.AddControllers();
         builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -47,7 +39,6 @@ public class Program
         builder.Services.AddScoped<IPropertyService, PropertyService>();
         builder.Services.AddScoped<IFavouriteService, FavouriteService>();
         builder.Services.AddTransient<IPopulationSupplyService, PopulationSupplyService>();
-
         //Add Swagger
         builder.Services.AddSwaggerGen(options =>
         {
@@ -60,7 +51,6 @@ public class Program
             });
             options.EnableAnnotations();
         });
-
         var app = builder.Build();
         // use Swagger
         if (app.Environment.IsDevelopment())
@@ -71,13 +61,11 @@ public class Program
                 option.SwaggerEndpoint($"/swagger/SettlyService/swagger.json", "SettlyService");
             });
         }
-
         // Configure the HTTP request pipeline.
         app.UseRouting();
         app.UseCors("AllowAll");
         app.UseAuthorization();
         app.MapControllers();
-
         Console.WriteLine("Starting SettlyAI API server...");
         app.Run();
     }
