@@ -99,9 +99,9 @@ const SuburbReportPage = () => {
   return (
     <PageContainer>
       <Banner
-        suburb={formattedData.suburbBasicInfo?.name}
-        postcode={formattedData.suburbBasicInfo?.postcode}
-        state={formattedData.suburbBasicInfo?.state}
+      // suburb={formattedData.suburbBasicInfo?.name}
+      // postcode={formattedData.suburbBasicInfo?.postcode}
+      // state={formattedData.suburbBasicInfo?.state}
       />
       <ContentContainer>
         {allLoading ? (
