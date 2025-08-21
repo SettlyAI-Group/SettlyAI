@@ -1,7 +1,8 @@
-name: CD
+name: FE_CD
 on:
-  pull_request:
-    branches: [ main ]
+  push:
+    branches:
+      - main
     paths:
       - 'frontend/**'
 
