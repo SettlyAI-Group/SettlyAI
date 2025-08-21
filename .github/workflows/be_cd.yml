@@ -30,7 +30,7 @@ jobs:
           echo "Looking for EC2 tagged Name=${{ secrets.AWS_EC2_NAME }}..."
 
           INSTANCE_ID=$(aws ec2 describe-instances \
-            --filters "Name=tag:Name,Values=${{ secrets.AWS_EC2_NAME }}" \
+            --filters "Name=tag:Name,Values=${{ secrets.AWS_EC2_NAME }}" "Name=instance-state-name,Values=running" \
             --query "Reservations[].Instances[0].InstanceId" \
             --region $AWS_REGION \
             --output text)
