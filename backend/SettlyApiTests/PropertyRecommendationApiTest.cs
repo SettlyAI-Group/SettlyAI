@@ -16,15 +16,16 @@ public class PropertyRecommendationApiTests
 
     public PropertyRecommendationApiTests()
     {
-        // AutoMapper 
+        // AutoMapper
         var config = new MapperConfiguration(cfg =>
         {
-            cfg.CreateMap<Property, PropertyRecommendationDto>(); 
-            cfg.CreateMap<Property, PropertyDetailDto>();     
-        });
+            cfg.CreateMap<Property, PropertyRecommendationDto>();
+            cfg.CreateMap<Property, PropertyDetailDto>();
+        }, null
+        );
         _mapper = config.CreateMapper();
 
-        // InMemory 
+        // InMemory
         var options = new DbContextOptionsBuilder<SettlyDbContext>()
             .UseInMemoryDatabase(databaseName: "TestDb")
             .EnableSensitiveDataLogging()

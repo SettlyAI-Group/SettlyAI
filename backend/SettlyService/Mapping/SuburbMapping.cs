@@ -1,5 +1,6 @@
 using AutoMapper;
 using SettlyModels.Dtos;
+using SettlyModels.Dtos.Suburb;
 using SettlyModels.Entities;
 
 namespace SettlyService.Mapping

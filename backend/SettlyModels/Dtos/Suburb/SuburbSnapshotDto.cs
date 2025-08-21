@@ -1,5 +1,4 @@
-
-namespace SettlyModels.Dtos;
+namespace SettlyModels.Dtos.Suburb;
 
 public class SuburbSnapshotDto
 {

@@ -2,7 +2,7 @@ import ActionButtonWrapper from '@/pages/SuburbReportPage/components/ActionButto
 import { Box, Button, styled, Typography } from '@mui/material';
 import MetricCardsSection from './components/MetricCardsSection';
 import { useQueries } from '@tanstack/react-query';
-import { getSuburbLivability } from '@/api/suburbApi';
+import { getSuburbLivability, getSuburbReport } from '@/api/suburbApi';
 import { Navigate, useParams } from 'react-router-dom';
 import { getDemandAndDev } from '@/api/suburbApi';
 import {
@@ -47,6 +47,10 @@ const SuburbReportPage = () => {
 
   const results = useQueries({
     queries: [
+      {
+        queryKey: ['suburbBaseInfo', suburbId],
+        queryFn: () => getSuburbBaseInfo(suburbId),
+      },
       {
         queryKey: ['demandAndDev', suburbId],
         queryFn: () => getDemandAndDev(parseInt(suburbId)),

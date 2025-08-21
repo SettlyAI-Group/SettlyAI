@@ -1,4 +1,4 @@
-using SettlyModels.Dtos;
+using SettlyModels.Dtos.Suburb;
 
 namespace ISettlyService
 {

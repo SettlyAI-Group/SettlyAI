@@ -1,12 +1,9 @@
-using Xunit;
 using SettlyModels.Entities;
-using SettlyModels;    
-using SettlyModels.Dtos;        
+using SettlyModels;
+using SettlyModels.Dtos;
 using AutoMapper;
 using SettlyService;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore; 
-using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 
 public class PropertyDetailApiTests
 {
@@ -18,7 +15,8 @@ public class PropertyDetailApiTests
         {
             cfg.CreateMap<Property, PropertyDetailDto>();
 
-        });
+        }, null
+        );
         _mapper = config.CreateMapper();
     }
 

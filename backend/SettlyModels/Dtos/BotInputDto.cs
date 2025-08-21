@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Settly.Dtos
+namespace SettlyModels.Dtos
 {
     public class BotInputDto
     {

@@ -1,7 +1,7 @@
 using ISettlyService;
 using SettlyModels;
-using SettlyModels.Dtos;
 using Microsoft.EntityFrameworkCore;
+using SettlyModels.Dtos.Suburb;
 
 namespace SettlyService
 {

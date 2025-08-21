@@ -1,4 +1,4 @@
-namespace SettlyModels.Dtos;
+namespace SettlyModels.Dtos.Suburb;
 public class HousingMarketDto
 {
     public decimal RentalYield { get; set; }

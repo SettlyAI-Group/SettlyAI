@@ -2,6 +2,7 @@ using ISettlyService;
 using Microsoft.AspNetCore.Mvc;
 using SettlyModels;
 using SettlyModels.Dtos;
+using SettlyModels.Dtos.Suburb;
 using Swashbuckle.AspNetCore.Annotations;
 namespace SettlyApi.Controllers
 {
