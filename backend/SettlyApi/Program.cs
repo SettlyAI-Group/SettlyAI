@@ -1,12 +1,10 @@
-
 using ISettlyService;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using SettlyModels;
 using SettlyApi.Configuration;
 using SettlyService;
-using System.Reflection;
-using Microsoft.AspNetCore.Builder;
+
+
 namespace SettlyApi;
 public class Program
 {
@@ -34,7 +32,8 @@ public class Program
         builder.Services.AddScoped<ISettlyService.ISearchService, SettlyService.SearchService>();
         // Add services to the container.
         builder.Services.AddControllers();
-        builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+        // Add AutoMapper - scan all assemblies for profiles
+        builder.Services.AddAutoMapper(cfg => { }, AppDomain.CurrentDomain.GetAssemblies());
         builder.Services.AddScoped<ISuburbService, SuburbService>();
         builder.Services.AddScoped<IPropertyService, PropertyService>();
         builder.Services.AddScoped<IFavouriteService, FavouriteService>();
