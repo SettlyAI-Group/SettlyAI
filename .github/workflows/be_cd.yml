@@ -1,0 +1,39 @@
+name: BE_CD
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types:
+      - completed
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Configure AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ap-southeast-2
+      - name: Find EC2 instance
+        id: ec2
+        run: |
+          INSTANCE_ID=$(aws ec2 describe-instances \
+            --filters "Name=tag:Name,Values=backend-server" \
+            --query "Reservations[].Instances[0].InstanceId" \
+            --output text)
+          echo "INSTANCE_ID=$INSTANCE_ID" >> $GITHUB_ENV
+
+      - name: Deploy container via SSM
+        run: |
+          aws ssm send-command \
+            --document-name "AWS-RunShellScript" \
+            --region $AWS_REGION \
+            --instance-ids "$INSTANCE_ID" \
+            --comment "Deploy backend container" \
+            --parameters commands="[
+              \\\"docker login -u AWS -p \$(aws ecr get-login-password --region $AWS_REGION) ${{ secrets.ECR_REGISTRY }}\\\",
+              \\\"docker pull ${{ secrets.ECR_REGISTRY }}:latest\\\",
+              \\\"docker stop backend || true\\\",
+              \\\"docker rm backend || true\\\",
+              \\\"docker run -d --name backend -p 5100:5100 -e ASPNETCORE_ENVIRONMENT=Production ${{ secrets.ECR_REGISTRY }}:latest\\\"
+            ]"
