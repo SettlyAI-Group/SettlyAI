@@ -169,10 +169,11 @@ vi.mock('@tanstack/react-query', () => ({
 
 ### 完成状态
 - [ ] RegistrationPage.test.tsx (0/5)
-- [ ] RegistrationIntro.test.tsx (0/6)
+- [x] RegistrationIntro.test.tsx (6/6) ✅
 - [ ] RegistrationForm.test.tsx (0/25)
+- [x] PasswordStrength.test.tsx (37/37) ✅
 
-### 总体进度: 0/36 (0%)
+### 总体进度: 43/73 (58.9%)
 
 ## 测试运行命令
 
@@ -228,6 +229,31 @@ npm run test RegistrationPage
 5. **API 集成**: 测试所有可能的 API 响应情况
 6. **测试层级**: 遵循渲染→交互→边界→可访问性的测试优先级
 
+## 配置调整记录
+
+### Vitest 配置优化
+为了避免 Storybook 测试的浏览器依赖问题，进行了以下调整：
+
+1. **`.storybook/main.ts`**: 注释掉 `@storybook/addon-vitest`
+2. **`vite.config.ts`**: 
+   - 简化测试配置，移除 Storybook 相关的 projects 配置
+   - 添加 `exclude: ['**/*.stories.*']` 排除 Storybook 文件
+   - 保持 `environment: 'jsdom'` 用于单元测试
+3. **保持原有方式**: 每个测试文件单独导入 `@testing-library/jest-dom`
+
+### 测试脚本
+```json
+{
+  "test": "vitest run",              // 运行所有测试
+  "test:watch": "vitest",            // 监听模式  
+  "test:ui": "vitest --ui",          // 图形化界面
+  "test:coverage": "vitest run --coverage" // 覆盖率报告
+}
+```
+
 ## 更新日志
 
 - **2025-08-21**: 初始测试设计文档创建
+- **2025-08-21**: RegistrationIntro.test.tsx 完成 (6/6 测试通过)
+- **2025-08-21**: 优化 Vitest 配置，移除 Storybook 测试依赖
+- **2025-08-21**: PasswordStrength.test.tsx 完成 (37/37 测试通过) - 包含纯函数测试和组件渲染测试
