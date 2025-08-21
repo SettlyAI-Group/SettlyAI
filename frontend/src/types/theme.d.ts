@@ -24,10 +24,12 @@ declare module '@mui/material/styles' {
 
   interface Palette {
     black: Palette['primary'];
+    white: Palette['primary'];
   }
 
   interface PaletteOptions {
     black?: PaletteOptions['primary'];
+    white?: PaletteOptions['primary'];
   }
 }
 
@@ -43,11 +45,13 @@ declare module '@mui/material/Typography' {
 declare module '@mui/material/Button' {
   interface ButtonPropsColorOverrides {
     black: true;
+    white: true;
   }
 }
 
 declare module '@mui/material' {
   interface ButtonPropsColorOverrides {
     black: true;
+    white: true;
   }
 }
