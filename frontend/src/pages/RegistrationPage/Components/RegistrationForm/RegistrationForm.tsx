@@ -96,7 +96,7 @@ export const RegistrationForm = () => {
   });
   const passwordValue = useWatch({ control, name: 'password' });
 
-  const { mutateAsync, isPending } = useMutation<
+  const { mutate, isPending } = useMutation<
     IUser,
     AxiosError,
     z.infer<typeof userFormSchema>
@@ -141,8 +141,8 @@ export const RegistrationForm = () => {
       component="form"
       noValidate
       autoComplete="off"
-      onSubmit={handleSubmit(async data => {
-        await mutateAsync(data);
+      onSubmit={handleSubmit(data => {
+        mutate(data);
       })}
     >
       <Typography variant="h4" component="h3" marginBottom={2}>
