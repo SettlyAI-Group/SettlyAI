@@ -1,14 +1,15 @@
 name: BE_CD
 on:
-  workflow_run:
-    workflows: ["CI"]
-    types:
-      - completed
+  push:
+    branches:
+      - main
+    paths:
+      - 'backend/**'
 
 permissions:
   id-token: write
   contents: read
-  
+
 env:
   AWS_REGION: ap-southeast-2
 
@@ -39,10 +40,10 @@ jobs:
             --region $AWS_REGION \
             --instance-ids "$INSTANCE_ID" \
             --comment "Deploy backend container" \
-            --parameters commands="[
-              \\\"docker login -u AWS -p \$(aws ecr get-login-password --region $AWS_REGION) ${{ secrets.ECR_REGISTRY }}\\\",
-              \\\"docker pull ${{ secrets.ECR_REGISTRY }}:latest\\\",
-              \\\"docker stop backend || true\\\",
-              \\\"docker rm backend || true\\\",
-              \\\"docker run -d --name backend -p 5100:5100 -e ASPNETCORE_ENVIRONMENT=Production ${{ secrets.ECR_REGISTRY }}:latest\\\"
-            ]"
+            --parameters 'commands=[
+              "aws ecr get-login-password --region ap-southeast-2 | docker login --username AWS --password-stdin '${{ secrets.ECR_REGISTRY }}'",
+              "docker pull '${{ secrets.ECR_REGISTRY }}:latest'",
+              "docker stop backend || true",
+              "docker rm backend || true",
+              "docker run -d --name backend -p 5100:5100 -e ASPNETCORE_ENVIRONMENT=Production '${{ secrets.ECR_REGISTRY }}:latest'"
+            ]'
