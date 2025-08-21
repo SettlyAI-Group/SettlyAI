@@ -41,15 +41,9 @@ namespace SettlyApi.Controllers
         [HttpGet("housingmarket")]
         public async Task<ActionResult<HousingMarketDto>> GetHousingMarket(int id)
         {
-            try
-            {
+           
                 var dto = await _suburbService.GetHousingMarketAsync(id);
                 return Ok(dto);
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound();
-            }
         }
 
         [SwaggerOperation(Summary = "Get suburb demand and development data", Description = "Returns the suburb's latest demand and development data for the given ID.")]
