@@ -16,7 +16,7 @@ namespace SettlyApi.Controllers
         {
             _populationSupplyService = populationSupplyService;
         }
-        [Authorize]
+
         [HttpGet("{suburbId}")]
         [SwaggerOperation(Summary = "Get population supply data for a suburb")]
         [SwaggerResponse(200, "Successfully retrieved population data", typeof(PopulationSupplyDto))]

@@ -1,17 +1,7 @@
-
+using System.Threading.RateLimiting;
 using ISettlyService;
 using Microsoft.EntityFrameworkCore;
-<<<<<<< HEAD
-using Microsoft.Extensions.DependencyInjection;
-using SettlyModels;
-||||||| parent of bdad4ff (Merge Login services into Auth)
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
-using SettlyModels;
-=======
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
->>>>>>> bdad4ff (Merge Login services into Auth)
 using SettlyApi.Configuration;
 using SettlyModels;
 using SettlyService;
@@ -189,105 +179,63 @@ public class Program
                 Type = SecuritySchemeType.ApiKey,
                 Scheme = "Bearer"
             });
-
             options.AddSecurityRequirement(new OpenApiSecurityRequirement()
+            {
+                {
+                    new OpenApiSecurityScheme()
                     {
+                        Reference=new OpenApiReference()
                         {
-
-                        new OpenApiSecurityScheme()
-                        {
-                            Reference=new OpenApiReference()
-                            {
-                                 Type=ReferenceType.SecurityScheme,
-                                 Id="Bearer"
-                            }
-                        },
-                        new List<string>()
-                          }
-                    });
+                            Type=ReferenceType.SecurityScheme,
+                            Id="Bearer"
+                        }
+                    },
+                    new List<string>()
+                }
+            });
         });
 
         // JWT configration
         builder.Services.Configure<JWTConfig>(builder.Configuration.GetSection(JWTConfig.Section));
         var jwtConfig = builder.Configuration.GetSection(JWTConfig.Section).Get<JWTConfig>();
         builder.Services.AddJWT(jwtConfig);
->>>>>>> bdad4ff (Merge Login services into Auth)
 
-                        // Add CORS services
-                        builder.Services.AddCorsPolicies();
+        // Add a rate-limiter policy: 5 requests per 15 minutes per client IP
+        builder.Services.AddRateLimiter(options =>
+        {
+            options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
 
-                        // Add application services
-                        builder.Services.AddScoped<IUserService, UserService>();
-                        builder.Services.AddScoped<IEmailSender, StubEmailSender>();
-                        builder.Services.AddScoped<IVerificationCodeService, VerificationCodeService>();
-                        builder.Services.AddScoped<IAuthService, AuthService>();
+            options.AddPolicy("LoginIpFixedWindow", httpContext =>
+            {
+                var ip = httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
 
+                return RateLimitPartition.GetFixedWindowLimiter(
+                    partitionKey: ip,
+                    factory: _ => new FixedWindowRateLimiterOptions
+                    {
+                        PermitLimit = 5,                       // <= 5 attempts ...
+                        Window = TimeSpan.FromMinutes(15),     // ... every 15 minutes
+                        QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                        QueueLimit = 0                         // don't queue, just reject
+                    });
+            });
+        });
 
-
-                        //Register ISearchApi with SearchApiService
-                        builder.Services.AddScoped<ISettlyService.ISearchService, SettlyService.SearchService>();
-
-                        // Add services to the container.
-                        builder.Services.AddControllers();
-                        builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-                        builder.Services.AddScoped<ISuburbService, SuburbService>();
-                        builder.Services.AddScoped<IPropertyService, PropertyService>();
-                        builder.Services.AddScoped<IFavouriteService, FavouriteService>();
-                        builder.Services.AddTransient<IPopulationSupplyService, PopulationSupplyService>();
-
-                        //Add Swagger
-                        builder.Services.AddSwaggerGen(options =>
-                        {
-                                options.SwaggerDoc("SettlyService", new Microsoft.OpenApi.Models.OpenApiInfo()
-                                {
-                                        Title = "SettlyAI",
-                                        Version = "1.0.0.0",
-                                        Description = "SettlyAI Web Api",
-                                        Contact = new Microsoft.OpenApi.Models.OpenApiContact()
-                                });
-                                options.EnableAnnotations();
-                        });
-
-                        var app = builder.Build();
-                        var app = builder.Build();
-                        // use Swagger
-                        if (app.Environment.IsDevelopment())
-                        {
-                                app.UseSwagger();
-                                app.UseSwaggerUI(option =>
-                                {
-                                        option.SwaggerEndpoint($"/swagger/SettlyService/swagger.json", "SettlyService");
-                                });
-                        }
-
-                        // Configure the HTTP request pipeline.
-                        app.UseRouting();
-                        app.UseCors("AllowAll");
-                        app.UseAuthorization();
-                        app.MapControllers();
-
-                        Console.WriteLine("Starting SettlyAI API server...");
-                        app.Run();
-                }
+        var app = builder.Build();
+        // use Swagger
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI(option =>
+            {
+                option.SwaggerEndpoint($"/swagger/SettlyService/swagger.json", "SettlyService");
+            });
         }
-<<<<<<< HEAD
-||||||| parent of bdad4ff (Merge Login services into Auth)
 
         // Configure the HTTP request pipeline.
         app.UseRouting();
         app.UseCors("AllowAll");
-        app.UseAuthorization();
-        app.MapControllers();
-
-        Console.WriteLine("Starting SettlyAI API server...");
-        app.Run();
-    }
-}
-=======
-
-        // Configure the HTTP request pipeline.
-        app.UseRouting();
-        app.UseCors("AllowAll");
+        app.UseRateLimiter();
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();

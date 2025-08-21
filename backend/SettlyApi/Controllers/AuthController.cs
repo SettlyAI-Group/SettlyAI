@@ -1,5 +1,6 @@
 using ISettlyService;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using SettlyModels.Dtos;
 using SettlyService;
 using Swashbuckle.AspNetCore.Annotations;
@@ -27,6 +28,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("login")]
+    [EnableRateLimiting("LoginIpFixedWindow")]
     [SwaggerOperation(Summary = "Users use email and password to login")]
     [SwaggerResponse(200, "User logined successfully", typeof(LoginOutputDto))]
     public async Task<ActionResult<LoginOutputDto>> Login(LoginInputDto loginInput)
