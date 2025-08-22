@@ -3,7 +3,7 @@ using SettlyModels.Dtos;
 
 namespace SettlyService
 {
-    public class LayoutNavService: ILayoutNavService
+    public sealed class LayoutNavService: ILayoutNavService
     {
         private static readonly IReadOnlyList<LayoutNavDto> Items = new[]
        {            

@@ -1,11 +1,10 @@
 using ISettlyService;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SettlyModels.Dtos;
 
 namespace SettlyApi.Controllers
 {
-    [Route("api/[layout]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class LayoutController : ControllerBase
     {
