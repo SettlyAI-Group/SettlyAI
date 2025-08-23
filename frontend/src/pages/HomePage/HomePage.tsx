@@ -1,4 +1,8 @@
 import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from "react";
+import TestimonialsSection from "./components/TestimonialsSection";
+import type { ITestimonial } from "@/interfaces/Testimonial";
+import axios from "axios";
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -22,11 +26,20 @@ const HomePage = () => {
     navigate(`/suburb/1`);
   };
 
+  const [testimonials, setTestimonials] = useState<ITestimonial[]>([]);
+
+  useEffect(() => {
+    axios.get("/api/testimonials").then((res) => {
+      setTestimonials(res.data);
+    });
+  }, []);
+
   return (
     <>
       <h1>Home</h1>
       <button onClick={() => checkSuburb(sydney)}>Go to Sydney</button>
       <button onClick={() => checkSuburb(melbourne)}>Go to Melbourne</button>
+      <TestimonialsSection testimonials={testimonials} />
     </>
   );
 };
