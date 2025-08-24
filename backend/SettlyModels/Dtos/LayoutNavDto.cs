@@ -10,8 +10,11 @@ namespace SettlyModels.Dtos
 
         public required string Position { get; set; }
 
-        public int Order { get; set; }
+        public required int Order { get; set; }
 
-        public string Variant { get; set; } = "text";
+        public string? Variant { get; set; }
+
+        public List<LayoutNavDto>? SubItems { get; set; }
+
     }
 }
