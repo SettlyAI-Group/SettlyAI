@@ -1,8 +1,9 @@
 import { useNavigate } from 'react-router-dom';
-import { useEffect, useState } from "react";
 import TestimonialsSection from "./components/TestimonialsSection";
 import type { ITestimonial } from "@/interfaces/Testimonial";
-import axios from "axios";
+import { getTestimonials } from "@/api/testimonialApi";
+import { useQuery } from "@tanstack/react-query";
+import { Typography, Button } from '@mui/material';
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -26,13 +27,34 @@ const HomePage = () => {
     navigate(`/suburb/1`);
   };
 
-  const [testimonials, setTestimonials] = useState<ITestimonial[]>([]);
 
-  useEffect(() => {
-    axios.get("/api/testimonials").then((res) => {
-      setTestimonials(res.data);
-    });
-  }, []);
+  const {
+    data: testimonials,
+    isLoading,
+    error,
+    refetch,
+  } = useQuery<ITestimonial[]>({
+    queryKey: ["testimonials"],
+    queryFn: getTestimonials,
+  });
+
+  if (isLoading) {
+    return (
+      <Typography variant="h4">Loading testimonials...</Typography>
+    );
+  }
+
+  if (error) {
+    return (
+      <div>
+        <Typography variant="h6" color="error">
+          Error loading testimonials
+        </Typography>
+        <Button onClick={() => refetch()}>Retry</Button>
+      </div>
+    );
+  }
+
 
   return (
     <>

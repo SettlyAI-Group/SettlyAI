@@ -3,37 +3,47 @@ import TestimonialCard from "./components/TestimonialCard";
 import type { ITestimonial } from "@/interfaces/Testimonial";
 
 interface Props {
-  testimonials: ITestimonial[];
+  testimonials?: ITestimonial[];
 }
 
+const Heading = styled(Typography)(({ theme }) => ({
+  maxWidth: theme.spacing(182.5),
+  marginLeft: "auto",
+  marginRight: "auto",
+}));
+
+const SubHeading = styled(Typography)(({ theme }) => ({
+  maxWidth: theme.spacing(192),
+  marginLeft: "auto",
+  marginRight: "auto",
+}));
+
 const TestimonialsGrid = styled(Box)(({ theme }) => ({
-  display: "grid",
+  display: "flex",
+  flexWrap: "wrap",
+  justifyContent: "center",
   gap: theme.spacing(8),
-  gridTemplateColumns: "1fr",
-  [theme.breakpoints.up("sm")]: {
-    gridTemplateColumns: "1fr 1fr",
-  },
-  [theme.breakpoints.up("md")]: {
-    gridTemplateColumns: "1fr 1fr 1fr",
-  },
 }));
 
 const TestimonialsSection = ({ testimonials }: Props) => {
   return (
     <Box component="section" sx={{ py: 8 }}>
       <Container>
-        <Typography variant="h3" align="center" gutterBottom>
-          Stay Ahead with the Latest Policies & Grants
-        </Typography>
-        <Typography variant="subtitle1" align="center" color="text.secondary" mb={6}>
-          We help you understand what's available - from First Home Owner Grants to Super Saver Schemes.
-           Always up to date, easy to understand
-        </Typography>
+        <Heading variant="h3" align="center" gutterBottom>
+          Understand the Support Available to You
+        </Heading>
+
+        <SubHeading variant="subtitle1" align="center" color="text.secondary" mb={6}>
+          We help you understand what's available - from First Home Owner Grants to
+          Super Saver Schemes. Always up to date, easy to understand
+        </SubHeading>
 
         <TestimonialsGrid>
-          {testimonials.map((t) => (
-            <TestimonialCard key={t.id} testimonial={t} />
-          ))}
+          {testimonials?.length ? (
+            testimonials.map(t => <TestimonialCard key={t.id} testimonial={t} />)
+          ) : (
+            <Typography>No testimonials available</Typography>
+          )}
         </TestimonialsGrid>
       </Container>
     </Box>
