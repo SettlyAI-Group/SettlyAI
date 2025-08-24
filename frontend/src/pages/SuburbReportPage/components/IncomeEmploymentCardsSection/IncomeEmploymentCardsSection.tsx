@@ -1,13 +1,8 @@
-import { useEffect, useState } from 'react';
+//import { useEffect, useState } from 'react';
 import { Typography, Box, styled, useTheme } from '@mui/material';
 import IncomeEmploymentCard from './components/IncomeEmploymentCard';
+import type { IIncomeEmployment } from '@/interfaces/suburbReport';
 
-interface IIncomeEmploymentData {
-  medianIncome: number;
-  employmentRate: number;
-  whiteCollarRatio: number;
-  jobGrowthRate: number;
-}
 
 interface ICardData {
   title: string;
@@ -18,14 +13,14 @@ interface ICardData {
 }
 
 const OuterBox = styled(Box)(({ theme }) => ({
-  padding: theme.spacing(6),
+  // padding: theme.spacing(6),
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
 }));
 
 const InterBox = styled(Box)(({ theme }) => ({
-  padding: theme.spacing(6),
+  // padding: theme.spacing(6),
   display: 'flex',
   flexWrap: 'wrap',
   gap: theme.spacing(6),
@@ -34,56 +29,11 @@ const InterBox = styled(Box)(({ theme }) => ({
 
 interface IProps {
   title: string;
-  suburbId?: number;
+  data?: IIncomeEmployment;
 }
 
-const IncomeEmploymentCardsSection = ({ title, suburbId }: IProps) => {
+const IncomeEmploymentCardsSection = ({ title, data }: IProps) => {
   const theme = useTheme();
-  const [data, setData] = useState<IIncomeEmploymentData | null>(null);
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     const mockApiResponse = {
-  //       suburb: {
-  //         suburbId: 104,
-  //         report: {
-  //           id: '104_2050730',
-  //           state: 'NSW',
-  //           postcode: '2000',
-  //           incomeEmployment: {
-  //             medianIncome: 119522,
-  //             employmentRate: 0.877564,
-  //             whiteCollarRatio: 0.77990824,
-  //             jobGrowthRate: 0.10071424,
-  //           },
-  //         },
-  //       },
-  //     };
-
-  //     await new Promise((r) => setTimeout(r, 300));
-  //     setData(mockApiResponse.suburb.report.incomeEmployment);
-  //   };
-
-  //   fetchData();
-  // }, [suburbId]);
-
-  useEffect(() => {
-    if (!suburbId) return;
-
-    const fetchData = async () => {
-      try {
-        const res = await fetch(`/api/suburb/${suburbId}`);
-        if (!res.ok) throw new Error(`API error: ${res.status}`);
-        const json = await res.json();
-
-        setData(json.incomeEmployment);
-      } catch (err) {
-        console.error('Failed to fetch suburb data:', err);
-      }
-    };
-
-    fetchData();
-  }, [suburbId]);
 
   if (!data) return <Typography>Loading...</Typography>;
 

@@ -10,9 +10,8 @@ import {
   mapDevCardData,
   mapLivability,
 } from './components/MetricCardsSection/utils/dataMapper';
-
-
 import IncomeEmploymentCardsSection from './components/IncomeEmploymentCardsSection';
+import { getIncomeEmployment } from '@/api/suburbApi';
 
 
 const PageContainer = styled(Box)(({ theme }) => ({
@@ -50,7 +49,7 @@ const SuburbReportPage = () => {
   }
 
   const results = useQueries({
-    queries: [
+    queries: [  
       {
         queryKey: ['demandAndDev', suburbId],
         queryFn: () => getDemandAndDev(parseInt(suburbId)),
@@ -58,6 +57,10 @@ const SuburbReportPage = () => {
       {
         queryKey: ['livability', suburbId],
         queryFn: () => getSuburbLivability(suburbId),
+      },
+      {
+        queryKey: ['incomeEmployment', suburbId],
+        queryFn: () => getIncomeEmployment(parseInt(suburbId)),
       },
     ],
   });
@@ -86,6 +89,7 @@ const SuburbReportPage = () => {
   const formattedData = {
     demand: results[0].data ? mapDevCardData(results[0].data) : undefined,
     livability: results[1].data ? mapLivability(results[1].data) : undefined,
+    incomeEmployment: results[2].data ? results[2].data : undefined,
   };
 
   return (
@@ -113,9 +117,8 @@ const SuburbReportPage = () => {
         <ContentContainer>
 
           <IncomeEmploymentCardsSection
-            //suburbId={report.suburbId}
-            title="Income & Employment"
-            suburbId={104}
+            title={TITLES.incomeEmployment}
+            data={formattedData.incomeEmployment}
           />
 
           <MetricCardsSection
