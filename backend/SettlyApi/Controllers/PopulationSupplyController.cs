@@ -1,6 +1,4 @@
 using ISettlyService;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SettlyModels.Dtos;
 using Swashbuckle.AspNetCore.Annotations;
