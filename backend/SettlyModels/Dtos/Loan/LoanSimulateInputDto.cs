@@ -1,23 +1,3 @@
-
-/*
-Contract date (used to determine applicable rule set)
-○ Dutiable value (property price subject to duty)
-○ Regional commercial/industrial/extractive concession (boolean)
-○ Foreign purchaser (boolean)
-○ Residential property (boolean)
-○ Property type (new home, established home, vacant land)
-○ Principal Place of Residence (PPR) (boolean)
-○ First home buyer (boolean)
-
-"contractDate": "2025-08-18",
-"dutiableValue": 700000,
-"isRegionalCommercialIndustrialExtractive": false,
-"isForeignPurchaser": false,
-"isResidentialProperty": true,
-"propertyType": "NEW_HOME",
-"isPPR": true,
-"isFirstHome": true
-*/
 namespace SettlyModels.Dtos;
 
 public class LoanSimulateInputDto
