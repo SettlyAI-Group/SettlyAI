@@ -27,6 +27,22 @@ export default defineConfig(({ mode }) => {
       reporters: ['verbose'],
       projects: [
         {
+          test: {
+            name: 'unit',
+            include: ['src/**/*.{test,spec}.{js,ts,jsx,tsx}'],
+            exclude: [
+              'node_modules',
+              'dist',
+              'coverage',
+              'src/**/*.stories.*',
+              'src/**/*.mdx',
+            ],
+            environment: 'jsdom',
+            globals: true,
+            // setupFiles: ['./src/test/setup.ts'],
+          },
+        },
+        {
           extends: true,
           plugins: [
             // The plugin will run tests for the stories defined in your Storybook config
