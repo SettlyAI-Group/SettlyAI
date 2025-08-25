@@ -19,6 +19,7 @@ const queryClient = new QueryClient({
 
 const App = () => {
   return (
+
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
@@ -27,13 +28,15 @@ const App = () => {
             <Route path="/theme" element={<ThemeDemo />} />
             <Route index element={<HomePage />} />
 
-            <Route path="/suburb/:location" element={<SuburbReportPage />} />
+            <Route path="/suburb/:suburbId" element={<SuburbReportPage />} />
+
           </Route>
           <Route path="/" element={<ThemeDemo />} />
           <Route path="/registration" element={<RegistrationPage />} />
         </Routes>
       </ThemeProvider>
     </QueryClientProvider>
+
   );
 };
 

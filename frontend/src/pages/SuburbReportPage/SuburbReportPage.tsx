@@ -10,6 +10,9 @@ import {
   mapLivability,
 } from './components/MetricCardsSection/utils/dataMapper';
 import Banner from './components/Banner';
+import IncomeEmploymentCardsSection from './components/IncomeEmploymentCardsSection';
+import { getIncomeEmployment } from '@/api/suburbApi';
+
 
 const PageContainer = styled(Box)(({ theme }) => ({
   maxWidth: '1440px',
@@ -46,7 +49,7 @@ const SuburbReportPage = () => {
   }
 
   const results = useQueries({
-    queries: [
+    queries: [  
       {
         queryKey: ['SuburbBasicInfo', suburbId],
         queryFn: () => getSuburbBasicInfo(suburbId),
@@ -58,6 +61,10 @@ const SuburbReportPage = () => {
       {
         queryKey: ['livability', suburbId],
         queryFn: () => getSuburbLivability(suburbId),
+      },
+      {
+        queryKey: ['incomeEmployment', suburbId],
+        queryFn: () => getIncomeEmployment(parseInt(suburbId)),
       },
     ],
   });
@@ -84,13 +91,17 @@ const SuburbReportPage = () => {
   }
 
   const formattedData = {
+
     suburbBasicInfo: results[0].data ? results[0].data : undefined,
     demand: results[1].data ? mapDevCardData(results[1].data) : undefined,
     livability: results[2].data ? mapLivability(results[2].data) : undefined,
+    incomeEmployment: results[3].data ? results[3].data : undefined,
+
   };
 
   return (
     <PageContainer>
+
       <Banner
         suburb={formattedData.suburbBasicInfo?.name}
         postcode={formattedData.suburbBasicInfo?.postcode}
@@ -110,6 +121,11 @@ const SuburbReportPage = () => {
           </div>
         ) : (
           <>
+            <IncomeEmploymentCardsSection
+              title={TITLES.incomeEmployment}
+              data={formattedData.incomeEmployment}
+            />
+
             <MetricCardsSection
               title={TITLES.demandDevelopment}
               data={formattedData.demand}
@@ -128,6 +144,7 @@ const SuburbReportPage = () => {
           </>
         )}
       </ContentContainer>
+
     </PageContainer>
   );
 };
