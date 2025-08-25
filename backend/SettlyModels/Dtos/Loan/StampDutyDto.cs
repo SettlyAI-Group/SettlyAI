@@ -79,8 +79,8 @@ public class ModifierDto
             return false;
         if (Eligibility.DutiableValueMin.HasValue && input.DutiableValue < Eligibility.DutiableValueMin.Value)
             return false;
-        if (Eligibility.IsForeignPerson.HasValue && Eligibility.IsForeignPerson.Value && !input.IsForeignPurchase)
-            return false;
+        // if (Eligibility.IsForeignPerson.HasValue && Eligibility.IsForeignPerson.Value && !input.IsForeignPurchase)
+        //     return false;
         if (!string.IsNullOrEmpty(Eligibility.PropertyType) && input.PropertyType != Eligibility.PropertyType)
             return false;
 

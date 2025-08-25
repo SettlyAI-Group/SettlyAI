@@ -18,6 +18,7 @@ namespace SettlyService
         private readonly StampDutyCalculator _calculator;
         public LoanService()
         {
+            //todo: vic only, add other states later
             _calculator = new StampDutyCalculator("../SettlyApi/Data/vic_stamp_duty.json");
         }
         public Task<LoanSimulateOutputDto> GenerateLoanSimulateDtoAsync(LoanSimulateInputDto input)
@@ -27,7 +28,7 @@ namespace SettlyService
 
             var output = new LoanSimulateOutputDto
             {
-                StampDuty = duty
+                StampDutyOutput = duty
             };
             return Task.FromResult(output);
         }

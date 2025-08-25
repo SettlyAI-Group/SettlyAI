@@ -1,6 +1,8 @@
+using System.Reflection.Emit;
 using System.Text.Json;
+using Microsoft.Extensions.ObjectPool;
 using SettlyModels.Dtos;
-//todo: vic only, add other states later
+
 public class StampDutyCalculator
 {
     private readonly StampDutyDto _data;
@@ -20,7 +22,11 @@ public class StampDutyCalculator
             StringComparer.OrdinalIgnoreCase
         );
     }
-    public decimal Calculate(LoanSimulateInputDto input)
+    public StampDutyCalculator(StampDutyDto data)
+    {
+        _data = data;
+    }
+    public StampDutyOutputDto Calculate(LoanSimulateInputDto input)
     {
 
         if (_data == null)
@@ -28,10 +34,18 @@ public class StampDutyCalculator
 
         var tableKey = SelectBaseTable(input);
         var baseDuty = CalculateBaseDuty(input, tableKey);
-        var modifiedDuty = ApplyModifiers(baseDuty, input);
-        var finalDuty = ApplyRounding(modifiedDuty);
+        var concessionDuty = ApplyConcessions(baseDuty, input);
+        var surcharge = ApplyForeignSurcharge(input);
+        var total = concessionDuty.Value + surcharge;
+        var finalDuty = ApplyRounding(total);    
 
-        return finalDuty;
+        return new StampDutyOutputDto
+        {
+            BaseDuty = baseDuty,
+            Concessions = concessionDuty,
+            ForiegnSurcharge = surcharge,
+            FinalDuty = finalDuty
+        };
     }
     /// <summary>
     /// Step 1: select base table
@@ -52,7 +66,7 @@ public class StampDutyCalculator
     }
 
     /// <summary>
-    /// Step 2: calculate duty by table
+    /// Step 2: calculate base duty by table
     /// </summary>
     private decimal CalculateBaseDuty(LoanSimulateInputDto input, string tableKey)
     {
@@ -76,18 +90,49 @@ public class StampDutyCalculator
         throw new InvalidOperationException($"No bracket found for value {input.DutiableValue} in table {tableKey}");
     }
     /// <summary>
-    /// Step 3: discount/ surcharge
+    /// Step 3: concessions/ surcharge
     /// </summary>
-    private decimal ApplyModifiers(decimal duty, LoanSimulateInputDto input)
+    private Concession ApplyConcessions(decimal duty, LoanSimulateInputDto input)
     {
+
+        var concession = new Concession
+        {
+            Label = "no_concession",
+            Value = duty
+        };
+        if (!input.IsFirstHome) return concession;
+
         foreach (var modifier in _data.Modifiers)
         {
             if (modifier.IsEligible(input))
             {
+
                 duty = modifier.Apply(duty, input);
+                return new Concession
+                {
+                    Label = modifier.Id,
+                    Value = duty
+                };
             }
         }
-        return duty;
+        return concession;
+    }
+
+    private decimal ApplyForeignSurcharge(LoanSimulateInputDto input)
+    {
+        decimal surcharge = 0;
+        if (input.IsForeignPurchase == false) return surcharge;
+
+        foreach (var modifier in _data.Modifiers)
+        {
+            if (modifier.Id == "vic_foreign_purchaser_additional_duty")
+            {
+                surcharge = input.DutiableValue * (modifier.Action.Rate ?? 0);
+                return surcharge;
+            }
+
+        }
+        return surcharge;
     }
 
     /// <summary>
