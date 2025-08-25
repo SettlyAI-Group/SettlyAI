@@ -1,4 +1,4 @@
-namespace SettlyModels.DTOs
+namespace SettlyModels.Dtos
 {
     public class SuggestionOutputDto
     {

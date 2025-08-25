@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Settly.DTOs
+namespace Settly.Dtos
 {
     public class SearchInputDto
     {

@@ -1,4 +1,4 @@
-namespace Settly.DTOs
+namespace Settly.Dtos
 {
     public class BotOutputDto
     {

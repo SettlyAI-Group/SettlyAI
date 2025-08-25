@@ -2,7 +2,10 @@
 import { Typography, Box, styled, useTheme } from '@mui/material';
 import IncomeEmploymentCard from './components/IncomeEmploymentCard';
 import type { IIncomeEmployment } from '@/interfaces/suburbReport';
-
+import {
+  convertNumberToString,
+  mapValueToPercentageString,
+} from '@/pages/SuburbReportPage/utils/numberConverters';
 
 interface ICardData {
   title: string;
@@ -37,14 +40,14 @@ const IncomeEmploymentCardsSection = ({ title, data }: IProps) => {
 
   if (!data) return <Typography>Loading...</Typography>;
 
-  const jobGrowthValue = (data.jobGrowthRate * 100).toFixed(2);
+  const jobGrowthValue = mapValueToPercentageString(data.jobGrowthRate);
   const formattedJobGrowth =
-    data.jobGrowthRate >= 0 ? `+${jobGrowthValue}%` : `${jobGrowthValue}%`;
+    data.jobGrowthRate >= 0 ? `+${jobGrowthValue}` : `${jobGrowthValue}`;
 
   const formattedData: ICardData[] = [
     {
       title: 'Median Income',
-      valueDisplay: `$${Math.round(data.medianIncome / 52)}/week`,
+      valueDisplay: `$${convertNumberToString(Math.round(data.medianIncome / 52))}/week`,
       showProgress: false,
     },
     {
@@ -58,13 +61,13 @@ const IncomeEmploymentCardsSection = ({ title, data }: IProps) => {
     },
     {
       title: 'Employment Rate',
-      valueDisplay: `${(data.employmentRate * 100).toFixed(1)}%`,
+      valueDisplay: mapValueToPercentageString(data.employmentRate),
       percent: data.employmentRate * 100,
       showProgress: true,
     },
     {
       title: 'White Collar Ratio',
-      valueDisplay: `${(data.whiteCollarRatio * 100).toFixed(1)}%`,
+      valueDisplay: mapValueToPercentageString(data.whiteCollarRatio),
       percent: data.whiteCollarRatio * 100,
       showProgress: true,
     },
