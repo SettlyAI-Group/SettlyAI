@@ -1,5 +1,4 @@
 import { Container, Box, Button, Typography, styled, useTheme } from '@mui/material';
-import { lighten } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../../../redux/store';
 import { useEffect, useRef } from 'react';
@@ -33,6 +32,7 @@ const ReportButton = styled(Button)(({ theme }) => ({
   whiteSpace: 'nowrap',
   color: '#fff',
   ...theme.typography.subtitle1,
+  textTransform: 'none',
   [theme.breakpoints.between(900, 1150)]: {
     width: '48%',
     position: 'static',
@@ -48,16 +48,9 @@ const ReportButton = styled(Button)(({ theme }) => ({
 }));
 
 const ExploreButton = styled(Button)(({ theme }) => ({
-  width: 'min(100%, 220px)',
-  height: 60,
-  backgroundColor: lighten(theme.palette.secondary.light, 0.75),
-  color: theme.palette.primary.main,
-  borderRadius: theme.shape.borderRadius,
-  boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.3)',
-  ...theme.typography.subtitle2,
-}));
-const RotbotButton = styled(Button)(({ theme }) => ({
-  ...theme.typography.p1,
+  ...theme.typography.body2,
+  textAlign: 'left',
+  textTransform: 'none',
 }));
 
 const HeroSectionContainer = () => {
@@ -141,7 +134,7 @@ const HeroSectionContainer = () => {
           >
             <SuggestAutocomplete />
             <ReportButton variant="contained" onClick={() => navigate('/suburb/id')}>
-              GET MY REPORT
+              Get my report
             </ReportButton>
           </Box>
         </Box>
@@ -150,23 +143,20 @@ const HeroSectionContainer = () => {
           sx={theme => ({
             width: {
               xs: '100%',
-              md: 640,
+              md: 660,
               display: 'flex',
               flexDirection: { xs: 'column', md: 'row' },
               justifyContent: 'space-between',
               alignItems: 'stretch',
             },
             mx: 'auto',
-            gap: { xs: 4, md: 8 },
             pt: { xs: 4, md: 4 },
             pb: 8,
           })}
         >
           <ExploreButton variant="text" onClick={() => navigate('/explore/:location')}>
-            Explore Suburb
+            Not sure where to begin? Explore suburbs that match your lifestyle
           </ExploreButton>
-
-          <RotbotButton onClick={() => navigate('/chat')}>Not sure where to begin? Chat with Settly Robot</RotbotButton>
         </Box>
       </HeroContainer>
     </Box>
