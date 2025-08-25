@@ -22,7 +22,7 @@ namespace SettlyApi.Controllers
         [HttpPost("simulate")]
         [SwaggerOperation(
             Summary = "Calculate Loan",
-            Description = "Returns the full PropertyDetailDto for a given property ID."
+            Description = "Returns the loan details for a given input."
         )]
         [SwaggerResponse(200, "Successfully returned loan details", typeof(LoanSimulateOutputDto))]
 

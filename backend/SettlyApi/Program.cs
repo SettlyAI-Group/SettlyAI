@@ -166,9 +166,14 @@ public class Program
         builder.Services.AddScoped<IPropertyService, PropertyService>();
         builder.Services.AddScoped<IFavouriteService, FavouriteService>();
         builder.Services.AddTransient<IPopulationSupplyService, PopulationSupplyService>();
+<<<<<<< HEAD
         builder.Services.AddScoped<ITestimonialService, TestimonialService>();
 
 
+||||||| parent of e0b1d0c (feat: fix controller  & add dto)
+=======
+        builder.Services.AddScoped<ILoanService, LoanService>();
+>>>>>>> e0b1d0c (feat: fix controller  & add dto)
         //Add Swagger
         builder.Services.AddSwaggerGen(options =>
         {

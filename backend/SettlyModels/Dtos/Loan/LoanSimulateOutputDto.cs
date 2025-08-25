@@ -4,7 +4,7 @@ namespace SettlyModels.Dtos;
 public class LoanSimulateOutputDto
 
 {
-    public decimal Stampduty { get; set; }
+    public decimal StampDuty { get; set; }
     //todo: add other fees below
    
 
