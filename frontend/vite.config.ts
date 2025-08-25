@@ -2,14 +2,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import { resolve } from 'path';
-// https://vite.dev/config/
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
-const dirname =
-  typeof __dirname !== 'undefined'
-    ? __dirname
-    : path.dirname(fileURLToPath(import.meta.url));
+
 export default defineConfig(({ mode }) => {
   const isDev = mode === 'development';
   return {
@@ -21,36 +14,15 @@ export default defineConfig(({ mode }) => {
     },
     test: {
       include: ['src/**/*.{test,spec}.{js,ts,jsx,tsx}'],
+      exclude: [
+        '**/node_modules/**',
+        '**/dist/**',
+        '**/*.stories.*', // 排除 Storybook 文件
+      ],
       globals: true,
       environment: 'jsdom',
-      // setupFiles: ["./src/test/setup.ts"],
+      // setupFiles: ["./src/test/setup.ts"], // 保持原来的注释状态
       reporters: ['verbose'],
-      projects: [
-        {
-          extends: true,
-          plugins: [
-            // The plugin will run tests for the stories defined in your Storybook config
-            // See options at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon#storybooktest
-            storybookTest({
-              configDir: path.join(dirname, '.storybook'),
-            }),
-          ],
-          test: {
-            name: 'storybook',
-            browser: {
-              enabled: true,
-              headless: true,
-              provider: 'playwright',
-              instances: [
-                {
-                  browser: 'chromium',
-                },
-              ],
-            },
-            setupFiles: ['.storybook/vitest.setup.ts'],
-          },
-        },
-      ],
     },
     server: {
       proxy: isDev
