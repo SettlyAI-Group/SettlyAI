@@ -4,21 +4,28 @@ using SettlyModels;
 using SettlyModels.Dtos;        
 using AutoMapper;
 using SettlyService;
+using SettlyService.Mapping;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore; 
 using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
 
-public class PropertyDetailServiceTests
+public class PropertyDetailApiTests
 {
     private readonly IMapper _mapper;
 
-    public PropertyDetailServiceTests()
+    public PropertyDetailApiTests()
     {
+        var loggerFactory = LoggerFactory.Create(builder => 
+        {
+            builder.AddConsole();
+            builder.SetMinimumLevel(LogLevel.Debug);
+        });
         var config = new MapperConfiguration(cfg =>
         {
             cfg.CreateMap<Property, PropertyDetailDto>();
 
-        });
+        }, loggerFactory);
         _mapper = config.CreateMapper();
     }
 
@@ -58,7 +65,7 @@ public class PropertyDetailServiceTests
         };
 
         var context = GetDbContextMock(new List<Property> { property });
-        var service = new PropertyDetailService(context, _mapper);
+        var service = new PropertyService(context, _mapper);
 
         // Act
         var result = await service.GeneratePropertyDetailAsync(1);
@@ -76,7 +83,7 @@ public class PropertyDetailServiceTests
     {
         // Arrange
         var context = GetDbContextMock(new List<Property>());
-        var service = new PropertyDetailService(context, _mapper);
+        var service = new PropertyService(context, _mapper);
 
         // Act & Assert
         await Assert.ThrowsAsync<KeyNotFoundException>(() => service.GeneratePropertyDetailAsync(999));

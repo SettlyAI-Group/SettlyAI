@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: read
+  id-token: write 
 
 jobs:
   changes:
@@ -73,6 +74,20 @@ jobs:
         run: dotnet test backend.sln --no-build --configuration Release --logger trx
       # - name: Format
       #   run: dotnet format --verify-no-changes
+      - name: Configure AWS (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ap-southeast-2
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+      - name: Debug Image Tag
+        run: |
+          echo "Image tag: '${{ secrets.ECR_REGISTRY }}'"
+      - name: Build, Tag, and Push Docker Image
+        run: |
+          docker build -t ${{ secrets.ECR_REGISTRY }}:latest .
+          docker push ${{ secrets.ECR_REGISTRY }}:latest
 
   frontend:
     name: frontend build-and-test
