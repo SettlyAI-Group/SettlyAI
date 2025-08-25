@@ -36,17 +36,7 @@
       "id": "vic_fhb_concession_600001_750000",
       "eligibility": { "isFirstHomeBuyer": true, "dutiableValueMin": 600001, "dutiableValueMax": 750000 },
       "action": {
-        "type": "table_override_total",
-        "table": [
-          { "v": 605000, "total": 1045 },
-          { "v": 625000, "total": 5428 },
-          { "v": 650000, "total": 11356 },
-          { "v": 675000, "total": 17785 },
-          { "v": 700000, "total": 24713 },
-          { "v": 725000, "total": 32141 },
-          { "v": 745000, "total": 38444 }
-        ],
-        "interpolate": "linear"
+        "type": "table_override_total"
       },
       "note": "FHB concession $600,001–$750,000 — sliding scale; table points from SRO examples."
     },

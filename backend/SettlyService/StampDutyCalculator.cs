@@ -37,7 +37,7 @@ public class StampDutyCalculator
         var concessionDuty = ApplyConcessions(baseDuty, input);
         var surcharge = ApplyForeignSurcharge(input);
         var total = concessionDuty.Value + surcharge;
-        var finalDuty = ApplyRounding(total);    
+        var finalDuty = ApplyRounding(total);
 
         return new StampDutyOutputDto
         {
@@ -52,6 +52,10 @@ public class StampDutyCalculator
     /// </summary>
     private string SelectBaseTable(LoanSimulateInputDto input)
     {
+
+        if (input.State.ToLower() != "vic")
+            throw new InvalidOperationException(
+                        $"no implement calculator for (State={input.State}, Value={input.DutiableValue})");
         foreach (var selector in _data.Selectors)
         {
             if (selector.Matches(input))
@@ -106,13 +110,19 @@ public class StampDutyCalculator
         {
             if (modifier.IsEligible(input))
             {
-
-                duty = modifier.Apply(duty, input);
-                return new Concession
+                if (modifier.Id.Contains("exemption") && input.DutiableValue <= modifier.Eligibility.DutiableValueMax)
+                    return new Concession { Label = modifier.Id, Value = 0 };
+                if (modifier.Id.Contains("concession") && input.DutiableValue <= modifier.Eligibility.DutiableValueMax && input.DutiableValue >= modifier.Eligibility.DutiableValueMin)
                 {
-                    Label = modifier.Id,
-                    Value = duty
-                };
+                    decimal discountRate = (decimal)((input.DutiableValue - modifier.Eligibility.DutiableValueMin + 1) / (modifier.Eligibility.DutiableValueMax - modifier.Eligibility.DutiableValueMin + 1));
+
+                    return new Concession
+                    {
+                        Label = modifier.Id,
+                        Value = duty * discountRate,
+                    };
+                }
+
             }
         }
         return concession;
@@ -125,7 +135,7 @@ public class StampDutyCalculator
 
         foreach (var modifier in _data.Modifiers)
         {
-            if (modifier.Id == "vic_foreign_purchaser_additional_duty")
+            if (modifier.Id.Contains("foreign_purchaser"))
             {
                 surcharge = input.DutiableValue * (modifier.Action.Rate ?? 0);
                 return surcharge;
