@@ -4,7 +4,6 @@ import {
   Container,
   Typography,
   Link,
-  IconButton,
 } from '@mui/material';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import InstagramIcon from '@mui/icons-material/Instagram';
@@ -313,7 +312,7 @@ const Footer: React.FC<FooterProps> = ({ className }) => {
           </Box>
         </Box>
 
-        {/* 底部版权信息 */}
+        {/* Bottom */}
         <Box style={copyrightContainerStyle}>
           <Typography
             variant="body2"
