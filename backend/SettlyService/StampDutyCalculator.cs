@@ -22,19 +22,13 @@ public class StampDutyCalculator
         var data = JsonSerializer.Deserialize<StampDutyDto>(json, options)
                    ?? throw new Exception("Failed to deserialize stamp duty JSON.");
 
-        // Ignore cases
-        data.BaseTables = new Dictionary<string, List<RateBracketDto>>(
-            data.BaseTables,
-            StringComparer.OrdinalIgnoreCase
-        );
-
         return data;
     }
     public StampDutyOutputDto Calculate(LoanSimulateInputDto input)
     {
 
         if (_data == null)
-            throw new InvalidOperationException("Stamp duty data not loaded. Call LoadJson() first.");
+            throw new InvalidOperationException("Stamp duty data not loaded. call StampDutyCalculator() first.");
 
         var tableKey = SelectBaseTable(input);
         var baseDuty = CalculateBaseDuty(input, tableKey);
