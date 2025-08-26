@@ -35,14 +35,5 @@ namespace SettlyApi.Controllers
             return Ok(result);
         }
 
-        [HttpGet("chat")]
-        [SwaggerOperation(Summary = "Chat with bot using intent")]
-        [SwaggerResponse(200, "Successfully received bot reply", typeof(BotOutputDto))]
-        public async Task<ActionResult<BotOutputDto>> Chat(BotInputDto input)
-        {
-            var reply = await _searchService.AskBotAsync(input.Intent);
-            return Ok(reply);
-        }
-
     }
 }

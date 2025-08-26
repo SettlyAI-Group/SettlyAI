@@ -64,16 +64,6 @@ namespace SettlyService
         }
         #endregion
 
-        #region Function AskBotAsync
-        public async Task<BotOutputDto> AskBotAsync(string query)
-        {
-            return await Task.FromResult(new BotOutputDto
-            {
-                Response = $"Hello! You asked about: {query}. This chatbot feature is coming soon!",
-                Timestamp = DateTime.UtcNow
-            });
-        }
-        #endregion
 
         #region Helper Functions for Function QuerySearchAsync
 
