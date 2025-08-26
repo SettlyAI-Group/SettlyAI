@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { Autocomplete, TextField, Box, Typography, InputAdornment } from '@mui/material';
+import { TextField, Box, Typography, InputAdornment } from '@mui/material';
+import Autocomplete from '@mui/material/Autocomplete';
 import SearchIcon from '@mui/icons-material/Search';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
 import { setQuery } from '../../store/slices/exploreSlice';
-
+import { styled } from '@mui/material/styles';
 import type { SuggestionList } from '@/interfaces/searchSuggestion';
 
 const formatSuggestList = (option: SuggestionList) => {
@@ -11,6 +12,15 @@ const formatSuggestList = (option: SuggestionList) => {
   const right = [option.state, option.postcode].filter(Boolean).join(' ');
   return [option.address, option.name, right].filter(Boolean).join(', ');
 };
+
+type Option = SuggestionList;
+const StyledAutocomplete = styled(Autocomplete<Option, false, false, true>)(({ theme }) => ({
+  flexGrow: 1,
+  minWidth: 0,
+  width: '100%',
+  [theme.breakpoints.between('md', 'lg')]: { width: '45%' },
+  [theme.breakpoints.up('lg')]: { width: 650 },
+}));
 
 const SuggestAutocomplete = () => {
   const dispatch = useAppDispatch();
@@ -20,14 +30,7 @@ const SuggestAutocomplete = () => {
   const SUGGESTION_STORAGE_KEY = 'settly:selectedSuggestion';
 
   return (
-    <Autocomplete
-      sx={theme => ({
-        flexGrow: 1,
-        minWidth: 0,
-        width: '100%',
-        [theme.breakpoints.between(900, 1150)]: { width: '45%' },
-        [theme.breakpoints.up(1150)]: { width: 650 },
-      })}
+    <StyledAutocomplete
       disablePortal
       freeSolo
       options={suggestions as SuggestionList[]}
