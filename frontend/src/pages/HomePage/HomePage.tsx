@@ -19,7 +19,7 @@ const HomePage = () => {
 
     localStorage.setItem('suburbId', suburbId.toString());
 
-    navigate(`/suburb/1`);
+    navigate(`/suburb/${suburbId}`);
   };
 
   return (
