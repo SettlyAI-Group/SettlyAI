@@ -35,7 +35,6 @@ public class FormulaDto
 
 public class SelectorDto
 {
-    // public Dictionary<string, object> Conditions { get; set; } = new();
     public ConditionsDto Conditions { get; set; } = new ConditionsDto();
     public string Table { get; set; } = string.Empty;
 
