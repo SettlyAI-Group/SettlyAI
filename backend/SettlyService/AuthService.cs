@@ -14,17 +14,20 @@ public class AuthService : IAuthService
     private readonly IUserService _userService;
     private readonly IVerificationCodeService _verificationCodeService;
     private readonly IEmailSender _emailSender;
+    private readonly ICreateTokenService _createTokenService;
 
     public AuthService(
         SettlyDbContext context,
         IUserService userService,
         IVerificationCodeService verificationCodeService,
-        IEmailSender emailSender)
+        IEmailSender emailSender,
+        ICreateTokenService createTokenService)
     {
         _context = context;
         _userService = userService;
         _verificationCodeService = verificationCodeService;
         _emailSender = emailSender;
+        _createTokenService = createTokenService;
     }
 
     public async Task<ResponseUserDto> RegisterAsync(RegisterUserDto registerUser)
@@ -79,5 +82,29 @@ public class AuthService : IAuthService
             await transaction.RollbackAsync();
             throw;
         }
+    }
+
+    public async Task<LoginOutputDto> LoginAsync(LoginInputDto loginInput)
+    {
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == loginInput.Email);
+        if (user is null)
+        {
+            return null;
+        }
+
+        if (!BCrypt.Net.BCrypt.Verify(loginInput.Password, user.PasswordHash))
+        {
+            return null;
+        }
+
+        string accessToken = _createTokenService.CreateToken(user);
+
+        LoginOutputDto loginOutputDto = new LoginOutputDto
+        {
+            UserName = user.Name,
+            AccessToken = accessToken,
+        };
+
+        return loginOutputDto;
     }
 }
