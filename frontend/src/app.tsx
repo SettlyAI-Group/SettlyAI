@@ -9,6 +9,7 @@ import Layout from './components/Layout/Layout';
 import './App.css';
 import { RegistrationPage } from './pages/RegistrationPage';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import LoginPage from './pages/LoginPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -31,6 +32,7 @@ const App = () => {
           </Route>
           <Route path="/" element={<ThemeDemo />} />
           <Route path="/registration" element={<RegistrationPage />} />
+          <Route path='/login' element={<LoginPage/>} />
         </Routes>
       </ThemeProvider>
     </QueryClientProvider>
