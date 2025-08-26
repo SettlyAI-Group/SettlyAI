@@ -210,7 +210,7 @@ namespace SettlyService
                 });
         }
 
-        private IQueryable<SuggestionOutputDto> SuburbStatePatternChecking(string processedQuery)
+        private IQueryable<SuggestionOutputDto> StatePatternChecking(string processedQuery)
         {
             return _context.Suburbs
                 .AsNoTracking()
@@ -224,7 +224,7 @@ namespace SettlyService
                 });
         }
 
-        private IQueryable<SuggestionOutputDto> SuburbStateCodePatternChecking(string processedQuery)
+        private IQueryable<SuggestionOutputDto> StateCodePatternChecking(string processedQuery)
         {
             return _context.Suburbs
                 .AsNoTracking()
@@ -257,8 +257,8 @@ namespace SettlyService
         private IQueryable<SuggestionOutputDto> BuildQueryForSql(string pattern)
         {
             var suburbsByName = SuburbNamePatternChecking(pattern);
-            var suburbsByState = SuburbStatePatternChecking(pattern);
-            var suburbsByStateCode = SuburbStateCodePatternChecking(pattern);
+            var suburbsByState = StatePatternChecking(pattern);
+            var suburbsByStateCode = StateCodePatternChecking(pattern);
             var propertiesByAddress = AddressPatternChecking(pattern);
 
             return suburbsByName
