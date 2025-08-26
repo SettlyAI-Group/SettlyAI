@@ -15,14 +15,6 @@ public class StampDutyDto
     public RoundingDto? Rounding { get; set; }
 }
 
-public class StampDutyBracket
-{
-    public decimal? Min { get; set; }
-    public decimal? Max { get; set; }
-    public string? Formula { get; set; }
-    public decimal? Base { get; set; }
-    public string? Marginal { get; set; }
-}
 
 public class EffectiveDto { public string From { get; set; } = ""; public string? To { get; set; } }
 
@@ -43,27 +35,31 @@ public class FormulaDto
 
 public class SelectorDto
 {
-    public Dictionary<string, object> Conditions { get; set; } = new();
-    public string Table { get; set; } = "";
+    // public Dictionary<string, object> Conditions { get; set; } = new();
+    public ConditionsDto Conditions { get; set; } = new ConditionsDto();
+    public string Table { get; set; } = string.Empty;
 
     public bool Matches(LoanSimulateInputDto input)
     {
-        foreach (var kv in Conditions)
+        if (Conditions.Occupancy != null)
         {
-            //  var occupancy = input.IsPPR ? "PPOR" : "GENERAL";
-            // if (kv.Key.Equals("occupancy", StringComparison.OrdinalIgnoreCase) && kv.Value is string occ)
-            // {
-            //     // if (!occ.Equals(input.Occupancy, StringComparison.OrdinalIgnoreCase)) return false;
-            // }
-            if (kv.Key.Equals("dutiableValueMax", StringComparison.OrdinalIgnoreCase) && kv.Value is JsonElement maxEl && maxEl.TryGetDecimal(out var max))
-            {
-                if (input.DutiableValue > max) return false;
-            }
+            var occupancy = input.IsPPR ? "PPOR" : "GENERAL";
+            if (!Conditions.Occupancy.Equals(occupancy, StringComparison.OrdinalIgnoreCase))
+                return false;
         }
+
+        if (Conditions.DutiableValueMax.HasValue && input.DutiableValue > Conditions.DutiableValueMax.Value)
+            return false;
+
         return true;
     }
 }
-
+public class ConditionsDto
+{
+    public string? Occupancy { get; set; }
+    public decimal? DutiableValueMin { get; set; }
+    public decimal? DutiableValueMax { get; set; }
+}
 public class ModifierDto
 {
     public string Id { get; set; } = "";
@@ -79,22 +75,10 @@ public class ModifierDto
             return false;
         if (Eligibility.DutiableValueMin.HasValue && input.DutiableValue < Eligibility.DutiableValueMin.Value)
             return false;
-        // if (Eligibility.IsForeignPerson.HasValue && Eligibility.IsForeignPerson.Value && !input.IsForeignPurchase)
-        //     return false;
         if (!string.IsNullOrEmpty(Eligibility.PropertyType) && input.PropertyType != Eligibility.PropertyType)
             return false;
 
         return true;
-    }
-
-    public decimal Apply(decimal currentDuty, LoanSimulateInputDto input)
-    {
-        return Action.Type switch
-        {
-            "override_total_to" => Action.Value ?? currentDuty,
-            "surcharge_percentage" => currentDuty + currentDuty * (Action.Rate ?? 0),
-            _ => currentDuty
-        };
     }
 }
 

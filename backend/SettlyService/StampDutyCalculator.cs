@@ -12,19 +12,23 @@ public class StampDutyCalculator
             throw new FileNotFoundException("Stamp duty JSON file not found.", jsonFilePath);
 
         var json = File.ReadAllText(jsonFilePath);
+
+        _data = DeserializeJson(json);
+    }
+    private static StampDutyDto DeserializeJson(string json)
+    {
         var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
 
-        _data = JsonSerializer.Deserialize<StampDutyDto>(json, options)
-                ?? throw new Exception("Failed to deserialize stamp duty JSON.");
-        // Ensure dictionary is case-insensitive
-        _data.BaseTables = new Dictionary<string, List<RateBracketDto>>(
-            _data.BaseTables,
+        var data = JsonSerializer.Deserialize<StampDutyDto>(json, options)
+                   ?? throw new Exception("Failed to deserialize stamp duty JSON.");
+
+        // Ignore cases
+        data.BaseTables = new Dictionary<string, List<RateBracketDto>>(
+            data.BaseTables,
             StringComparer.OrdinalIgnoreCase
         );
-    }
-    public StampDutyCalculator(StampDutyDto data)
-    {
-        _data = data;
+
+        return data;
     }
     public StampDutyOutputDto Calculate(LoanSimulateInputDto input)
     {
