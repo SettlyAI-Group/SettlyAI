@@ -22,6 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\SettlyFinance\SettlyFinance.csproj" />
     <ProjectReference Include="..\SettlyService\SettlyService.csproj" />
     <ProjectReference Include="..\SettlyModels\SettlyModels.csproj" />
     <ProjectReference Include="..\ISettlyService\ISettlyService.csproj" />
