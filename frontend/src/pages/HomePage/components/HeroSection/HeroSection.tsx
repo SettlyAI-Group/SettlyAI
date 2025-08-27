@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../../../redux/store';
 import { useEffect, useRef } from 'react';
 import { fetchSuggestion } from '../../../../store/slices/searchSuggestSlice';
-import SuggestAutocomplete from '../../../../components/Search/SuggestAutocomplete';
+import SearchBar from '../../../../components/Search/SearchBar';
 
 const HeroContainer = styled(Container)(({ theme }) => ({
   paddingTop: theme.spacing(25),
@@ -23,28 +23,6 @@ const MainHeader = styled(Typography)(({ theme }) => ({
 
 const Accent = styled('span')(({ theme }) => ({
   color: theme.palette.primary.main,
-}));
-
-const ReportButton = styled(Button)(({ theme }) => ({
-  position: 'static',
-  width: '100%',
-  height: 48,
-  whiteSpace: 'nowrap',
-  color: '#fff',
-  ...theme.typography.subtitle1,
-  textTransform: 'none',
-  [theme.breakpoints.between(900, 1150)]: {
-    width: '48%',
-    position: 'static',
-    height: 56,
-  },
-  [theme.breakpoints.up(1150)]: {
-    position: 'absolute',
-    width: 200,
-    left: '100%',
-    height: 56,
-    transform: 'translateX(36px)',
-  },
 }));
 
 const ExploreButton = styled(Button)(({ theme }) => ({
@@ -132,10 +110,7 @@ const HeroSectionContainer = () => {
               },
             })}
           >
-            <SuggestAutocomplete />
-            <ReportButton variant="contained" onClick={() => navigate('/suburb/id')}>
-              Get my report
-            </ReportButton>
+            <SearchBar />
           </Box>
         </Box>
 
