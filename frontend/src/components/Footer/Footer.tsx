@@ -282,7 +282,7 @@ const Footer: React.FC<FooterProps> = ({ className }) => {
                 >
                   <LinkedInIcon />
                   </a>
-                <a
+                <Link
                   href="#"
                   style={{ 
                     color: '#9ca3af',
