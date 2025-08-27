@@ -160,7 +160,7 @@ const Footer: React.FC<FooterProps> = ({ className }) => {
           {/* Left Brand Section */}
           <Box style={isLargeScreen ? {
             ...brandSectionStyle,
-            flex: '0 0 48%',
+            flex: 1,
           } : brandSectionStyle}>
             <Box style={brandContainerStyle}>
               <Box style={logoStyle}>
