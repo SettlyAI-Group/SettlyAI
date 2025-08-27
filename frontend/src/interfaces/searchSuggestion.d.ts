@@ -3,6 +3,7 @@ export interface SuggestionOutputDto {
   state: string;
   postcode: string;
   address: string;
+  suburbId: number;
 }
 
 export interface SuggestionList {
@@ -10,4 +11,5 @@ export interface SuggestionList {
   state?: string;
   postcode?: string | number;
   address?: string;
+  suburbId?: number;
 }

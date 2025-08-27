@@ -1,7 +1,7 @@
 import { Container, Box, Button, Typography, styled, useTheme } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../../../redux/store';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { fetchSuggestion } from '../../../../store/slices/searchSuggestSlice';
 import SearchBar from '../../../../components/Search/SearchBar';
 
@@ -34,29 +34,29 @@ const ExploreButton = styled(Button)(({ theme }) => ({
 const HeroSectionContainer = () => {
   const navigate = useNavigate();
   const theme = useTheme();
-  const dispatch = useAppDispatch();
-  const { query } = useAppSelector(selector => selector.explore);
-  const lastReqRef = useRef<any>(null);
+  // const dispatch = useAppDispatch();
+  // const { query } = useAppSelector(selector => selector.explore);
+  // const lastReqRef = useRef<any>(null);
 
-  useEffect(() => {
-    const timeInterval = setTimeout(() => {
-      const trimmedQuery = query.trim();
+  // useEffect(() => {
+  //   const timeInterval = setTimeout(() => {
+  //     const trimmedQuery = query.trim();
 
-      if (trimmedQuery.length < 3) {
-        lastReqRef.current?.abort?.();
-        return;
-      }
+  //     if (trimmedQuery.length < 3) {
+  //       lastReqRef.current?.abort?.();
+  //       return;
+  //     }
 
-      lastReqRef.current?.abort?.();
-      const p = dispatch(fetchSuggestion(trimmedQuery));
-      lastReqRef.current = p;
-    }, 300);
+  //     lastReqRef.current?.abort?.();
+  //     const p = dispatch(fetchSuggestion(trimmedQuery));
+  //     lastReqRef.current = p;
+  //   }, 300);
 
-    return () => {
-      clearTimeout(timeInterval);
-      lastReqRef.current?.abort?.();
-    };
-  }, [query, dispatch]);
+  //   return () => {
+  //     clearTimeout(timeInterval);
+  //     lastReqRef.current?.abort?.();
+  //   };
+  // }, [query, dispatch]);
 
   return (
     <Box

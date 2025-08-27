@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { TextField, Box, Typography, InputAdornment, Button } from '@mui/material';
+import { TextField, Box, Typography, InputAdornment } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
 import SearchIcon from '@mui/icons-material/Search';
-import { useAppDispatch, useAppSelector } from '../../redux/store';
-import { setQuery } from '../../store/slices/exploreSlice';
 import { styled } from '@mui/material/styles';
-import type { SuggestionList } from '@/interfaces/searchSuggestion';
+import type { SuggestionList, SuggestionOutputDto } from '@/interfaces/searchSuggestion';
 import GetReportButton from './components/GetReportButton';
+import { useQuery } from '@tanstack/react-query';
+import { searchSuggestion } from '@/api/searchSuggestApi';
 
 const formatSuggestList = (option: SuggestionList) => {
   if (!option) return '';
@@ -14,7 +14,7 @@ const formatSuggestList = (option: SuggestionList) => {
   return [option.address, option.name, right].filter(Boolean).join(', ');
 };
 
-type Option = SuggestionList;
+type Option = SuggestionOutputDto;
 const StyledAutocomplete = styled(Autocomplete<Option, false, false, true>)(({ theme }) => ({
   flexGrow: 1,
   minWidth: 0,
@@ -24,32 +24,39 @@ const StyledAutocomplete = styled(Autocomplete<Option, false, false, true>)(({ t
 }));
 
 const SearchBar = () => {
-  const dispatch = useAppDispatch();
-  const { query } = useAppSelector(selector => selector.explore);
-  const { suggestions, loading } = useAppSelector(selector => selector.searchSuggest);
+  const [query, setQuery] = useState('');
+  const [selected, setSelected] = useState<Option | string | null>(null);
   const [focused, setFocused] = useState(false);
-  const SUGGESTION_STORAGE_KEY = 'settly:selectedSuggestion';
+
+  const trimmedQuery = query.trim();
+  const { data: options = [], isFetching } = useQuery<SuggestionOutputDto[]>({
+    queryKey: ['suggest', trimmedQuery],
+    staleTime: 60_000,
+    enabled: trimmedQuery.length >= 2,
+    queryFn: ({ signal }) => searchSuggestion(trimmedQuery, { signal }),
+  });
 
   return (
     <>
       <StyledAutocomplete
         disablePortal
         freeSolo
-        options={suggestions as SuggestionList[]}
+        value={selected}
+        options={options}
         getOptionLabel={option => (typeof option === 'string' ? option : formatSuggestList(option))}
         isOptionEqualToValue={(option, value) =>
-          option.name === value.name && option.postcode === value.postcode && option.state === value.state
+          value != null &&
+          typeof value !== 'string' &&
+          option.name === value.name &&
+          option.postcode === value.postcode &&
+          option.state === value.state
         }
         filterOptions={data => data}
-        loading={loading}
-        open={focused && query.length >= 3 && suggestions.length > 0}
+        loading={isFetching}
+        open={focused && query.length >= 3 && options.length > 0}
         inputValue={query}
-        onInputChange={(_, value) => dispatch(setQuery(value))}
-        onChange={(_, option, reason) => {
-          if (reason !== 'selectOption' || !option || typeof option === 'string') return;
-          const label = formatSuggestList(option);
-          localStorage.setItem(SUGGESTION_STORAGE_KEY, JSON.stringify({ label, option }));
-        }}
+        onInputChange={(_, value) => setQuery(value)}
+        onChange={(_, value) => setSelected(typeof value === 'string' ? null : value)}
         onOpen={() => setFocused(true)}
         onClose={() => setFocused(false)}
         slotProps={{
