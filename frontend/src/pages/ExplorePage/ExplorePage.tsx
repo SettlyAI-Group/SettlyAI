@@ -1,9 +1,8 @@
-import { readSelectedSuggestion } from '../../utils/storage';
-
+import { useLocation, useParams } from 'react-router-dom';
 const ExplorePage = () => {
-  const savedData = readSelectedSuggestion();
-  const label = savedData?.label;
-  const selectedSuggestion = savedData?.option;
+  const { state } = useLocation() as { state?: { suburbId?: number } };
+  const { location } = useParams();
+  const label = location ? decodeURIComponent(location) : 'Unknown';
   return (
     <div>
       <p>Selected Suggestion: {label}</p>

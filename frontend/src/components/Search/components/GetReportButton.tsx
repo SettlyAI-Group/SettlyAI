@@ -23,10 +23,14 @@ const ReportButton = styled(Button)(({ theme }) => ({
   },
 }));
 
-const GetReportButton = () => {
+type Props = {
+  onClick?: () => void;
+};
+
+const GetReportButton = ({ onClick }: Props) => {
   const navigate = useNavigate();
   return (
-    <ReportButton variant="contained" onClick={() => navigate('/suburb/id')}>
+    <ReportButton variant="contained" onClick={onClick}>
       Get my report
     </ReportButton>
   );
