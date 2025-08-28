@@ -14,6 +14,12 @@ const formatSuggestList = (option: SuggestionList) => {
   return [option.address, option.name, right].filter(Boolean).join(', ');
 };
 
+type Props = {
+  selected: Option | null;
+  onSelectedChange: (value: Option | null) => void;
+  onGetReport?: () => void;
+};
+
 type Option = SuggestionOutputDto;
 const StyledAutocomplete = styled(Autocomplete<Option, false, false, true>)(({ theme }) => ({
   flexGrow: 1,
@@ -23,9 +29,9 @@ const StyledAutocomplete = styled(Autocomplete<Option, false, false, true>)(({ t
   [theme.breakpoints.up('lg')]: { width: 650 },
 }));
 
-const SearchBar = () => {
+const SearchBar = ({ selected, onSelectedChange, onGetReport }: Props) => {
   const [query, setQuery] = useState('');
-  const [selected, setSelected] = useState<Option | string | null>(null);
+  // const [selected, setSelected] = useState<Option | string | null>(null);
   const [focused, setFocused] = useState(false);
 
   const trimmedQuery = query.trim();
@@ -56,7 +62,7 @@ const SearchBar = () => {
         open={focused && query.length >= 3 && options.length > 0}
         inputValue={query}
         onInputChange={(_, value) => setQuery(value)}
-        onChange={(_, value) => setSelected(typeof value === 'string' ? null : value)}
+        onChange={(_, value) => onSelectedChange(typeof value === 'string' ? null : value)}
         onOpen={() => setFocused(true)}
         onClose={() => setFocused(false)}
         slotProps={{
@@ -120,7 +126,7 @@ const SearchBar = () => {
           />
         )}
       />
-      <GetReportButton />
+      <GetReportButton onClick={onGetReport} />
     </>
   );
 };

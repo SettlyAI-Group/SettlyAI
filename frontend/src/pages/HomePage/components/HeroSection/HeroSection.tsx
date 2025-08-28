@@ -1,9 +1,8 @@
 import { Container, Box, Button, Typography, styled, useTheme } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from '../../../../redux/store';
-import { useEffect, useRef, useState } from 'react';
-import { fetchSuggestion } from '../../../../store/slices/searchSuggestSlice';
+import { useState } from 'react';
 import SearchBar from '../../../../components/Search/SearchBar';
+import type { SuggestionOutputDto } from '@/interfaces/searchSuggestion';
 
 const HeroContainer = styled(Container)(({ theme }) => ({
   paddingTop: theme.spacing(25),
@@ -34,29 +33,19 @@ const ExploreButton = styled(Button)(({ theme }) => ({
 const HeroSectionContainer = () => {
   const navigate = useNavigate();
   const theme = useTheme();
-  // const dispatch = useAppDispatch();
-  // const { query } = useAppSelector(selector => selector.explore);
-  // const lastReqRef = useRef<any>(null);
-
-  // useEffect(() => {
-  //   const timeInterval = setTimeout(() => {
-  //     const trimmedQuery = query.trim();
-
-  //     if (trimmedQuery.length < 3) {
-  //       lastReqRef.current?.abort?.();
-  //       return;
-  //     }
-
-  //     lastReqRef.current?.abort?.();
-  //     const p = dispatch(fetchSuggestion(trimmedQuery));
-  //     lastReqRef.current = p;
-  //   }, 300);
-
-  //   return () => {
-  //     clearTimeout(timeInterval);
-  //     lastReqRef.current?.abort?.();
-  //   };
-  // }, [query, dispatch]);
+  const [selected, setSelected] = useState<SuggestionOutputDto | null>(null);
+  const onSelectedChange = () => {
+    setSelected(selected);
+  };
+  const handleExplore = () => {
+    if (!selected) return;
+    const encoded = encodeURIComponent(`${selected.name}, ${selected.state}`);
+    navigate(`/explore/${encoded}`, { state: { suburbid: selected.suburbId } });
+  };
+  const handleGetReport = () => {
+    if (!selected) return;
+    navigate(`/suburb/${selected.suburbId}`);
+  };
 
   return (
     <Box
@@ -110,7 +99,7 @@ const HeroSectionContainer = () => {
               },
             })}
           >
-            <SearchBar />
+            <SearchBar selected={selected} onSelectedChange={setSelected} onGetReport={handleGetReport} />
           </Box>
         </Box>
 
@@ -129,7 +118,7 @@ const HeroSectionContainer = () => {
             pb: 8,
           })}
         >
-          <ExploreButton variant="text" onClick={() => navigate('/explore/:location')}>
+          <ExploreButton variant="text" disabled={!selected} onClick={handleExplore}>
             Not sure where to begin? Explore suburbs that match your lifestyle
           </ExploreButton>
         </Box>
