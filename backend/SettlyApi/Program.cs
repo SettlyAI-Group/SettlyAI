@@ -7,11 +7,18 @@ using SettlyService;
 
 
 namespace SettlyApi;
+
 public class Program
 {
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+
+        builder.Configuration
+        .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+        .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+        .AddEnvironmentVariables();
+
         var apiConfigs = builder.Configuration.GetSection("ApiConfigs").Get<ApiConfigs>();
         builder.Services.AddDbContext<SettlyDbContext>(
             options => options
