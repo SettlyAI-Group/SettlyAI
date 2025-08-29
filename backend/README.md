@@ -218,11 +218,17 @@ Currently available endpoints:
 - Database logging enabled with sensitive data
 - Detailed error messages
 - Fake data generation available
+- ```dotnet run --environment "Development"```
+
+### Test
+```dotnet run --environment "Test"```
 
 ### Production
 - Optimized logging
 - Error handling without sensitive information
 - Data reset operations disabled
+- ```dotnet run --environment "Production"```
+
 
 ## Known Issues
 
@@ -237,7 +243,7 @@ These will be addressed in future database migrations.
 2. Update migrations for entity changes
 3. Test with sample data using `SettlyDbManager`
 4. Ensure all projects build successfully
-
+   
 ## License
 
 [Add your license information here]
