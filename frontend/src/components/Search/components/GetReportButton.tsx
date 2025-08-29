@@ -1,5 +1,4 @@
 import { Button, styled } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
 
 const ReportButton = styled(Button)(({ theme }) => ({
   position: 'static',
@@ -28,7 +27,6 @@ type Props = {
 };
 
 const GetReportButton = ({ onClick }: Props) => {
-  const navigate = useNavigate();
   return (
     <ReportButton variant="contained" onClick={onClick}>
       Get my report

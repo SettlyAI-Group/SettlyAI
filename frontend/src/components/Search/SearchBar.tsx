@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import * as React from 'react';
 import { TextField, Box, Typography, InputAdornment } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
 import SearchIcon from '@mui/icons-material/Search';
@@ -8,19 +9,28 @@ import GetReportButton from './components/GetReportButton';
 import { useQuery } from '@tanstack/react-query';
 import { searchSuggestion } from '@/api/searchSuggestApi';
 
+//Handle the format of data return from Backend Search Suggest Api being shown on the suggestion list to user
 const formatSuggestList = (option: SuggestionList) => {
   if (!option) return '';
   const right = [option.state, option.postcode].filter(Boolean).join(' ');
   return [option.address, option.name, right].filter(Boolean).join(', ');
 };
 
-type Props = {
-  selected: Option | null;
-  onSelectedChange: (value: Option | null) => void;
-  onGetReport?: () => void;
+//Handle the delayed time period for fetching data when user stop typing in textfield
+export const useDebouncedValue = <T,>(value: T, delay = 300): T => {
+  const [debounced, setDebounced] = React.useState(value);
+  React.useEffect(() => {
+    const id = window.setTimeout(() => setDebounced(value), delay);
+    return () => window.clearTimeout(id);
+  }, [value, delay]);
+
+  return debounced;
 };
 
+//Set up the type of data return from Backend Search Suggest Api
 type Option = SuggestionOutputDto;
+
+//Styling for the Autocomplete
 const StyledAutocomplete = styled(Autocomplete<Option, false, false, true>)(({ theme }) => ({
   flexGrow: 1,
   minWidth: 0,
@@ -29,16 +39,22 @@ const StyledAutocomplete = styled(Autocomplete<Option, false, false, true>)(({ t
   [theme.breakpoints.up('lg')]: { width: 650 },
 }));
 
-const SearchBar = ({ selected, onSelectedChange, onGetReport }: Props) => {
-  const [query, setQuery] = useState('');
-  // const [selected, setSelected] = useState<Option | string | null>(null);
-  const [focused, setFocused] = useState(false);
+type Props = {
+  selected: Option | null;
+  handleSelected: (value: Option | null) => void;
+  handleGetReport?: () => void;
+};
 
-  const trimmedQuery = query.trim();
+const SearchBar = ({ selected, handleSelected, handleGetReport }: Props) => {
+  const [query, setQuery] = useState('');
+  const [focused, setFocused] = useState(false);
+  const debouncedQuery = useDebouncedValue(query, 500);
+
+  const trimmedQuery = debouncedQuery.trim();
   const { data: options = [], isFetching } = useQuery<SuggestionOutputDto[]>({
     queryKey: ['suggest', trimmedQuery],
-    staleTime: 60_000,
-    enabled: trimmedQuery.length >= 2,
+    staleTime: 30_000,
+    enabled: trimmedQuery.length >= 3,
     queryFn: ({ signal }) => searchSuggestion(trimmedQuery, { signal }),
   });
 
@@ -62,7 +78,7 @@ const SearchBar = ({ selected, onSelectedChange, onGetReport }: Props) => {
         open={focused && query.length >= 3 && options.length > 0}
         inputValue={query}
         onInputChange={(_, value) => setQuery(value)}
-        onChange={(_, value) => onSelectedChange(typeof value === 'string' ? null : value)}
+        onChange={(_, value) => handleSelected(typeof value === 'string' ? null : value)}
         onOpen={() => setFocused(true)}
         onClose={() => setFocused(false)}
         slotProps={{
@@ -126,7 +142,7 @@ const SearchBar = ({ selected, onSelectedChange, onGetReport }: Props) => {
           />
         )}
       />
-      <GetReportButton onClick={onGetReport} />
+      <GetReportButton onClick={handleGetReport} />
     </>
   );
 };

@@ -6,7 +6,7 @@ export const searchSuggestion = async (q: string, config?: AxiosRequestConfig): 
   const query = q.trim();
   const url = './search/suggest';
   const params = { ...(config?.params ?? {}), q: query };
-  const options: AxiosRequestConfig = { ...config, params };
+  const options: AxiosRequestConfig = { ...(config ?? {}), params };
 
   const { data } = await httpClient.get<SuggestionOutputDto[]>(url, options);
   return data ?? [];
