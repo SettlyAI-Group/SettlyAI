@@ -230,7 +230,6 @@ Currently available endpoints:
 - ```dotnet run --environment "Production"```
 
 
-
 ## Known Issues
 
 - DbSet naming inconsistency: `SuburbReport` entity mapped to `Users` table
@@ -245,9 +244,6 @@ These will be addressed in future database migrations.
 3. Test with sample data using `SettlyDbManager`
 4. Ensure all projects build successfully
    
-##
-
-
 ## License
 
 [Add your license information here]
