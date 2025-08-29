@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import HeroSectionContainer from './components/HeroSection';
+import HeroSection from './components/HeroSection';
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -24,7 +24,7 @@ const HomePage = () => {
 
   return (
     <>
-      <HeroSectionContainer />
+      <HeroSection />
       <h1>Home</h1>
       <button onClick={() => checkSuburb(sydney)}>Go to Sydney</button>
       <button onClick={() => checkSuburb(melbourne)}>Go to Melbourne</button>
