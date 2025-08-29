@@ -5,9 +5,9 @@ import Autocomplete from '@mui/material/Autocomplete';
 import SearchIcon from '@mui/icons-material/Search';
 import { styled } from '@mui/material/styles';
 import type { SuggestionList, SuggestionOutputDto } from '@/interfaces/searchSuggestion';
-import GetReportButton from './components/GetReportButton';
 import { useQuery } from '@tanstack/react-query';
 import { searchSuggestion } from '@/api/searchSuggestApi';
+import GlobalButton from '../GlobalButton';
 
 //Handle the format of data return from Backend Search Suggest Api being shown on the suggestion list to user
 const formatSuggestList = (option: SuggestionList) => {
@@ -30,7 +30,7 @@ export const useDebouncedValue = <T,>(value: T, delay = 300): T => {
 //Set up the type of data return from Backend Search Suggest Api
 type Option = SuggestionOutputDto;
 
-//Styling for the Autocomplete
+//Styling for the Autocomplete & ReportButton Wrap
 const StyledAutocomplete = styled(Autocomplete<Option, false, false, true>)(({ theme }) => ({
   flexGrow: 1,
   minWidth: 0,
@@ -39,13 +39,35 @@ const StyledAutocomplete = styled(Autocomplete<Option, false, false, true>)(({ t
   [theme.breakpoints.up('lg')]: { width: 650 },
 }));
 
-type Props = {
+const ReportButtonWrap = styled('div')(({ theme }) => ({
+  marginTop: theme.spacing(2),
+  [theme.breakpoints.up('md')]: { marginTop: 0 },
+
+  '@media (min-width:1150px)': {
+    position: 'absolute',
+    left: '100%',
+    top: '50%',
+    transform: `translate(${theme.spacing(6)}, -50%)`,
+  },
+  '&& > .MuiButton-root': {
+    height: 56,
+    width: '100%',
+    [theme.breakpoints.up('md')]: { width: 200 },
+    borderRadius:
+      typeof theme.shape.borderRadius === 'number'
+        ? theme.shape.borderRadius * 3
+        : `calc(${theme.shape.borderRadius} * 3)`,
+    fontSize: `calc(${theme.typography.button.fontSize} * 1.3)`,
+  },
+}));
+
+type ISearchBarProps = {
   selected: Option | null;
   handleSelected: (value: Option | null) => void;
   handleGetReport?: () => void;
 };
 
-const SearchBar = ({ selected, handleSelected, handleGetReport }: Props) => {
+const SearchBar = ({ selected, handleSelected, handleGetReport }: ISearchBarProps) => {
   const [query, setQuery] = useState('');
   const [focused, setFocused] = useState(false);
   const debouncedQuery = useDebouncedValue(query, 500);
@@ -89,7 +111,7 @@ const SearchBar = ({ selected, handleSelected, handleGetReport }: Props) => {
               { name: 'preventOverflow', options: { altAxis: false } },
             ],
           },
-          paper: { sx: { mt: 1, borderRadius: 2 } },
+          paper: { sx: { mt: 1, borderRadius: 4 } },
           listbox: {
             sx: {
               py: 0.5,
@@ -128,6 +150,12 @@ const SearchBar = ({ selected, handleSelected, handleGetReport }: Props) => {
             placeholder="Search suburb or postcode"
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
+            sx={theme => ({
+              '& .MuiOutlinedInput-root': {
+                borderRadius: theme.shape.borderRadius,
+                '& fieldset': { borderRadius: 'inherit' },
+              },
+            })}
             InputProps={{
               ...params.InputProps,
               startAdornment: (
@@ -142,7 +170,11 @@ const SearchBar = ({ selected, handleSelected, handleGetReport }: Props) => {
           />
         )}
       />
-      <GetReportButton onClick={handleGetReport} />
+      <ReportButtonWrap>
+        <GlobalButton onClick={handleGetReport} variant="contained" type="button">
+          Get my report
+        </GlobalButton>
+      </ReportButtonWrap>
     </>
   );
 };
