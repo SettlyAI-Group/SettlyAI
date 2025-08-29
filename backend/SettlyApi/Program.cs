@@ -47,45 +47,13 @@ public class Program
         builder.Services.AddScoped<IPropertyService, PropertyService>();
         builder.Services.AddScoped<IFavouriteService, FavouriteService>();
         builder.Services.AddTransient<IPopulationSupplyService, PopulationSupplyService>();
+        builder.Services.AddScoped<ILoanService, LoanService>();
         builder.Services.AddScoped<ITestimonialService, TestimonialService>();
 
 
+        builder.Services.AddScoped<ILayoutNavService, LayoutNavService>();
         //Add Swagger
-        builder.Services.AddSwaggerGen(options =>
-        {
-            options.SwaggerDoc("SettlyService", new Microsoft.OpenApi.Models.OpenApiInfo()
-            {
-                Title = "SettlyAI",
-                Version = "1.0.0.0",
-                Description = "SettlyAI Web Api",
-                Contact = new Microsoft.OpenApi.Models.OpenApiContact()
-            });
-            options.EnableAnnotations();
-
-            // Add JWT Authorization
-            options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme()
-            {
-                Description = "please 'Bearer+space+token'，For instance：Bearer eyJhbGciOi...",
-                Name = "Authorization",
-                In = ParameterLocation.Header,
-                Type = SecuritySchemeType.ApiKey,
-                Scheme = "Bearer"
-            });
-            options.AddSecurityRequirement(new OpenApiSecurityRequirement()
-            {
-                {
-                    new OpenApiSecurityScheme()
-                    {
-                        Reference=new OpenApiReference()
-                        {
-                            Type=ReferenceType.SecurityScheme,
-                            Id="Bearer"
-                        }
-                    },
-                    new List<string>()
-                }
-            });
-        });
+        builder.Services.AddSwaggerConfig();
 
         // JWT configration
         builder.Services.Configure<JWTConfig>(builder.Configuration.GetSection(JWTConfig.Section));
@@ -96,15 +64,10 @@ public class Program
         builder.Services.AddLoginLimitRater(attempts: 5, miniutes: 15);
 
         var app = builder.Build();
+
         // use Swagger
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseSwagger();
-            app.UseSwaggerUI(option =>
-            {
-                option.SwaggerEndpoint($"/swagger/SettlyService/swagger.json", "SettlyService");
-            });
-        }
+        app.UseSwaggerConfig(app.Environment);
+
         // Configure the HTTP request pipeline.
         app.UseRouting();
         app.UseCors("AllowAll");
