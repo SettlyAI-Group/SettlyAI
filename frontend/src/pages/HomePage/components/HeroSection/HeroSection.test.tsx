@@ -1,119 +1,113 @@
+// src/pages/Home/components/HeroSection.test.tsx
 import '@testing-library/jest-dom';
-import { describe, it, beforeEach, afterEach, vi, expect } from 'vitest';
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { ThemeProvider, createTheme } from '@mui/material';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { Provider } from 'react-redux';
-import { configureStore } from '@reduxjs/toolkit';
+import { describe, it, beforeEach, vi, expect } from 'vitest';
 
-import HeroSection from './HeroSection';
+// --- 1) Mock router navigate BEFORE importing SUT ---
+const mockNavigate = vi.fn();
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual<any>('react-router-dom');
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate,
+  };
+});
 
-const SUGGESTION_STORAGE_KEY = 'settly:selectedSuggestion';
-const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
-
-const DEFAULT_STATE = {
-  explore: { query: '' },
-  searchSuggest: { suggestions: [], loading: false, error: null },
+// --- 2) Stub SearchBar BEFORE importing SUT (matches SUT import path) ---
+const selectedSydney = {
+  suburbId: 101,
+  address: 'Sydney (CBD)',
+  name: 'Sydney',
+  state: 'NSW',
+  postcode: '2000',
 };
 
-function renderWithProviders(ui: JSX.Element, preloaded: Partial<typeof DEFAULT_STATE> = {}) {
-  const initialState = {
-    ...DEFAULT_STATE,
-    explore: { ...DEFAULT_STATE.explore, ...(preloaded.explore ?? {}) },
-    searchSuggest: { ...DEFAULT_STATE.searchSuggest, ...(preloaded.searchSuggest ?? {}) },
-    ...preloaded,
-  };
+vi.mock('../../../../components/Search/SearchBar', () => ({
+  default: ({ handleSelected, handleGetReport }: any) => (
+    <div data-testid="stub-searchbar">
+      <button onClick={() => handleSelected(selectedSydney)}>Select Sydney</button>
+      <button onClick={handleGetReport}>Get my report</button>
+    </div>
+  ),
+}));
 
-  const reducer = (state = initialState, action: any) => {
-    if (action?.type === 'explore/setQuery') {
-      return { ...state, explore: { ...(state.explore ?? {}), query: action.payload } };
-    }
-    return state;
-  };
+// --- 3) Now import test utils + SUT ---
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { MemoryRouter } from 'react-router-dom';
+import HeroSection from './HeroSection';
 
-  const store = configureStore({
-    reducer,
-    middleware: getDefault =>
-      getDefault({
-        thunk: true,
-        serializableCheck: false,
-        immutableCheck: false,
-      }),
-  });
-
+// harness
+function renderHero() {
   const theme = createTheme();
-
-  return {
-    ...render(
-      <Provider store={store}>
-        <ThemeProvider theme={theme}>
-          <MemoryRouter initialEntries={['/']}>
-            <Routes>
-              <Route path="/" element={ui} />
-              <Route path="/chat" element={<div data-testid="chat-page" />} />
-              <Route path="/explore/:location" element={<div data-testid="explore-page" />} />
-            </Routes>
-          </MemoryRouter>
-        </ThemeProvider>
-      </Provider>
-    ),
-    store,
-  };
+  return render(
+    <MemoryRouter initialEntries={['/']}>
+      <ThemeProvider theme={theme}>
+        <HeroSection />
+      </ThemeProvider>
+    </MemoryRouter>
+  );
 }
 
+beforeEach(() => {
+  mockNavigate.mockReset();
+});
+
 describe('HeroSection', () => {
-  beforeEach(() => {
-    localStorage.clear();
+  it('shows Explore as a link to /explore when nothing is selected', async () => {
+    renderHero();
+
+    // Find the Explore CTA (MUI Button rendered as <a> via RouterLink)
+    const exploreText = /Not sure where to begin\? Explore suburbs that match your lifestyle/i;
+    const exploreCta = screen.getByText(exploreText);
+    const linkEl = exploreCta.closest('a') as HTMLAnchorElement;
+
+    expect(linkEl).toBeInTheDocument();
+    // MemoryRouter renders href as "/explore"
+    expect(linkEl).toHaveAttribute('href', '/explore');
   });
 
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
-
-  it('debounces input and only dispatches the latest thunk after 300ms', async () => {
+  it('updates Explore link when a suburb is selected via SearchBar', async () => {
     const user = userEvent.setup();
+    renderHero();
 
-    const { store } = renderWithProviders(<HeroSection />);
-    const dispatchSpy = vi.spyOn(store, 'dispatch');
+    // Trigger the stubbed selection
+    await user.click(screen.getByRole('button', { name: /select sydney/i }));
 
-    const input = screen.getByRole('combobox');
-    await user.click(input);
-    await user.type(input, 's');
-    await user.type(input, 'y');
-    await user.type(input, 'd');
+    const exploreText = /Not sure where to begin\? Explore suburbs that match your lifestyle/i;
+    const exploreCta = screen.getByText(exploreText);
+    const linkEl = exploreCta.closest('a') as HTMLAnchorElement;
 
-    expect(dispatchSpy.mock.calls.some(c => typeof c[0] === 'function')).toBe(false);
+    expect(linkEl).toBeInTheDocument();
+    const href = linkEl.getAttribute('href') || '';
 
-    await sleep(320);
-
-    const thunkCalls = dispatchSpy.mock.calls.filter(c => typeof c[0] === 'function');
-    expect(thunkCalls.length).toBe(1);
+    // Should now be an encoded explore path (we keep the assertion resilient to exact slug rules)
+    expect(href).toMatch(/explore/i);
+    expect(href).not.toBe('/explore');
+    expect(href).toMatch(/sydney/i); // slug or encoded text containing sydney is fine
   });
 
-  it('routes CTAs: Chat and Explore', async () => {
+  it('navigates to a report path that contains the selected suburbId when clicking "Get my report"', async () => {
     const user = userEvent.setup();
+    renderHero();
 
-    localStorage.setItem(
-      SUGGESTION_STORAGE_KEY,
-      JSON.stringify({
-        id: '1',
-        address: '123 Fake St',
-        name: 'Testville',
-        state: 'NSW',
-        postcode: '2000',
-        label: '123 Fake St, Testville, NSW 2000',
-      })
-    );
+    // Select first, so HeroSection has a suburbId in state
+    await user.click(screen.getByRole('button', { name: /select sydney/i }));
 
-    renderWithProviders(<HeroSection />, { explore: { query: 'syd' } });
-    const chatBtn = screen.getByRole('button', { name: /chat/i });
-    await user.click(chatBtn);
-    expect(screen.getByTestId('chat-page')).toBeInTheDocument();
+    // Click the delegated "Get my report" (wired through stub SearchBar)
+    await user.click(screen.getByRole('button', { name: /get my report/i }));
 
-    renderWithProviders(<HeroSection />, { explore: { query: 'syd' } });
-    const exploreBtn = screen.getByRole('button', { name: /explore/i });
-    await user.click(exploreBtn);
-    expect(screen.getByTestId('explore-page')).toBeInTheDocument();
+    expect(mockNavigate).toHaveBeenCalled();
+
+    // Be robust to either string or object navigate calls
+    const [arg] = mockNavigate.mock.calls.at(-1)!;
+    if (typeof arg === 'string') {
+      expect(arg).toMatch(/suburb/i);
+      expect(arg).toMatch(/101/); // selectedSydney.suburbId
+    } else {
+      const payload = JSON.stringify(arg);
+      expect(payload).toMatch(/suburb/i);
+      expect(payload).toMatch(/101/);
+    }
   });
 });

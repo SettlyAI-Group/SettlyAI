@@ -1,95 +1,104 @@
-// src/components/Search/SuggestAutocomplete.test.tsx
 import '@testing-library/jest-dom';
-import { describe, it, beforeEach, afterEach, vi, expect } from 'vitest';
+import { describe, it, beforeEach, vi, expect } from 'vitest';
+
+// 1) HOISTED mock BEFORE importing the component that uses it
+vi.mock('@/api/searchSuggestApi', () => ({
+  searchSuggestion: vi.fn(),
+}));
+
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { ThemeProvider, createTheme } from '@mui/material';
-import { Provider } from 'react-redux';
-import { configureStore } from '@reduxjs/toolkit';
-import SuggestAutocomplete from './SearchBar';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import * as SearchBarModule from './SearchBar'; // import as namespace so we can spy on the hook
+const SearchBar = (SearchBarModule as any).default as typeof import('./SearchBar').default;
+import { searchSuggestion } from '@/api/searchSuggestApi';
 
-function renderWithProviders(ui: React.ReactElement, preloadedState: any) {
-  const reducer = (state = preloadedState, action: any) => {
-    if (action?.type === 'explore/setQuery') {
-      return { ...state, explore: { ...(state.explore ?? {}), query: action.payload } };
-    }
-    return state;
-  };
+// 2) Kill the debounce in tests (return value immediately)
+beforeEach(() => {
+  vi.restoreAllMocks();
+  vi.spyOn(SearchBarModule, 'useDebouncedValue').mockImplementation((v: unknown) => v as any);
+});
 
-  const store = configureStore({
-    reducer,
-  });
+// ---- fixtures ----
+const optionA = {
+  suburbId: 101,
+  address: 'Sydney (CBD)',
+  name: 'Sydney',
+  state: 'NSW',
+  postcode: '2000',
+};
+const optionB = {
+  suburbId: 202,
+  address: 'Syddenham',
+  name: 'Sydenham',
+  state: 'NSW',
+  postcode: '2044',
+};
 
+// test harness
+function renderWithProviders(ui: React.ReactElement) {
+  const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   const theme = createTheme();
-  const utils = render(
-    <Provider store={store}>
+  return render(
+    <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={theme}>{ui}</ThemeProvider>
-    </Provider>
+    </QueryClientProvider>
   );
-  return { ...utils, store };
 }
 
-const optionA = { id: '1', address: '123 Fake St', name: 'Testville', state: 'NSW', postcode: '2000' };
-const optionB = { id: '2', address: '456 Real Rd', name: 'Sampletown', state: 'NSW', postcode: '2001' };
+describe('SearchBar', () => {
+  it('opens suggestions only when input length ≥ 3 and renders mocked options', async () => {
+    (searchSuggestion as unknown as vi.Mock).mockResolvedValue([optionA, optionB]);
 
-let setItemSpy: any;
+    const onSelected = vi.fn();
+    const onReport = vi.fn();
 
-beforeEach(() => {
-  vi.useRealTimers();
-  setItemSpy = vi.spyOn(window.localStorage.__proto__, 'setItem').mockImplementation(() => {});
-});
-
-afterEach(() => {
-  setItemSpy.mockRestore();
-  vi.restoreAllMocks();
-});
-
-describe('SuggestAutocomplete', () => {
-  it('opens on focus when query length >= 3 and shows server options', async () => {
-    const preloaded = {
-      explore: { query: 'syd' },
-      searchSuggest: { suggestions: [optionA, optionB], loading: false, error: null },
-    };
-
-    renderWithProviders(<SuggestAutocomplete />, preloaded);
+    renderWithProviders(<SearchBar selected={null} handleSelected={onSelected} handleGetReport={onReport} />);
 
     const input = screen.getByRole('combobox');
     await userEvent.click(input);
+    await userEvent.type(input, 'sy'); // < 3 chars
+    expect(screen.queryByRole('listbox')).toBeNull();
 
+    await userEvent.type(input, 'd'); // now 3 chars
     const listbox = await screen.findByRole('listbox');
-    expect(within(listbox).getByRole('option', { name: /123 Fake St, Testville, NSW 2000/i })).toBeInTheDocument();
-    expect(within(listbox).getByRole('option', { name: /456 Real Rd, Sampletown, NSW 2001/i })).toBeInTheDocument();
+    const options = within(listbox).getAllByRole('option');
+    expect(options.length).toBe(2);
+
+    expect(within(listbox).getByRole('option', { name: /Sydney \(CBD\), Sydney, NSW 2000/i })).toBeInTheDocument();
+    expect(within(listbox).getByRole('option', { name: /Syddenham, Sydenham, NSW 2044/i })).toBeInTheDocument();
   });
 
-  it('selecting an option writes to localStorage (persists selection)', async () => {
-    const preloaded = {
-      explore: { query: 'syd' },
-      searchSuggest: { suggestions: [optionA, optionB], loading: false, error: null },
-    };
+  it('selecting an option calls handleSelected with the full DTO', async () => {
+    (searchSuggestion as unknown as vi.Mock).mockResolvedValue([optionA, optionB]);
 
-    renderWithProviders(<SuggestAutocomplete />, preloaded);
+    const onSelected = vi.fn();
+    const onReport = vi.fn();
+
+    renderWithProviders(<SearchBar selected={null} handleSelected={onSelected} handleGetReport={onReport} />);
 
     const input = screen.getByRole('combobox');
     await userEvent.click(input);
-
-    const listbox = await screen.findByRole('listbox');
-    await userEvent.click(within(listbox).getByRole('option', { name: /123 Fake St, Testville, NSW 2000/i }));
-
-    expect(setItemSpy).toHaveBeenCalledWith('settly:selectedSuggestion', expect.any(String));
-  });
-
-  it('typing dispatches explore/setQuery when length >= 3', async () => {
-    const preloaded = {
-      explore: { query: '' },
-      searchSuggest: { suggestions: [], loading: false, error: null },
-    };
-
-    const { store } = renderWithProviders(<SuggestAutocomplete />, preloaded);
-    const dispatchSpy = vi.spyOn(store, 'dispatch');
-
-    const input = screen.getByRole('combobox');
     await userEvent.type(input, 'syd');
 
-    expect(dispatchSpy).toHaveBeenCalledWith(expect.objectContaining({ type: 'explore/setQuery', payload: 'syd' }));
+    const listbox = await screen.findByRole('listbox');
+    await userEvent.click(within(listbox).getByRole('option', { name: /Sydney \(CBD\), Sydney, NSW 2000/i }));
+
+    expect(onSelected).toHaveBeenCalledTimes(1);
+    expect(onSelected).toHaveBeenCalledWith(expect.objectContaining(optionA));
+  });
+
+  it('clicking "Get my report" calls handleGetReport', async () => {
+    (searchSuggestion as unknown as vi.Mock).mockResolvedValue([]);
+
+    const onSelected = vi.fn();
+    const onReport = vi.fn();
+
+    renderWithProviders(<SearchBar selected={null} handleSelected={onSelected} handleGetReport={onReport} />);
+
+    const button = screen.getByRole('button', { name: /get my report/i });
+    await userEvent.click(button);
+    expect(onReport).toHaveBeenCalledTimes(1);
   });
 });
