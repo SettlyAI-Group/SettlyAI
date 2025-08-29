@@ -25,6 +25,7 @@
     <ProjectReference Include="..\SettlyService\SettlyService.csproj" />
     <ProjectReference Include="..\SettlyModels\SettlyModels.csproj" />
     <ProjectReference Include="..\ISettlyService\ISettlyService.csproj" />
+     <ProjectReference Include="..\SettlyApi\SettlyApi.csproj" />
   </ItemGroup>
 
 <ItemGroup>
