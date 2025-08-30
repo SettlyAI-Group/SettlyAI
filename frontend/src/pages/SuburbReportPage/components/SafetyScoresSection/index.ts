@@ -1,1 +1,3 @@
-export { default } from './SafetyScoresSection';
+
+export { default as CardsContainer } from './CardsContainer';
+export { default as SafetyScoresSection } from './SafetyScoresSection';
