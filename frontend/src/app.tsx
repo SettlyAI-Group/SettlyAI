@@ -9,6 +9,7 @@ import Layout from './components/Layout/Layout';
 import './App.css';
 import { RegistrationPage } from './pages/RegistrationPage';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import ExplorePage from './pages/ExplorePage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -27,7 +28,8 @@ const App = () => {
             <Route path="/theme" element={<ThemeDemo />} />
             <Route index element={<HomePage />} />
 
-            <Route path="/suburb/:location" element={<SuburbReportPage />} />
+            <Route path="/explore/:location" element={<ExplorePage />} />
+            <Route path="/suburb/:suburbId" element={<SuburbReportPage />} />
           </Route>
           <Route path="/" element={<ThemeDemo />} />
           <Route path="/registration" element={<RegistrationPage />} />
