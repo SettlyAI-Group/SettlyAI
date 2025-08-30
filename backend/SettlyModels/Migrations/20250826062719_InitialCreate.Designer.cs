@@ -12,8 +12,8 @@ using SettlyModels;
 namespace SettlyModels.Migrations
 {
     [DbContext(typeof(SettlyDbContext))]
-    [Migration("20250813085927_ChangeFeaturesToArray")]
-    partial class ChangeFeaturesToArray
+    [Migration("20250826062719_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -701,17 +701,26 @@ namespace SettlyModels.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
 
                     b.ToTable("Users");
                 });
@@ -742,6 +751,41 @@ namespace SettlyModels.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("UserFundSelections");
+                });
+
+            modelBuilder.Entity("SettlyModels.Entities.Verification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("Expiry")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsUsed")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("VerificationType")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Verifications");
                 });
 
             modelBuilder.Entity("SettlyModels.Entities.ChatLog", b =>
@@ -954,6 +998,17 @@ namespace SettlyModels.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("SettlyModels.Entities.Verification", b =>
+                {
+                    b.HasOne("SettlyModels.Entities.User", "User")
+                        .WithMany("EmailVerifications")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("SettlyModels.Entities.Property", b =>
                 {
                     b.Navigation("Favourites");
@@ -997,6 +1052,8 @@ namespace SettlyModels.Migrations
             modelBuilder.Entity("SettlyModels.Entities.User", b =>
                 {
                     b.Navigation("ChatLogs");
+
+                    b.Navigation("EmailVerifications");
 
                     b.Navigation("Favourites");
 

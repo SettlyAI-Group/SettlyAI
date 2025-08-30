@@ -15,7 +15,7 @@ public class RegisterUserDto
     public string Email { get; set; } = null!;
 
     [Range(1, 1, ErrorMessage = "Only Email verification is supported for now.")]
-    public VerificationType? VerificationType { get; set; }
+    public VerificationType VerificationType { get; set; }
 
     [Required(ErrorMessage = "Password is required")]
     [ValidPassword]

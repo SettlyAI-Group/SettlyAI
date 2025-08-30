@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -54,7 +54,8 @@ namespace SettlyModels.Migrations
                     Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Email = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     PasswordHash = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -207,7 +208,9 @@ namespace SettlyModels.Migrations
                     InternalArea = table.Column<int>(type: "integer", nullable: false),
                     LandSize = table.Column<int>(type: "integer", nullable: false),
                     YearBuilt = table.Column<int>(type: "integer", nullable: false),
-                    Features = table.Column<string>(type: "text", nullable: false)
+                    Features = table.Column<string[]>(type: "text[]", nullable: false),
+                    Summary = table.Column<string>(type: "text", nullable: false),
+                    ImageUrl = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -312,14 +315,42 @@ namespace SettlyModels.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Verifications",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    Code = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    VerificationType = table.Column<int>(type: "integer", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Expiry = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    IsUsed = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Verifications", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Verifications_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Favourites",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     UserId = table.Column<int>(type: "integer", nullable: false),
-                    PropertyId = table.Column<int>(type: "integer", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    TargetType = table.Column<string>(type: "text", nullable: false),
+                    TargetId = table.Column<int>(type: "integer", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Notes = table.Column<string>(type: "text", nullable: true),
+                    Priority = table.Column<int>(type: "integer", nullable: true),
+                    PropertyId = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -328,8 +359,7 @@ namespace SettlyModels.Migrations
                         name: "FK_Favourites_Properties_PropertyId",
                         column: x => x.PropertyId,
                         principalTable: "Properties",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Favourites_Users_UserId",
                         column: x => x.UserId,
@@ -605,6 +635,11 @@ namespace SettlyModels.Migrations
                 table: "Users",
                 column: "Email",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Verifications_UserId",
+                table: "Verifications",
+                column: "UserId");
         }
 
         /// <inheritdoc />
@@ -651,6 +686,9 @@ namespace SettlyModels.Migrations
 
             migrationBuilder.DropTable(
                 name: "UserFundSelections");
+
+            migrationBuilder.DropTable(
+                name: "Verifications");
 
             migrationBuilder.DropTable(
                 name: "Properties");
