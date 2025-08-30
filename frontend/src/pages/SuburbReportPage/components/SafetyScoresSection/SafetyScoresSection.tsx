@@ -1,57 +1,30 @@
-import React from 'react';
-import {
-  Box,
-  Stack,
-  styled,
-  Typography,
-  useMediaQuery,
-  useTheme,
-} from '@mui/material';
-import { UniversalScoreCard, type ICardConfig } from './components/ScoresCard';
+import { Box,styled,Typography,} from '@mui/material';
+import ScoresCardsContainer, { type IScoresCardsData } from './CardsContainer';
 
 interface ISafetyScoresSectionProps {
   title: string;
-  cardsConfig: ICardConfig[];
+  CardProps: IScoresCardsData[];
 }
+// parent wrapper - whole SafetyScoresSection
+const SectionWrapper = styled(Box)(({ theme }) => ({
+  padding: theme.spacing(3),
+  }));
 
-const CardsGroupDesktop = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  gap: theme.spacing(4),
-  alignItems: 'stretch',
-  flexWrap: 'nowrap',
-  overflow: 'auto',
+const SectionTitle = styled(Typography)(({ theme }) => ({
+  marginBottom: 0,
+  fontWeight: theme.typography.h3.fontWeight,
+  color: theme.palette.text.primary,
 }));
 
-const CardsGroupMobile = styled(Stack)(({ theme }) => ({
-  gap: theme.spacing(4),
-}));
-
-const SafetyScoresSection: React.FC<ISafetyScoresSectionProps> = ({
-  title,
-  cardsConfig,
-}) => {
-  const theme = useTheme();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
-
+const SafetyScoresSection = ({ title, CardProps }:ISafetyScoresSectionProps) =>{
   return (
-    <Stack direction="column" spacing={8} sx={{ overflow: 'hidden' }}>
-      <Typography variant="h4">{title}</Typography>
-      
-      {!isSmallScreen ? (
-        <CardsGroupDesktop>
-          {cardsConfig.map((config) => (
-            <UniversalScoreCard key={config.id} config={config} />
-          ))}
-        </CardsGroupDesktop>
-      ) : (
-        <CardsGroupMobile direction="column">
-          {cardsConfig.map((config) => (
-            <UniversalScoreCard key={config.id} config={config} />
-          ))}
-        </CardsGroupMobile>
-      )}
-    </Stack>
+    <SectionWrapper>
+      {/* header：title section */}
+      <SectionTitle variant="h3">{title}</SectionTitle>
+
+  {/* child container：scorescards layout（includes individual cards component） */}
+    <ScoresCardsContainer cardProps={CardProps} /></SectionWrapper>
   );
-};
+}; 
 
 export default SafetyScoresSection;
