@@ -15,7 +15,7 @@ const CreateAccountButton = styled(Button)(({ theme }) => ({
   textTransform: 'none',
   color: theme.palette.common.white,
   marginTop: theme.spacing(4),    
-  marginBottom: theme.spacing(4), 
+  marginBottom: theme.spacing(1), 
 }));
 
 const LoginIntro = () => {
