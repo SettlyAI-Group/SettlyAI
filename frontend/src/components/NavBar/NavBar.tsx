@@ -1,10 +1,10 @@
 import { AppBar, Toolbar, Typography, Button, Box, styled, Container } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import navhomeImage from '../../assets/navhome.png';
+import navhomeImage from '../../assets/NavHome.png';
 
-const StyledAppBar = styled(AppBar)(() => ({
-  background: '#FFFFFF',
-  boxShadow: 'none',
+const StyledAppBar = styled(AppBar)(({ theme }) => ({
+  background: theme.palette.background.paper,
+  boxShadow: "none",
 }));
 
 const StyledToolbar = styled(Toolbar)({
@@ -64,19 +64,34 @@ const JoinButton = styled(Button)({
 const Navbar = () => {
   const navigate = useNavigate();
 
+  const StyledContainer = styled(Container)({
+    maxWidth: 1440,
+    marginLeft: "auto",
+    marginRight: "auto",
+  });
+
+  const StyledTypography = styled(Typography)(({ theme }) => ({
+    color: theme.palette.text.primary, // instead of #1F2937
+    fontWeight: 600,
+    fontSize: 20,
+  }));
+
+
   return (
     <StyledAppBar position="static" elevation={0}>
       {/* Center content and clamp width here (not on AppBar) */}
-      <Container maxWidth={false} sx={{ maxWidth: 1440, mx: 'auto' }}>
+      <StyledContainer maxWidth={false}>
         <StyledToolbar disableGutters>
           <HomeSection onClick={() => navigate('/')}>
-            <HomeIconContainer><img src={navhomeImage} alt="Home" style={{ width: 24, height: 24 }} /></HomeIconContainer>
-            <Typography
-              variant="h6"
-              sx={{ color: '#1F2937', fontWeight: 600, fontSize: 20 }}
-            >
+            <HomeIconContainer>
+              <img src={navhomeImage}
+                alt="Home"
+                style={{ width: 24, height: 24 }} />
+            </HomeIconContainer>
+            <StyledTypography
+              variant="h6">
               Settly AI
-            </Typography>
+            </StyledTypography>
           </HomeSection>
 
           <NavLinks>
@@ -88,7 +103,7 @@ const Navbar = () => {
             <JoinButton onClick={() => navigate('/join')}>Join</JoinButton>
           </NavLinks>
         </StyledToolbar>
-      </Container>
+      </StyledContainer>
     </StyledAppBar>
   );
 };

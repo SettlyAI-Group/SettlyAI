@@ -8,17 +8,15 @@ import { FeatureDetailSections } from './components/FeatureSections';
 // Styled Components
 const PageContainer = styled(Box)(() => ({}));
 
-const HomePage: React.FC = () => {
-
-    return (
-        <PageContainer>
-            <HeroSection />
-            
-            <ToolsSection />
-            
-            <FeatureDetailSections />
-        </PageContainer>
-    );
+const HomePage = (): JSX.Element => {
+  return (
+    <PageContainer>
+      <HeroSection />
+      <ToolsSection />
+      <FeatureDetailSections />
+    </PageContainer>
+  );
 };
+
 
 export default HomePage;
