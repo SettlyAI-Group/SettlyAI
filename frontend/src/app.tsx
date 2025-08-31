@@ -9,6 +9,7 @@ import Layout from './components/Layout/Layout';
 import './App.css';
 import { RegistrationPage } from './pages/RegistrationPage';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { HomePage } from './pages/HomePage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
