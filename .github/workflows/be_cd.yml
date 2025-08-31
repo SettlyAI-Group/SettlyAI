@@ -1,0 +1,76 @@
+name: BE_CD
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'backend/**'
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: ap-southeast-2
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Configure AWS (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Find EC2 instance
+        id: ec2
+        run: |
+          echo "Looking for EC2 tagged Name=${{ secrets.AWS_EC2_NAME }}..."
+
+          INSTANCE_ID=$(aws ec2 describe-instances \
+            --filters "Name=tag:Name,Values=${{ secrets.AWS_EC2_NAME }}" "Name=instance-state-name,Values=running" \
+            --query "Reservations[].Instances[0].InstanceId" \
+            --region $AWS_REGION \
+            --output text)
+
+          echo "Found EC2 instance ID: $INSTANCE_ID"
+          echo "INSTANCE_ID=$INSTANCE_ID" >> $GITHUB_ENV
+      - name: Wait for SSM registration
+        run: |
+          echo "Waiting for EC2 to register with SSM..."
+          for i in {1..10}; do
+            MATCHED=$(aws ssm describe-instance-information \
+              --region $AWS_REGION \
+              --query "InstanceInformationList[?InstanceId=='$INSTANCE_ID']" \
+              --output text)
+
+            if [ -n "$MATCHED" ]; then
+              echo "✅ EC2 instance registered with SSM!"
+              break
+            fi
+
+            echo "⏳ Not yet registered... retry in 5 seconds"
+            sleep 5
+          done
+
+          # Fail if not registered after waiting
+          if [ -z "$MATCHED" ]; then
+            echo "❌ EC2 instance did not register with SSM in time."
+            exit 1
+          fi
+      - name: Deploy container via SSM
+        run: |
+          aws ssm send-command \
+            --document-name "AWS-RunShellScript" \
+            --region $AWS_REGION \
+            --instance-ids "$INSTANCE_ID" \
+            --comment "Deploy backend container" \
+            --parameters 'commands=[
+              "aws ecr get-login-password --region ap-southeast-2 | docker login --username AWS --password-stdin '${{ secrets.ECR_REGISTRY }}'",
+              "docker pull '${{ secrets.ECR_REGISTRY }}:latest'",
+              "docker stop backend || true",
+              "docker rm backend || true",
+              "docker run -d --name backend -p 5100:5100 -e ASPNETCORE_ENVIRONMENT=Production '${{ secrets.ECR_REGISTRY }}:latest'"
+            ]'

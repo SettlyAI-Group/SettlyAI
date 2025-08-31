@@ -1,6 +1,6 @@
 import { Box, Card, styled, Typography } from '@mui/material';
 
-interface IMetricCardProps {
+export interface IMetricCardProps {
   icon: React.ReactNode;
   title: string;
   value: string;

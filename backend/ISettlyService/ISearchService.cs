@@ -1,5 +1,5 @@
-using Settly.DTOs;
-using SettlyModels.DTOs;
+using Settly.Dtos;
+using SettlyModels.Dtos;
 
 namespace ISettlyService
 {
@@ -8,8 +8,6 @@ namespace ISettlyService
         public Task<List<SearchOutputDto>> QuerySearchAsync(string query);
 
         public Task<List<SuggestionOutputDto>> GetSuggestionsAsync(string query);
-
-
-        public Task<BotOutputDto> AskBotAsync(string query);
+        
     }
 }

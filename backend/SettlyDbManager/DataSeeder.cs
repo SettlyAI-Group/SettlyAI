@@ -205,7 +205,7 @@ public class DataSeeder
         var suburbIds = await _context.Suburbs.Select(s => s.Id).ToListAsync();
         var propertyTypes = new[] { "House", "Apartment", "Townhouse", "Unit", "Villa" };
         var features = new[] { "Pool", "Garage", "Garden", "Balcony", "Air Conditioning", "Parking", "Modern Kitchen" };
-
+        var iamges = new[] { "https://cdn.pixabay.com/photo/2020/04/28/04/03/villa-5102551_1280.jpg", "https://cdn.pixabay.com/photo/2020/04/28/04/03/villa-5102547_1280.jpg", "https://cdn.pixabay.com/photo/2017/04/10/22/28/residence-2219972_1280.jpg" };
         var propertyFaker = new Faker<Property>()
             .RuleFor(p => p.SuburbId, f => f.PickRandom(suburbIds))
             .RuleFor(p => p.Address, f => f.Address.StreetAddress())
@@ -217,8 +217,11 @@ public class DataSeeder
             .RuleFor(p => p.InternalArea, f => f.Random.Int(50, 400))
             .RuleFor(p => p.LandSize, f => f.Random.Int(100, 1000))
             .RuleFor(p => p.YearBuilt, f => f.Random.Int(1950, 2024))
-            .RuleFor(p => p.Features, f => string.Join(", ", f.PickRandom(features, f.Random.Int(1, 4))));
-
+            .RuleFor(p => p.Features, f => f.PickRandom(features, 3).ToArray())
+            .RuleFor(p => p.Summary, (f, p) => $"Discover this stunning {p.Bedrooms}-bedroom {p.PropertyType.ToLower()} located in a vibrant suburb. " +
+                $"Featuring {p.Features}, this property offers comfort and convenience for modern living. " +
+                $"Built in {p.YearBuilt}, it boasts {p.Bathrooms} bathrooms and {p.CarSpaces} car spaces.")
+            .RuleFor(p => p.ImageUrl, f => f.PickRandom(iamges));
         var properties = propertyFaker.Generate(500);
         await _context.Properties.AddRangeAsync(properties);
     }

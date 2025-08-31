@@ -1,9 +1,20 @@
 import { render, screen } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import '@testing-library/jest-dom';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+import userEvent from '@testing-library/user-event';
+import { MemoryRouter } from 'react-router-dom';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import MetricCardsSection from './components/MetricCardsSection';
+import Banner from './components/Banner';
+
+const mockNavigate = vi.fn();
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom');
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate,
+  };
+});
 
 // Mock Swiper
 vi.mock('swiper/react', () => ({
@@ -28,34 +39,59 @@ vi.mock('./components/MetricCardsSection/components/MetricCard', () => ({
   ),
 }));
 
-const mockData = [
-  {
-    icon: <AccountBalanceIcon />,
-    title: 'Test Card',
-    value: '80%',
-    subtitle: '12 months',
-  },
-];
+// Clear all mocks before each test
+beforeEach(() => {
+  vi.clearAllMocks();
+});
 
-const theme = createTheme();
+describe('Banner Component', () => {
+  it('should render section title, subtitle, and button', () => {
+    render(
+      <MemoryRouter>
+        <Banner suburb="Point Cook" postcode="3030" state="VIC" />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText(/Point Cook/)).toBeInTheDocument();
+    expect(screen.getByText(/3030/)).toBeInTheDocument();
+    expect(screen.getByText(/VIC/)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /back/i })).toBeInTheDocument();
+  });
+
+  it('calls navigate(-1) when back button is clicked', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <MemoryRouter>
+        <Banner suburb="Point Cook" postcode="3030" state="VIC" />
+      </MemoryRouter>
+    );
+
+    const backButton = screen.getByRole('button', { name: /back/i });
+
+    await user.click(backButton);
+    expect(mockNavigate).toHaveBeenCalledWith(-1);
+  });
+});
 
 describe('MetricCardsSection', () => {
+  const mockData = [
+    {
+      icon: <AccountBalanceIcon />,
+      title: 'Test Card',
+      value: '80%',
+      subtitle: '12 months',
+    },
+  ];
+
   it('renders section title', () => {
-    render(
-      <ThemeProvider theme={theme}>
-        <MetricCardsSection title="Test Section" data={mockData} />
-      </ThemeProvider>
-    );
+    render(<MetricCardsSection title="Test Section" data={mockData} />);
 
     expect(screen.getByText('Test Section')).toBeInTheDocument();
   });
 
   it('renders metric cards', () => {
-    render(
-      <ThemeProvider theme={theme}>
-        <MetricCardsSection title="Test Section" data={mockData} />
-      </ThemeProvider>
-    );
+    render(<MetricCardsSection title="Test Section" data={mockData} />);
 
     expect(screen.getByTestId('metric-card')).toBeInTheDocument();
     expect(screen.getByText('Test Card')).toBeInTheDocument();

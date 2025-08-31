@@ -1,0 +1,149 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [ main ]         # PR 一定触发
+  push:
+    branches: [ main ]         # 可选：合到 main 后也跑一遍
+
+permissions:
+  contents: read
+  id-token: write 
+
+jobs:
+  changes:
+    name: detect changes
+    runs-on: ubuntu-latest
+    outputs:
+      fe: ${{ steps.filter.outputs.fe }}
+      be: ${{ steps.filter.outputs.be }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            fe:
+              - 'frontend/**'
+            be:
+              - 'backend/**'
+      - name: print filters
+        run: |
+          echo "fe=${{ steps.filter.outputs.fe }}"
+          echo "be=${{ steps.filter.outputs.be }}"
+
+  backend:
+    name: backend build-and-test
+    runs-on: ubuntu-latest
+    needs: changes
+    if: ${{ needs.changes.outputs.be == 'true' }}
+    defaults:
+      run:
+        working-directory: backend
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: testuser
+          POSTGRES_PASSWORD: testpass
+          POSTGRES_DB: testdb
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U testuser"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    env:
+      ConnectionStrings__DefaultConnection: Host=localhost;Port=5432;Database=testdb;User Id=testuser;Password=testpass
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Install dotnet-ef
+        run: dotnet tool install --global dotnet-ef
+      - name: Restore
+        run: dotnet restore backend.sln
+      - name: Build
+        run: dotnet build backend.sln --no-restore --configuration Release
+      - name: Test
+        run: dotnet test backend.sln --no-build --configuration Release --logger trx
+      # - name: Format
+      #   run: dotnet format --verify-no-changes
+      - name: Configure AWS (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ap-southeast-2
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+      - name: Debug Image Tag
+        run: |
+          echo "Image tag: '${{ secrets.ECR_REGISTRY }}'"
+      - name: Build, Tag, and Push Docker Image
+        run: |
+          docker build -t ${{ secrets.ECR_REGISTRY }}:latest .
+          docker push ${{ secrets.ECR_REGISTRY }}:latest
+
+  frontend:
+    name: frontend build-and-test
+    runs-on: ubuntu-latest
+    needs: changes
+    if: ${{ needs.changes.outputs.fe == 'true' }}
+    concurrency:
+      group: pr-ci-${{ github.event.pull_request.number || github.run_id }}
+      cancel-in-progress: true
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: pnpm/action-setup@v4
+        with:
+          version: '9'
+          run_install: false
+      - run: pnpm install
+      - run: pnpm build
+      # - run: pnpm test -- --ci   # 有测试就打开
+      # - run: pnpm lint.         # fix完语法错打开
+      # - run: pnpm type-check
+
+  gate:
+    name: gate
+    runs-on: ubuntu-latest
+    needs: [backend, frontend, changes]
+    if: ${{ always() }}   # 不管前面是否 skipped/失败，gate 都会执行
+    steps:
+      - name: summarize results
+        run: |
+          echo "FE changed?  ${{ needs.changes.outputs.fe }}"
+          echo "BE changed?  ${{ needs.changes.outputs.be }}"
+          echo "FE result:   ${{ needs.frontend.result }}"
+          echo "BE result:   ${{ needs.backend.result }}"
+
+      - name: enforce passing for changed parts
+        shell: bash
+        run: |
+          FE_CHANGED="${{ needs.changes.outputs.fe }}"
+          BE_CHANGED="${{ needs.changes.outputs.be }}"
+          FE_RESULT="${{ needs.frontend.result }}"
+          BE_RESULT="${{ needs.backend.result }}"
+
+          fail() { echo "::error::$1"; exit 1; }
+
+          # 若有改动：必须 success；若没改动：允许 skipped
+          if [[ "$FE_CHANGED" == "true" && "$FE_RESULT" != "success" ]]; then
+            fail "Frontend changed but job result is '$FE_RESULT'"
+          fi
+          if [[ "$BE_CHANGED" == "true" && "$BE_RESULT" != "success" ]]; then
+            fail "Backend changed but job result is '$BE_RESULT'"
+          fi
+
+          echo "All required parts passed (others may be skipped)."

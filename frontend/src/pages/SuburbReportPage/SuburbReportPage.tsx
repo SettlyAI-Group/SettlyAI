@@ -1,154 +1,139 @@
 import ActionButtonWrapper from '@/pages/SuburbReportPage/components/ActionButtonGroup/ActionButtonWrapper';
-import BannerWrapper from '@/pages/SuburbReportPage/components/Banner/BannerWrapper';
-import type { AppDispatch, RootState } from '@/store';
-import { fetchSuburbReport, setSuburbId } from '@/store/slices/suburbSlice';
 import { Box, Button, styled, Typography } from '@mui/material';
-import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import MetricCardsSection from './components/MetricCardsSection';
-import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
-import SaveButton from '@/components/SaveButton/SaveButton';
-import { getFavouriteByTarget, toggleFavourite } from '@/utils/api/favourite';
+import { useQueries } from '@tanstack/react-query';
+import { getSuburbBasicInfo, getSuburbLivability } from '@/api/suburbApi';
+import { Navigate, useParams } from 'react-router-dom';
+import { getDemandAndDev, getHousingMarket } from '@/api/suburbApi';
+import {
+  mapDevCardData,
+  mapLivability,
+} from './components/MetricCardsSection/utils/dataMapper';
+import Banner from './components/Banner';
+import { mapPropertyCards } from '@/pages/SuburbReportPage/components/PropertyMarketInsightsSection';
+import PropertyMarketInsightsSection from '@/pages/SuburbReportPage/components/PropertyMarketInsightsSection';
+import type { IHousingMarket } from '@/interfaces/housingmarket';
 
 const PageContainer = styled(Box)(({ theme }) => ({
   maxWidth: '1440px',
   display: 'flex',
   flexDirection: 'column',
-  justifyContent: 'center',
   alignItems: 'center',
   margin: '0 auto',
   padding: theme.spacing(8),
 }));
-
+const ContentContainer = styled(Box)(({ theme }) => ({
+  maxWidth: '936px',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  gap: theme.spacing(8),
+  width: '100%',
+  paddingTop: theme.spacing(8),
+}));
+const TITLES = {
+  incomeEmployment: 'Income & Employment',
+  propertyMarketInsights: 'Property Market Insights',
+  demandDevelopment: 'Demand & Development',
+  lifeStyle: 'LifeStyle & Accessibility',
+  safetyScore: 'Safety & Score',
+};
 const SuburbReportPage = () => {
-  const TITLES = {
-    incomeEmployment: 'Income & Employment',
-    propertyMarketInsights: 'Property Market Insghts',
-    demandDevelopment: 'Demand & Development',
-    lifeStyle: 'LifeStyle & Accessibility',
-    safetyScore: 'Safety & Score',
+  const { suburbId } = useParams<{ suburbId: string }>();
+  if (!suburbId || Number.isNaN(suburbId)) {
+    return <Navigate to="/" replace />;
+  }
+  const results = useQueries({
+    queries: [
+      {
+        queryKey: ['SuburbBasicInfo', suburbId],
+        queryFn: () => getSuburbBasicInfo(suburbId),
+      },
+      {
+        queryKey: ['demandAndDev', suburbId],
+        queryFn: () => getDemandAndDev(parseInt(suburbId)),
+      },
+      {
+        queryKey: ['livability', suburbId],
+        queryFn: () => getSuburbLivability(suburbId),
+      },
+      {
+        queryKey: ['housingMarket', suburbId],
+        queryFn: () => getHousingMarket(Number(suburbId)),
+      },
+    ],
+  });
+
+  const allLoading = results.some(result => result.isLoading);
+  const anyError = results.find(result => result.error);
+
+  if (anyError) {
+    return (
+      /* todo: update error UI */
+      <div
+        style={{
+          textAlign: 'center',
+          padding: '50px',
+          height: '100vh',
+          paddingTop: '30%',
+        }}
+      >
+        <div style={{ color: 'red' }}>Error: {anyError.error?.message}</div>
+        <div>❌</div>
+        <button onClick={() => window.location.reload()}>Retry</button>
+      </div>
+    );
+  }
+  const formattedData = {
+    suburbBasicInfo: results[0].data ? results[0].data : undefined,
+    demand: results[1].data ? mapDevCardData(results[1].data) : undefined,
+    livability: results[2].data ? mapLivability(results[2].data) : undefined,
   };
-  const dispatch = useDispatch<AppDispatch>();
-  const { suburbId, report, loading, error } = useSelector(
-    (state: RootState) => state.suburb
-  );
-  //todo: replace it with real data
-  const metricCardsData = [
-    {
-      icon: <AccountBalanceIcon />,
-      title: 'Financial Health',
-      value: '$12,500',
-      subtitle: 'Total Savings',
-    },
-    {
-      icon: <AccountBalanceIcon />,
-      title: 'Monthly Income',
-      value: '$3,200',
-      subtitle: 'After Tax',
-    },
-    {
-      icon: <AccountBalanceIcon />,
-      title: 'Credit Score',
-      value: '752',
-      subtitle: 'Excellent',
-    },
-    {
-      icon: <AccountBalanceIcon />,
-      title: 'Loan Balance',
-      value: '$8,900',
-      subtitle: 'Remaining',
-    },
-    {
-      icon: <AccountBalanceIcon />,
-      title: 'Investments',
-      value: '$15,000',
-      subtitle: 'Stocks & Funds',
-    },
-    {
-      icon: <AccountBalanceIcon />,
-      title: 'Monthly Expenses',
-      value: '$2,100',
-      subtitle: 'Utilities & Rent',
-    },
-    {
-      icon: <AccountBalanceIcon />,
-      title: 'Net Worth',
-      value: '$28,400',
-      subtitle: 'Assets - Liabilities',
-    },
-    {
-      icon: <AccountBalanceIcon />,
-      title: 'Retirement Fund',
-      value: '$7,800',
-      subtitle: 'Superannuation',
-    },
-  ];
-  const [isSaved, setIsSaved] = useState(false);
-  useEffect(() => {
-    let id = suburbId;
-
-    if (!id) {
-      const fromStorage = localStorage.getItem('suburbId');
-      if (fromStorage) {
-        id = parseInt(fromStorage);
-        dispatch(setSuburbId(id));
-      }
-    }
-    if (id) {
-      dispatch(fetchSuburbReport(id));
-      (async () => {
-        try {
-          const fav = await getFavouriteByTarget('suburb', id);
-          setIsSaved(Boolean(fav?.isSaved));
-        } catch {
-          //
-        }
-      })();
-    }
-  }, [suburbId, dispatch]);
-
-  const handleToggleSave = async (next: boolean) => {
-    if (!suburbId) return;
-    const prev = isSaved;
-    setIsSaved(next);
-    try {
-      const res = await toggleFavourite('suburb', suburbId);
-      if (typeof res?.isSaved === 'boolean') setIsSaved(res.isSaved);
-    } catch (e) {
-      console.error('Toggle favourite failed:', e);
-      setIsSaved(prev);
-    }
-  };
-  if (loading) return <p>Loading report...</p>;
-  if (error) return <p>Error: {error}</p>;
-  if (!report) return <p>No report found.</p>;
-
+  const propertyMetrics = results[3]?.data
+    ? mapPropertyCards(results[3].data as IHousingMarket)
+    : [];
   return (
     <PageContainer>
-      {/* todo: replace with real banner content */}
-      <BannerWrapper>
-        <Typography variant="h3" fontWeight={700}>
-          Welcome to {report.suburbName},{report.state},{report.postcode}
-        </Typography>
-      </BannerWrapper>
-      {/* todo: replace with real card content */}
-
-      <MetricCardsSection
-        title="Lifestyle Accessibility"
-        data={metricCardsData}
+      <Banner
+        suburb={formattedData.suburbBasicInfo?.name}
+        postcode={formattedData.suburbBasicInfo?.postcode}
+        state={formattedData.suburbBasicInfo?.state}
       />
-      {/* todo:  replace with real action buttons , feel free to modify*/}
-      <ActionButtonWrapper>
-        <SaveButton
-          isSaved={isSaved}
-          onToggle={handleToggleSave}
-          targetType="suburb"
-          targetId={suburbId ?? 0}
-        />
-        <Button>Export PDF</Button>
-      </ActionButtonWrapper>
+      <ContentContainer>
+        {allLoading ? (
+          <div
+            style={{
+              textAlign: 'center',
+              padding: '50px',
+              height: '100vh',
+              paddingTop: '30%',
+            }}
+          >
+            <Typography variant="h4">Loading all data...</Typography>
+          </div>
+        ) : (
+          <>
+            <PropertyMarketInsightsSection
+              title={TITLES.propertyMarketInsights}
+              items={propertyMetrics}
+            />
+            <MetricCardsSection
+              title={TITLES.demandDevelopment}
+              data={formattedData.demand}
+            />
+            <MetricCardsSection
+              title={TITLES.lifeStyle}
+              data={formattedData.livability}
+            />
+            {/* todo:  replace with real action buttons , feel free to modify*/}
+            <ActionButtonWrapper>
+              <Button>save this suburb</Button>
+              <Button>Export PDF</Button>
+            </ActionButtonWrapper>
+          </>
+        )}
+      </ContentContainer>
     </PageContainer>
   );
 };
-
 export default SuburbReportPage;

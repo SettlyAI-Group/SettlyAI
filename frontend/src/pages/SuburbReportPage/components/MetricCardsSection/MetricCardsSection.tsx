@@ -10,7 +10,7 @@ import {
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
 
-interface IMetricCardData {
+export interface IMetricCardData {
   icon: React.ReactNode;
   title: string;
   value: string;
@@ -19,7 +19,7 @@ interface IMetricCardData {
 
 interface IMetricCardsSectionProps {
   title: string;
-  data: IMetricCardData[];
+  data?: IMetricCardData[];
 }
 
 const CardsGroupDesktop = styled(Box)(({ theme }) => ({
@@ -67,12 +67,16 @@ const MetricCardsSection = ({ title, data }: IMetricCardsSectionProps) => {
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   return (
-    <Stack direction="column" spacing={8} sx={{ overflow: 'hidden' }}>
+    <Stack
+      direction="column"
+      spacing={8}
+      sx={{ overflow: 'hidden', width: '100%' }}
+    >
       <Typography variant="h4">{title}</Typography>
       {!isSmallScreen ? (
         <CardsGroupDesktop>
-          {data.map((card, index) => (
-            <MetricCard key={index} {...card} />
+          {data?.map(card => (
+            <MetricCard key={card.title} {...card} />
           ))}
         </CardsGroupDesktop>
       ) : (
@@ -82,8 +86,8 @@ const MetricCardsSection = ({ title, data }: IMetricCardsSectionProps) => {
           slidesPerView="auto"
           navigation
         >
-          {data.map((card, index) => (
-            <SwiperSlide style={{ width: '220px' }} key={index}>
+          {data?.map(card => (
+            <SwiperSlide style={{ width: '220px' }} key={card.title}>
               <MetricCard {...card} />
             </SwiperSlide>
           ))}

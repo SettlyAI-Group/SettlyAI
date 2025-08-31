@@ -20,6 +20,14 @@ This solution consists of four main projects:
 - PostgreSQL database
 - Visual Studio, VS Code, or Rider (recommended)
 
+### Quick Setup using docker
+You can use the following command to start the bakend service using docker containers quickly (including conneting to postgres db, db-migration, db-seed)
+```bash
+ cd backend
+ docker compose build
+ docker compose up
+```
+
 ### Setup
 
 1. **Clone and restore packages**
@@ -30,16 +38,16 @@ This solution consists of four main projects:
    ```
 
 2. **Configure database connection**
-   
+
    Copy the example configuration files and update with your database settings:
    ```bash
    # Copy API configuration
    cp SettlyApi/appsettings.Development.json.example SettlyApi/appsettings.Development.json
-   
-   # Copy database manager configuration  
+
+   # Copy database manager configuration
    cp SettlyDbManager/appsettings.Development.json.example SettlyDbManager/appsettings.Development.json
    ```
-   
+
    Then update both files with your PostgreSQL connection details:
    ```json
    {
@@ -137,9 +145,7 @@ dotnet ef migrations remove --startup-project ../SettlyApi
 
 Currently available endpoints:
 
-- `GET /weatherforecast` - Sample endpoint for testing
-
-*Additional endpoints will be added as business logic is implemented.*
+*API endpoints will be added as business logic is implemented.*
 
 ## Development Workflow
 
@@ -161,6 +167,42 @@ Currently available endpoints:
    - Run API: `cd SettlyApi && dotnet run`
    - Test endpoints: Use `backend.http` file or Postman
    - Generate fresh data: `cd SettlyDbManager && dotnet run -- --reset-seed`
+
+5. **Unit Test**
+   - run test
+   ```bash
+   dotnet test
+   ```
+   - clean & build if has issues
+   ```bash
+      dotnet clean
+      dotnet build
+   ```
+6. **Format**
+```bash
+      dotnet format
+```
+7. **Swagger**
+- UI: http://localhost:5100/swagger/index.html
+- Anotations Examples
+  
+1. Add to controller file
+   ```csharp
+   using Swashbuckle.AspNetCore.Annotations;
+   ```
+2. Add Summary && description:
+   ```csharp
+   [SwaggerOperation( Summary = "Get property details", Description = "Returns the full PropertyDetailDto for a given property ID.")]
+   ```
+3. Add response
+   ```csharp
+   [SwaggerResponse(200, "Successfully returned property details", typeo(PropertyDetailDto))]
+   [SwaggerResponse(404, "Property not found")]
+   ```
+4. Add Parameter
+   ```csharp
+   public async Task<ActionResult<PropertyDetailDto>> GetPropertyDetail([SwaggerParameter("The unique ID of the property")] int id)
+   ```
 
 ## Architecture Notes
 

@@ -1,7 +1,8 @@
 using ISettlyService;
 using Microsoft.AspNetCore.Mvc;
-using Settly.DTOs;
-using SettlyModels.DTOs;
+using Settly.Dtos;
+using SettlyModels.Dtos;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace SettlyApi.Controllers
 {
@@ -17,6 +18,8 @@ namespace SettlyApi.Controllers
         }
 
         [HttpGet]
+        [SwaggerOperation(Summary = "Search based on query")]
+        [SwaggerResponse(200, "Successfully retrieved search results", typeof(IEnumerable<SearchOutputDto>))]
         public async Task<ActionResult<IEnumerable<SearchOutputDto>>> GetAsync(SearchInputDto dto)
         {
             var result = await _searchService.QuerySearchAsync(dto.Query);
@@ -24,17 +27,12 @@ namespace SettlyApi.Controllers
         }
 
         [HttpGet("suggest")]
+        [SwaggerOperation(Summary = "Get search suggestions")]
+        [SwaggerResponse(200, "Successfully retrieved suggestions", typeof(IEnumerable<SuggestionOutputDto>))]
         public async Task<ActionResult<IEnumerable<SuggestionOutputDto>>> SuggestAsync(SuggestionInputDto dto)
         {
             var result = await _searchService.GetSuggestionsAsync(dto.Query);
             return Ok(result);
-        }
-
-        [HttpGet("chat")]
-        public async Task<ActionResult<BotOutputDto>> Chat(BotInputDto input)
-        {
-            var reply = await _searchService.AskBotAsync(input.Intent);
-            return Ok(reply);
         }
 
     }
