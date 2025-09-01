@@ -23,22 +23,22 @@ const CardsContainer = styled(Box)(() => ({
   marginRight: 'auto',
 }));
 
-const StyledHomeIcon = styled(HomeIcon)(() => ({
+const StyledHomeIcon = styled(HomeIcon)(({ theme }) => ({
   fontSize: 48,
-  color: '#6366f1',
+  color: theme.palette.primary.main,
 }));
 
-const StyledAttachMoneyIcon = styled(AttachMoneyIcon)(() => ({
+const StyledAttachMoneyIcon = styled(AttachMoneyIcon)(({ theme }) => ({
   fontSize: 48,
-  color: '#6366f1',
+  color: theme.palette.primary.main,
 }));
 
-const StyledStockIcon = styled(StockIcon)(() => ({
+const StyledStockIcon = styled(StockIcon)(({ theme }) => ({
   fontSize: 48,
-  color: '#6366f1',
+  color: theme.palette.primary.main,
 }));
 
-const FeatureCardsSection: React.FC = () => {
+const FeatureCardsSection = () => {
 
   const featureCards: FeatureCard[] = [
     {

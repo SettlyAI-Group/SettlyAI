@@ -35,7 +35,7 @@ const ComingSoonContainer = styled(Box)(({ theme }) => ({
   },
 }));
 
-const FeatureDetailSections: React.FC = () => {
+const FeatureDetailSections = () => {
   return (
     <>
       {/* SettlyHome Section */}

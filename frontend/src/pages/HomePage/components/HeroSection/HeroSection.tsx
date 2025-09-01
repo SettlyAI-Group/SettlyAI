@@ -149,7 +149,7 @@ const ChatLink = styled('a')(({ theme }) => ({
   fontWeight: 400,
   fontSize: '16px',
   lineHeight: '26px',
-  color: '#4F46E5',
+  color: theme.palette.primary.main, // '#4F46E5'
   textDecoration: 'none',
   cursor: 'pointer',
   display: 'flex',
@@ -160,7 +160,6 @@ const ChatLink = styled('a')(({ theme }) => ({
     textDecoration: 'underline',
   },
 }));
-
 
 
 // Component without React.FC
@@ -174,12 +173,6 @@ const HeroSection = () => {
         </HighlightSpan>{" "}
         Planning
       </MainHeading>
-
-
-
-
-
-
 
       <Subtitle>
         No jargon, just clarity. Plan your future with confidence using smart

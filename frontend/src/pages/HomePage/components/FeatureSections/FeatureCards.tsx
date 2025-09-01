@@ -22,7 +22,7 @@ const CardsContainer = styled(Box)(() => ({
 }));
 
 
-const FeatureCardsSection: React.FC = () => {
+const FeatureCardsSection = () => {
 
   const featureCards: FeatureCard[] = [
     {
