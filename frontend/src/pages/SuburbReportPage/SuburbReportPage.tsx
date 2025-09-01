@@ -13,6 +13,7 @@ import Banner from './components/Banner';
 import { mapPropertyCards } from '@/pages/SuburbReportPage/components/PropertyMarketInsightsSection';
 import PropertyMarketInsightsSection from '@/pages/SuburbReportPage/components/PropertyMarketInsightsSection';
 import type { IHousingMarket } from '@/interfaces/housingmarket';
+import SaveButton from '../../components/SaveButton/SaveButton';
 
 const PageContainer = styled(Box)(({ theme }) => ({
   maxWidth: '1440px',
@@ -92,6 +93,13 @@ const SuburbReportPage = () => {
   const propertyMetrics = results[3]?.data
     ? mapPropertyCards(results[3].data as IHousingMarket)
     : [];
+
+  const handleSaveToggle = (isSaved: boolean) => {
+    console.log(
+      `Suburb ${formattedData.suburbBasicInfo?.name} ${isSaved ? 'saved' : 'unsaved'}`
+    );
+  };
+
   return (
     <PageContainer>
       <Banner
@@ -127,7 +135,11 @@ const SuburbReportPage = () => {
             />
             {/* todo:  replace with real action buttons , feel free to modify*/}
             <ActionButtonWrapper>
-              <Button>save this suburb</Button>
+              <SaveButton
+                targetType="suburb"
+                targetId={parseInt(suburbId)}
+                onToggle={handleSaveToggle}
+              />
               <Button>Export PDF</Button>
             </ActionButtonWrapper>
           </>
