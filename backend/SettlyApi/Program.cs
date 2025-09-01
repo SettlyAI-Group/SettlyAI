@@ -2,6 +2,7 @@ using ISettlyService;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using SettlyApi.Configuration;
+using SettlyApi.Middlewares;
 using SettlyModels;
 using SettlyService;
 
@@ -39,6 +40,9 @@ public class Program
         builder.Services.AddScoped<IAuthService, AuthService>();
         //Register ISearchApi with SearchApiService
         builder.Services.AddScoped<ISettlyService.ISearchService, SettlyService.SearchService>();
+
+        // Add your custom API behavior config
+        builder.Services.AddCustomApiBehavior();
         // Add services to the container.
         builder.Services.AddControllers();
         // Add AutoMapper - scan all assemblies for profiles
@@ -64,6 +68,8 @@ public class Program
         builder.Services.AddLoginLimitRater(attempts: 5, miniutes: 15);
 
         var app = builder.Build();
+        // Register middleware first so it catches all exceptions
+        app.UseMiddleware<ErrorHandlingMiddleware>();
 
         // use Swagger
         app.UseSwaggerConfig(app.Environment);
