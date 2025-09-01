@@ -1,4 +1,4 @@
-import { Container, Box, Button, Typography, styled, useTheme, Stack, type ButtonProps } from '@mui/material';
+import { Box, Button, Typography, styled, useTheme, type ButtonProps } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import SearchBar from '../../../../components/Search/SearchBar';
@@ -16,35 +16,18 @@ const HeroContainer = styled('section')(({ theme }) => ({
   paddingInline: theme.spacing(6),
   [theme.breakpoints.between('sm', 'md')]: { paddingInline: theme.spacing(8) },
   [theme.breakpoints.up('md')]: { paddingInline: 0 },
-  '& .searchRow': {
-    position: 'relative',
-    alignItems: 'stretch',
-    gap: theme.spacing(4),
-    width: '100%',
-    maxWidth: 650,
-    marginInline: 'auto',
-    [theme.breakpoints.up('md')]: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: theme.spacing(6),
-    },
-  },
+}));
+
+const BottomContainer = styled(Box)(({ theme }) => ({
+  marginLeft: 'auto',
+  marginRight: 'auto',
+  width: '100%',
+  maxWidth: '650px',
+  textAlign: 'left',
 }));
 
 const HighligtedHeader = styled('span')(({ theme }) => ({
   color: theme.palette.primary.main,
-}));
-
-const ExploreButtonContainer = styled(Stack)(({ theme }) => ({
-  flexDirection: 'column',
-  width: '100%',
-  marginInline: 'auto',
-  paddingTop: theme.spacing(4),
-  paddingBottom: theme.spacing(8),
-  maxWidth: 660,
-  [theme.breakpoints.up('md')]: {
-    flexDirection: 'row',
-  },
 }));
 
 const ExploreButton = styled(Button)<LinkButtonProps>(({ theme }) => ({
@@ -95,15 +78,13 @@ const HeroSection = () => {
         buyers and everyday Australians.
       </Typography>
 
-      <Stack className="searchRow">
+      <BottomContainer>
         <SearchBar selected={selected} handleSelected={setSelected} handleGetReport={handleGetReport} />
-      </Stack>
 
-      <ExploreButtonContainer>
         <ExploreButton component={RouterLink} to={explorePagePath}>
           Not sure where to begin? Explore suburbs that match your lifestyle
         </ExploreButton>
-      </ExploreButtonContainer>
+      </BottomContainer>
     </HeroContainer>
   );
 };

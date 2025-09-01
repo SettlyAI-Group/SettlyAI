@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import * as React from 'react';
-import { TextField, Box, Typography, InputAdornment } from '@mui/material';
+import { TextField, Box, Typography, InputAdornment, Container } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
 import SearchIcon from '@mui/icons-material/Search';
 import { styled } from '@mui/material/styles';
@@ -32,32 +32,33 @@ type Option = SuggestionOutputDto;
 
 //Styling for the Autocomplete & ReportButton Wrap
 const StyledAutocomplete = styled(Autocomplete<Option, false, false, true>)(({ theme }) => ({
-  flexGrow: 1,
-  minWidth: 0,
   width: '100%',
-  [theme.breakpoints.between('md', 'lg')]: { width: '45%' },
-  [theme.breakpoints.up('lg')]: { width: 650 },
 }));
 
-const ReportButtonWrap = styled('div')(({ theme }) => ({
-  marginTop: theme.spacing(2),
-  [theme.breakpoints.up('md')]: { marginTop: 0 },
+const SearchBarContainer = styled(Box)(({ theme }) => ({
+  width: '100%',
+  marginLeft: 'auto',
+  marginright: 'auto',
+  position: 'relative',
+  minwidth: { md: 650 },
+}));
 
-  '@media (min-width:1150px)': {
-    position: 'absolute',
-    left: '100%',
-    top: '50%',
-    transform: `translate(${theme.spacing(6)}, -50%)`,
-  },
-  '&& > .MuiButton-root': {
-    height: 56,
+const ReportButton = styled(GlobalButton)(({ theme }) => ({
+  position: 'absolute',
+  left: '100%',
+  top: '50%',
+  transform: 'translateY(-50%)',
+  height: 56,
+  fontSize: theme.typography.subtitle1.fontSize,
+  borderRadius: 14,
+  [theme.breakpoints.down('md')]: {
+    position: 'static',
+    transform: 'none',
     width: '100%',
-    [theme.breakpoints.up('md')]: { width: 200 },
-    borderRadius:
-      typeof theme.shape.borderRadius === 'number'
-        ? theme.shape.borderRadius * 3
-        : `calc(${theme.shape.borderRadius} * 3)`,
-    fontSize: `calc(${theme.typography.button.fontSize} * 1.3)`,
+    marginTop: theme.spacing(4),
+  },
+  [theme.breakpoints.up('md')]: {
+    marginLeft: theme.spacing(6),
   },
 }));
 
@@ -81,7 +82,7 @@ const SearchBar = ({ selected, handleSelected, handleGetReport }: ISearchBarProp
   });
 
   return (
-    <>
+    <SearchBarContainer>
       <StyledAutocomplete
         disablePortal
         freeSolo
@@ -170,12 +171,11 @@ const SearchBar = ({ selected, handleSelected, handleGetReport }: ISearchBarProp
           />
         )}
       />
-      <ReportButtonWrap>
-        <GlobalButton onClick={handleGetReport} variant="contained" type="button">
-          Get my report
-        </GlobalButton>
-      </ReportButtonWrap>
-    </>
+
+      <ReportButton onClick={handleGetReport} variant="contained">
+        Get my report
+      </ReportButton>
+    </SearchBarContainer>
   );
 };
 
