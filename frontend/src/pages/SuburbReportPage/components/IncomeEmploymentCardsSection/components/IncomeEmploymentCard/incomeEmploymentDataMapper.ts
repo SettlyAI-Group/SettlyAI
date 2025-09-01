@@ -1,3 +1,4 @@
+import { useTheme } from '@mui/material';
 import type { IIncomeEmployment } from '@/interfaces/suburbReport';
 import {
   convertNumberToString,
@@ -13,9 +14,13 @@ export interface IIncomeEmploymentCard {
 }
 
 export const mapIncomeEmployment = (
-  data: IIncomeEmployment,
-  theme: any
-): IIncomeEmploymentCard[] => {
+  data: IIncomeEmployment | undefined
+): IIncomeEmploymentCard[] | undefined => {
+
+  const theme = useTheme();
+  
+  if (!data) return undefined;
+
   const jobGrowthValue = mapValueToPercentageString(data.jobGrowthRate);
   const formattedJobGrowth =
     data.jobGrowthRate >= 0 ? `+${jobGrowthValue}` : `${jobGrowthValue}`;

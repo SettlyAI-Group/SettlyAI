@@ -7,7 +7,7 @@ import {
   styled,
 } from '@mui/material';
 import IncomeEmploymentCard from './components/IncomeEmploymentCard';
-import type { IIncomeEmploymentCard } from './utils/incomeEmploymentDataMapper';
+import type { IIncomeEmploymentCard } from './components/IncomeEmploymentCard/incomeEmploymentDataMapper';
 
 interface IIncomeEmploymentCardsProps {
   title: string;
@@ -19,10 +19,6 @@ const SectionWrapper = styled(Stack)(({ theme }) => ({
   overflow: 'hidden',
   flexDirection: 'column',
   gap: theme.spacing(8),
-}));
-
-const SectionTitle = styled(Typography)(({ theme }) => ({
-  ...theme.typography.h4,
 }));
 
 const DesktopGrid = styled(Grid)(({ theme }) => ({
@@ -46,7 +42,7 @@ const IncomeEmploymentCardsSection = ({
 
   return (
     <SectionWrapper>
-      <SectionTitle>{title}</SectionTitle>
+      <Typography variant="h4">{title}</Typography>
 
       {!isSmallScreen ? (
         <DesktopGrid>
