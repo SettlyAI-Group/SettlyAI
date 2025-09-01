@@ -1,11 +1,17 @@
 {
-  "Logging": {
-    "LogLevel": {
-      "Default": "Information",
-      "Microsoft.AspNetCore": "Warning"
+    "Logging": {
+        "LogLevel": {
+            "Default": "Information",
+            "Microsoft.AspNetCore": "Warning"
+        }
+    },
+    "ApiConfigs": {
+        "DBConnection": "Host=localhost;Port=5432;Database=settly;User Id=your_username;Password=your_password"
+    },
+    "JWTConfig": {
+        "SecretKey": "SettlyAISuperSecretKey!@#$%^&*()_+1234567890",
+        "Issuer": "SettlyAI",
+        "Audience": "SettlyAI",
+        "ExpireSeconds": 7200
     }
-  },
-  "ApiConfigs": {
-    "DBConnection": "Host=localhost;Port=5432;Database=settly;User Id=your_username;Password=your_password"
-  }
 }

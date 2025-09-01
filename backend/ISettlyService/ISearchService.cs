@@ -8,8 +8,6 @@ namespace ISettlyService
         public Task<List<SearchOutputDto>> QuerySearchAsync(string query);
 
         public Task<List<SuggestionOutputDto>> GetSuggestionsAsync(string query);
-
-
-        public Task<BotOutputDto> AskBotAsync(string query);
+        
     }
 }
