@@ -22,11 +22,11 @@ namespace SettlyService
                 return new List<SearchOutputDto>();
             }
 
-            var inputTokens = GetInputTokens(query);
-            if (!inputTokens.Any())
+            var queryKeywordArray = GetKeywordsArray(query);
+            if (!queryKeywordArray.Any())
                 return new List<SearchOutputDto>();
 
-            var (postcode, state, searchKeywords) = ExtractSearchKeywords(inputTokens);
+            var (postcode, state, searchKeywords) = GetQueryKeywords(queryKeywordArray);
             if (!HasSearchCriteria(postcode, state, searchKeywords))
                 return new List<SearchOutputDto>();
 
@@ -58,26 +58,16 @@ namespace SettlyService
                 return new List<SuggestionOutputDto>();
             }
 
-            var pattern = $"{EscapeForLike(query)}%";
+            var processedQuery = $"{EscapeSqlLikeSymbols(query)}%";
 
-            return await BuildCombinedSuggestionQuery(pattern).ToListAsync();
+            return await BuildQueryForSql(processedQuery).ToListAsync();
         }
         #endregion
 
-        #region Function AskBotAsync
-        public async Task<BotOutputDto> AskBotAsync(string query)
-        {
-            return await Task.FromResult(new BotOutputDto
-            {
-                Response = $"Hello! You asked about: {query}. This chatbot feature is coming soon!",
-                Timestamp = DateTime.UtcNow
-            });
-        }
-        #endregion
 
         #region Helper Functions for Function QuerySearchAsync
 
-        private bool IsPostcode(string inputToken)
+        private bool PostcodeChecking(string inputToken)
             => inputToken.Length == 4
                && int.TryParse(inputToken, out _);
 
@@ -85,19 +75,19 @@ namespace SettlyService
         {
             "NSW","VIC","QLD","WA","SA","TAS","ACT","NT"
         };
-        private bool IsState(string inputToken)
+        private bool StateChecking(string inputToken)
             => _states.Contains(inputToken);
 
-        private static readonly HashSet<string> _commonWords = new(StringComparer.OrdinalIgnoreCase)
+        private static readonly HashSet<string> _StreetWords = new(StringComparer.OrdinalIgnoreCase)
         {
             "avenue","ave","street","st","road","rd",
             "drive","dr","lane","ln","court","ct",
             "place","pl","way","crescent","cres"
         };
-        private bool IsCommonWord(string inputToken)
-            => _commonWords.Contains(inputToken);
+        private bool StreetWordChecking(string inputToken)
+            => _StreetWords.Contains(inputToken);
 
-        private string[] GetInputTokens(string query)
+        private string[] GetKeywordsArray(string query)
         {
 
             var separators = new[] { ' ', ',', '-', '/' };
@@ -111,19 +101,19 @@ namespace SettlyService
         private bool HasSearchCriteria(string postcode, string state, List<string> keywords)
             => !string.IsNullOrEmpty(postcode) || !string.IsNullOrEmpty(state) || keywords.Any();
 
-        private (string Postcode, string State, List<string> Keywords) ExtractSearchKeywords(string[] tokens)
+        private (string Postcode, string State, List<string> Keywords) GetQueryKeywords(string[] keywordArray)
         {
             string postcode = "", state = "";
-            var keywords = new List<string>();
+            var remainingKeywords = new List<string>();
 
-            foreach (var t in tokens)
+            foreach (var keyword in keywordArray)
             {
-                if (IsPostcode(t)) postcode = t;
-                else if (IsState(t)) state = t.ToUpper();
-                else if (!IsCommonWord(t)) keywords.Add(t);
+                if (PostcodeChecking(keyword)) postcode = keyword;
+                else if (StateChecking(keyword)) state = keyword.ToUpper();
+                else if (!StreetWordChecking(keyword)) remainingKeywords.Add(keyword);
             }
 
-            return (postcode, state, keywords);
+            return (postcode, state, remainingKeywords);
         }
 
         private string BuildLikePattern(string token)
@@ -199,73 +189,77 @@ namespace SettlyService
         #endregion
 
         #region Helper Functions for Function GetSuggestionsAsync
-        private string EscapeForLike(string input)
+        private string EscapeSqlLikeSymbols(string input)
         {
             return input
                 .Replace("%", "\\%")
                 .Replace("_", "\\_");
         }
 
-        private IQueryable<SuggestionOutputDto> SuggestBySuburbNamePattern(string pattern)
+        private IQueryable<SuggestionOutputDto> SuburbNamePatternChecking(string processedQuery)
         {
             return _context.Suburbs
                 .AsNoTracking()
-                .Where(s => EF.Functions.ILike(s.Name, pattern))
+                .Where(s => EF.Functions.ILike(s.Name, processedQuery))
                 .Select(s => new SuggestionOutputDto
                 {
                     Name = s.Name,
                     State = s.State,
-                    Postcode = s.Postcode
+                    Postcode = s.Postcode,
+                    SuburbId = s.Id,
                 });
         }
 
-        private IQueryable<SuggestionOutputDto> SuggestBySuburbStatePattern(string pattern)
+        private IQueryable<SuggestionOutputDto> StatePatternChecking(string processedQuery)
         {
             return _context.Suburbs
                 .AsNoTracking()
-                .Where(s => EF.Functions.ILike(s.State, pattern))
+                .Where(s => EF.Functions.ILike(s.State, processedQuery))
                 .Select(s => new SuggestionOutputDto
                 {
                     Name = s.Name,
                     State = s.State,
-                    Postcode = s.Postcode
+                    Postcode = s.Postcode,
+                    SuburbId = s.Id,
                 });
         }
 
-        private IQueryable<SuggestionOutputDto> SuggestBySuburbStateCodePattern(string pattern)
+        private IQueryable<SuggestionOutputDto> StateCodePatternChecking(string processedQuery)
         {
             return _context.Suburbs
                 .AsNoTracking()
-                .Where(s => EF.Functions.ILike(s.Postcode, pattern))
+                .Where(s => EF.Functions.ILike(s.Postcode, processedQuery))
                 .Select(s => new SuggestionOutputDto
                 {
                     Name = s.Name,
                     State = s.State,
-                    Postcode = s.Postcode
+                    Postcode = s.Postcode,
+                    SuburbId = s.Id,
                 });
         }
 
-        private IQueryable<SuggestionOutputDto> SuggestByPropertyAddressPattern(string pattern)
+        private IQueryable<SuggestionOutputDto> AddressPatternChecking(string processedQuery)
         {
             return _context.Properties
                 .AsNoTracking()
                 .Include(p => p.Suburb)
-                .Where(p => EF.Functions.ILike(p.Address, pattern))
+                .Where(p => EF.Functions.ILike(p.Address, processedQuery))
                 .Select(p => new SuggestionOutputDto
                 {
                     Name = p.Address,
                     State = p.Suburb.State,
-                    Postcode = p.Suburb.Postcode
+                    Postcode = p.Suburb.Postcode,
+                    SuburbId = p.SuburbId
                 });
         }
 
 
-        private IQueryable<SuggestionOutputDto> BuildCombinedSuggestionQuery(string pattern)
+        private IQueryable<SuggestionOutputDto> BuildQueryForSql(string pattern)
         {
-            var suburbsByName = SuggestBySuburbNamePattern(pattern);
-            var suburbsByState = SuggestBySuburbStatePattern(pattern);
-            var suburbsByStateCode = SuggestBySuburbStateCodePattern(pattern);
-            var propertiesByAddress = SuggestByPropertyAddressPattern(pattern);
+            var suburbsByName = SuburbNamePatternChecking(pattern);
+            var suburbsByState = StatePatternChecking(pattern);
+            var suburbsByStateCode = StateCodePatternChecking(pattern);
+            var propertiesByAddress = AddressPatternChecking(pattern);
 
             return suburbsByName
                 .Union(suburbsByState)
