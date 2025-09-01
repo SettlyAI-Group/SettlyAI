@@ -1,3 +1,1 @@
-import IncomeEmploymentCard from './IncomeEmploymentCard';
-
-export default IncomeEmploymentCard;
+export { default } from './IncomeEmploymentCard';
