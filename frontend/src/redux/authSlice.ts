@@ -1,14 +1,12 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import type { PayloadAction } from '@reduxjs/toolkit';
 import { http } from '@/api/http';
-
 export interface User {
   id: number;
   name: string;
   email: string;
 }
-
 type Status = 'unknown' | 'authenticated' | 'guest';
-
 interface AuthState {
   status: Status;
   isAuthenticated: boolean;
@@ -16,18 +14,15 @@ interface AuthState {
   user?: User;
   token?: string;
 }
-
 const initialState: AuthState = {
   status: 'unknown',
   isAuthenticated: false,
   isLoading: false,
 };
-
 export const checkAuthStatus = createAsyncThunk('auth/check', async () => {
   const { data } = await http.get('/auth/me');
   return data as { user?: User; token?: string };
 });
-
 export const authSlice = createSlice({
   name: 'auth',
   initialState,
@@ -73,6 +68,5 @@ export const authSlice = createSlice({
       });
   },
 });
-
 export const { login, logout } = authSlice.actions;
 export default authSlice.reducer;

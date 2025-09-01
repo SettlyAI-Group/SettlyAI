@@ -1,4 +1,4 @@
-export type TargetType = 'SuburbReport' | 'PropertyReport' | 'LoanSimulator';
+export type TargetType = 'suburb' | 'property' | 'loan';
 export interface FavouriteStateDto {
   isSaved: boolean;
 }

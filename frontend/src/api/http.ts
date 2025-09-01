@@ -8,7 +8,6 @@ export const http = axios.create({
 http.interceptors.request.use(config => {
   const state = store.getState() as RootState;
   const token: string | undefined = state?.auth?.token;
-
   if (token) {
     config.headers = config.headers ?? {};
     config.headers.Authorization = `Bearer ${token}`;
