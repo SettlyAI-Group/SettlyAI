@@ -3,4 +3,3 @@ import type { IIncomeEmploymentCard } from './incomeEmploymentDataMapper';
 
 export { mapIncomeEmployment };
 export type { IIncomeEmploymentCard };
-export default mapIncomeEmployment;
