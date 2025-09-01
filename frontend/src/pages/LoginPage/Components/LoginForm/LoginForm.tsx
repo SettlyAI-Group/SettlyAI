@@ -5,8 +5,11 @@ import FormInput from "./component/FormInput";
 import FormCheckbox from "./component/FormCheckbox";
 import { styled } from '@mui/material/styles';
 import { SocialLoginButtons } from './component/SocialLoginButtons';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams  } from 'react-router-dom';
 import { loginUser } from '@/api/authApi';
+import { setAuth } from '@/redux/authSlice';
+import type { AppDispatch } from '@/redux/store';
+import { useDispatch } from 'react-redux';
 
 const FormContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -57,13 +60,18 @@ const LoginForm = () => {
   const [apiError, setApiError] = useState<string>('');
   const [validationErrors, setValidationErrors] = useState<{emailError?: string; passwordError?: string}>({});
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
+
+  // login router setting
+  const [params] = useSearchParams();
+  const returnTo = params.get("returnTo") || "/"; // default to home
 
   // define error type:
   const badRequest = 400;
   const tooManyRequest = 429;
 
   // input validation
-    const validate = () => {
+  const validate = () => {
     const inputErrors: { emailError?: string; passwordError?: string } = {};
     // email validation
     if (!email) {
@@ -88,10 +96,12 @@ const LoginForm = () => {
     setIsLoading(true);
     try {
       const data = await loginUser({email, password});
-      // Todo: Put into Redux and implement Auth
-      console.log(data.accessToken);
-      console.log(data.userName);
-      navigate('/');
+      // Put into Redux
+      dispatch(setAuth({userName:data.userName, accessToken:data.accessToken}));
+      // Login router:
+      // 1. registration --> login --> homepage
+      // 2. one page --> login --> back to that page
+      navigate(decodeURIComponent(returnTo), { replace: true });
     } catch (err:any) {
       if (err.status === badRequest) setApiError("Incorrect email or password, please try again.");
       else if (err.status === tooManyRequest) setApiError("Too many login attempts. Please try again in 15 minutes."); 
