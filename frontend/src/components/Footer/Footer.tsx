@@ -1,328 +1,191 @@
-import React from 'react';
 import {
   Box,
   Container,
   Typography,
   Link,
 } from '@mui/material';
+import { styled } from '@mui/material/styles';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import InstagramIcon from '@mui/icons-material/Instagram';
-
+import HomeIcon from "@mui/icons-material/Home";
 interface FooterProps {
   className?: string;
 }
 
-const Footer: React.FC<FooterProps> = ({ className }) => {
-  const footerStyle = {
-    backgroundColor: '#2c2f3e',
-    color: '#9ca3af',
-    paddingTop: '48px',
-    paddingBottom: '48px',
-    paddingLeft: '16px',
-    paddingRight: '16px',
-  };
+// Footer main container
+const FooterContainer = styled('footer')(({ theme }) => ({
+  backgroundColor: theme.palette.grey[900],
+  color: theme.palette.grey[400],
+  padding:theme.spacing(12, 4, 12, 4),
+}));
 
-  const containerStyle = {
-    display: 'flex',
-    flexWrap: 'wrap' as const,
-    gap: '32px',
-  };
+// Top section - contains left and right containers
+const TopSection = styled(Box)(({ theme }) => ({
+  display: 'flex', gap: theme.spacing(4),marginBottom: theme.spacing(4),
+  [theme.breakpoints.down('md')]: {flexDirection: 'column',gap: theme.spacing(3),},
+}));
 
-  const brandSectionStyle = {
-    flex: '1 1 300px', // minwidth 300px in small screens
-    minWidth: '300px',
-  };
+// Bottom section - copyright
+const BottomSection = styled(Box)(({ theme }) => ({
+  borderTop: `1px solid ${theme.palette.grey[700]}`,
+  paddingTop: theme.spacing(3),textAlign: 'center',
+}));
 
-  const navSectionStyle = {
-    flex: '1 1 300px', // take 50% width in large screens
-    display: 'flex',
-    gap: '32px',
-    flexWrap: 'wrap' as const,
-  };
+// Reusable navigation column component
+const NavColumn = ({ title, links }: { title: string; links: Array<{ text: string; href: string }> }) => (
+  <Box sx={theme => ({ flex: 1, minWidth: theme.spacing(15) })}>
+    <Typography  variant="h6" 
+      sx={{ 
+        color: theme => theme.palette.common.white,
+        fontWeight: theme => theme.typography.fontWeightBold,
+        mb: theme => theme.spacing(2),
+        fontSize: theme => theme.typography.pxToRem(16)
+      }}
+    >
+      {title}
+    </Typography>
+    <Box sx={{ 
+      display: 'flex', 
+      flexDirection: 'column', 
+      gap: theme => theme.spacing(1) 
+    }}>
+      {links.map((link, index) => (
+        <Link 
+          key={index}
+          href={link.href} 
+          sx={{
+            color: theme => theme.palette.grey[400],
+            textDecoration: 'none',
+            fontSize: theme => theme.typography.pxToRem(14),
+            '&:hover': { 
+              color: theme => theme.palette.common.white,
+              textDecoration: 'none' 
+            }
+          }}
+        >
+          {link.text}
+        </Link>
+      ))}
+    </Box>
+  </Box>
+);
 
-  const brandContainerStyle = {
-    display: 'flex',
-    alignItems: 'center',
-    marginBottom: '16px',
-  };
+// Main Footer component
+const Footer  = ({ className }:FooterProps) => {
+  // Navigation data
+  const companyLinks = [
+    { text: 'About Us', href: '#' },
+    { text: 'Contact', href: '#' }
+  ];
 
-  const logoStyle = {
-    width: '32px',
-    height: '32px',
-    backgroundColor: '#6366f1',
-    borderRadius: '8px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: '16px',
-  };
-
-  const logoTextStyle = {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: '18px',
-  };
-
-  const brandNameStyle = {
-    color: 'white',
-    fontWeight: 600,
-    fontSize: '20px',
-  };
-
-  const descriptionStyle = {
-    color: '#9ca3af',
-    lineHeight: 1.6,
-    maxWidth: '300px',
-  };
-
-  const sectionTitleStyle = {
-    color: 'white',
-    fontWeight: 600,
-    marginBottom: '16px',
-    fontSize: '16px',
-  };
-
-  const linkContainerStyle = {
-    display: 'flex',
-    flexDirection: 'column' as const,
-    gap: '8px',
-  };
-
-  const linkStyle = {
-    color: '#9ca3af',
-    textDecoration: 'none' as const,
-    fontSize: '14px',
-    cursor: 'pointer' as const,
-  };
-
-  const socialContainerStyle = {
-    display: 'flex',
-    gap: '8px',
-  };
-
-  const copyrightContainerStyle = {
-    borderTop: '1px solid #374151',
-    marginTop: '32px',
-    paddingTop: '24px',
-    textAlign: 'center' as const,
-  };
-
-  const copyrightTextStyle = {
-    color: '#6b7280',
-    fontSize: '14px',
-  };
-
-  const navColumnStyle = {
-    flex: '1', // divide the space equally within nav section
-    minWidth: '120px',
-  };
-
-  // window size state for responsiveness
-  const [windowWidth, setWindowWidth] = React.useState(
-    typeof window !== 'undefined' ? window.innerWidth : 1024
-  );
-
-  React.useEffect(() => {
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  const isLargeScreen = windowWidth >= 768;
-
-  const handleLinkHover = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.currentTarget.style.color = 'white';
-    e.currentTarget.style.textDecoration = 'none';
-  };
-
-  const handleLinkLeave = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.currentTarget.style.color = '#9ca3af';
-  };
+  const legalLinks = [
+    { text: 'Privacy Policy', href: '#' },
+    { text: 'Terms of Service', href: '#' }
+  ];
 
   return (
-    <Box
-      component="footer"
-      className={className}
-      style={footerStyle}
-    >
+    <FooterContainer className={className}>
       <Container maxWidth="lg">
-        <Box style={isLargeScreen ? {
-          ...containerStyle,
-          justifyContent: 'space-between',
-        } : {
-          ...containerStyle,
-          flexDirection: 'column',
-          gap: '24px',
-        }}>
-          {/* Left Brand Section */}
-          <Box style={isLargeScreen ? {
-            ...brandSectionStyle,
-            flex: 1,
-          } : brandSectionStyle}>
-            <Box style={brandContainerStyle}>
-              <Box style={logoStyle}>
-                <Typography
-                  variant="h6"
-                  style={logoTextStyle}
-                >
-                  🏠
-                </Typography>
-              </Box>
-              <Typography
-                variant="h6"
-                style={brandNameStyle}
+        <TopSection>
+          {/* Left Container */}
+          <Box sx={{ flex: 1 }}>
+            <Box sx={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              mb: theme => theme.spacing(2) 
+            }}>
+              <HomeIcon sx={{ color: theme => theme.palette.common.white, fontSize: theme => theme.typography.pxToRem(28) }} />
+              
+              <Typography 
+                variant="h6" 
+                sx={{ 
+                  color: theme => theme.palette.common.white,
+                  fontWeight: theme => theme.typography.fontWeightBold,
+                  fontSize: theme => theme.typography.pxToRem(20),
+                  ml: theme => theme.spacing(2)
+                }}
               >
                 Settly AI
               </Typography>
             </Box>
-            <Typography
-              variant="body2"
-              style={descriptionStyle}
+            <Typography 
+              variant="body2" 
+              sx={{ 
+                color: theme => theme.palette.grey[400],
+                lineHeight: theme => theme.typography.body2.lineHeight,
+                maxWidth: theme => theme.spacing(37.5)
+              }}
             >
               Your intelligent companion for finding the perfect suburb to call home.
             </Typography>
           </Box>
+          {/* Right Container */}
+          <Box sx={theme => ({ 
+            flex: 1, 
+            display: 'flex', 
+            gap: theme.spacing(4),
+            [theme.breakpoints.down('sm')]: {
+              flexDirection: 'column',
+              gap: theme.spacing(2),
+            }
+          })}>
 
-          {/* Right Navigation Section - includes Company, Legal and Follow Us */}
-          <Box style={isLargeScreen ? {
-            ...navSectionStyle,
-            flex: '0 0 48%',
-            justifyContent: 'space-between',
-          } : navSectionStyle}>
-            {/* Company */}
-            <Box style={navColumnStyle}>
-              <Typography
-                variant="h6"
-                style={sectionTitleStyle}
-              >
-                Company
-              </Typography>
-              <Box style={linkContainerStyle}>
-                <Link
-                  href="#"
-                  style={linkStyle}
-                  onMouseEnter={handleLinkHover}
-                  onMouseLeave={handleLinkLeave}
-                >
-                  About Us
-                </Link>
-                <Link
-                  href="#"
-                  style={linkStyle}
-                  onMouseEnter={handleLinkHover}
-                  onMouseLeave={handleLinkLeave}
-                >
-                  Contact
-                </Link>
-              </Box>
-            </Box>
+            <NavColumn title="Company" links={companyLinks} />
+            <NavColumn title="Legal" links={legalLinks} />
 
-            {/* Legal */}
-            <Box style={navColumnStyle}>
-              <Typography
-                variant="h6"
-                style={sectionTitleStyle}
-              >
-                Legal
-              </Typography>
-              <Box style={linkContainerStyle}>
-                <Link
-                  href="#"
-                  style={linkStyle}
-                  onMouseEnter={handleLinkHover}
-                  onMouseLeave={handleLinkLeave}
-                >
-                  Privacy Policy
-                </Link>
-                <Link
-                  href="#"
-                  style={linkStyle}
-                  onMouseEnter={handleLinkHover}
-                  onMouseLeave={handleLinkLeave}
-                >
-                  Terms of Service
-                </Link>
-              </Box>
-            </Box>
-
-            {/* Follow Us */}
-            <Box style={navColumnStyle}>
-              <Typography
-                variant="h6"
-                style={sectionTitleStyle}
+            {/* Follow Us Column */}
+            <Box sx={{ flex: 1, minWidth: theme => theme.spacing(15) }}>
+              <Typography 
+                variant="h6" 
+                sx={{ 
+                  color: theme => theme.palette.common.white,
+                  fontWeight: theme => theme.typography.fontWeightBold,
+                  mb: theme => theme.spacing(2),
+                  fontSize: theme => theme.typography.pxToRem(16)
+                }}
               >
                 Follow Us
               </Typography>
-              <Box style={socialContainerStyle}>
-              <a
-                  href="#"
-                  style={{ 
-                    color: '#9ca3af',
-                    textDecoration: 'none',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    width: '48px',
-                    height: '48px',
-                    borderRadius: '50%',
-                    transition: 'all 0.2s ease',
-                    cursor: 'pointer',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.color = 'white';
-                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.color = '#9ca3af';
-                    e.currentTarget.style.backgroundColor = 'transparent';
-                  }}
-                >
-                  <LinkedInIcon />
-                  </a>
-                <Link
-                  href="#"
-                  style={{ 
-                    color: '#9ca3af',
-                    textDecoration: 'none',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    width: '48px',
-                    height: '48px',
-                    borderRadius: '50%',
-                    transition: 'all 0.2s ease',
-                    cursor: 'pointer',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.color = 'white';
-                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.color = '#9ca3af';
-                    e.currentTarget.style.backgroundColor = 'transparent';
-                  }}
-                >
-                  <InstagramIcon />
-                  </a>
+              <Box sx={{ 
+                display: 'flex', 
+                gap: theme => theme.spacing(1) 
+              }}>
+              {[
+                  { icon: <LinkedInIcon />, href: '#' },
+                  { icon: <InstagramIcon />, href: '#' }
+                ].map((social, index) => (
+                  <Link 
+                    key={index}
+                    href={social.href} 
+                    sx={theme => ({
+                      color: theme.palette.grey[400],
+                      '&:hover': {
+                        color: theme.palette.common.white,
+                      }
+                    })}
+                  >
+                    {social.icon}
+                  </Link>
+                ))}
+                  </Box>
               </Box>
             </Box>
-          </Box>
-        </Box>
+        </TopSection>
 
-        {/* Bottom */}
-        <Box style={copyrightContainerStyle}>
-          <Typography
-            variant="body2"
-            style={copyrightTextStyle}
+        {/* Bottom Section - Copyright */}
+        <BottomSection>
+          <Typography 
+            variant="body2" 
+            sx={{ 
+              color: theme => theme.palette.grey[500],
+              fontSize: theme => theme.typography.pxToRem(14)
+            }}
           >
             © 2024 Settly AI. All rights reserved.
           </Typography>
-        </Box>
+        </BottomSection>
       </Container>
-    </Box>
+    </FooterContainer>
   );
 };
 
