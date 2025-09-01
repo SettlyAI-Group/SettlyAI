@@ -56,6 +56,7 @@ const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [apiError, setApiError] = useState<string>('');
   const [validationErrors, setValidationErrors] = useState<{emailError?: string; passwordError?: string}>({});
+  const navigate = useNavigate();
 
   // define error type:
   const badRequest = 400;
@@ -87,7 +88,9 @@ const LoginForm = () => {
     setIsLoading(true);
     try {
       const data = await loginUser({email, password});
-      console.log(data); 
+      console.log(data.accessToken);
+      console.log(data.userName);
+      navigate('/');
     } catch (err:any) {
       if (err.status === badRequest) setApiError("Incorrect email or password, please try again.");
       else if (err.status === tooManyRequest) setApiError("Too many login attempts. Please try again in 15 minutes."); 
@@ -158,7 +161,8 @@ const LoginForm = () => {
         />
         <CheckBoxContainer>
           <FormCheckbox label='Remeber me' checked={rememberMe} onChange={setRememberMe}/>
-          <Link to='/'>
+          {/* Todo: link to forgot password page */}
+          <Link to='/'> 
             <TextButton>Forgot password?</TextButton>
           </Link>
         </CheckBoxContainer>
