@@ -74,7 +74,6 @@ const Navbar = () => {
 
   return (
     <StyledAppBar position="static" elevation={0}>
-      {/* Center content and clamp width here (not on AppBar) */}
       <StyledContainer maxWidth={false}>
         <StyledToolbar disableGutters>
           <HomeSection onClick={() => navigate("/")}>
