@@ -1,10 +1,9 @@
 import React from 'react';
 import { Box, styled, Grid, Typography } from '@mui/material';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-// Import custom icons
-import homeIcon from '../../../../assets/home.png';
-import moneyIcon from '../../../../assets/money.png';
-import stockIcon from '../../../../assets/stock.png';
+import HomeIcon from '@mui/icons-material/Home';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import Card from '../Card';
 
 interface FeatureCard {
@@ -29,10 +28,10 @@ const FeatureCardsSection: React.FC = () => {
     {
       title: 'SettlyHome',
       description: 'Explore smart suburbs picks and lifestyle-friendly neighbourhoods.',
-      icon: <img src={homeIcon} alt="Home" style={{ width: 48, height: 48 }} />,
+      icon: <HomeIcon style={{ fontSize: 48 }} />,
       route: '#home',
       ctaText: (
-        <Typography component="span" sx={{ color: 'black' }}>
+        <Typography component="span" style={{ color: 'black' }}>
           Explore Suburb & Homes <ArrowForwardIcon fontSize="small" />
         </Typography>
       )
@@ -40,10 +39,10 @@ const FeatureCardsSection: React.FC = () => {
     {
       title: 'SettlyLoan',
       description: 'Compare fixed vs variable, estimate repayments, and test loan stress scenarios.',
-      icon: <img src={moneyIcon} alt="Money" style={{ width: 48, height: 48 }} />,
+      icon: <AttachMoneyIcon style={{ fontSize: 48 }} />,
       route: '#loan',
       ctaText: (
-        <Typography component="span" sx={{ color: 'black' }}>
+        <Typography component="span" style={{ color: 'black' }}>
           Simulate Loan <ArrowForwardIcon fontSize="small" />
         </Typography>
       )
@@ -51,10 +50,10 @@ const FeatureCardsSection: React.FC = () => {
     {
       title: 'SettlySuper',
       description: 'Use your Super Wisely to Boost Your Home Plan',
-      icon: <img src={stockIcon} alt="Stock" style={{ width: 48, height: 48 }} />,
+      icon: <TrendingUpIcon style={{ fontSize: 48 }} />,
       route: '#super',
       ctaText: (
-        <Typography component="span" sx={{ color: 'black' }}>
+        <Typography component="span" style={{ color: 'black' }}>
           Compare Super Strategy <ArrowForwardIcon fontSize="small" />
         </Typography>
       )

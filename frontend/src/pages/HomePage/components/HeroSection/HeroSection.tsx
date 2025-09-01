@@ -3,7 +3,8 @@ import {
   Box,
   Typography,
   TextField,
-  Button
+  Button,
+  type TypographyProps
 } from '@mui/material';
 import { styled } from '@mui/material';
 import { Search as SearchIcon } from '@mui/icons-material';
@@ -11,7 +12,7 @@ import { Search as SearchIcon } from '@mui/icons-material';
 // Hero container
 const HeroContainer = styled(Box)(({ theme }) => ({
   minHeight: '548px',
-  background: '#F8F9FB',
+  background: theme.palette.background.default,
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
@@ -23,15 +24,12 @@ const HeroContainer = styled(Box)(({ theme }) => ({
 }));
 
 // H1
-const MainHeading = styled(Typography)(({ theme }) => ({
+const MainHeading = styled(Typography)<TypographyProps>(({ theme }) => ({
   fontFamily: 'Poppins',
-  fontStyle: 'normal',
-  fontWeight: 400,       
-  fontSize: '32px',     
+  fontWeight: 400,
+  fontSize: '32px',
   textAlign: 'center',
-  color: '#1F2937',
-  maxWidth: '768px',
-  maxHeight:'180px',
+  color: theme.palette.text.primary,
   margin: '0 auto',
   marginBottom: theme.spacing(14),
   letterSpacing: '-0.01em',
@@ -45,9 +43,23 @@ const MainHeading = styled(Typography)(({ theme }) => ({
   },
 }));
 
-const HighlightSpan = styled(Box)(() => ({
-  color: '#6366f1',
-}));
+const HighlightSpan = styled(Typography)<TypographyProps>(({ theme }) => ({
+  color: theme.palette.primary.main,
+  display: "inline",
+  fontFamily: 'Poppins',
+  fontWeight: 400,
+  fontSize: '32px',
+  letterSpacing: '-0.01em',
+  [theme.breakpoints.up('sm')]: {
+    fontSize: '40px',
+    lineHeight: '50px',
+  },
+  [theme.breakpoints.up('md')]: {
+    fontSize: '48px',
+    lineHeight: '60px',
+  },
+})) as typeof Typography;
+
 
 // Subheading
 const Subtitle = styled(Typography)(({ theme }) => ({
@@ -56,7 +68,7 @@ const Subtitle = styled(Typography)(({ theme }) => ({
   fontWeight: 400,
   fontSize: '18px',
   lineHeight: '28px',
-  color: '#4B5563',
+  color: theme.palette.text.secondary,
   width: '653px',
   height: '84px',
   marginBottom: theme.spacing(4),
@@ -75,31 +87,30 @@ const SearchContainer = styled(Box)(() => ({
   marginBottom: 16,
 }));
 
-
 const InputContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
-  width: '100%',
-  height: 56,
-  background: '#FFFFFF',
-  border: '1px solid #E5E7EB',
-  borderRadius: 12,
+  width: '653px', // Match CSS width
+  height: 60, // Match CSS height
+  background: theme.palette.background.paper, 
+  border: `1px solid ${theme.palette.divider}`, 
+  borderRadius: 8, // Match CSS border-radius
   padding: theme.spacing(0, 2),
-  [theme.breakpoints.up('sm')]: { width: '720px' },
+  // Remove responsive breakpoints to keep fixed width
 }));
 
 const StyledSearchIcon = styled(SearchIcon)(({ theme }) => ({
-  color: '#9CA3AF',
+  color: theme.palette.text.disabled,
   marginRight: theme.spacing(2),
 }));
 
-const StyledTextField = styled(TextField)(() => ({
+const StyledTextField = styled(TextField)(({ theme }) => ({
   '& .MuiInput-root': {
     fontFamily: 'Poppins',
     fontWeight: 400,
     fontSize: '14px',
     lineHeight: '22px',
-    color: '#6B7280',
+    color: theme.palette.text.secondary,
   },
 }));
 
@@ -107,30 +118,30 @@ const StyledTextField = styled(TextField)(() => ({
 const GetReportButton = styled(Button)(({ theme }) => ({
   width: '206px',
   height: '60px',
-  background: '#7B61FF',
-  boxShadow:
-    '0px 0px 2px rgba(23, 26, 31, 0.12), 0px 4px 9px rgba(23, 26, 31, 0.11)',
+  background: theme.palette.primary.main,
+  boxShadow: theme.shadows[4],
   borderRadius: '12px',
   fontFamily: 'Poppins',
   fontWeight: 500,
   fontSize: '16px',
   lineHeight: '24px',
-  color: '#FFFFFF',
+  color: theme.palette.primary.contrastText,
   textTransform: 'none',
-  '&:hover': { background: '#6B51E8' },
+  '&:hover': {
+    background: theme.palette.primary.dark,
+    boxShadow: theme.shadows[8]
+  },
 }));
 
 const ActionButtonsContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
-  justifyContent: 'flex-start',
-  gap: '30px',
+  justifyContent: 'center',
   marginTop: theme.spacing(2),
   width: '653px',
-  height: '60px',
+  height: '52px',
 }));
-
 
 const ChatLink = styled('a')(({ theme }) => ({
   fontFamily: 'Poppins',
@@ -141,53 +152,39 @@ const ChatLink = styled('a')(({ theme }) => ({
   color: '#4F46E5',
   textDecoration: 'none',
   cursor: 'pointer',
-  whiteSpace: 'nowrap',
   display: 'flex',
   alignItems: 'center',
+  width: '581px',
+  height: '52px',
   '&:hover': {
     textDecoration: 'underline',
   },
 }));
 
-const ExploreSuburbButton = styled(Button)(({ theme }) => ({
-  boxSizing: 'border-box',
-  width: '213px',
-  height: '60px',
-  minWidth: '213px',
-  minHeight: '60px',
-  background: '#E0E7FF',
-  boxShadow: '0px 0px 2px rgba(23, 26, 31, 0.12), 0px 8px 17px rgba(23, 26, 31, 0.15)',
-  borderRadius: '8px',
-  fontFamily: 'Poppins',
-  fontWeight: 500,
-  fontSize: '16px',
-  lineHeight: '24px',
-  color: '#4F46E5',
-  textTransform: 'none',
-  border: 'none',
-  padding: 0,
-  '&.MuiButton-root': {
-    width: '213px',
-    height: '60px',
-    minWidth: '213px',
-    minHeight: '60px',
-    padding: 0,
-  },
-}));
 
-const HeroSection: React.FC = () => {
+
+// Component without React.FC
+const HeroSection = () => {
   return (
     <HeroContainer>
       <MainHeading component="h1">
-        Your AI-Powered Guide for<br />
-        <HighlightSpan component="span">Property, Loan & Super</HighlightSpan>{' '}
+        Your AI-Powered Guide for <br />
+        <HighlightSpan component="span">
+          Property, Loan & Super
+        </HighlightSpan>{" "}
         Planning
       </MainHeading>
 
-<Subtitle>
-  No jargon, just clarity. Plan your future with confidence using smart
-  reports and tools built for first-home buyers and everyday Australians.
-</Subtitle>
+
+
+
+
+
+
+      <Subtitle>
+        No jargon, just clarity. Plan your future with confidence using smart
+        reports and tools built for first-home buyers and everyday Australians.
+      </Subtitle>
 
       <SearchContainer>
         <InputContainer>
@@ -206,12 +203,10 @@ const HeroSection: React.FC = () => {
       </SearchContainer>
 
       <ActionButtonsContainer>
-        <ExploreSuburbButton>Explore Suburb</ExploreSuburbButton>
         <ChatLink href="#">
           Not sure where to begin? Chat with Settly Robot
         </ChatLink>
       </ActionButtonsContainer>
-
     </HeroContainer>
   );
 };

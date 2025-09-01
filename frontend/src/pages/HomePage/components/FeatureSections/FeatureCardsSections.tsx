@@ -1,10 +1,9 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
 import { styled } from '@mui/material';
-// Import custom icons
-import homeIcon from '../../../../assets/home.png';
-import moneyIcon from '../../../../assets/money.png';
-import stockIcon from '../../../../assets/stock.png';
+import HomeIcon from '@mui/icons-material/Home';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import Card from '../Card';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
@@ -43,17 +42,17 @@ const FeatureDetailSections: React.FC = () => {
       <FeatureSection id="home-section">
         <Card
           title={
-            <Typography variant="h3" sx={{ fontWeight: 400, textAlign: 'center' }}>
+            <Typography variant="h3" style={{ fontWeight: 400, textAlign: 'center' }}>
               SettlyHome
             </Typography>
           }
           description={
-            <Typography variant="body1" sx={{ fontWeight: 200, textAlign: 'left' }}>
+            <Typography variant="body1" style={{ fontWeight: 200, textAlign: 'left' }}>
               Discover your perfect home with smart property insights and market analysis. 
           
             </Typography>
           }
-          icon={<img src={homeIcon} alt="Home" style={{ width: 40, height: 40 }} />}
+          icon={<HomeIcon style={{ fontSize: 40 }} />}
           ctaText={"Explore Suburb & Homes"}
           variant="full"
         />
@@ -71,16 +70,16 @@ const FeatureDetailSections: React.FC = () => {
       <LoanSection id="loan-section">
         <Card
           title={
-            <Typography variant="h3" sx={{ fontWeight: 400, textAlign: 'center' }}>
+            <Typography variant="h3" style={{ fontWeight: 400, textAlign: 'center' }}>
               SettlyLoan
             </Typography>
           }
           description={
-            <Typography variant="body1" sx={{ fontWeight: 200, textAlign: 'left' }}>
+            <Typography variant="body1" style={{ fontWeight: 200, textAlign: 'left' }}>
               Get personalized loan recommendations and calculate your borrowing capacity. 
             </Typography>
           }
-          icon={<img src={moneyIcon} alt="Money" style={{ width: 40, height: 40 }} />}
+          icon={<AttachMoneyIcon style={{ fontSize: 40 }} />}
           ctaText={"Simulate Loan"}
           variant="full"
         />
@@ -98,16 +97,16 @@ const FeatureDetailSections: React.FC = () => {
       <FeatureSection id="super-section">
         <Card
           title={
-            <Typography variant="h3" sx={{ fontWeight: 400, textAlign: 'center' }}>
+            <Typography variant="h3" style={{ fontWeight: 400, textAlign: 'center' }}>
               SettlySuper
             </Typography>
           }
           description={
-            <Typography variant="body1" sx={{ fontWeight: 200, textAlign: 'left' }}>
+            <Typography variant="body1" style={{ fontWeight: 200, textAlign: 'left' }}>
               Maximize your superannuation potential with smart property investment strategies.
             </Typography>
           }
-          icon={<img src={stockIcon} alt="Stock" style={{ width: 40, height: 40 }} />}
+          icon={<TrendingUpIcon style={{ fontSize: 40 }} />}
           ctaText={"Compare Super Strategy"}
           variant="full"
         />
