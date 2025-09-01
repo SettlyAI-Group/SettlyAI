@@ -90,13 +90,12 @@ const SearchContainer = styled(Box)(() => ({
 const InputContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
-  width: '653px', // Match CSS width
-  height: 60, // Match CSS height
+  width: '653px', 
+  height: 60, 
   background: theme.palette.background.paper, 
   border: `1px solid ${theme.palette.divider}`, 
-  borderRadius: 8, // Match CSS border-radius
+  borderRadius: 8, 
   padding: theme.spacing(0, 2),
-  // Remove responsive breakpoints to keep fixed width
 }));
 
 const StyledSearchIcon = styled(SearchIcon)(({ theme }) => ({
