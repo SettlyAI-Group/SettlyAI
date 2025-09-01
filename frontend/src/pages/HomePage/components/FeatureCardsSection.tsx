@@ -65,7 +65,6 @@ const FeatureCardsSection = () => {
   ];
 
   const handleCardClick = (route: string) => {
-    // Extract section name from route (e.g., '#home' -> 'home')
     const sectionId = route.replace('#', '') + '-section';
     const element = document.getElementById(sectionId);
     
