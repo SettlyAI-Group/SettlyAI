@@ -72,16 +72,19 @@ const TitleBox = styled(Box)(({ theme }) => ({
   marginBottom: theme.spacing(4),
 }));
 
+interface ValueBoxProps {
+  withProgress?: boolean;
+}
+
 const ValueBox = styled(Box, {
-  shouldForwardProp: (prop) => prop !== 'showProgress',
-})<{ showProgress: boolean }>(({ theme, showProgress }) => ({
-  marginBottom: showProgress ? theme.spacing(4) : 0,
+  shouldForwardProp: (prop) => prop !== 'withProgress',
+})<ValueBoxProps>(({ theme, withProgress }) => ({
+  marginBottom: withProgress ? theme.spacing(4) : 0,
 }));
 
 const ProgressWrapper = styled(Box)(({ theme }) => ({
   marginTop: theme.spacing(4),
 }));
-
 
 const IncomeEmploymentCard = ({
   title,
@@ -104,7 +107,7 @@ const IncomeEmploymentCard = ({
         </TitleBox>
 
         {/* Value */}
-        <ValueBox showProgress={showProgress}>
+        <ValueBox withProgress={showProgress}>
           <ValueText color={color || theme.palette.primary.main}>
             {valueDisplay}
           </ValueText>
