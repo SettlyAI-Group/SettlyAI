@@ -18,7 +18,6 @@ const ToolsContainer = styled(Box)(({ theme }) => ({
   
   [theme.breakpoints.up('sm')]: {
     padding: theme.spacing(8, 4),
-    marginTop: theme.spacing(-20), // Less aggressive on larger screens
     marginTop: theme.spacing(-4), // Less aggressive on larger screens
   },
 }));
@@ -31,33 +30,30 @@ const ToolsTextContainer = styled(Box)(({ theme }) => ({
 
 const ToolsHeading = styled(Typography)(({ theme }) => ({
   fontWeight: 400,
-  marginBottom: theme.spacing(2),
   fontSize: '36px',
   color: '#1f2937',
   width: '766px',
   height: '40px',
   margin: '0 auto',
-  marginBottom: theme.spacing(2),
+  marginBottom: theme.spacing(7),
 }));
 
-const ToolsSubtitle = styled(Typography)(() => ({
+const ToolsSubtitle = styled(Typography)(({ theme }) => ({
   color: '#6b7280',
   fontSize: '1rem',
   fontWeight: 400,
   width: '766px',
   height: '28px',
   margin: '0 auto',
+  marginBottom: theme.spacing(13),
   lineHeight: 1.6,
 }));
 
-const ToolsSection: React.FC = () => {
+const ToolsSection = () => {
   return (
     <ToolsContainer>
       <ToolsTextContainer>
-        <ToolsHeading 
-          variant="h4" 
-          component="h2"
-        >
+        <ToolsHeading variant="h4">
           All-in-One Tools to Simplify Your Journey
         </ToolsHeading>
         <ToolsSubtitle variant="body1">
@@ -70,5 +66,6 @@ const ToolsSection: React.FC = () => {
     </ToolsContainer>
   );
 };
+
 
 export default ToolsSection;
