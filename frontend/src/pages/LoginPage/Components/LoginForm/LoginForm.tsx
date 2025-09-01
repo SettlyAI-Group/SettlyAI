@@ -88,6 +88,7 @@ const LoginForm = () => {
     setIsLoading(true);
     try {
       const data = await loginUser({email, password});
+      // Todo: Put into Redux and implement Auth
       console.log(data.accessToken);
       console.log(data.userName);
       navigate('/');
