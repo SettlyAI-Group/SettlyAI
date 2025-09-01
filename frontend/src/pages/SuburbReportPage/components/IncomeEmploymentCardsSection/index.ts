@@ -1,3 +1,1 @@
-import IncomeEmploymentCardsSection from './IncomeEmploymentCardsSection';
-
-export default IncomeEmploymentCardsSection;
+export { default } from './IncomeEmploymentCardsSection';

@@ -7,7 +7,8 @@ import {
   useTheme,
   styled,
 } from '@mui/material';
-import infoIcon from '@/assets/info.png';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+
 
 interface IIncomeEmploymentCardProps {
   title: string;
@@ -18,8 +19,7 @@ interface IIncomeEmploymentCardProps {
 }
 
 const StyledCard = styled(Card)(({ theme }) => ({
-  width: theme.spacing(114),
-  height: theme.spacing(36),
+  minHeight: theme.spacing(36),
   padding: theme.spacing(6),
   borderRadius: 8,
   boxShadow: theme.shadows[3],
@@ -32,20 +32,24 @@ const StyledCard = styled(Card)(({ theme }) => ({
   },
 }));
 
+const StyledCardContent = styled(CardContent)(() => ({
+  padding: 0,
+    '&:last-child': {
+    paddingBottom: 0,
+  },
+}));
+
 const TitleText = styled(Typography)(({ theme }) => ({
   fontFamily: 'Poppins, sans-serif',
   fontSize: theme.typography.subtitle2.fontSize,
-  lineHeight: '24px',
 }));
 
 const ValueText = styled(Typography)(({ theme }) => ({
   fontFamily: 'Poppins, sans-serif',
   fontSize: theme.typography.h4.fontSize,
-  lineHeight: '32px',
 }));
 
 const StyledProgress = styled(LinearProgress)(({ theme }) => ({
-  width: theme.spacing(102),
   height: theme.spacing(2),
   borderRadius: 4,
   backgroundColor: theme.palette.grey[300],
@@ -55,13 +59,29 @@ const StyledProgress = styled(LinearProgress)(({ theme }) => ({
   },
 }));
 
-const IconWrapper = styled(Box)(({ theme }) => ({
-  width: theme.spacing(6),
-  height: theme.spacing(6),
+const IconWrapper = styled(Box)(() => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
 }));
+
+const TitleBox = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  marginBottom: theme.spacing(4),
+}));
+
+const ValueBox = styled(Box, {
+  shouldForwardProp: (prop) => prop !== 'showProgress',
+})<{ showProgress: boolean }>(({ theme, showProgress }) => ({
+  marginBottom: showProgress ? theme.spacing(4) : 0,
+}));
+
+const ProgressWrapper = styled(Box)(({ theme }) => ({
+  marginTop: theme.spacing(4),
+}));
+
 
 const IncomeEmploymentCard = ({
   title,
@@ -74,39 +94,29 @@ const IncomeEmploymentCard = ({
 
   return (
     <StyledCard>
-      <CardContent sx={{ p: 0 }}>
+      <StyledCardContent>
         {/* Title & Icon */}
-        <Box
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
-          mb={1}
-        >
+        <TitleBox>
           <TitleText color={theme.palette.text.secondary}>{title}</TitleText>
           <IconWrapper>
-            <Box
-              component="img"
-              src={infoIcon}
-              alt="info icon"
-              sx={{ width: theme.spacing(6), height: theme.spacing(6) }}
-            />
+            <InfoOutlinedIcon fontSize="small" />
           </IconWrapper>
-        </Box>
+        </TitleBox>
 
         {/* Value */}
-        <Box mb={showProgress ? 1.5 : 0}>
+        <ValueBox showProgress={showProgress}>
           <ValueText color={color || theme.palette.primary.main}>
             {valueDisplay}
           </ValueText>
-        </Box>
+        </ValueBox>
 
         {/* Progress */}
-        {showProgress && (
-          <Box mt={1}>
+        {showProgress && percent !== undefined && (
+          <ProgressWrapper>
             <StyledProgress variant="determinate" value={percent} />
-          </Box>
+          </ProgressWrapper>
         )}
-      </CardContent>
+      </StyledCardContent>
     </StyledCard>
   );
 };

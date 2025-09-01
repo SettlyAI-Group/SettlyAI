@@ -1,5 +1,5 @@
 import ActionButtonWrapper from '@/pages/SuburbReportPage/components/ActionButtonGroup/ActionButtonWrapper';
-import { Box, Button, styled, Typography } from '@mui/material';
+import { Box, Button, styled, Typography, useTheme  } from '@mui/material';
 import MetricCardsSection from './components/MetricCardsSection';
 import { useQueries } from '@tanstack/react-query';
 import { getSuburbBasicInfo, getSuburbLivability } from '@/api/suburbApi';
@@ -12,6 +12,7 @@ import {
 import Banner from './components/Banner';
 import IncomeEmploymentCardsSection from './components/IncomeEmploymentCardsSection';
 import { getIncomeEmployment } from '@/api/suburbApi';
+import { mapIncomeEmployment } from './components/IncomeEmploymentCardsSection/utils/incomeEmploymentDataMapper';
 
 
 const PageContainer = styled(Box)(({ theme }) => ({
@@ -43,6 +44,7 @@ const TITLES = {
 
 const SuburbReportPage = () => {
   const { suburbId } = useParams<{ suburbId: string }>();
+  const theme = useTheme();
 
   if (!suburbId || Number.isNaN(suburbId)) {
     return <Navigate to="/" replace />;
@@ -95,7 +97,7 @@ const SuburbReportPage = () => {
     suburbBasicInfo: results[0].data ? results[0].data : undefined,
     demand: results[1].data ? mapDevCardData(results[1].data) : undefined,
     livability: results[2].data ? mapLivability(results[2].data) : undefined,
-    incomeEmployment: results[3].data ? results[3].data : undefined,
+    incomeEmployment: results[3].data ? mapIncomeEmployment(results[3].data, theme) : undefined,
 
   };
 
