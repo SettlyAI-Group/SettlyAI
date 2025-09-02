@@ -28,15 +28,8 @@ const App = () => {
           <Route path="/" element={<Layout />}>
             <Route path="/theme" element={<ThemeDemo />} />
             <Route index element={<HomePage />} />
-
-<<<<<<< HEAD
-            <Route path="/suburb/:suburbId" element={<SuburbReportPage />} />
-||||||| 80cacd2
-            <Route path="/suburb/:location" element={<SuburbReportPage />} />
-=======
             <Route path="/explore/:location" element={<ExplorePage />} />
             <Route path="/suburb/:suburbId" element={<SuburbReportPage />} />
->>>>>>> origin/main
           </Route>
           <Route path="/" element={<ThemeDemo />} />
           <Route path="/registration" element={<RegistrationPage />} />
