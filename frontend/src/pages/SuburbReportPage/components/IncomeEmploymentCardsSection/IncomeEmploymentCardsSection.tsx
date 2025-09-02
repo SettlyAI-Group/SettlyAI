@@ -7,7 +7,7 @@ import {
   styled,
 } from '@mui/material';
 import IncomeEmploymentCard from './components/IncomeEmploymentCard';
-import type { IIncomeEmploymentCard } from './components/IncomeEmploymentCard/incomeEmploymentDataMapper';
+import type { IIncomeEmploymentCard } from './utils/incomeEmploymentDataMapper';
 
 interface IIncomeEmploymentCardsProps {
   title: string;

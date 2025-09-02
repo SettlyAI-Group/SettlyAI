@@ -12,7 +12,7 @@ import {
 import Banner from './components/Banner';
 import IncomeEmploymentCardsSection from './components/IncomeEmploymentCardsSection';
 import { getIncomeEmployment } from '@/api/suburbApi';
-import { mapIncomeEmployment } from './components/IncomeEmploymentCardsSection/components/IncomeEmploymentCard/incomeEmploymentDataMapper';
+import { mapIncomeEmployment } from './components/IncomeEmploymentCardsSection/utils/incomeEmploymentDataMapper';
 import { mapPropertyCards } from '@/pages/SuburbReportPage/components/PropertyMarketInsightsSection';
 import PropertyMarketInsightsSection from '@/pages/SuburbReportPage/components/PropertyMarketInsightsSection';
 import type { IHousingMarket } from '@/interfaces/housingmarket';
