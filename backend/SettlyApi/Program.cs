@@ -30,11 +30,13 @@ public class Program
                 .EnableSensitiveDataLogging()
                 .EnableDetailedErrors()
         );
+        // 绑定 Email 节点到 EmailSettings
+        builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("Email"));
         // Add CORS services
         builder.Services.AddCorsPolicies();
         // Add application services
         builder.Services.AddScoped<IUserService, UserService>();
-        builder.Services.AddScoped<IEmailSender, StubEmailSender>();
+        builder.Services.AddScoped<IEmailService, MailKitEmailService>();
         builder.Services.AddScoped<IVerificationCodeService, VerificationCodeService>();
         builder.Services.AddTransient<ICreateTokenService, CreateTokenService>();
         builder.Services.AddScoped<IAuthService, AuthService>();
