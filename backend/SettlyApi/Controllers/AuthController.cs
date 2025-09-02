@@ -27,6 +27,19 @@ public class AuthController : ControllerBase
         return Ok(user);
     }
 
+    [HttpPost("activate")]
+    [SwaggerOperation(Summary = "activate user by email verification code")]
+    public async Task<IActionResult> VerifyCode([FromBody] VerifyCodeDto verifyCodeDto)
+    {
+        var success = await _authService.ActivateUserAsync(verifyCodeDto);
+        if (!success)
+        {
+            return BadRequest("Invalid or expired verification code");
+        }
+        return Ok(new { message = "Verification successful, account activated" });
+    }
+
+
     [HttpPost("login")]
     [EnableRateLimiting("LoginIpFixedWindow")]
     [SwaggerOperation(Summary = "Users use email and password to login")]
