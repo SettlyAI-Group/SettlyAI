@@ -2,12 +2,12 @@ import { render, screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
 import '@testing-library/jest-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { 
-  PasswordStrength, 
-  evaluatePassword, 
-  getStrength, 
+import {
+  PasswordStrength,
+  evaluatePassword,
+  getStrength,
   defaultPasswordRules,
-  type PasswordRule 
+  type PasswordRule,
 } from './PasswordStrength';
 
 const theme = createTheme();
@@ -65,9 +65,7 @@ describe('PasswordStrength Utility Functions', () => {
     });
 
     it('should evaluate password against custom rules', () => {
-      const customRules: PasswordRule[] = [
-        { code: 'test', label: 'Test rule', test: (v) => v.includes('test') }
-      ];
+      const customRules: PasswordRule[] = [{ code: 'test', label: 'Test rule', test: v => v.includes('test') }];
       const result = evaluatePassword('testpassword', customRules);
       expect(result.results).toHaveLength(1);
       expect(result.results[0].passed).toBe(true);
@@ -128,7 +126,7 @@ describe('PasswordStrength Component', () => {
           <PasswordStrength value="test" />
         </TestWrapper>
       );
-      
+
       expect(screen.getByText(/At least 8 characters/)).toBeInTheDocument();
       expect(screen.getByText(/Includes uppercase and lowercase letters/)).toBeInTheDocument();
       expect(screen.getByText(/Includes at least one number/)).toBeInTheDocument();
@@ -141,7 +139,7 @@ describe('PasswordStrength Component', () => {
           <PasswordStrength value="Abc123!@" showMeter={false} />
         </TestWrapper>
       );
-      
+
       expect(screen.queryByText(/Password Strength:/)).not.toBeInTheDocument();
     });
 
@@ -151,7 +149,7 @@ describe('PasswordStrength Component', () => {
           <PasswordStrength value="" showMeter={true} />
         </TestWrapper>
       );
-      
+
       expect(screen.queryByText(/Password Strength:/)).not.toBeInTheDocument();
     });
 
@@ -161,7 +159,7 @@ describe('PasswordStrength Component', () => {
           <PasswordStrength value="Abc123!@" showMeter={true} />
         </TestWrapper>
       );
-      
+
       expect(screen.getByText(/Password Strength:/)).toBeInTheDocument();
     });
   });
@@ -173,7 +171,7 @@ describe('PasswordStrength Component', () => {
           <PasswordStrength value="Abcdefgh1!" />
         </TestWrapper>
       );
-      
+
       const passedRules = screen.getAllByText(/✓/);
       expect(passedRules).toHaveLength(4);
     });
@@ -184,7 +182,7 @@ describe('PasswordStrength Component', () => {
           <PasswordStrength value="abc" />
         </TestWrapper>
       );
-      
+
       const failedRules = screen.getAllByText(/✗/);
       expect(failedRules).toHaveLength(4);
     });
@@ -195,7 +193,7 @@ describe('PasswordStrength Component', () => {
           <PasswordStrength value="test" />
         </TestWrapper>
       );
-      
+
       expect(screen.getByText('✗ At least 8 characters')).toBeInTheDocument();
       expect(screen.getByText('✗ Includes uppercase and lowercase letters')).toBeInTheDocument();
       expect(screen.getByText('✗ Includes at least one number')).toBeInTheDocument();
@@ -208,7 +206,7 @@ describe('PasswordStrength Component', () => {
           <PasswordStrength value="Abcdefgh1!" />
         </TestWrapper>
       );
-      
+
       const passedRule = screen.getByText('✓ At least 8 characters');
       expect(passedRule).toHaveStyle({ color: 'rgb(46, 125, 50)' });
     });
@@ -219,7 +217,7 @@ describe('PasswordStrength Component', () => {
           <PasswordStrength value="abc" />
         </TestWrapper>
       );
-      
+
       const failedRule = screen.getByText('✗ At least 8 characters');
       expect(failedRule).toHaveStyle({ color: 'rgb(211, 47, 47)' });
     });
@@ -232,7 +230,7 @@ describe('PasswordStrength Component', () => {
           <PasswordStrength value="abcdefgh" />
         </TestWrapper>
       );
-      
+
       const strengthText = screen.getByText('Password Strength: Weak');
       expect(strengthText).toBeInTheDocument();
       expect(strengthText).toHaveStyle({ color: 'rgb(211, 47, 47)' });
@@ -244,7 +242,7 @@ describe('PasswordStrength Component', () => {
           <PasswordStrength value="Abcdefgh1" />
         </TestWrapper>
       );
-      
+
       const strengthText = screen.getByText('Password Strength: Medium');
       expect(strengthText).toBeInTheDocument();
       expect(strengthText).toHaveStyle({ color: 'rgb(237, 108, 2)' });
@@ -256,7 +254,7 @@ describe('PasswordStrength Component', () => {
           <PasswordStrength value="Abcdefgh1!" />
         </TestWrapper>
       );
-      
+
       const strengthText = screen.getByText('Password Strength: Strong');
       expect(strengthText).toBeInTheDocument();
       expect(strengthText).toHaveStyle({ color: 'rgb(46, 125, 50)' });
@@ -268,7 +266,7 @@ describe('PasswordStrength Component', () => {
           <PasswordStrength value="Abcdefgh1" />
         </TestWrapper>
       );
-      
+
       const progressBar = screen.getByRole('progressbar');
       expect(progressBar).toHaveAttribute('aria-valuenow', '75');
     });
@@ -276,16 +274,14 @@ describe('PasswordStrength Component', () => {
 
   describe('Component Props', () => {
     it('should accept custom password rules', () => {
-      const customRules: PasswordRule[] = [
-        { code: 'custom', label: 'Must contain xyz', test: (v) => v.includes('xyz') }
-      ];
-      
+      const customRules: PasswordRule[] = [{ code: 'custom', label: 'Must contain xyz', test: v => v.includes('xyz') }];
+
       render(
         <TestWrapper>
           <PasswordStrength value="test" rules={customRules} />
         </TestWrapper>
       );
-      
+
       expect(screen.getByText(/Must contain xyz/)).toBeInTheDocument();
       expect(screen.queryByText(/At least 8 characters/)).not.toBeInTheDocument();
     });
@@ -296,7 +292,7 @@ describe('PasswordStrength Component', () => {
           <PasswordStrength value="Abc123!@" compact={true} />
         </TestWrapper>
       );
-      
+
       expect(screen.getByText('Password Strength: Strong')).toBeInTheDocument();
     });
 
@@ -306,15 +302,15 @@ describe('PasswordStrength Component', () => {
           <PasswordStrength value="Abc123!@" showMeter={false} />
         </TestWrapper>
       );
-      
+
       expect(screen.queryByText(/Password Strength:/)).not.toBeInTheDocument();
-      
+
       rerender(
         <TestWrapper>
           <PasswordStrength value="Abc123!@" showMeter={true} />
         </TestWrapper>
       );
-      
+
       expect(screen.getByText(/Password Strength:/)).toBeInTheDocument();
     });
   });
@@ -326,7 +322,7 @@ describe('PasswordStrength Component', () => {
           <PasswordStrength value="abc" />
         </TestWrapper>
       );
-      
+
       expect(screen.getByText('Password Strength: Weak')).toBeInTheDocument();
       expect(screen.getAllByText(/✗/)).toHaveLength(4);
     });
@@ -337,7 +333,7 @@ describe('PasswordStrength Component', () => {
           <PasswordStrength value="abcdefgh" />
         </TestWrapper>
       );
-      
+
       expect(screen.getByText('Password Strength: Weak')).toBeInTheDocument();
       expect(screen.getAllByText(/✓/)).toHaveLength(1);
       expect(screen.getAllByText(/✗/)).toHaveLength(3);
@@ -349,7 +345,7 @@ describe('PasswordStrength Component', () => {
           <PasswordStrength value="Abcdefgh1" />
         </TestWrapper>
       );
-      
+
       expect(screen.getByText('Password Strength: Medium')).toBeInTheDocument();
       expect(screen.getAllByText(/✓/)).toHaveLength(3);
       expect(screen.getAllByText(/✗/)).toHaveLength(1);
@@ -361,7 +357,7 @@ describe('PasswordStrength Component', () => {
           <PasswordStrength value="Abcdefgh1!" />
         </TestWrapper>
       );
-      
+
       expect(screen.getByText('Password Strength: Strong')).toBeInTheDocument();
       expect(screen.getAllByText(/✓/)).toHaveLength(4);
       expect(screen.queryByText(/✗/)).not.toBeInTheDocument();
@@ -373,7 +369,7 @@ describe('PasswordStrength Component', () => {
           <PasswordStrength value="   " />
         </TestWrapper>
       );
-      
+
       expect(screen.queryByText(/Password Strength:/)).not.toBeInTheDocument();
       expect(screen.getAllByText(/✗/)).toHaveLength(3);
     });
@@ -386,7 +382,7 @@ describe('PasswordStrength Component', () => {
           <PasswordStrength value="" />
         </TestWrapper>
       );
-      
+
       expect(screen.queryByText(/Password Strength:/)).not.toBeInTheDocument();
       expect(screen.getAllByText(/✗/)).toHaveLength(4);
     });
@@ -398,7 +394,7 @@ describe('PasswordStrength Component', () => {
           <PasswordStrength value={longPassword} />
         </TestWrapper>
       );
-      
+
       expect(screen.getByText('Password Strength: Strong')).toBeInTheDocument();
     });
 
@@ -408,7 +404,7 @@ describe('PasswordStrength Component', () => {
           <PasswordStrength value="Abcd@#$%^&*()" />
         </TestWrapper>
       );
-      
+
       expect(screen.getByText('✓ Includes at least one special character')).toBeInTheDocument();
     });
 
@@ -418,7 +414,7 @@ describe('PasswordStrength Component', () => {
           <PasswordStrength value="AÄÖÜß123!" />
         </TestWrapper>
       );
-      
+
       expect(screen.getByText('Password Strength: Medium')).toBeInTheDocument();
     });
   });

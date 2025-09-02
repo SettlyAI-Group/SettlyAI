@@ -45,7 +45,8 @@ artifacts/
 *.cache
 
 # Environment-specific appsettings
-# appsettings.Development.json
+appsettings.Development.json
+**/appsettings.Development.json
 # appsettings.Production.json
 appsettings.local.json
 

@@ -5,10 +5,7 @@ import { useQueries } from '@tanstack/react-query';
 import { getSuburbBasicInfo, getSuburbLivability } from '@/api/suburbApi';
 import { Navigate, useParams } from 'react-router-dom';
 import { getDemandAndDev, getHousingMarket } from '@/api/suburbApi';
-import {
-  mapDevCardData,
-  mapLivability,
-} from './components/MetricCardsSection/utils/dataMapper';
+import { mapDevCardData, mapLivability } from './components/MetricCardsSection/utils/dataMapper';
 import Banner from './components/Banner';
 import IncomeEmploymentCardsSection from './components/IncomeEmploymentCardsSection';
 import { getIncomeEmployment } from '@/api/suburbApi';
@@ -101,9 +98,7 @@ const SuburbReportPage = () => {
     livability: results[2].data ? mapLivability(results[2].data) : undefined,
     incomeEmployment,
   };
-  const propertyMetrics = results[3]?.data
-    ? mapPropertyCards(results[3].data as IHousingMarket)
-    : [];
+  const propertyMetrics = results[3]?.data ? mapPropertyCards(results[3].data as IHousingMarket) : [];
   return (
     <PageContainer>
 
@@ -126,22 +121,11 @@ const SuburbReportPage = () => {
           </div>
         ) : (
           <>
-            <IncomeEmploymentCardsSection
-              title={TITLES.incomeEmployment}
-              data={formattedData.incomeEmployment}
-            />
-            <PropertyMarketInsightsSection
-              title={TITLES.propertyMarketInsights}
-              items={propertyMetrics}
-            />
-            <MetricCardsSection
-              title={TITLES.demandDevelopment}
-              data={formattedData.demand}
-            />
-            <MetricCardsSection
-              title={TITLES.lifeStyle}
-              data={formattedData.livability}
-            />
+            <IncomeEmploymentCardsSection title={TITLES.incomeEmployment} data={formattedData.incomeEmployment} />
+            <PropertyMarketInsightsSection title={TITLES.propertyMarketInsights} items={propertyMetrics} />
+            <MetricCardsSection title={TITLES.demandDevelopment} data={formattedData.demand} />
+            <MetricCardsSection title={TITLES.lifeStyle} data={formattedData.livability} />
+
             {/* todo:  replace with real action buttons , feel free to modify*/}
             <ActionButtonWrapper>
               <Button>save this suburb</Button>

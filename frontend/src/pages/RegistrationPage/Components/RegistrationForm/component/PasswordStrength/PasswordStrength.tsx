@@ -45,10 +45,7 @@ export function getStrength(score: number, total: number) {
   };
 }
 
-export function evaluatePassword(
-  value: string,
-  rules: PasswordRule[] = defaultPasswordRules
-) {
+export function evaluatePassword(value: string, rules: PasswordRule[] = defaultPasswordRules) {
   const results = rules.map(r => ({ ...r, passed: r.test(value) }));
   const passedCount = results.reduce((n, r) => n + (r.passed ? 1 : 0), 0);
   const strength = getStrength(passedCount, rules.length);
@@ -71,10 +68,7 @@ export const PasswordStrength = ({
   const { results, strength } = evaluatePassword(value, rules);
   const hasValue = (value?.trim()?.length ?? 0) > 0;
 
-  const colorMap: Record<
-    typeof strength.level,
-    'error' | 'warning' | 'success'
-  > = {
+  const colorMap: Record<typeof strength.level, 'error' | 'warning' | 'success'> = {
     weak: 'error',
     medium: 'warning',
     strong: 'success',
@@ -104,11 +98,7 @@ export const PasswordStrength = ({
 
       <Stack spacing={0.25}>
         {results.map(r => (
-          <Typography
-            key={r.code}
-            variant={itemVariant}
-            color={r.passed ? 'success.main' : 'error.main'}
-          >
+          <Typography key={r.code} variant={itemVariant} color={r.passed ? 'success.main' : 'error.main'}>
             {r.passed ? '✓' : '✗'} {r.label}
           </Typography>
         ))}

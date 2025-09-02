@@ -50,9 +50,7 @@ export const FormCheckbox: React.FC<FormCheckboxProps> = ({
               }
               label={label}
             />
-            {error?.message && (
-              <FormHelperText>{error?.message}</FormHelperText>
-            )}
+            {error?.message && <FormHelperText>{error?.message}</FormHelperText>}
           </FormControl>
         );
       }}

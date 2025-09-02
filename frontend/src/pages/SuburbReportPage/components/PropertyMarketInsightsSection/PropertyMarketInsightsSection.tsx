@@ -1,22 +1,15 @@
-import { Box, Typography, styled } from '@mui/material';
+import { Grid, Stack, Typography, useMediaQuery, useTheme, styled } from '@mui/material';
 import PropertyMetricCard from './components/PropertyMetricCard';
 import type { PropertyMetricItem } from './components/PropertyMetricCard';
-const SectionContainer = styled(Box)(({ theme }) => ({
-  padding: theme.spacing(0, 16),
-  margin: theme.spacing(3, 0),
+const SectionWrapper = styled(Stack)(({ theme }) => ({
+  width: '100%',
+  overflow: 'hidden',
+  flexDirection: 'column',
+  gap: theme.spacing(8),
 }));
-const TitleWrapper = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  marginBottom: theme.spacing(8),
-}));
-const CardGrid = styled(Box)(({ theme }) => ({
+const GridContainer = styled(Grid)(({ columns }) => ({
   display: 'grid',
-  gridTemplateColumns: 'repeat(3, min(300px))',
-  gap: theme.spacing(6),
-  [theme.breakpoints.down('md')]: {
-    gridTemplateColumns: '1fr',
-  },
+  gridTemplateColumns: `repeat(${columns}, 1fr)`,
 }));
 const PropertyMarketInsightsSection = ({
   title = 'Property Market Insights',
@@ -25,18 +18,24 @@ const PropertyMarketInsightsSection = ({
   title?: string;
   items: PropertyMetricItem[];
 }) => {
+  const theme = useTheme();
+  const isMdDown = useMediaQuery(theme.breakpoints.down('md'));
+  const isSmDown = useMediaQuery(theme.breakpoints.down('sm'));
+  let columns = 3;
+  if (isSmDown) {
+    columns = 1;
+  } else if (isMdDown) {
+    columns = 2;
+  }
   return (
-    <SectionContainer>
-      <TitleWrapper>
-        <Typography variant="h4">{title}</Typography>
-      </TitleWrapper>
-
-      <CardGrid>
+    <SectionWrapper>
+      <Typography variant="h4">{title}</Typography>
+      <GridContainer container spacing={6} columns={columns}>
         {items.map((item, index) => (
           <PropertyMetricCard key={index} {...item} />
         ))}
-      </CardGrid>
-    </SectionContainer>
+      </GridContainer>
+    </SectionWrapper>
   );
 };
 export default PropertyMarketInsightsSection;

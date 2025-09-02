@@ -1,6 +1,8 @@
 using ISettlyService;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.EntityFrameworkCore;
+using SettlyModels;
 using SettlyModels.Dtos;
 using SettlyService;
 using Swashbuckle.AspNetCore.Annotations;
@@ -12,10 +14,12 @@ namespace SettlyApi.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
+    private readonly SettlyDbContext _context;
 
-    public AuthController(IAuthService authService)
+    public AuthController(IAuthService authService, SettlyDbContext context)
     {
         _authService = authService;
+        _context = context;
     }
 
     [HttpPost("register")]
@@ -37,6 +41,23 @@ public class AuthController : ControllerBase
             return BadRequest("Invalid or expired verification code");
         }
         return Ok(new { message = "Verification successful, account activated" });
+    }
+
+    [HttpPost("send-verification-code")]
+    [SwaggerOperation(Summary = "Send verification code to user")]
+    [SwaggerResponse(200, "Verification code sent successfully")]
+    [SwaggerResponse(400, "User not found or already activated")]
+    public async Task<IActionResult> SendVerificationCode([FromBody] ResendVerificationDto resendDto)
+    {
+        // Find user by userId
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == resendDto.UserId);
+        if (user is null || user.IsActive)
+        {
+            return BadRequest("User not found or already activated");
+        }
+
+        await _authService.SendVerificationCodeAsync(user, resendDto.VerificationType);
+        return Ok(new { message = "Verification code sent successfully" });
     }
 
 

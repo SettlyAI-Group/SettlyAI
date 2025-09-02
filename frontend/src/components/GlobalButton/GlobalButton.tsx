@@ -15,31 +15,19 @@ interface StyledButtonProps {
 
 const StyledButton = styled(MuiButton, {
   shouldForwardProp: prop => prop !== 'customWidth' && prop !== 'customHeight',
-})<StyledButtonProps>(
-  ({ theme, customWidth = '180', customHeight = '40' }) => ({
-    width: customWidth === 'full' ? '100%' : `${customWidth}px`,
-    height: `${customHeight}px`,
-    textTransform: 'none',
-    fontSize: theme.typography.body2.fontSize,
-    fontWeight: theme.typography.body2.fontWeight,
-    borderRadius: theme.shape.borderRadius,
-    padding: theme.spacing(0),
-  })
-);
+})<StyledButtonProps>(({ theme, customWidth = '180', customHeight = '40' }) => ({
+  width: customWidth === 'full' ? '100%' : `${customWidth}px`,
+  height: `${customHeight}px`,
+  textTransform: 'none',
+  fontSize: theme.typography.body2.fontSize,
+  fontWeight: theme.typography.body2.fontWeight,
+  borderRadius: theme.shape.borderRadius,
+  padding: theme.spacing(0),
+}));
 
-const GlobalButton = ({
-  children,
-  width = '180',
-  height = '40',
-  ...props
-}: GlobalButtonProps) => {
+const GlobalButton = ({ children, width = '180', height = '40', ...props }: GlobalButtonProps) => {
   return (
-    <StyledButton
-      customWidth={width}
-      customHeight={height}
-      disableElevation
-      {...props}
-    >
+    <StyledButton customWidth={width} customHeight={height} disableElevation {...props}>
       {children}
     </StyledButton>
   );

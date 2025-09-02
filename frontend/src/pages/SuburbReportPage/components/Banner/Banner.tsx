@@ -3,6 +3,8 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
 import GlobalButton from '@/components/GlobalButton';
 import street from './assets/street.jpg';
+import SearchBar from '@/components/SearchBar';
+import type { SuggestionOutputDto } from '@/interfaces/searchSuggestion';
 
 const BannerContainer = styled(Box)(({ theme }) => ({
   position: 'relative',
@@ -55,20 +57,6 @@ const Subtitle = styled(Typography)(({ theme }) => ({
   },
 }));
 
-const SearchPlaceholder = styled(Box)(() => ({
-  width: '100%',
-  maxWidth: '600px',
-  height: '60px',
-  backgroundColor: 'rgba(255, 255, 255, 0.1)',
-  borderRadius: '12px',
-  border: '1px solid rgba(255, 255, 255, 0.2)',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  margin: '0 auto',
-  backdropFilter: 'blur(10px)',
-}));
-
 interface BannerProps {
   suburb?: string;
   state?: string;
@@ -82,31 +70,23 @@ const Banner = ({ suburb, state, postcode }: BannerProps) => {
     navigate(-1);
   };
 
+  //Handle suburb selection from SearchBar - navigate to new suburb report
+  const handleSuburbSelected = (suburbData: SuggestionOutputDto) => {
+    navigate(`/suburb/${suburbData.suburbId}`);
+  };
+
   const displayTitle =
-    suburb && state && postcode
-      ? `Welcome to ${suburb}, ${state} ${postcode}`
-      : 'Welcome to Suburb Report';
+    suburb && state && postcode ? `Welcome to ${suburb}, ${state} ${postcode}` : 'Welcome to Suburb Report';
 
   return (
     <BannerContainer>
-      <BackButton
-        variant="contained"
-        width="100"
-        startIcon={<ArrowBackIcon />}
-        onClick={handleBack}
-        color="white"
-      >
+      <BackButton variant="contained" width="100" startIcon={<ArrowBackIcon />} onClick={handleBack} color="white">
         Back
       </BackButton>
       <ContentContainer>
         <MainTitle variant="h1">{displayTitle}</MainTitle>
-        <Subtitle variant="body2">
-          Smart data to help you decide — from affordability to growth to
-          lifestyle.
-        </Subtitle>
-        <SearchPlaceholder>
-          <Typography variant="body2">Search section placeholder</Typography>
-        </SearchPlaceholder>
+        <Subtitle variant="body2">Smart data to help you decide — from affordability to growth to lifestyle.</Subtitle>
+        <SearchBar onSuburbSelected={handleSuburbSelected} breakpoint={1350} />
       </ContentContainer>
     </BannerContainer>
   );

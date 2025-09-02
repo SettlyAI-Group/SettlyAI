@@ -52,22 +52,7 @@ public class AuthService : IAuthService
 
             var savedUser = await _userService.AddUserAsync(user);
 
-            var (code, actualType) = await _verificationCodeService.SaveCodeAsync(savedUser.Id, registerUser.VerificationType);
-
-            switch (actualType)
-            {
-                case VerificationType.Email:
-                    await _emailService.SendAsync(
-                        savedUser.Name,
-                        savedUser.Email,
-                        "Email Verification Code",
-                        $"Your email verification code is {code}."
-                    );
-                    break;
-
-                default:
-                    throw new ArgumentException($"Unsupported verification type: {registerUser.VerificationType}");
-            }
+            await SendVerificationCodeAsync(savedUser, registerUser.VerificationType);
 
             await transaction.CommitAsync();
 
@@ -119,5 +104,25 @@ public class AuthService : IAuthService
         };
 
         return await _userService.UpdateUserByIdAsync(verifyCodeDto.UserId, updateDto);;
+    }
+
+    public async Task SendVerificationCodeAsync(User user, VerificationType verificationType)
+    {
+        var (code, actualType) = await _verificationCodeService.SaveCodeAsync(user.Id, verificationType);
+
+        switch (actualType)
+        {
+            case VerificationType.Email:
+                await _emailService.SendAsync(
+                    user.Name,
+                    user.Email,
+                    "Email Verification Code",
+                    $"Your email verification code is {code}."
+                );
+                break;
+
+            default:
+                throw new ArgumentException($"Unsupported verification type: {verificationType}");
+        }
     }
 }

@@ -1,9 +1,5 @@
 import { TextField, type TextFieldProps } from '@mui/material';
-import {
-  Controller,
-  type Control,
-  type RegisterOptions,
-} from 'react-hook-form';
+import { Controller, type Control, type RegisterOptions } from 'react-hook-form';
 
 interface FormInputProps extends Omit<TextFieldProps, 'name'> {
   name: string;
@@ -11,13 +7,7 @@ interface FormInputProps extends Omit<TextFieldProps, 'name'> {
   rules?: RegisterOptions;
 }
 
-export const FormInput = ({
-  name,
-  control,
-  rules,
-  helperText,
-  ...props
-}: FormInputProps) => {
+export const FormInput = ({ name, control, rules, helperText, ...props }: FormInputProps) => {
   return (
     <Controller
       name={name}
