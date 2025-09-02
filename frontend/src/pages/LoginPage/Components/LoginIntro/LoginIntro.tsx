@@ -1,6 +1,7 @@
 import { Typography, Box, Button} from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
+import { Title, Highlight } from '@/components/FormPageTitle/FormePageTitle';
 
 const LoginIntroContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -17,19 +18,6 @@ const CreateAccountButton = styled(Button)(({ theme }) => ({
   color: theme.palette.common.white,
   marginTop: theme.spacing(4),    
   marginBottom: theme.spacing(1), 
-}));
-
-const Title = styled(Typography)(() => ({
-  textAlign: 'center',
-  fontWeight: 700,
-}));
-
-const Highlight = styled(Typography)<{ component?: React.ElementType }>(() => ({
-  display: 'inline',
-  // When screen < 540px → force to new line
-  '@media (max-width:540px)': {
-    display: 'block',
-  },
 }));
 
 const LoginIntro = () => {

@@ -26,10 +26,7 @@ const PropertyMetricCard = ({
   };
   const valueColor = getValueColor(growthValue, isGrowthMetric);
   return (
-    <Card
-      variant="outlined"
-      sx={{ height: 110, borderRadius: 2, position: 'relative' }}
-    >
+    <Card variant="outlined" sx={{ height: 110, borderRadius: 2, position: 'relative' }}>
       {hint && (
         <Box
           sx={{

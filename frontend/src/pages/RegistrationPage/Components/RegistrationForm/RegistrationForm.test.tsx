@@ -31,7 +31,7 @@ const TestWrapper = ({ children }: { children: React.ReactNode }) => {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: { retry: false },
-      mutations: { 
+      mutations: {
         retry: false,
         // Suppress error logging in tests
         onError: () => {},
@@ -48,9 +48,7 @@ const TestWrapper = ({ children }: { children: React.ReactNode }) => {
   return (
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>
-        <ThemeProvider theme={theme}>
-          {children}
-        </ThemeProvider>
+        <ThemeProvider theme={theme}>{children}</ThemeProvider>
       </QueryClientProvider>
     </BrowserRouter>
   );
@@ -65,15 +63,15 @@ describe('RegistrationForm Component', () => {
     await user.click(screen.getByRole('checkbox'));
   };
 
-  // Suppress test warnings 
+  // Suppress test warnings
   const originalConsoleError = console.error;
   const originalConsoleWarn = console.warn;
-  
+
   beforeEach(() => {
     vi.clearAllMocks();
     mockRegisterUserFn.mockClear();
     mockNavigate.mockClear();
-    
+
     // Suppress console warnings during tests
     console.error = vi.fn();
     console.warn = vi.fn();
@@ -91,7 +89,7 @@ describe('RegistrationForm Component', () => {
           <RegistrationForm />
         </TestWrapper>
       );
-      
+
       expect(screen.getByText('Get Started for Free')).toBeInTheDocument();
     });
 
@@ -101,7 +99,7 @@ describe('RegistrationForm Component', () => {
           <RegistrationForm />
         </TestWrapper>
       );
-      
+
       expect(screen.getByText('Create your Settly AI account.')).toBeInTheDocument();
     });
 
@@ -111,7 +109,7 @@ describe('RegistrationForm Component', () => {
           <RegistrationForm />
         </TestWrapper>
       );
-      
+
       expect(screen.getByText('Already have an account?')).toBeInTheDocument();
       expect(screen.getByText('Log in here')).toBeInTheDocument();
     });
@@ -122,7 +120,7 @@ describe('RegistrationForm Component', () => {
           <RegistrationForm />
         </TestWrapper>
       );
-      
+
       expect(screen.getByLabelText('Full Name')).toBeInTheDocument();
       expect(screen.getByLabelText('Email')).toBeInTheDocument();
       expect(screen.getByLabelText('Password')).toBeInTheDocument();
@@ -137,7 +135,7 @@ describe('RegistrationForm Component', () => {
           <RegistrationForm />
         </TestWrapper>
       );
-      
+
       expect(screen.queryByText(/registration failed/i)).not.toBeInTheDocument();
     });
   });
@@ -150,19 +148,19 @@ describe('RegistrationForm Component', () => {
           <RegistrationForm />
         </TestWrapper>
       );
-      
+
       const fullNameInput = screen.getByLabelText('Full Name');
       const emailInput = screen.getByLabelText('Email');
       const passwordInput = screen.getByLabelText('Password');
       const confirmPasswordInput = screen.getByLabelText('Confirm Password');
       const termsCheckbox = screen.getByRole('checkbox');
-      
+
       await user.type(fullNameInput, 'John Doe');
       await user.type(emailInput, 'john@example.com');
       await user.type(passwordInput, 'Password123!');
       await user.type(confirmPasswordInput, 'Password123!');
       await user.click(termsCheckbox);
-      
+
       expect(fullNameInput).toHaveValue('John Doe');
       expect(emailInput).toHaveValue('john@example.com');
       expect(passwordInput).toHaveValue('Password123!');
@@ -177,12 +175,12 @@ describe('RegistrationForm Component', () => {
           <RegistrationForm />
         </TestWrapper>
       );
-      
+
       const passwordInput = screen.getByLabelText('Password');
-      
+
       await user.click(passwordInput);
       await user.type(passwordInput, 'test');
-      
+
       // Password strength component should be visible
       expect(screen.getByText(/password strength/i)).toBeInTheDocument();
     });
@@ -194,16 +192,16 @@ describe('RegistrationForm Component', () => {
           <RegistrationForm />
         </TestWrapper>
       );
-      
+
       const passwordInput = screen.getByLabelText('Password');
       const emailInput = screen.getByLabelText('Email');
-      
+
       await user.click(passwordInput);
       await user.type(passwordInput, 'test');
-      
+
       // Focus another field
       await user.click(emailInput);
-      
+
       // Password strength should be hidden
       expect(screen.queryByText(/password strength/i)).not.toBeInTheDocument();
     });
@@ -215,11 +213,11 @@ describe('RegistrationForm Component', () => {
           <RegistrationForm />
         </TestWrapper>
       );
-      
+
       const submitButton = screen.getByRole('button', { name: 'Create Account' });
-      
+
       await user.click(submitButton);
-      
+
       // Should show validation errors
       expect(screen.getByText('Full name is required')).toBeInTheDocument();
       expect(mockRegisterUserFn).not.toHaveBeenCalled();
@@ -227,28 +225,27 @@ describe('RegistrationForm Component', () => {
   });
 
   describe('API Integration', () => {
-
     it('should submit form with valid data and navigate on success', async () => {
       const user = userEvent.setup();
       mockRegisterUserFn.mockResolvedValue({ id: 1, fullName: 'John Doe', email: 'john@example.com' });
-      
+
       render(
         <TestWrapper>
           <RegistrationForm />
         </TestWrapper>
       );
-      
+
       await fillValidForm(user);
-      
+
       const submitButton = screen.getByRole('button', { name: 'Create Account' });
       await user.click(submitButton);
-      
+
       expect(mockRegisterUserFn).toHaveBeenCalledWith({
         fullName: 'John Doe',
         email: 'john@example.com',
         password: 'Password123!',
       });
-      
+
       await waitFor(() => {
         expect(mockNavigate).toHaveBeenCalledWith('/verify-email');
       });
@@ -257,29 +254,32 @@ describe('RegistrationForm Component', () => {
     it('should show loading state during submission', async () => {
       const user = userEvent.setup();
       let resolvePromise: (value?: unknown) => void;
-      mockRegisterUserFn.mockImplementation(() => new Promise(resolve => {
-        resolvePromise = resolve;
-      }));
-      
+      mockRegisterUserFn.mockImplementation(
+        () =>
+          new Promise(resolve => {
+            resolvePromise = resolve;
+          })
+      );
+
       render(
         <TestWrapper>
           <RegistrationForm />
         </TestWrapper>
       );
-      
+
       await fillValidForm(user);
-      
+
       const submitButton = screen.getByRole('button', { name: 'Create Account' });
       await user.click(submitButton);
-      
+
       // Should show loading spinner and form should be replaced by loading state
       await waitFor(() => {
         expect(screen.getByRole('progressbar')).toBeInTheDocument();
       });
-      
+
       // Form should not be visible during loading (replaced by loading spinner)
       expect(screen.queryByRole('button', { name: 'Create Account' })).not.toBeInTheDocument();
-      
+
       // Resolve the promise to clean up
       resolvePromise!();
     });
@@ -290,22 +290,22 @@ describe('RegistrationForm Component', () => {
         response: { status: 409 },
       };
       mockRegisterUserFn.mockRejectedValue(error);
-      
+
       render(
         <TestWrapper>
           <RegistrationForm />
         </TestWrapper>
       );
-      
+
       await fillValidForm(user);
-      
+
       const submitButton = screen.getByRole('button', { name: 'Create Account' });
       await user.click(submitButton);
-      
+
       await waitFor(() => {
         expect(screen.getByText('This email has already been registered')).toBeInTheDocument();
       });
-      
+
       expect(mockNavigate).not.toHaveBeenCalled();
     });
 
@@ -315,44 +315,44 @@ describe('RegistrationForm Component', () => {
         response: { status: 500 },
       };
       mockRegisterUserFn.mockRejectedValue(error);
-      
+
       render(
         <TestWrapper>
           <RegistrationForm />
         </TestWrapper>
       );
-      
+
       await fillValidForm(user);
-      
+
       const submitButton = screen.getByRole('button', { name: 'Create Account' });
       await user.click(submitButton);
-      
+
       await waitFor(() => {
         expect(screen.getByText('Registration failed, please try again later')).toBeInTheDocument();
       });
-      
+
       expect(mockNavigate).not.toHaveBeenCalled();
     });
 
     it('should reset form after successful registration', async () => {
       const user = userEvent.setup();
       mockRegisterUserFn.mockResolvedValue({ id: 1, fullName: 'John Doe', email: 'john@example.com' });
-      
+
       render(
         <TestWrapper>
           <RegistrationForm />
         </TestWrapper>
       );
-      
+
       await fillValidForm(user);
-      
+
       const submitButton = screen.getByRole('button', { name: 'Create Account' });
       await user.click(submitButton);
-      
+
       await waitFor(() => {
         expect(mockNavigate).toHaveBeenCalledWith('/verify-email');
       });
-      
+
       // Form should be reset
       expect(screen.getByLabelText('Full Name')).toHaveValue('');
       expect(screen.getByLabelText('Email')).toHaveValue('');
@@ -367,18 +367,18 @@ describe('RegistrationForm Component', () => {
       const user = userEvent.setup();
       const timeoutError = new Error('Network timeout');
       mockRegisterUserFn.mockRejectedValue(timeoutError);
-      
+
       render(
         <TestWrapper>
           <RegistrationForm />
         </TestWrapper>
       );
-      
+
       await fillValidForm(user);
-      
+
       const submitButton = screen.getByRole('button', { name: 'Create Account' });
       await user.click(submitButton);
-      
+
       await waitFor(() => {
         expect(screen.getByText('Registration failed, please try again later')).toBeInTheDocument();
       });
@@ -387,23 +387,23 @@ describe('RegistrationForm Component', () => {
     it('should handle form state when switching between loading and error states', async () => {
       const user = userEvent.setup();
       mockRegisterUserFn.mockRejectedValue(new Error('Network error'));
-      
+
       render(
         <TestWrapper>
           <RegistrationForm />
         </TestWrapper>
       );
-      
+
       await fillValidForm(user);
-      
+
       const submitButton = screen.getByRole('button', { name: 'Create Account' });
       await user.click(submitButton);
-      
+
       // Wait for error state
       await waitFor(() => {
         expect(screen.getByText('Registration failed, please try again later')).toBeInTheDocument();
       });
-      
+
       // Form should be interactive again
       expect(submitButton).toBeEnabled();
       expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();

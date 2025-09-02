@@ -5,5 +5,6 @@ export const FormPageContainer = styled(Container)(({ theme }) => ({
   justifyContent: 'center',
   alignItems: 'center',
   flexDirection: 'column',
-  gap: theme.spacing(8),
+  gap: theme.spacing(21),
+  minHeight: '100vh',
 }));

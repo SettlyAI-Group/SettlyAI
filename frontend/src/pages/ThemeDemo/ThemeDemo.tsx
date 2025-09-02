@@ -1,12 +1,4 @@
-import {
-  Box,
-  Button,
-  Container,
-  Paper,
-  Stack,
-  Typography,
-  useTheme,
-} from '@mui/material';
+import { Box, Button, Container, Paper, Stack, Typography, useTheme } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { styled } from '@mui/material/styles';
 
@@ -49,16 +41,14 @@ const CodeBlock = styled(Box)(({ theme }) => ({
 }));
 
 // 示例卡片组件，用于展示阴影
-const ShadowCard = styled(Paper)<{ elevation: number }>(
-  ({ theme, elevation }) => ({
-    padding: theme.spacing(3),
-    height: 70,
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    boxShadow: theme.shadows[elevation],
-  })
-);
+const ShadowCard = styled(Paper)<{ elevation: number }>(({ theme, elevation }) => ({
+  padding: theme.spacing(3),
+  height: 70,
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  boxShadow: theme.shadows[elevation],
+}));
 
 /**
  * 主题演示组件
@@ -68,15 +58,7 @@ const ThemeDemo = () => {
   const theme = useTheme();
 
   // 颜色块组件
-  const ColorBlock = ({
-    color,
-    name,
-    code,
-  }: {
-    color: string;
-    name: string;
-    code?: string;
-  }) => (
+  const ColorBlock = ({ color, name, code }: { color: string; name: string; code?: string }) => (
     <Box
       sx={{
         width: 80,
@@ -113,8 +95,7 @@ const ThemeDemo = () => {
         <Typography variant="body1" sx={{ mb: 3 }}>
           <strong>规范1: 优先使用styled API，尽量避免使用sx属性</strong>
           <br />
-          sx属性虽然方便快捷，但会导致样式分散在各处，难以维护。而styled
-          API创建的组件可重用，且样式集中易于管理。
+          sx属性虽然方便快捷，但会导致样式分散在各处，难以维护。而styled API创建的组件可重用，且样式集中易于管理。
         </Typography>
 
         <Stack direction="row" spacing={2} sx={{ mb: 3 }}>
@@ -165,72 +146,63 @@ const StyledButton = styled(Button)(({ theme }) => ({
           <Grid size={12}>
             <ColorCard>
               <Typography variant="h1" gutterBottom>
-                H1: 标题一 ({theme.typography.h1.fontSize} /{' '}
-                {theme.typography.h1.fontWeight})
+                H1: 标题一 ({theme.typography.h1.fontSize} / {theme.typography.h1.fontWeight})
               </Typography>
               <CodeBlock>{`<Typography variant="h1">标题一</Typography>`}</CodeBlock>
             </ColorCard>
 
             <ColorCard>
               <Typography variant="h2" gutterBottom>
-                H2: 标题二 ({theme.typography.h2.fontSize} /{' '}
-                {theme.typography.h2.fontWeight})
+                H2: 标题二 ({theme.typography.h2.fontSize} / {theme.typography.h2.fontWeight})
               </Typography>
               <CodeBlock>{`<Typography variant="h2">标题二</Typography>`}</CodeBlock>
             </ColorCard>
 
             <ColorCard>
               <Typography variant="h3" gutterBottom>
-                H3: 标题三 ({theme.typography.h3.fontSize} /{' '}
-                {theme.typography.h3.fontWeight})
+                H3: 标题三 ({theme.typography.h3.fontSize} / {theme.typography.h3.fontWeight})
               </Typography>
               <CodeBlock>{`<Typography variant="h3">标题三</Typography>`}</CodeBlock>
             </ColorCard>
 
             <ColorCard>
               <Typography variant="h4" gutterBottom>
-                H4: 标题四 ({theme.typography.h4.fontSize} /{' '}
-                {theme.typography.h4.fontWeight})
+                H4: 标题四 ({theme.typography.h4.fontSize} / {theme.typography.h4.fontWeight})
               </Typography>
               <CodeBlock>{`<Typography variant="h4">标题四</Typography>`}</CodeBlock>
             </ColorCard>
 
             <ColorCard>
               <Typography variant="h5" gutterBottom>
-                H5: 标题五 ({theme.typography.h5.fontSize} /{' '}
-                {theme.typography.h5.fontWeight})
+                H5: 标题五 ({theme.typography.h5.fontSize} / {theme.typography.h5.fontWeight})
               </Typography>
               <CodeBlock>{`<Typography variant="h5">标题五</Typography>`}</CodeBlock>
             </ColorCard>
 
             <ColorCard>
               <Typography variant="subtitle1" gutterBottom>
-                Subtitle1: 副标题一 ({theme.typography.subtitle1.fontSize} /{' '}
-                {theme.typography.subtitle1.fontWeight})
+                Subtitle1: 副标题一 ({theme.typography.subtitle1.fontSize} / {theme.typography.subtitle1.fontWeight})
               </Typography>
               <CodeBlock>{`<Typography variant="subtitle1">副标题一</Typography>`}</CodeBlock>
             </ColorCard>
 
             <ColorCard>
               <Typography variant="subtitle2" gutterBottom>
-                Subtitle2: 副标题二 ({theme.typography.subtitle2.fontSize} /{' '}
-                {theme.typography.subtitle2.fontWeight})
+                Subtitle2: 副标题二 ({theme.typography.subtitle2.fontSize} / {theme.typography.subtitle2.fontWeight})
               </Typography>
               <CodeBlock>{`<Typography variant="subtitle2">副标题二</Typography>`}</CodeBlock>
             </ColorCard>
 
             <ColorCard>
               <Typography variant="body1" gutterBottom>
-                Body1: 正文一 ({theme.typography.body1.fontSize} /{' '}
-                {theme.typography.body1.fontWeight})
+                Body1: 正文一 ({theme.typography.body1.fontSize} / {theme.typography.body1.fontWeight})
               </Typography>
               <CodeBlock>{`<Typography variant="body1">正文一</Typography>`}</CodeBlock>
             </ColorCard>
 
             <ColorCard>
               <Typography variant="body2" gutterBottom>
-                Body2: 正文二 ({theme.typography.body2.fontSize} /{' '}
-                {theme.typography.body2.fontWeight})
+                Body2: 正文二 ({theme.typography.body2.fontSize} / {theme.typography.body2.fontWeight})
               </Typography>
               <CodeBlock>{`<Typography variant="body2">正文二</Typography>`}</CodeBlock>
             </ColorCard>
@@ -241,12 +213,7 @@ const StyledButton = styled(Button)(({ theme }) => ({
           如何添加特殊样式
         </Typography>
         <ColorCard>
-          <Typography
-            variant="h3"
-            color="primary.main"
-            fontWeight={700}
-            gutterBottom
-          >
+          <Typography variant="h3" color="primary.main" fontWeight={700} gutterBottom>
             带颜色和加粗的H3标题
           </Typography>
           <CodeBlock>{`<Typography 
@@ -277,8 +244,7 @@ const StyledButton = styled(Button)(({ theme }) => ({
       <Paper sx={{ p: 3, mb: 5 }}>
         <SectionTitle variant="h3">颜色系统</SectionTitle>
         <Typography variant="body1" sx={{ mb: 3 }}>
-          <strong>重点:</strong> 每个主题颜色都有三个变体:
-          main（主色）、light（浅色）和dark（深色）。
+          <strong>重点:</strong> 每个主题颜色都有三个变体: main（主色）、light（浅色）和dark（深色）。
           设计时应合理使用这三种变体来创建层次感和一致性。
         </Typography>
 
@@ -293,21 +259,9 @@ const StyledButton = styled(Button)(({ theme }) => ({
                 Primary 主色
               </Typography>
               <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap>
-                <ColorBlock
-                  color={theme.palette.primary.light}
-                  name="Light"
-                  code="primary.light"
-                />
-                <ColorBlock
-                  color={theme.palette.primary.main}
-                  name="Main"
-                  code="primary.main"
-                />
-                <ColorBlock
-                  color={theme.palette.primary.dark}
-                  name="Dark"
-                  code="primary.dark"
-                />
+                <ColorBlock color={theme.palette.primary.light} name="Light" code="primary.light" />
+                <ColorBlock color={theme.palette.primary.main} name="Main" code="primary.main" />
+                <ColorBlock color={theme.palette.primary.dark} name="Dark" code="primary.dark" />
               </Stack>
               <CodeBlock>{`// 使用主色的三种变体
 theme.palette.primary.light  // 浅色变体
@@ -321,21 +275,9 @@ theme.palette.primary.dark   // 深色变体`}</CodeBlock>
                 Secondary 次要色
               </Typography>
               <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap>
-                <ColorBlock
-                  color={theme.palette.secondary.light}
-                  name="Light"
-                  code="secondary.light"
-                />
-                <ColorBlock
-                  color={theme.palette.secondary.main}
-                  name="Main"
-                  code="secondary.main"
-                />
-                <ColorBlock
-                  color={theme.palette.secondary.dark}
-                  name="Dark"
-                  code="secondary.dark"
-                />
+                <ColorBlock color={theme.palette.secondary.light} name="Light" code="secondary.light" />
+                <ColorBlock color={theme.palette.secondary.main} name="Main" code="secondary.main" />
+                <ColorBlock color={theme.palette.secondary.dark} name="Dark" code="secondary.dark" />
               </Stack>
             </ColorCard>
 
@@ -350,21 +292,9 @@ theme.palette.primary.dark   // 深色变体`}</CodeBlock>
                     Error 错误色
                   </Typography>
                   <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap>
-                    <ColorBlock
-                      color={theme.palette.error.light}
-                      name="Light"
-                      code="error.light"
-                    />
-                    <ColorBlock
-                      color={theme.palette.error.main}
-                      name="Main"
-                      code="error.main"
-                    />
-                    <ColorBlock
-                      color={theme.palette.error.dark}
-                      name="Dark"
-                      code="error.dark"
-                    />
+                    <ColorBlock color={theme.palette.error.light} name="Light" code="error.light" />
+                    <ColorBlock color={theme.palette.error.main} name="Main" code="error.main" />
+                    <ColorBlock color={theme.palette.error.dark} name="Dark" code="error.dark" />
                   </Stack>
                 </ColorCard>
               </Grid>
@@ -374,21 +304,9 @@ theme.palette.primary.dark   // 深色变体`}</CodeBlock>
                     Warning 警告色
                   </Typography>
                   <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap>
-                    <ColorBlock
-                      color={theme.palette.warning.light}
-                      name="Light"
-                      code="warning.light"
-                    />
-                    <ColorBlock
-                      color={theme.palette.warning.main}
-                      name="Main"
-                      code="warning.main"
-                    />
-                    <ColorBlock
-                      color={theme.palette.warning.dark}
-                      name="Dark"
-                      code="warning.dark"
-                    />
+                    <ColorBlock color={theme.palette.warning.light} name="Light" code="warning.light" />
+                    <ColorBlock color={theme.palette.warning.main} name="Main" code="warning.main" />
+                    <ColorBlock color={theme.palette.warning.dark} name="Dark" code="warning.dark" />
                   </Stack>
                 </ColorCard>
               </Grid>
@@ -398,21 +316,9 @@ theme.palette.primary.dark   // 深色变体`}</CodeBlock>
                     Info 信息色
                   </Typography>
                   <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap>
-                    <ColorBlock
-                      color={theme.palette.info.light}
-                      name="Light"
-                      code="info.light"
-                    />
-                    <ColorBlock
-                      color={theme.palette.info.main}
-                      name="Main"
-                      code="info.main"
-                    />
-                    <ColorBlock
-                      color={theme.palette.info.dark}
-                      name="Dark"
-                      code="info.dark"
-                    />
+                    <ColorBlock color={theme.palette.info.light} name="Light" code="info.light" />
+                    <ColorBlock color={theme.palette.info.main} name="Main" code="info.main" />
+                    <ColorBlock color={theme.palette.info.dark} name="Dark" code="info.dark" />
                   </Stack>
                 </ColorCard>
               </Grid>
@@ -422,21 +328,9 @@ theme.palette.primary.dark   // 深色变体`}</CodeBlock>
                     Success 成功色
                   </Typography>
                   <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap>
-                    <ColorBlock
-                      color={theme.palette.success.light}
-                      name="Light"
-                      code="success.light"
-                    />
-                    <ColorBlock
-                      color={theme.palette.success.main}
-                      name="Main"
-                      code="success.main"
-                    />
-                    <ColorBlock
-                      color={theme.palette.success.dark}
-                      name="Dark"
-                      code="success.dark"
-                    />
+                    <ColorBlock color={theme.palette.success.light} name="Light" code="success.light" />
+                    <ColorBlock color={theme.palette.success.main} name="Main" code="success.main" />
+                    <ColorBlock color={theme.palette.success.dark} name="Dark" code="success.dark" />
                   </Stack>
                 </ColorCard>
               </Grid>
@@ -540,9 +434,7 @@ const HighlightBox = styled(Box)(({ theme }) => ({
                       mb: 1,
                     }}
                   >
-                    <Typography variant="body2">
-                      间距为8px (spacing(2))
-                    </Typography>
+                    <Typography variant="body2">间距为8px (spacing(2))</Typography>
                   </Box>
                   <Box
                     sx={{
@@ -551,9 +443,7 @@ const HighlightBox = styled(Box)(({ theme }) => ({
                       borderRadius: 1,
                     }}
                   >
-                    <Typography variant="body2">
-                      间距为12px (spacing(3))
-                    </Typography>
+                    <Typography variant="body2">间距为12px (spacing(3))</Typography>
                   </Box>
                 </ColorCard>
               </Grid>
@@ -829,8 +719,7 @@ const CustomOverlay = styled(Box)(({ theme }) => ({
           实现响应式设计，它比Grid更灵活，性能更好，易于维护
         </Typography>
         <Typography variant="body1" paragraph>
-          3. 对于复杂的响应式行为，可以使用useMediaQuery
-          Hook来根据屏幕尺寸条件渲染内容
+          3. 对于复杂的响应式行为，可以使用useMediaQuery Hook来根据屏幕尺寸条件渲染内容
         </Typography>
 
         <Typography variant="h5" sx={{ mt: 3 }} gutterBottom>

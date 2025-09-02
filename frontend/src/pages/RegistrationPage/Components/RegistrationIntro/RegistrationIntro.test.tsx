@@ -15,9 +15,7 @@ const theme = createTheme();
 // Test wrapper with required providers
 const TestWrapper = ({ children }: { children: React.ReactNode }) => (
   <BrowserRouter>
-    <ThemeProvider theme={theme}>
-      {children}
-    </ThemeProvider>
+    <ThemeProvider theme={theme}>{children}</ThemeProvider>
   </BrowserRouter>
 );
 
@@ -29,7 +27,7 @@ describe('RegistrationIntro', () => {
           <RegistrationIntro />
         </TestWrapper>
       );
-      
+
       const heading = screen.getByRole('heading', { level: 4 });
       expect(heading).toBeInTheDocument();
       expect(heading).toHaveTextContent('Welcome to Settly AI');
@@ -41,7 +39,7 @@ describe('RegistrationIntro', () => {
           <RegistrationIntro />
         </TestWrapper>
       );
-      
+
       expect(screen.getByText('Settly AI')).toBeInTheDocument();
     });
 
@@ -51,10 +49,8 @@ describe('RegistrationIntro', () => {
           <RegistrationIntro />
         </TestWrapper>
       );
-      
-      expect(
-        screen.getByText(/create your free account to unlock suburb insights/i)
-      ).toBeInTheDocument();
+
+      expect(screen.getByText(/create your free account to unlock suburb insights/i)).toBeInTheDocument();
     });
   });
 
@@ -65,7 +61,7 @@ describe('RegistrationIntro', () => {
           <RegistrationIntro />
         </TestWrapper>
       );
-      
+
       const link = screen.getByRole('link', { name: /back to log in/i });
       expect(link).toBeInTheDocument();
     });
@@ -76,7 +72,7 @@ describe('RegistrationIntro', () => {
           <RegistrationIntro />
         </TestWrapper>
       );
-      
+
       const link = screen.getByRole('link', { name: /back to log in/i });
       expect(link).toHaveAttribute('href', '/login');
     });
@@ -87,9 +83,8 @@ describe('RegistrationIntro', () => {
           <RegistrationIntro />
         </TestWrapper>
       );
-      
+
       expect(screen.getByTestId('arrow-back-icon')).toBeInTheDocument();
     });
   });
-
 });

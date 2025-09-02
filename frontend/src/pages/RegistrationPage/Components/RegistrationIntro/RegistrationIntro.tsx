@@ -2,6 +2,7 @@ import { Typography, Box } from '@mui/material';
 import { Link } from 'react-router-dom';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { styled } from '@mui/material/styles';
+import { Title, Highlight } from '@/components/FormPageTitle/FormePageTitle';
 
 const RegistrationIntroContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -9,6 +10,7 @@ const RegistrationIntroContainer = styled(Box)(({ theme }) => ({
   alignItems: 'center',
   justifyContent: 'center',
   gap: theme.spacing(7),
+  paddingTop:theme.spacing(12),
 }));
 
 const BackToLoginLink = styled(Link)(({ theme }) => ({
@@ -27,21 +29,14 @@ const BackToLoginLink = styled(Link)(({ theme }) => ({
 export const RegistrationIntro = () => {
   return (
     <RegistrationIntroContainer>
-      <Typography variant="h1" component="h4">
-        Welcome to
-        <Typography variant="h1" component="span" color="primary">
-          {' '}
+      <Title variant="h1">
+        Welcome to{' '}
+        <Highlight variant="h1" component="span" color="primary">
           Settly AI
-        </Typography>
-      </Typography>
-      <Typography
-        color="textPrimary"
-        align="justify"
-        variant="subtitle1"
-        textAlign="center"
-      >
-        Create your free account to unlock suburb insights, personalised
-        reports, and smart financial tools.
+        </Highlight>
+      </Title>
+      <Typography color="textPrimary" align="justify" variant="subtitle1" textAlign="center">
+        Create your free account to unlock suburb insights, personalised reports, and smart financial tools.
       </Typography>
       <BackToLoginLink to="/login">
         <ArrowBackIcon />

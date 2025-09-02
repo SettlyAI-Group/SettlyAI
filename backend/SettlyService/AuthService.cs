@@ -13,20 +13,20 @@ public class AuthService : IAuthService
     private readonly SettlyDbContext _context;
     private readonly IUserService _userService;
     private readonly IVerificationCodeService _verificationCodeService;
-    private readonly IEmailSender _emailSender;
+    private readonly IEmailService _emailService;
     private readonly ICreateTokenService _createTokenService;
 
     public AuthService(
         SettlyDbContext context,
         IUserService userService,
         IVerificationCodeService verificationCodeService,
-        IEmailSender emailSender,
+        IEmailService emailService,
         ICreateTokenService createTokenService)
     {
         _context = context;
         _userService = userService;
         _verificationCodeService = verificationCodeService;
-        _emailSender = emailSender;
+        _emailService = emailService;
         _createTokenService = createTokenService;
     }
 
@@ -52,21 +52,7 @@ public class AuthService : IAuthService
 
             var savedUser = await _userService.AddUserAsync(user);
 
-            var (code, actualType) = await _verificationCodeService.SaveCodeAsync(savedUser.Id, registerUser.VerificationType);
-
-            switch (actualType)
-            {
-                case VerificationType.Email:
-                    await _emailSender.SendAsync(
-                        savedUser.Email,
-                        "Email Verification Code",
-                        $"Your email verification code is {code}."
-                    );
-                    break;
-
-                default:
-                    throw new ArgumentException($"Unsupported verification type: {registerUser.VerificationType}");
-            }
+            await SendVerificationCodeAsync(savedUser, registerUser.VerificationType);
 
             await transaction.CommitAsync();
 
@@ -106,5 +92,37 @@ public class AuthService : IAuthService
         };
 
         return loginOutputDto;
+    }
+
+    public async Task<bool> ActivateUserAsync(VerifyCodeDto verifyCodeDto)
+    {
+        var ok = await _verificationCodeService.VerifyCodeAsync(verifyCodeDto);
+        if (!ok) return false;
+        var updateDto = new UserUpdateDto
+        {
+            IsActive = true
+        };
+
+        return await _userService.UpdateUserByIdAsync(verifyCodeDto.UserId, updateDto);;
+    }
+
+    public async Task SendVerificationCodeAsync(User user, VerificationType verificationType)
+    {
+        var (code, actualType) = await _verificationCodeService.SaveCodeAsync(user.Id, verificationType);
+
+        switch (actualType)
+        {
+            case VerificationType.Email:
+                await _emailService.SendAsync(
+                    user.Name,
+                    user.Email,
+                    "Email Verification Code",
+                    $"Your email verification code is {code}."
+                );
+                break;
+
+            default:
+                throw new ArgumentException($"Unsupported verification type: {verificationType}");
+        }
     }
 }

@@ -5,10 +5,7 @@ import { useQueries } from '@tanstack/react-query';
 import { getSuburbBasicInfo, getSuburbLivability } from '@/api/suburbApi';
 import { Navigate, useParams } from 'react-router-dom';
 import { getDemandAndDev, getHousingMarket } from '@/api/suburbApi';
-import {
-  mapDevCardData,
-  mapLivability,
-} from './components/MetricCardsSection/utils/dataMapper';
+import { mapDevCardData, mapLivability } from './components/MetricCardsSection/utils/dataMapper';
 import Banner from './components/Banner';
 import { mapPropertyCards } from '@/pages/SuburbReportPage/components/PropertyMarketInsightsSection';
 import PropertyMarketInsightsSection from '@/pages/SuburbReportPage/components/PropertyMarketInsightsSection';
@@ -89,9 +86,7 @@ const SuburbReportPage = () => {
     demand: results[1].data ? mapDevCardData(results[1].data) : undefined,
     livability: results[2].data ? mapLivability(results[2].data) : undefined,
   };
-  const propertyMetrics = results[3]?.data
-    ? mapPropertyCards(results[3].data as IHousingMarket)
-    : [];
+  const propertyMetrics = results[3]?.data ? mapPropertyCards(results[3].data as IHousingMarket) : [];
   return (
     <PageContainer>
       <Banner
@@ -113,18 +108,9 @@ const SuburbReportPage = () => {
           </div>
         ) : (
           <>
-            <PropertyMarketInsightsSection
-              title={TITLES.propertyMarketInsights}
-              items={propertyMetrics}
-            />
-            <MetricCardsSection
-              title={TITLES.demandDevelopment}
-              data={formattedData.demand}
-            />
-            <MetricCardsSection
-              title={TITLES.lifeStyle}
-              data={formattedData.livability}
-            />
+            <PropertyMarketInsightsSection title={TITLES.propertyMarketInsights} items={propertyMetrics} />
+            <MetricCardsSection title={TITLES.demandDevelopment} data={formattedData.demand} />
+            <MetricCardsSection title={TITLES.lifeStyle} data={formattedData.livability} />
             {/* todo:  replace with real action buttons , feel free to modify*/}
             <ActionButtonWrapper>
               <Button>save this suburb</Button>
