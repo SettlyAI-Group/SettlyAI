@@ -22,7 +22,7 @@ const LoginIntro = () => {
   const navigate = useNavigate();
   return (
     <LoginIntroContainer>
-      <Typography variant="h1" component="h4">
+      <Typography variant="h1">
         Welcome to
         <Typography variant="h1" component="span" color="primary">
           {' '}
