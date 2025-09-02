@@ -4,7 +4,7 @@ import {Visibility, VisibilityOff} from "@mui/icons-material";
 import FormInput from "./component/FormInput";
 import FormCheckbox from "./component/FormCheckbox";
 import { styled } from '@mui/material/styles';
-import { SocialLoginButtons } from './component/SocialLoginButtons';
+import { SocialLoginButtons } from '../../../RegistrationPage/Components/RegistrationForm/component/SocialLoginButtons';
 import { Link, useNavigate, useSearchParams  } from 'react-router-dom';
 import { loginUser } from '@/api/authApi';
 import { setAuth } from '@/redux/authSlice';
@@ -23,7 +23,7 @@ const FormContainer = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
 }));
 
-const CheckBoxContainer = styled(Box)(({ theme }) => ({
+const CheckBoxContainer = styled(Box)(() => ({
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center'
@@ -138,7 +138,6 @@ const LoginForm = () => {
 
       {/* Login Form */}
       <form noValidate autoComplete='off' onSubmit={handleSubmit}>
-        {/* Email input */}
         <FormInput 
           label="Email" 
           type='email' 
@@ -148,7 +147,6 @@ const LoginForm = () => {
           error={!!validationErrors.emailError}
           helperText={validationErrors.emailError}
         />
-        {/* Password input   */}
         <FormInput 
           label="Password" 
           type={showPassword ? "text" : "password"}

@@ -1,3 +1,4 @@
+import { Padding } from '@mui/icons-material';
 import { Typography, Box, Button} from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
@@ -8,6 +9,7 @@ const LoginIntroContainer = styled(Box)(({ theme }) => ({
   alignItems: 'center',
   justifyContent: 'center',
   gap: theme.spacing(7),
+  paddingTop:theme.spacing(12),
 }));
 
 const CreateAccountButton = styled(Button)(({ theme }) => ({
@@ -18,17 +20,29 @@ const CreateAccountButton = styled(Button)(({ theme }) => ({
   marginBottom: theme.spacing(1), 
 }));
 
+const Title = styled(Typography)(() => ({
+  textAlign: 'center',
+  fontWeight: 700,
+}));
+
+const Highlight = styled(Typography)<{ component?: React.ElementType }>(() => ({
+  display: 'inline',
+  // When screen < 540px → force to new line
+  '@media (max-width:540px)': {
+    display: 'block',
+  },
+}));
+
 const LoginIntro = () => {
   const navigate = useNavigate();
   return (
     <LoginIntroContainer>
-      <Typography variant="h1" component="h4">
-        Welcome to
-        <Typography variant="h1" component="span" color="primary">
-          {' '}
+      <Title variant="h1">
+        Welcome to{' '}
+        <Highlight variant="h1" component="span" color="primary">
           Settly AI
-        </Typography>
-      </Typography>
+        </Highlight>
+      </Title>
       <Typography
         color="textPrimary"
         align="justify"
