@@ -4,6 +4,7 @@ import { styled } from '@mui/material';
 import HomeIcon from '@mui/icons-material/Home';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import Card from '../Card';
 
 // Styled Components - Feature Detail Sections
 const FeatureSection = styled(Box)(({ theme }) => ({
@@ -20,18 +21,6 @@ const LoanSection = styled(FeatureSection)(() => ({
   backgroundColor: '#f8f9fa',
 }));
 
-const FullCard = styled(Box)(({ theme }) => ({
-  position: 'relative',
-  width: '100%',
-  background: theme.palette.background.paper,
-  boxShadow: theme.shadows[1],
-  borderRadius: '12px',
-  padding: theme.spacing(6),
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  textAlign: 'center',
-}));
 
 const ComingSoonContainer = styled(Box)(({ theme }) => ({
   marginTop: theme.spacing(4),
@@ -51,15 +40,21 @@ const FeatureDetailSections = () => {
     <>
       {/* SettlyHome Section */}
       <FeatureSection id="home-section">
-        <FullCard>
-          <HomeIcon style={{ fontSize: 40, marginBottom: 16 }} />
-          <Typography variant="h3" style={{ fontWeight: 400, textAlign: 'center', marginBottom: 16 }}>
-            SettlyHome
-          </Typography>
-          <Typography variant="body1" style={{ fontWeight: 200, textAlign: 'left' }}>
-            Discover your perfect home with smart property insights and market analysis.
-          </Typography>
-        </FullCard>
+        <Card
+          title={
+            <Typography variant="h3" style={{ fontWeight: 400, textAlign: 'center' }}>
+              SettlyHome
+            </Typography>
+          }
+          description={
+            <Typography variant="body1" style={{ fontWeight: 200, textAlign: 'left' }}>
+              Discover your perfect home with smart property insights and market analysis. 
+            </Typography>
+          }
+          icon={<HomeIcon style={{ fontSize: 40 }} />}
+          ctaText={"Explore Suburb & Homes"}
+          variant="full"
+        />
         <ComingSoonContainer>
           <Typography variant="h6" gutterBottom>
             Coming Soon: Property Discovery Tools
@@ -72,15 +67,21 @@ const FeatureDetailSections = () => {
 
       {/* SettlyLoan Section */}
       <LoanSection id="loan-section">
-        <FullCard>
-          <AttachMoneyIcon style={{ fontSize: 40, marginBottom: 16 }} />
-          <Typography variant="h3" style={{ fontWeight: 400, textAlign: 'center', marginBottom: 16 }}>
-            SettlyLoan
-          </Typography>
-          <Typography variant="body1" style={{ fontWeight: 200, textAlign: 'left' }}>
-            Get personalized loan recommendations and calculate your borrowing capacity.
-          </Typography>
-        </FullCard>
+        <Card
+          title={
+            <Typography variant="h3" style={{ fontWeight: 400, textAlign: 'center' }}>
+              SettlyLoan
+            </Typography>
+          }
+          description={
+            <Typography variant="body1" style={{ fontWeight: 200, textAlign: 'left' }}>
+              Get personalized loan recommendations and calculate your borrowing capacity. 
+            </Typography>
+          }
+          icon={<AttachMoneyIcon style={{ fontSize: 40 }} />}
+          ctaText={"Simulate Loan"}
+          variant="full"
+        />
         <ComingSoonContainer>
           <Typography variant="h6" gutterBottom>
             Coming Soon: Loan Calculator Tools
@@ -93,15 +94,21 @@ const FeatureDetailSections = () => {
 
       {/* SettlySuper Section */}
       <FeatureSection id="super-section">
-        <FullCard>
-          <TrendingUpIcon style={{ fontSize: 40, marginBottom: 16 }} />
-          <Typography variant="h3" style={{ fontWeight: 400, textAlign: 'center', marginBottom: 16 }}>
-            SettlySuper
-          </Typography>
-          <Typography variant="body1" style={{ fontWeight: 200, textAlign: 'left' }}>
-            Maximize your superannuation potential with smart property investment strategies.
-          </Typography>
-        </FullCard>
+        <Card
+          title={
+            <Typography variant="h3" style={{ fontWeight: 400, textAlign: 'center' }}>
+              SettlySuper
+            </Typography>
+          }
+          description={
+            <Typography variant="body1" style={{ fontWeight: 200, textAlign: 'left' }}>
+              Maximize your superannuation potential with smart property investment strategies.
+            </Typography>
+          }
+          icon={<TrendingUpIcon style={{ fontSize: 40 }} />}
+          ctaText={"Compare Super Strategy"}
+          variant="full"
+        />
         <ComingSoonContainer>
           <Typography variant="h6" gutterBottom>
             Coming Soon: Super Optimization Tools
