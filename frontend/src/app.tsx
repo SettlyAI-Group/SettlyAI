@@ -11,6 +11,7 @@ import { RegistrationPage } from './pages/RegistrationPage';
 import { VerificationPage } from './pages/VerificationPage';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import ExplorePage from './pages/ExplorePage';
+import LoginPage from './pages/LoginPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -37,6 +38,7 @@ const App = () => {
           <Route path="/" element={<ThemeDemo />} />
           <Route path="/registration" element={<RegistrationPage />} />
           <Route path="/verify-email/:userId" element={<VerificationPage />} />
+          <Route path='/login' element={<LoginPage/>} />
         </Routes>
       </ThemeProvider>
     </QueryClientProvider>
