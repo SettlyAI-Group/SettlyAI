@@ -6,7 +6,7 @@ import {
   AttachMoney as AttachMoneyIcon,
   TrendingUp as StockIcon
 } from '@mui/icons-material';
-import Card from './Card';
+// Card component removed - using inline styled components instead
 
 interface FeatureCard {
   title: string;

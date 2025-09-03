@@ -21,7 +21,7 @@ const selectedSydney = {
   postcode: '2000',
 };
 
-vi.mock('../../../../components/Search/SearchBar', () => ({
+vi.mock('../../../../components/SearchBar/SearchBar', () => ({
   default: ({ handleSelected, handleGetReport }: any) => (
     <div data-testid="stub-searchbar">
       <button onClick={() => handleSelected(selectedSydney)}>Select Sydney</button>

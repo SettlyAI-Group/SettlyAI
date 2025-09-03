@@ -23,11 +23,6 @@ const HomePage = () => {
   };
 
   return (
-    <PageContainer>
-      <HeroSection />
-      <ToolsSection />
-      <FeatureDetailSections />
-    </PageContainer>
     <>
       <HeroSection />
       <h1>Home</h1>
@@ -36,6 +31,5 @@ const HomePage = () => {
     </>
   );
 };
-
 
 export default HomePage;

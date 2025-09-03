@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
 import { styled } from '@mui/material';
-import FeatureCardsSection from '../FeatureSections/FeatureCards';
+import FeatureCardsSection from '../FeatureSections/FeatureCardsSection';
 
 // Styled Components - Tools Section
 const ToolsContainer = styled(Box)(({ theme }) => ({
