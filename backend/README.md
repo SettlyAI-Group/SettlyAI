@@ -212,30 +212,6 @@ Currently available endpoints:
 - **Configuration**: Environment-specific settings with `appsettings.json`
 - **Fake Data Generation**: Bogus library for realistic Australian property data
 
-## Environment Configuration
-
-### Development
-- Database logging enabled with sensitive data
-- Detailed error messages
-- Fake data generation available
-- ```dotnet run --environment "Development"```
-
-### Test
-```dotnet run --environment "Test"```
-
-### Production
-- Optimized logging
-- Error handling without sensitive information
-- Data reset operations disabled
-- ```dotnet run --environment "Production"```
-
-
-## Known Issues
-
-- DbSet naming inconsistency: `SuburbReport` entity mapped to `Users` table
-- Table mapping: `Suburb` maps to "Teachers" table (legacy naming)
-
-These will be addressed in future database migrations.
 
 ## Contributing
 

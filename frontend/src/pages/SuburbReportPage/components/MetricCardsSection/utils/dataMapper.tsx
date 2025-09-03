@@ -11,11 +11,7 @@ import type { IDemandAndDev } from '@/interfaces/DemandAndDev';
 import { mapValueToPercentageString } from '@/pages/SuburbReportPage/utils/numberConverters';
 import type { ILivability } from '@/interfaces/suburbReport';
 import type { IMetricCardProps } from '../components/MetricCard/MetricCard';
-import {
-  convertAsFractionOfTen,
-  convertNumberToString,
-  convertWithGreaterThan,
-} from '../../../utils/numberConverters';
+import { convertAsFractionOfTen, convertNumberToString, convertWithGreaterThan } from '../../../utils/numberConverters';
 
 interface DemandCardConfig {
   key: keyof IDemandAndDev;

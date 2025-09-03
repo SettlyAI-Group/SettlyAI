@@ -14,12 +14,6 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-
-        builder.Configuration
-        .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-        .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
-        .AddEnvironmentVariables();
-
         var apiConfigs = builder.Configuration.GetSection("ApiConfigs").Get<ApiConfigs>();
         builder.Services.AddDbContext<SettlyDbContext>(
             options => options
@@ -30,11 +24,13 @@ public class Program
                 .EnableSensitiveDataLogging()
                 .EnableDetailedErrors()
         );
+        // 绑定 Email 节点到 EmailSettings
+        builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("Email"));
         // Add CORS services
         builder.Services.AddCorsPolicies();
         // Add application services
         builder.Services.AddScoped<IUserService, UserService>();
-        builder.Services.AddScoped<IEmailSender, StubEmailSender>();
+        builder.Services.AddScoped<IEmailService, MailKitEmailService>();
         builder.Services.AddScoped<IVerificationCodeService, VerificationCodeService>();
         builder.Services.AddTransient<ICreateTokenService, CreateTokenService>();
         builder.Services.AddScoped<IAuthService, AuthService>();

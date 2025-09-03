@@ -1,20 +1,39 @@
-import React from 'react';
-import { Box } from '@mui/material';
-import { styled } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import HeroSection from './components/HeroSection';
-import ToolsSection from './components/ToolsSection';
-import { FeatureDetailSections } from './components/FeatureSections';
 
-// Styled Components
-const PageContainer = styled(Box)(() => ({}));
+const HomePage = () => {
+  const navigate = useNavigate();
 
-const HomePage = (): JSX.Element => {
+  type Suburb = {
+    suburbName: string;
+    state: string;
+    suburbId: number;
+  };
+  //todo: change to fetch suburb id by suburb name and state
+  //check database to match for testing
+  const melbourne = { suburbName: 'Melbourn', state: 'VIC', suburbId: 1 };
+  const sydney = { suburbName: 'Sydney', state: 'NSW', suburbId: 2 };
+
+  const checkSuburb = (suburb: Suburb) => {
+    const { suburbId } = suburb;
+
+    localStorage.setItem('suburbId', suburbId.toString());
+
+    navigate(`/suburb/${suburbId}`);
+  };
+
   return (
     <PageContainer>
       <HeroSection />
       <ToolsSection />
       <FeatureDetailSections />
     </PageContainer>
+    <>
+      <HeroSection />
+      <h1>Home</h1>
+      <button onClick={() => checkSuburb(sydney)}>Go to Sydney</button>
+      <button onClick={() => checkSuburb(melbourne)}>Go to Melbourne</button>
+    </>
   );
 };
 
