@@ -124,6 +124,8 @@ export const themeOptions: ThemeOptions = {
     warning: createColorSet(warningBase),
     info: createColorSet(infoBase),
     success: createColorSet(successBase),
+    black: createColorSet(textPrimaryColor),
+    white: createColorSet(paperColor),
     divider: dividerColor,
   },
   typography: {
