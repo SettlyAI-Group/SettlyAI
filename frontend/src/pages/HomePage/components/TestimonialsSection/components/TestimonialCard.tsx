@@ -1,7 +1,7 @@
 import { Card, CardContent, Typography, Avatar, Box, styled } from "@mui/material";
 import type { ITestimonial } from "@/interfaces/Testimonial";
 
-interface Props {
+interface TestimonialCardProps {
   testimonial: ITestimonial;
 }
 
@@ -42,7 +42,7 @@ const Quote = styled(Typography)(() => ({
   fontSize: "14px",
 }));
 
-const TestimonialCard = ({ testimonial }: Props) => {
+const TestimonialCard = ({ testimonial }: TestimonialCardProps) => {
   return (
     <StyledCard variant="outlined">
       <StyledCardContent>

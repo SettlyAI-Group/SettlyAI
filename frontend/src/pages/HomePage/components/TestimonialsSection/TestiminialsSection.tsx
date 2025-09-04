@@ -2,7 +2,7 @@ import { Typography, Box, Container, styled, Grid } from "@mui/material";
 import TestimonialCard from "./components/TestimonialCard";
 import type { ITestimonial } from "@/interfaces/Testimonial";
 
-interface Props {
+interface TestimonialProps {
   testimonials?: ITestimonial[];
 }
 
@@ -33,7 +33,7 @@ const SubHeading = styled(Typography)(({ theme }) => ({
   marginRight: "auto",
 }));
 
-const TestimonialsSection = ({ testimonials }: Props) => {
+const TestimonialsSection = ({ testimonials }: TestimonialProps) => {
   return (
     <StyledSection component="section">
       <Container>
