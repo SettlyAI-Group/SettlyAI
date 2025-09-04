@@ -4,9 +4,11 @@ using SettlyModels;
 using SettlyModels.Dtos;        
 using AutoMapper;
 using SettlyService;
+using SettlyService.Mapping;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore; 
 using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
 
 public class PropertyDetailApiTests
 {
@@ -14,11 +16,16 @@ public class PropertyDetailApiTests
 
     public PropertyDetailApiTests()
     {
+        var loggerFactory = LoggerFactory.Create(builder => 
+        {
+            builder.AddConsole();
+            builder.SetMinimumLevel(LogLevel.Debug);
+        });
         var config = new MapperConfiguration(cfg =>
         {
             cfg.CreateMap<Property, PropertyDetailDto>();
 
-        });
+        }, loggerFactory);
         _mapper = config.CreateMapper();
     }
 

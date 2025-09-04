@@ -7,6 +7,8 @@ using SettlyModels;
 using SettlyModels.Dtos;
 using SettlyModels.Entities;
 using SettlyService;
+using SettlyService.Mapping;
+using Microsoft.Extensions.Logging;
 using Xunit;
 
 public class PropertyRecommendationApiTests
@@ -17,11 +19,12 @@ public class PropertyRecommendationApiTests
     public PropertyRecommendationApiTests()
     {
         // AutoMapper 
+      var loggerFactory = LoggerFactory.Create(_ => { });
         var config = new MapperConfiguration(cfg =>
         {
             cfg.CreateMap<Property, PropertyRecommendationDto>(); 
             cfg.CreateMap<Property, PropertyDetailDto>();     
-        });
+        }, loggerFactory);
         _mapper = config.CreateMapper();
 
         // InMemory 

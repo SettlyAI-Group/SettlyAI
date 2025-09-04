@@ -4,6 +4,7 @@ import type { ITestimonial } from "@/interfaces/Testimonial";
 import { getTestimonials } from "@/api/testimonialApi";
 import { useQuery } from "@tanstack/react-query";
 import { Typography, Button } from '@mui/material';
+import HeroSection from './components/HeroSection';
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -13,7 +14,6 @@ const HomePage = () => {
     state: string;
     suburbId: number;
   };
-
   //todo: change to fetch suburb id by suburb name and state
   //check database to match for testing
   const melbourne = { suburbName: 'Melbourn', state: 'VIC', suburbId: 1 };
@@ -24,7 +24,7 @@ const HomePage = () => {
 
     localStorage.setItem('suburbId', suburbId.toString());
 
-    navigate(`/suburb/1`);
+    navigate(`/suburb/${suburbId}`);
   };
 
 
@@ -58,6 +58,7 @@ const HomePage = () => {
 
   return (
     <>
+      <HeroSection />
       <h1>Home</h1>
       <button onClick={() => checkSuburb(sydney)}>Go to Sydney</button>
       <button onClick={() => checkSuburb(melbourne)}>Go to Melbourne</button>
