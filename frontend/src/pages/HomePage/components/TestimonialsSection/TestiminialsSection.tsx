@@ -1,10 +1,25 @@
-import { Typography, Box, Container, styled } from "@mui/material";
+import { Typography, Box, Container, styled, Grid } from "@mui/material";
 import TestimonialCard from "./components/TestimonialCard";
 import type { ITestimonial } from "@/interfaces/Testimonial";
 
 interface Props {
   testimonials?: ITestimonial[];
 }
+
+const StyledSection = styled(Box)(({ theme }) => ({
+  paddingTop: `clamp(${theme.spacing(16)}, 10vw, ${theme.spacing(20)})`,
+  paddingBottom: `clamp(${theme.spacing(16)}, 10vw, ${theme.spacing(20)})`,
+  paddingLeft: `clamp(${theme.spacing(16)}, 10vw, ${theme.spacing(41)})`,
+  paddingRight: `clamp(${theme.spacing(16)}, 10vw, ${theme.spacing(41)})`,
+}));
+
+const HeadingWrapper = styled(Box)(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  gap: theme.spacing(5),
+  marginBottom: theme.spacing(15),
+}));
 
 const Heading = styled(Typography)(({ theme }) => ({
   maxWidth: theme.spacing(182.5),
@@ -18,35 +33,34 @@ const SubHeading = styled(Typography)(({ theme }) => ({
   marginRight: "auto",
 }));
 
-const TestimonialsGrid = styled(Box)(({ theme }) => ({
-  display: "flex",
-  flexWrap: "wrap",
-  justifyContent: "center",
-  gap: theme.spacing(8),
-}));
-
 const TestimonialsSection = ({ testimonials }: Props) => {
   return (
-    <Box component="section" sx={{ py: 8 }}>
+    <StyledSection component="section">
       <Container>
-        <Heading variant="h3" align="center" gutterBottom>
-          Understand the Support Available to You
-        </Heading>
+        <HeadingWrapper>
+          <Heading variant="h3" align="center" gutterBottom>
+            Understand the Support Available to You
+          </Heading>
 
-        <SubHeading variant="subtitle1" align="center" color="text.secondary" mb={6}>
-          We help you understand what's available - from First Home Owner Grants to
-          Super Saver Schemes. Always up to date, easy to understand
-        </SubHeading>
+          <SubHeading variant="subtitle1" align="center" color="text.secondary">
+            We help you understand what's available - from First Home Owner Grants to
+            Super Saver Schemes. Always up to date, easy to understand
+          </SubHeading>
+        </HeadingWrapper>
 
-        <TestimonialsGrid>
+        <Grid container spacing={8} justifyContent="center">
           {testimonials?.length ? (
-            testimonials.map(t => <TestimonialCard key={t.id} testimonial={t} />)
+            testimonials.map((t) => (
+              <Grid item xs={12} sm={6} md={4} lg={3} key={t.id}>
+                <TestimonialCard testimonial={t} />
+              </Grid>
+            ))
           ) : (
             <Typography>No testimonials available</Typography>
           )}
-        </TestimonialsGrid>
+        </Grid>
       </Container>
-    </Box>
+    </StyledSection>
   );
 };
 
