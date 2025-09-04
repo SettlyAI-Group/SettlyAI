@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Box, CircularProgress, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import axiosInstance from '@/api/httpClient';
+import { loginWithOAuth } from '@/api/authApi';
 
 const CenteredContainer = styled(Box)({
   display: 'flex',
@@ -35,11 +35,10 @@ export const OAuthCallbackPage = () => {
         }
 
         // 从路径中提取提供商名称 (/oauth/callback/google -> google)
-        const provider = location.pathname.split('/').pop();
+        const provider = location.pathname.split('/').pop() || '';
         
-        // 发送到对应提供商的后端接口
-        const response = await axiosInstance.post(`/auth/${provider}/callback`, { code });
-        const { token, user } = response.data;
+        // 使用第三方授权码登录
+        const { token, user } = await loginWithOAuth(code, provider);
 
         localStorage.setItem('token', token);
         localStorage.setItem('user', JSON.stringify(user));

@@ -21,3 +21,11 @@ export const sendVerificationCode = async (
   });
   return response.data;
 };
+
+export const loginWithOAuth = async (code: string, provider: string) => {
+  const response = await httpClient.post('/auth/oauth/login', {
+    code,
+    provider,
+  });
+  return response.data;
+};
