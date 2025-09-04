@@ -47,9 +47,9 @@ public class Program
         builder.Services.AddScoped<IPropertyService, PropertyService>();
         builder.Services.AddScoped<IFavouriteService, FavouriteService>();
         builder.Services.AddTransient<IPopulationSupplyService, PopulationSupplyService>();
+
         builder.Services.AddScoped<ILoanService, LoanService>();
         builder.Services.AddScoped<ITestimonialService, TestimonialService>();
-
 
         builder.Services.AddScoped<ILayoutNavService, LayoutNavService>();
         //Add Swagger
