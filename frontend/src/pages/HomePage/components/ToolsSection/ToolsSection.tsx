@@ -1,9 +1,8 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
 import { styled } from '@mui/material';
-import FeatureCards from './FeatureCards/FeatureCards';
+import FeatureCardsSection from './FeatureCards/FeatureCards';
 const ToolsContainer = styled(Box)(({ theme }) => ({
-  maxWidth: '1440px',
   background: theme.palette.background.default,
   margin: '0 auto',
   padding: theme.spacing(8, 2),
@@ -26,7 +25,7 @@ const ToolsSection = () => {
         </Typography>
       </div>
       
-      <FeatureCards />
+      <FeatureCardsSection />
     </ToolsContainer>
   );
 };
