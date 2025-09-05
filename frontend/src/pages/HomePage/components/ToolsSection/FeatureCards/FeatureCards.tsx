@@ -21,8 +21,8 @@ const StyledCard = styled(Box)(({ theme }) => ({
 }));
 
 const IconContainer = styled(Box)(({ theme }) => ({
-  width: theme.spacing(6),
-  height: theme.spacing(6),
+  width: theme.spacing(12),
+  height: theme.spacing(12),
   borderRadius: theme.spacing(3),
   background: theme.palette.primary.light,
   display: 'flex',
