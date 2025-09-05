@@ -79,7 +79,7 @@ const FlexContainer = styled(Box)(({ theme }) => ({
   flexWrap: 'wrap',
 }));
 
-interface FeatureCardProps {
+interface ToolCardProps {
   title: string;
   description: string;
   icon: React.ReactNode;
@@ -87,7 +87,7 @@ interface FeatureCardProps {
   onClick: () => void;
 }
 
-const FeatureCard = ({ title, description, icon, ctaText, onClick }: FeatureCardProps) => (
+const ToolCard = ({ title, description, icon, ctaText, onClick }: ToolCardProps) => (
   <StyledCard onClick={onClick}>
     <IconContainer>
       <StyledIcon>
@@ -118,7 +118,7 @@ const FeatureCard = ({ title, description, icon, ctaText, onClick }: FeatureCard
 const FeatureCardsSection = () => (
   <FlexContainer>
     {featureCards.map((card, index) => (
-      <FeatureCard
+      <ToolCard
         key={index}
         title={card.title}
         description={card.description}
