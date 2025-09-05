@@ -5,10 +5,9 @@ import GlobalButton from '@/components/GlobalButton/GlobalButton';
 
 
 const StyledCard = styled(Box)(({ theme }) => ({
-  height: '300px',
   background: theme.palette.background.paper,
   boxShadow: theme.shadows[1],
-  borderRadius: '12px',
+  borderRadius: theme.shape.borderRadius,
   padding: theme.spacing(5), 
   display: 'flex',
   flexDirection: 'column',
@@ -22,9 +21,9 @@ const StyledCard = styled(Box)(({ theme }) => ({
 }));
 
 const IconContainer = styled(Box)(({ theme }) => ({
-  width: '48px',
-  height: '48px',
-  borderRadius: '24px',
+  width: theme.spacing(6),
+  height: theme.spacing(6),
+  borderRadius: theme.spacing(3),
   background: theme.palette.primary.light,
   display: 'flex',
   alignItems: 'center',
@@ -34,7 +33,7 @@ const IconContainer = styled(Box)(({ theme }) => ({
 
 const StyledIcon = styled(Box)(({ theme }) => ({
   color: theme.palette.primary.main,
-  fontSize: '24px',
+  fontSize: theme.typography.h6.fontSize,
 }));
 
 const CardTitle = styled(Typography)(({ theme }) => ({
