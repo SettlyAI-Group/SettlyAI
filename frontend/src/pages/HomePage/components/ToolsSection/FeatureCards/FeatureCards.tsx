@@ -48,7 +48,7 @@ const CardTitle = styled(Typography)(({ theme }) => ({
 
 const CardDescription = styled(Typography)(({ theme }) => ({
   color: theme.palette.text.secondary,
-  marginBottom: theme.spacing(4),
+  marginBottom: theme.spacing(2),
   flex: 1,
 }));
 
