@@ -38,17 +38,11 @@ const StyledIcon = styled(Box)(({ theme }) => ({
 }));
 
 const CardTitle = styled(Typography)(({ theme }) => ({
-  fontWeight: 600,
   color: theme.palette.text.primary,
   marginBottom: theme.spacing(3), 
 }));
 
 const CardDescription = styled(Typography)(({ theme }) => ({
-  fontFamily: 'Poppins',
-  fontStyle: 'normal',
-  fontWeight: 400,
-  fontSize: '16px',
-  lineHeight: '24px', 
   color: theme.palette.text.secondary,
   marginBottom: theme.spacing(4), 
   flex: 1,
@@ -79,38 +73,62 @@ const featureCards = [
   }
 ];
 
-const FeatureCards = () => (
-  <Grid container spacing={4} justifyContent="center">
-    {featureCards.map((card, index) => (
-      <Grid size={{ xs: 12, sm: 12, md: 4 }} key={index}>
-        <StyledCard onClick={card.onClick}>
-          <IconContainer>
-            <StyledIcon>
-              {card.icon}
-            </StyledIcon>
-          </IconContainer>
-          <CardTitle variant="h6">
-            {card.title}
-          </CardTitle>
-          <CardDescription variant="body2">
-            {card.description}
-          </CardDescription>
-          <GlobalButton
-            onClick={(e) => {
-              e.stopPropagation();
-              card.onClick();
-            }}
-            variant="contained"
-            width="full"
-            height="50"
-            style={{ alignSelf: 'flex-end' }}
-          >
-            {card.ctaText}
-          </GlobalButton>
-        </StyledCard>
-      </Grid>
-    ))}
-  </Grid>
+const FlexContainer = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  gap: theme.spacing(4),
+  justifyContent: 'center',
+  flexWrap: 'wrap',
+}));
+
+interface FeatureCardProps {
+  title: string;
+  description: string;
+  icon: React.ReactNode;
+  ctaText: string;
+  onClick: () => void;
+}
+
+const FeatureCard = ({ title, description, icon, ctaText, onClick }: FeatureCardProps) => (
+  <StyledCard onClick={onClick}>
+    <IconContainer>
+      <StyledIcon>
+        {icon}
+      </StyledIcon>
+    </IconContainer>
+    <CardTitle variant="h5">
+      {title}
+    </CardTitle>
+    <CardDescription variant="body2">
+      {description}
+    </CardDescription>
+    <GlobalButton
+      onClick={(e) => {
+        e.stopPropagation();
+        onClick();
+      }}
+      variant="contained"
+      width="full"
+      height="50"
+      style={{ alignSelf: 'flex-end' }}
+    >
+      {ctaText}
+    </GlobalButton>
+  </StyledCard>
 );
 
-export default FeatureCards;
+const FeatureCardsSection = () => (
+  <FlexContainer>
+    {featureCards.map((card, index) => (
+      <FeatureCard
+        key={index}
+        title={card.title}
+        description={card.description}
+        icon={card.icon}
+        ctaText={card.ctaText}
+        onClick={card.onClick}
+      />
+    ))}
+  </FlexContainer>
+);
+
+export default FeatureCardsSection;
