@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SettlyModels.Entities;
+using System.Text.Json;
 
 namespace SettlyModels;
 
@@ -43,5 +44,12 @@ public class SettlyDbContext : DbContext
         modelBuilder.Entity<Property>()
             .Property(p => p.Features)
             .HasColumnType("text[]");
+
+        modelBuilder.Entity<Property>()
+            .Property(p => p.InspectionTimeOptions)
+            .HasConversion(
+                v => JsonSerializer.Serialize(v, new JsonSerializerOptions()),
+                v => JsonSerializer.Deserialize<List<DateTime>>(v, new JsonSerializerOptions()) ?? new List<DateTime>()
+            );
     }
 }

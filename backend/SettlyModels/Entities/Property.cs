@@ -16,6 +16,7 @@ public class Property
     public string[] Features { get; set; } = [];
     public string Summary { get; set; } = string.Empty;
     public string ImageUrl { get; set; } = string.Empty;
+    public List<DateTime> InspectionTimeOptions { get; set; } = new List<DateTime>();
 
     public Suburb Suburb { get; set; } = null!;
     public ICollection<Favourite> Favourites { get; set; } = new List<Favourite>();
