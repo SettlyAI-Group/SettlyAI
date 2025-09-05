@@ -2,64 +2,30 @@ import React from 'react';
 import { Box, Typography } from '@mui/material';
 import { styled } from '@mui/material';
 import FeatureCards from './FeatureSections/FeatureCards';
-
 const ToolsContainer = styled(Box)(({ theme }) => ({
   maxWidth: '1440px',
-  height: '576px',
-  background: '#F8F9FB',
+  background: theme.palette.background.default,
   margin: '0 auto',
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'center',
-  alignItems: 'center',
-  padding: theme.spacing(8, 2), // Add more top padding to maintain internal spacing
+  padding: theme.spacing(8, 2),
   
   [theme.breakpoints.up('sm')]: {
     padding: theme.spacing(8, 4),
-    marginTop: theme.spacing(-4), // Less aggressive on larger screens
   },
 }));
 
-const ToolsTextContainer = styled(Box)(({ theme }) => ({
-  textAlign: 'center',
-  marginBottom: theme.spacing(4), // Reduce spacing between heading and cards
-  maxWidth: '731px',
-}));
-
-const ToolsHeading = styled(Typography)(({ theme }) => ({
-  fontWeight: 400,
-  fontSize: '36px',
-  color: '#1f2937',
-  width: '766px',
-  height: '40px',
-  margin: '0 auto',
-  marginBottom: theme.spacing(7),
-}));
-
-const ToolsSubtitle = styled(Typography)(({ theme }) => ({
-  color: '#6b7280',
-  fontSize: '1rem',
-  fontWeight: 400,
-  width: '766px',
-  height: '28px',
-  margin: '0 auto',
-  marginBottom: theme.spacing(13),
-  lineHeight: 1.6,
-}));
 
 const ToolsSection = () => {
   return (
     <ToolsContainer>
-      <ToolsTextContainer>
-        <ToolsHeading variant="h4">
+      <div style={{ textAlign: 'center', marginBottom: '48px' }}>
+        <Typography variant="h4">
           All-in-One Tools to Simplify Your Journey
-        </ToolsHeading>
-        <ToolsSubtitle variant="body1">
+        </Typography>
+        <Typography variant="body1" style={{ marginTop: '16px' }}>
           Let's plan smarter: from viewing a home to securing a loan and optimizing your super
-        </ToolsSubtitle>
-      </ToolsTextContainer>
+        </Typography>
+      </div>
       
-      {/* Feature Cards Section */}
       <FeatureCards />
     </ToolsContainer>
   );
