@@ -3,7 +3,6 @@ import { Box, Typography } from '@mui/material';
 import { styled } from '@mui/material';
 import FeatureCards from './FeatureSections/FeatureCards';
 
-// Styled Components - Tools Section
 const ToolsContainer = styled(Box)(({ theme }) => ({
   maxWidth: '1440px',
   height: '576px',
