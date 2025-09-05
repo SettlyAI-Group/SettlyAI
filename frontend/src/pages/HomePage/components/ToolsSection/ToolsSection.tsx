@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
 import { styled } from '@mui/material';
-import FeatureCardsSection from '../FeatureSections/FeatureCardsSection';
+import FeatureCards from './FeatureSections/FeatureCards';
 
 // Styled Components - Tools Section
 const ToolsContainer = styled(Box)(({ theme }) => ({
@@ -9,7 +9,6 @@ const ToolsContainer = styled(Box)(({ theme }) => ({
   height: '576px',
   background: '#F8F9FB',
   margin: '0 auto',
-  marginTop: theme.spacing(-24), // Pull up much closer to HeroSection
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
@@ -62,7 +61,7 @@ const ToolsSection = () => {
       </ToolsTextContainer>
       
       {/* Feature Cards Section */}
-      <FeatureCardsSection />
+      <FeatureCards />
     </ToolsContainer>
   );
 };
