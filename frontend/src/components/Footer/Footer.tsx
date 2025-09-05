@@ -1,8 +1,10 @@
-import { Box, Typography } from '@mui/material';
+
+import { Box, Container, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import HomeIcon from '@mui/icons-material/Home';
+import theme from '@/styles/theme';
 
 interface FooterItems {
   items?: string;

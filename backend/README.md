@@ -212,24 +212,6 @@ Currently available endpoints:
 - **Configuration**: Environment-specific settings with `appsettings.json`
 - **Fake Data Generation**: Bogus library for realistic Australian property data
 
-## Environment Configuration
-
-### Development
-- Database logging enabled with sensitive data
-- Detailed error messages
-- Fake data generation available
-
-### Production
-- Optimized logging
-- Error handling without sensitive information
-- Data reset operations disabled
-
-## Known Issues
-
-- DbSet naming inconsistency: `SuburbReport` entity mapped to `Users` table
-- Table mapping: `Suburb` maps to "Teachers" table (legacy naming)
-
-These will be addressed in future database migrations.
 
 ## Contributing
 
@@ -237,7 +219,7 @@ These will be addressed in future database migrations.
 2. Update migrations for entity changes
 3. Test with sample data using `SettlyDbManager`
 4. Ensure all projects build successfully
-
+   
 ## License
 
 [Add your license information here]
