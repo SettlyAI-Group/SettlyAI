@@ -1,17 +1,10 @@
 import React from 'react';
-import { Box, styled, Grid, Typography, Button } from '@mui/material';
+import { Box, styled, Grid, Typography } from '@mui/material';
 import { Home, AttachMoney, TrendingUp } from '@mui/icons-material';
+import GlobalButton from '@/components/GlobalButton/GlobalButton';
 
-const CardsContainer = styled(Box)(() => ({
-  width: '100%',
-  maxWidth: 1200,
-  marginLeft: 'auto',
-  marginRight: 'auto',
-}));
 
 const StyledCard = styled(Box)(({ theme }) => ({
-  position: 'relative',
-  width: '380px',
   height: '300px',
   background: theme.palette.background.paper,
   boxShadow: theme.shadows[1],
@@ -22,6 +15,7 @@ const StyledCard = styled(Box)(({ theme }) => ({
   alignItems: 'flex-start',
   textAlign: 'left',
   cursor: 'pointer',
+  flex: 1,
   '&:hover': {
     boxShadow: theme.shadows[3],
   },
@@ -31,7 +25,7 @@ const IconContainer = styled(Box)(({ theme }) => ({
   width: '48px',
   height: '48px',
   borderRadius: '24px',
-  background: '#E5F0FF',
+  background: theme.palette.primary.light,
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -43,24 +37,23 @@ const StyledIcon = styled(Box)(({ theme }) => ({
   fontSize: '24px',
 }));
 
-
-const ActionButton = styled(Button)(({ theme }) => ({
-  boxSizing: 'border-box',
-  width: '220px',
-  height: '48px',
-  background: '#E5F0FF',
-  boxShadow: theme.shadows[2],
-  borderRadius: '8px',
-  color: theme.palette.primary.main,
-  fontWeight: 500,
-  textTransform: 'none',
-  fontSize: '14px',
-  alignSelf: 'flex-end',
-  '&:hover': {
-    background: theme.palette.primary.main,
-    color: theme.palette.primary.contrastText,
-  },
+const CardTitle = styled(Typography)(({ theme }) => ({
+  fontWeight: 600,
+  color: theme.palette.text.primary,
+  marginBottom: theme.spacing(3), 
 }));
+
+const CardDescription = styled(Typography)(({ theme }) => ({
+  fontFamily: 'Poppins',
+  fontStyle: 'normal',
+  fontWeight: 400,
+  fontSize: '16px',
+  lineHeight: '24px', 
+  color: theme.palette.text.secondary,
+  marginBottom: theme.spacing(4), 
+  flex: 1,
+}));
+
 
 const featureCards = [
   {
@@ -87,36 +80,37 @@ const featureCards = [
 ];
 
 const FeatureCards = () => (
-  <CardsContainer>
-    <Grid container spacing={4} justifyContent="center">
-      {featureCards.map((card, index) => (
-        <Grid size={{ xs: 12, sm: 12, md: 4 }} key={index}>
-          <StyledCard onClick={card.onClick}>
-            <IconContainer>
-              <StyledIcon>
-                {card.icon}
-              </StyledIcon>
-            </IconContainer>
-            <Typography variant="h6">
-              {card.title}
-            </Typography>
-            <Typography variant="body2">
-              {card.description}
-            </Typography>
-            <ActionButton
-              onClick={(e) => {
-                e.stopPropagation();
-                card.onClick();
-              }}
-              variant="contained"
-            >
-              {card.ctaText}
-            </ActionButton>
-          </StyledCard>
-        </Grid>
-      ))}
-    </Grid>
-  </CardsContainer>
+  <Grid container spacing={4} justifyContent="center">
+    {featureCards.map((card, index) => (
+      <Grid size={{ xs: 12, sm: 12, md: 4 }} key={index}>
+        <StyledCard onClick={card.onClick}>
+          <IconContainer>
+            <StyledIcon>
+              {card.icon}
+            </StyledIcon>
+          </IconContainer>
+          <CardTitle variant="h6">
+            {card.title}
+          </CardTitle>
+          <CardDescription variant="body2">
+            {card.description}
+          </CardDescription>
+          <GlobalButton
+            onClick={(e) => {
+              e.stopPropagation();
+              card.onClick();
+            }}
+            variant="contained"
+            width="full"
+            height="50"
+            style={{ alignSelf: 'flex-end' }}
+          >
+            {card.ctaText}
+          </GlobalButton>
+        </StyledCard>
+      </Grid>
+    ))}
+  </Grid>
 );
 
 export default FeatureCards;
