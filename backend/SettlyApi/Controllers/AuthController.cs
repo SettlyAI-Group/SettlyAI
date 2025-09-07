@@ -80,18 +80,18 @@ public class AuthController : ControllerBase
     }
     [HttpPost("oauth/login")]
     [SwaggerOperation(Summary = "OAuth login")]
-    [SwaggerResponse(200, "OAuth login successful", typeof(ExternalUser))]
-    public async Task<ActionResult<ExternalUser>> OAuthLogin([FromBody] OAuthLoginRequestDto authLoginRequest)
+    [SwaggerResponse(200, "OAuth login successful", typeof(LoginOutputDto))]
+    public async Task<ActionResult<LoginOutputDto>> OAuthLogin([FromBody] OAuthLoginRequestDto authLoginRequest)
     {
-        // 用 code 换 token
         var tokenResult = await _oAuthService.ExchangeTokenAsync(authLoginRequest.Provider, authLoginRequest.Code);
         
-        // 拉用户信息
         var externalUser = await _oAuthService.GetUserAsync(
             authLoginRequest.Provider, 
             tokenResult.AccessToken, 
             tokenResult.IdToken);
         
-        return Ok(externalUser);
+        var loginResult = await _authService.OAuthLoginAsync(externalUser);
+        
+        return Ok(loginResult);
     }
 }

@@ -4,6 +4,7 @@ using SettlyModels;
 using SettlyModels.Dtos;
 using SettlyModels.Entities;
 using SettlyModels.Enums;
+using SettlyModels.OAutOptions;
 using SettlyService.Exceptions;
 
 namespace SettlyService;
@@ -37,7 +38,22 @@ public class AuthService : IAuthService
         {
             var existing = await _context.Users.FirstOrDefaultAsync(u => u.Email == registerUser.Email);
             if (existing is not null && existing.IsActive)
+            {
+                if (string.IsNullOrEmpty(existing.PasswordHash))
+                {
+                    existing.PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerUser.Password);
+                    existing.Name = registerUser.FullName;
+                    await _context.SaveChangesAsync();
+                    
+                    return new ResponseUserDto
+                    {
+                        Id = existing.Id,
+                        FullName = existing.Name,
+                        Email = existing.Email
+                    };
+                }
                 throw new ArgumentException("Email is already registered.");
+            }
 
             if (existing is not null && !existing.IsActive)
                 throw new EmailUnverifiedException("Email is registered but not yet verified.");
@@ -92,6 +108,110 @@ public class AuthService : IAuthService
         };
 
         return loginOutputDto;
+    }
+
+    public async Task<LoginOutputDto> OAuthLoginAsync(ExternalUser externalUser)
+    {
+        using var transaction = await _context.Database.BeginTransactionAsync();
+        try
+        {
+            var user = await FindOrCreateOAuthUserAsync(externalUser);
+
+            await _context.SaveChangesAsync();
+            await transaction.CommitAsync();
+
+            return GenerateLoginResponse(user);
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
+    }
+
+    private async Task<User> FindOrCreateOAuthUserAsync(ExternalUser externalUser)
+    {
+        var existingOAuth = await FindExistingOAuthAccountAsync(externalUser.Provider, externalUser.ProviderUserId);
+
+        if (existingOAuth != null)
+        {
+            UpdateOAuthAccountInfo(existingOAuth, externalUser);
+            return existingOAuth.User;
+        }
+
+        var user = await FindOrCreateUserByEmailAsync(externalUser);
+
+        CreateOAuthBinding(user, externalUser);
+
+        return user;
+    }
+
+    private async Task<UserOAuth?> FindExistingOAuthAccountAsync(string provider, string providerUserId)
+    {
+        return await _context.UserOAuths
+            .Include(uo => uo.User)
+            .FirstOrDefaultAsync(uo =>
+                uo.Provider == provider &&
+                uo.ProviderUserId == providerUserId);
+    }
+
+    private void UpdateOAuthAccountInfo(UserOAuth existingOAuth, ExternalUser externalUser)
+    {
+        existingOAuth.Email = externalUser.Email;
+        existingOAuth.Name = externalUser.Name;
+        existingOAuth.AvatarUrl = externalUser.AvatarUrl;
+        existingOAuth.UpdatedAt = DateTime.UtcNow;
+    }
+
+    private async Task<User> FindOrCreateUserByEmailAsync(ExternalUser externalUser)
+    {
+        if (!string.IsNullOrEmpty(externalUser.Email))
+        {
+            var existingUser = await _userService.FindUserByEmailAsync(externalUser.Email);
+            if (existingUser != null)
+            {
+                return existingUser;
+            }
+        }
+
+        var newUser = new User
+        {
+            Name = externalUser.Name ?? "OAuth User",
+            Email = externalUser.Email ?? "",
+            PasswordHash = "",
+            CreatedAt = DateTime.UtcNow,
+            IsActive = true
+        };
+
+        return await _userService.AddUserAsync(newUser);
+    }
+
+    private void CreateOAuthBinding(User user, ExternalUser externalUser)
+    {
+        var userOAuth = new UserOAuth
+        {
+            UserId = user.Id,
+            Provider = externalUser.Provider,
+            ProviderUserId = externalUser.ProviderUserId,
+            Email = externalUser.Email,
+            Name = externalUser.Name,
+            AvatarUrl = externalUser.AvatarUrl,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        };
+
+        _context.UserOAuths.Add(userOAuth);
+    }
+
+    private LoginOutputDto GenerateLoginResponse(User user)
+    {
+        string accessToken = _createTokenService.CreateToken(user);
+
+        return new LoginOutputDto
+        {
+            UserName = user.Name,
+            AccessToken = accessToken
+        };
     }
 
     public async Task<bool> ActivateUserAsync(VerifyCodeDto verifyCodeDto)

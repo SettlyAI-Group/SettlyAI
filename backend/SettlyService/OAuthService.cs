@@ -21,14 +21,14 @@ public class OAuthService : IOAuthService
     public async Task<OAuthTokenResult> ExchangeTokenAsync(string provider, string code, CancellationToken ct = default)
     {
         var providerKey = provider.ToLowerInvariant();
-        
+
         if (!_opt.Providers.TryGetValue(providerKey, out var providerConfig))
         {
             throw new ArgumentException($"Unsupported provider: {provider}");
         }
 
         var client = _http.CreateClient();
-        
+
         var tokenResponse = await client.RequestAuthorizationCodeTokenAsync(
             new AuthorizationCodeTokenRequest
             {
@@ -56,14 +56,14 @@ public class OAuthService : IOAuthService
     public async Task<ExternalUser> GetUserAsync(string provider, string accessToken, string? idToken = null, CancellationToken ct = default)
     {
         var providerKey = provider.ToLowerInvariant();
-        
+
         if (!_opt.Providers.TryGetValue(providerKey, out var providerConfig))
         {
             throw new ArgumentException($"Unsupported provider: {provider}");
         }
 
         var client = _http.CreateClient();
-        
+
         var userInfoResponse = await client.GetUserInfoAsync(new UserInfoRequest
         {
             Address = providerConfig.UserInfoEndpoint,
@@ -85,5 +85,6 @@ public class OAuthService : IOAuthService
 
         return externalUser;
     }
+
 
 }
