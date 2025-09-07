@@ -29,4 +29,5 @@ public class User
     public ICollection<ChatLog> ChatLogs { get; set; } = new List<ChatLog>();
     public ICollection<SuperProjectionInput> SuperProjectionInputs { get; set; } = new List<SuperProjectionInput>();
     public ICollection<UserFundSelection> UserFundSelections { get; set; } = new List<UserFundSelection>();
+    public ICollection<UserOAuth> OAuthAccounts { get; set; } = new List<UserOAuth>();
 }

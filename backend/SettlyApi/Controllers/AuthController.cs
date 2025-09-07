@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using SettlyModels;
 using SettlyModels.Dtos;
+using SettlyModels.OAutOptions;
 using SettlyService;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -15,11 +16,13 @@ public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
     private readonly SettlyDbContext _context;
+    private readonly IOAuthService _oAuthService;
 
-    public AuthController(IAuthService authService, SettlyDbContext context)
+    public AuthController(IAuthService authService, SettlyDbContext context, IOAuthService oAuthService)
     {
         _authService = authService;
         _context = context;
+        _oAuthService = oAuthService;
     }
 
     [HttpPost("register")]
@@ -74,5 +77,21 @@ public class AuthController : ControllerBase
         }
 
         return Ok(result);
+    }
+    [HttpPost("oauth/login")]
+    [SwaggerOperation(Summary = "OAuth login")]
+    [SwaggerResponse(200, "OAuth login successful", typeof(LoginOutputDto))]
+    public async Task<ActionResult<LoginOutputDto>> OAuthLogin([FromBody] OAuthLoginRequestDto authLoginRequest)
+    {
+        var tokenResult = await _oAuthService.ExchangeTokenAsync(authLoginRequest.Provider, authLoginRequest.Code);
+        
+        var externalUser = await _oAuthService.GetUserAsync(
+            authLoginRequest.Provider, 
+            tokenResult.AccessToken, 
+            tokenResult.IdToken);
+        
+        var loginResult = await _authService.OAuthLoginAsync(externalUser);
+        
+        return Ok(loginResult);
     }
 }
