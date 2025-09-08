@@ -14,7 +14,7 @@ const SaveButton = ({ targetType, targetId }: Props) => {
   const isDisabled = isLoading || isToggling;
 
   return (
-    <Tooltip title={message ? message : isSaved ? 'Unsave' : 'Saved'}>
+    <Tooltip title={message ? message : isSaved ? 'Unsave' : 'Save'}>
       <span>
         <GlobalButton
           width="180"

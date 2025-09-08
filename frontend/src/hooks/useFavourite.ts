@@ -34,7 +34,7 @@ export const useFavourite = (targetType: string, targetId: string | number): Use
       navigate('/login');
       throw new Error('User not authenticated. Token not found.');
     }
-    const response = await fetch(`https://localhost:5001/api/Favourite/${endpoint}`, {
+    const response = await fetch(`http://localhost:5100/api/Favourite/${endpoint}`, {
       method: method,
       headers: {
         'Content-Type': 'application/json',
@@ -79,7 +79,8 @@ export const useFavourite = (targetType: string, targetId: string | number): Use
     if (!isToggling) {
       setIsToggling(true);
       try {
-        const newStatus = await getTokenAndFetch<ToggleResponse>('toggle', 'POST', { targetType, targetId });
+        const endpoint = `toggle?userId=2`;
+        const newStatus = await getTokenAndFetch<ToggleResponse>(endpoint, 'POST', { targetType, targetId });
         setIsSaved(newStatus.isSaved);
       } catch (error) {
         console.error('Error toggling favourite status:', error);
@@ -88,16 +89,36 @@ export const useFavourite = (targetType: string, targetId: string | number): Use
       }
     }
   };
+  // const ensureToggle = async () => {
+  //   if (isToggling) return;
+  //   setIsToggling(true);
+  //   try {
+  //     const id = typeof targetId === 'string' ? Number(targetId) : targetId;
+
+  //     const endpoint = `toggle?userId=2`;
+
+  //     const newStatus = await getTokenAndFetch<ToggleResponse>(
+  //       endpoint,
+  //       'POST',
+  //       { targetType, targetId: id, notes: 'ui-test', priority: 1 }
+  //     );
+  //     setIsSaved(newStatus.isSaved);
+  //   } catch (e) {
+  //     console.error('Error toggling favourite status:', e);
+  //     setMessage('Toggle failed. Please try again.');
+  //   } finally {
+  //     setIsToggling(false);
+  //   }
+  // };
   const handlebuttonClick = (): void => {
     setMessage(null);
     if (!isAuthed) {
-      setMessage('Please log in to manage favourites.');
-      navigate('/login');
+      setMessage('Please log in.');
+      setTimeout(() => navigate('/login'), 1000);
       return;
     }
     ensureToggle();
   };
-
   return {
     isAuthed,
     isSaved,
