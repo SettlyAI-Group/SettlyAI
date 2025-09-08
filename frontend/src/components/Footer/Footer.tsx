@@ -6,6 +6,7 @@ import InstagramIcon from '@mui/icons-material/Instagram';
 import HomeIcon from '@mui/icons-material/Home';
 import theme from '@/styles/theme';
 
+// retain for future use
 interface FooterItems {
   items?: string;
 }
@@ -117,9 +118,9 @@ const CopyrightText = styled(Typography)(({ theme }) => ({
 }));
 
 // Main Footer component
-const Footer = ({ items }: FooterItems) => {
+const Footer = () => {
   return (
-    <FooterSection className={items}>
+    <FooterSection className="page-footer">
       <FooterContent>
         <TopFooterSection>
           <BrandSection>
