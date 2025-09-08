@@ -221,7 +221,17 @@ public class DataSeeder
             .RuleFor(p => p.Summary, (f, p) => $"Discover this stunning {p.Bedrooms}-bedroom {p.PropertyType.ToLower()} located in a vibrant suburb. " +
                 $"Featuring {p.Features}, this property offers comfort and convenience for modern living. " +
                 $"Built in {p.YearBuilt}, it boasts {p.Bathrooms} bathrooms and {p.CarSpaces} car spaces.")
-            .RuleFor(p => p.ImageUrl, f => f.PickRandom(iamges));
+            .RuleFor(p => p.ImageUrl, f => f.PickRandom(iamges))
+            .RuleFor(p => p.InspectionTimeOptions, f =>
+            {
+                var count = f.Random.Int(0, 5);
+                var options = new List<DateTime>();
+                for (int i = 0; i < count; i++)
+                {
+                    options.Add(f.Date.Between(DateTime.UtcNow.AddDays(1), DateTime.UtcNow.AddDays(30)));
+                }
+                return options;
+            });
         var properties = propertyFaker.Generate(500);
         await _context.Properties.AddRangeAsync(properties);
     }
