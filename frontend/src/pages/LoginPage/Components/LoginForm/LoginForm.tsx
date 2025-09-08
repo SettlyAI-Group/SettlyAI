@@ -5,7 +5,7 @@ import FormInput from "./component/FormInput";
 import FormCheckbox from "./component/FormCheckbox";
 import { styled } from '@mui/material/styles';
 import { SocialLoginButtons } from '../../../RegistrationPage/Components/RegistrationForm/component/SocialLoginButtons';
-import { Link, useNavigate, useSearchParams  } from 'react-router-dom';
+import { Link, useLocation, useNavigate  } from 'react-router-dom';
 import { loginUser } from '@/api/authApi';
 import { setAuth } from '@/redux/authSlice';
 import type { AppDispatch } from '@/redux/store';
@@ -63,8 +63,7 @@ const LoginForm = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   // login router setting
-  const [params] = useSearchParams();
-  const returnTo = params.get("returnTo") || "/"; // default to home
+  const location = useLocation();
 
   // define error type:
   const badRequest = 400;
@@ -101,7 +100,12 @@ const LoginForm = () => {
       // Login router:
       // 1. registration --> login --> homepage
       // 2. one page --> login --> back to that page
-      navigate(decodeURIComponent(returnTo), { replace: true });
+      if (location.state?.fromRegistration) {
+        navigate('/', {replace : true});
+      } else {
+        const from = location.state?.from?.pathname || '/';
+        navigate(from, {replace: true});
+      }
     } catch (err:any) {
       if (err.status === badRequest) setApiError("Incorrect email or password, please try again.");
       else if (err.status === tooManyRequest) setApiError("Too many login attempts. Please try again in 15 minutes."); 

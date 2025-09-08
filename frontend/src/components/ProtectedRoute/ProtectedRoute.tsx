@@ -8,8 +8,10 @@ const ProtectedRoute = () => {
   
   return (!accessToken || isTokenExpired(exp))? 
   // store the attempted path in `returnTo` query param
-  (<Navigate to={`/login?returnTo=${encodeURIComponent(location.pathname + location.search)}`}
-    replace />) : (
+  (<Navigate 
+    to="/login" 
+    state={{ from: location }} replace />
+  ) : (
     <Outlet/>
   )
 }
