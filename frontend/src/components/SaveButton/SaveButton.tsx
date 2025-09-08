@@ -10,9 +10,7 @@ type Props = {
 };
 const SaveButton = ({ targetType, targetId }: Props) => {
   const { isLoading, isSaved, isToggling, message, handlebuttonClick } = useFavourite(targetType, targetId);
-
   const isDisabled = isLoading || isToggling;
-
   return (
     <Tooltip title={message ? message : isSaved ? 'Unsave' : 'Save'}>
       <span>
