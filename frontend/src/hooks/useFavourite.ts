@@ -89,27 +89,6 @@ export const useFavourite = (targetType: string, targetId: string | number): Use
       }
     }
   };
-  // const ensureToggle = async () => {
-  //   if (isToggling) return;
-  //   setIsToggling(true);
-  //   try {
-  //     const id = typeof targetId === 'string' ? Number(targetId) : targetId;
-
-  //     const endpoint = `toggle?userId=2`;
-
-  //     const newStatus = await getTokenAndFetch<ToggleResponse>(
-  //       endpoint,
-  //       'POST',
-  //       { targetType, targetId: id, notes: 'ui-test', priority: 1 }
-  //     );
-  //     setIsSaved(newStatus.isSaved);
-  //   } catch (e) {
-  //     console.error('Error toggling favourite status:', e);
-  //     setMessage('Toggle failed. Please try again.');
-  //   } finally {
-  //     setIsToggling(false);
-  //   }
-  // };
   const handlebuttonClick = (): void => {
     setMessage(null);
     if (!isAuthed) {
