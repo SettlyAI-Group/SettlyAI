@@ -1,10 +1,8 @@
-
-import { Box, Container, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import HomeIcon from '@mui/icons-material/Home';
-import theme from '@/styles/theme';
 
 // retain for future use
 interface FooterItems {
@@ -120,7 +118,7 @@ const CopyrightText = styled(Typography)(({ theme }) => ({
 // Main Footer component
 const Footer = () => {
   return (
-    <FooterSection className="page-footer">
+    <FooterSection>
       <FooterContent>
         <TopFooterSection>
           <BrandSection>
@@ -129,8 +127,7 @@ const Footer = () => {
               <BrandTitle variant="h6">Settly AI</BrandTitle>
             </BrandHeader>
             <BrandDescription variant="body2">
-              Your intelligent companion for finding the perfect suburb to call
-              home.
+              Your intelligent companion for finding the perfect suburb to call home.
             </BrandDescription>
           </BrandSection>
 
@@ -164,9 +161,7 @@ const Footer = () => {
         </TopFooterSection>
 
         <BottomFooterSection>
-          <CopyrightText variant="body2">
-            © 2024 Settly AI. All rights reserved.
-          </CopyrightText>
+          <CopyrightText variant="body2">© 2024 Settly AI. All rights reserved.</CopyrightText>
         </BottomFooterSection>
       </FooterContent>
     </FooterSection>
