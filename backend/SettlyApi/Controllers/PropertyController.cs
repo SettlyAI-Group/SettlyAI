@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using SettlyModels;
 using SettlyModels.Dtos;
 using Swashbuckle.AspNetCore.Annotations;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace SettlyApi.Controllers
 
@@ -52,6 +54,30 @@ namespace SettlyApi.Controllers
             var result = await _propertyService.GetInspectionTimeOptionsAsync(id);
             return Ok(result);
         }
-        
+
+        [Authorize]
+        [HttpPost("{id}/inspection-plans")]
+        public async Task<ActionResult<InspectionPlanDto>> CreateInspectionPlan(int id, [FromBody] CreateInspectionPlanRequest request)
+        {
+            // Extract user ID from JWT token
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+            {
+                return Unauthorized("User ID not found in token.");
+            }
+
+            int userId = int.Parse(userIdClaim.Value);
+
+            var result = await _propertyService.CreateInspectionPlanAsync(id, userId, request.SelectedTime, request.Note);
+            return Ok(result);
+        }
+
     }
+
+}
+
+public class CreateInspectionPlanRequest
+{
+    public DateTime SelectedTime { get; set; }
+    public string Note { get; set; } = string.Empty;
 }

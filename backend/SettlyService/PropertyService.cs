@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using SettlyModels;
 using SettlyModels.Dtos;
+using SettlyModels.Entities;
 
 
 namespace SettlyService
@@ -112,6 +113,38 @@ namespace SettlyService
 
             return property.InspectionTimeOptions ?? new List<DateTime>();
         }        
+
+        public async Task<InspectionPlanDto> CreateInspectionPlanAsync(int propertyId, int userId, DateTime selectedTime, string note)
+        {
+            var property = await _context.Properties.FirstOrDefaultAsync(p => p.Id == propertyId);
+            if (property == null)
+                throw new Exception("Property not found");
+
+            if (property.InspectionTimeOptions == null || !property.InspectionTimeOptions.Contains(selectedTime))
+                throw new Exception("Selected time is not available");
+
+            var plan = new InspectionPlan
+            {
+                PropertyId = propertyId,
+                UserId = userId,
+                ScheduledTime = selectedTime,
+                Note = note,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            _context.InspectionPlans.Add(plan);
+            await _context.SaveChangesAsync();
+
+            return new InspectionPlanDto
+            {
+                Id = plan.Id,
+                PropertyId = plan.PropertyId,
+                UserId = plan.UserId,
+                ScheduledTime = plan.ScheduledTime,
+                Note = plan.Note,
+                CreatedAt = plan.CreatedAt
+            };
+        }
 
     }
 
