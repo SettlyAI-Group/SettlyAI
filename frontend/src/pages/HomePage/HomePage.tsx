@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { Box, styled } from '@mui/material';
 import HeroSection from './components/HeroSection';
-import ToolsSection from './components/ToolsSection/ToolsSection';
+import ToolsSection from '../../components/ToolsSection';
 
 const Container = styled(Box)(() => ({
   display: 'flex',
