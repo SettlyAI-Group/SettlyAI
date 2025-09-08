@@ -52,6 +52,15 @@ const CardDescription = styled(Typography)(({ theme }) => ({
   flex: 1,
 }));
 
+const StyledGlobalButton = styled(GlobalButton)(({ theme }) => ({
+  alignSelf: 'flex-end',
+  minWidth: theme.spacing(56),
+  minHeight: theme.spacing(8),
+  backgroundColor: theme.palette.secondary.light,
+  color: theme.palette.secondary.dark,
+  borderRadius: theme.shape.borderRadius * 3,
+}));
+
 const featureCards = [
   {
     title: 'SettlyHome',
@@ -105,23 +114,15 @@ const ToolCard = ({ title, description, icon, ctaText, onClick }: ToolCardProps)
       <CardTitle variant="h5">{title}</CardTitle>
       <CardDescription variant="body2">{description}</CardDescription>
 
-      <GlobalButton
+      <StyledGlobalButton
         onClick={(e) => {
           e.stopPropagation();
           onClick();
         }}
         variant="contained"
-        style={{
-          alignSelf: 'flex-end',
-          minWidth: theme.spacing(56),
-          minHeight: theme.spacing(8),
-          backgroundColor: theme.palette.secondary.light,
-          color: theme.palette.secondary.dark,
-          borderRadius: theme.shape.borderRadius * 3
-        }}
       >
         {ctaText}
-      </GlobalButton>
+      </StyledGlobalButton>
     </StyledCard>
   );
 };
