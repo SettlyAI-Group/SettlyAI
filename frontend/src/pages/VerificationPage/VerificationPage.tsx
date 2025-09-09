@@ -44,7 +44,7 @@ export const VerificationPage = () => {
     mutationFn: verifyEmail,
     onSuccess: () => {
       // navigate('/login');
-      navigate('/login', { replace: true, state: { fromRegistration: true } });
+      navigate('/login');
     },
   });
 

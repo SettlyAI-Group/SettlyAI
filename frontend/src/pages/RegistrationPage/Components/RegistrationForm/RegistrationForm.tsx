@@ -100,7 +100,7 @@ export const RegistrationForm = () => {
 
     onSuccess: user => {
       reset();
-      navigate(`/verify-email/${user.id}`, { replace: true, state: { fromRegistration: true } });
+      navigate(`/verify-email/${user.id}`);
     },
 
     onError: (error: AxiosError) => {

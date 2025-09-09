@@ -5,7 +5,7 @@ import FormInput from "./component/FormInput";
 import FormCheckbox from "./component/FormCheckbox";
 import { styled } from '@mui/material/styles';
 import { SocialLoginButtons } from '../../../RegistrationPage/Components/RegistrationForm/component/SocialLoginButtons';
-import { Link, useLocation, useNavigate  } from 'react-router-dom';
+import { Link, useSearchParams, useNavigate  } from 'react-router-dom';
 import { loginUser } from '@/api/authApi';
 import { setAuth } from '@/redux/authSlice';
 import type { AppDispatch } from '@/redux/store';
@@ -60,10 +60,8 @@ const LoginForm = () => {
   const [apiError, setApiError] = useState<string>('');
   const [validationErrors, setValidationErrors] = useState<{emailError?: string; passwordError?: string}>({});
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const dispatch = useDispatch<AppDispatch>();
-
-  // login router setting
-  const location = useLocation();
 
   // define error type:
   const badRequest = 400;
@@ -100,11 +98,11 @@ const LoginForm = () => {
       // Login router:
       // 1. registration --> login --> homepage
       // 2. one page --> login --> back to that page
-      if (location.state?.fromRegistration) {
-        navigate('/', {replace : true});
+      const redirectTo = searchParams.get("redirect");
+      if (redirectTo) {
+        navigate(redirectTo);
       } else {
-        const from = location.state?.from?.pathname || '/';
-        navigate(from, {replace: true});
+        navigate('/');
       }
     } catch (err:any) {
       if (err.status === badRequest) setApiError("Incorrect email or password, please try again.");
