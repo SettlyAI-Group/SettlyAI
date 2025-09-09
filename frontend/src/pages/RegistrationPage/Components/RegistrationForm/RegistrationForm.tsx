@@ -71,12 +71,13 @@ export const RegistrationForm = () => {
   const {
     handleSubmit,
     control,
+    trigger,
     setError,
     reset,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(userFormSchema),
-    mode: 'onSubmit',
+    mode: 'onBlur',
     reValidateMode: 'onChange',
     defaultValues: {
       fullName: '',
@@ -140,15 +141,16 @@ export const RegistrationForm = () => {
           {errors.root.message}
         </Typography>
       )}
-      <FormInput label="Full Name" name="fullName" control={control} />
-      <FormInput label="Email" name="email" control={control} />
+      <FormInput label="Full Name" name="fullName" control={control} trigger={trigger} />
+      <FormInput label="Email" name="email" control={control} trigger={trigger} />
       <FormInput
         label="Password"
         name="password"
         control={control}
         type="password"
+        trigger={trigger}
+        hideError={true}
         onFocus={() => setShowPasswordStrength(true)}
-        onBlur={() => setShowPasswordStrength(false)}
         helperText={showPasswordStrength ? <PasswordStrength value={passwordValue} /> : null}
       />
       <FormInput label="Confirm Password" name="confirmPassword" control={control} type="password" />

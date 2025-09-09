@@ -1451,12 +1451,15 @@ packages:
     resolution:
       { integrity: sha512-vAfasCOe6AIK70iP5UD11Ac4siNUNJ9i/9PZ3NKx07sG6sUxeag1LWdNrMWeKKYBLlzuK+Gn65Yd5nyL6ds+nw== }
 
+<<<<<<< HEAD
+=======
   '@vitest/ui@3.2.4':
     resolution:
       { integrity: sha512-hGISOaP18plkzbWEcP/QvtRW1xDXF2+96HbEX6byqQhAUbiS5oH6/9JwW+QsQCIYON2bI6QZBF+2PvOmrRZ9wA== }
     peerDependencies:
       vitest: 3.2.4
 
+>>>>>>> ff56663bf17b377669f2ac2eb298d8cc18f9e092
   '@vitest/utils@3.2.4':
     resolution:
       { integrity: sha512-fB2V0JFrQSMsCo9HiSq3Ezpdv4iYaXRG1Sx8edX3MwxfyNn83mKiGzOcH+Fkxt4MHxr3y42fQi1oeAInqgX2QA== }
@@ -2082,6 +2085,7 @@ packages:
         optional: true
 
   fflate@0.8.2:
+
     resolution:
       { integrity: sha512-cPJU47OaAoCbg0pBvzsgpTPhmhqI5eJjh/JIu8tPj5q+T7iLvW/JAYUqmE7KOB4R1ZyEhzBaIQpQpardBF5z8A== }
 
@@ -2609,9 +2613,14 @@ packages:
     engines: { node: '>=10' }
 
   locate-path@7.2.0:
+<<<<<<< HEAD
+    resolution: {integrity: sha512-gvVijfZvn7R+2qyPX8mAuKcFGDf6Nc61GdvGafQsHL0sBIxfKzA+usWn4GFC/bk+QdwPUD4kWFJLhElipq+0VA==}
+    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
+=======
     resolution:
       { integrity: sha512-gvVijfZvn7R+2qyPX8mAuKcFGDf6Nc61GdvGafQsHL0sBIxfKzA+usWn4GFC/bk+QdwPUD4kWFJLhElipq+0VA== }
     engines: { node: ^12.20.0 || ^14.13.1 || >=16.0.0 }
+>>>>>>> ff56663bf17b377669f2ac2eb298d8cc18f9e092
 
   lodash.isplainobject@4.0.6:
     resolution:
