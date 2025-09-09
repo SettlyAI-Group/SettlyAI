@@ -1,6 +1,5 @@
-import { Box, styled } from '@mui/material';
 import { Home, AttachMoney, TrendingUp } from '@mui/icons-material';
-import FeatureCard from './components/FeatureCard';
+import FeatureCard, { FlexContainer } from './components/FeatureCard/FeatureCardGrid';
 
 const featureCards = [
   {
@@ -27,13 +26,6 @@ const featureCards = [
     onClick: () => console.log('Navigate to super optimization'),
   },
 ];
-
-const FlexContainer = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  gap: theme.spacing(4),
-  justifyContent: 'center',
-  flexWrap: 'wrap',
-}));
 
 const FeatureCardsSection = () => (
   <FlexContainer>
