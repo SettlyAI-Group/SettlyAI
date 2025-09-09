@@ -3,6 +3,13 @@ import { Box, styled, Typography } from '@mui/material';
 import GlobalButton from '@/components/GlobalButton/GlobalButton';
 import { useTheme } from '@mui/material/styles';
 
+const FlexContainer = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  gap: theme.spacing(4),
+  justifyContent: 'center',
+  flexWrap: 'wrap',
+}));
+
 const StyledCard = styled(Box)(({ theme }) => ({
   background: theme.palette.background.paper,
   boxShadow: theme.shadows[1],
@@ -93,3 +100,4 @@ const FeatureCard = ({ title, description, icon, ctaText, onClick }: FeatureCard
 };
 
 export default FeatureCard;
+export { FlexContainer };

@@ -1,1 +1,1 @@
-export { default as FeatureCard } from './FeatureCard';
+export { default as FeatureCard, FlexContainer } from './FeatureCard/FeatureCardGrid';
