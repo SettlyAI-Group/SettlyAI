@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -8,27 +9,48 @@ namespace SettlyFinance.Utils
 {
     public static class MoneyUtils
     {
-        // 元 → 分（整数），保证精度，避免小数误差
+        // Yuan → Cents (integer), ensure precision and avoid floating point errors.
         public static long ToCents(decimal amount) =>
             (long)Math.Round(amount * 100m, 0, MidpointRounding.AwayFromZero);
-        //分 → 元（带小数），给前端/API 展示
+        // Cents → Yuan (decimal), used for API/frontend display.
         public static decimal FromCents(long cents) =>
             cents / 100m;
-        //把金额四舍五入到 2 位小数（分）
+        //Round to 2 decimal places (cents) using AwayFromZero rule.
         public static decimal RoundToCent(decimal amount) =>
             Math.Round(amount, 2, MidpointRounding.AwayFromZero);
-        //尾差修正：最后一期本金必须直接等于剩余本金，确保贷款归零
+        //Tail adjustment: in the final installment, principal part must equal remaining balance to ensure zero outstanding.
+        /// <summary>
+        /// Corrects a suggested principal payment amount to ensure it adheres to business logic.
+        /// </summary>
+        /// <param name="remainingPrincipalCents">The remaining principal balance of the loan, in cents.</param>
+        /// <param name="suggestedPrincipalPart">The suggested principal amount to be paid in this installment, in cents.</param>
+        /// <param name="isLastInstallment">A flag indicating whether this is the final loan installment.</param>
+        /// <returns>Returns the corrected and finalized principal amount to be paid.</returns>
         public static long FixPrincipalPart(long remainingPrincipalCents, long suggestedPrincipalPart, bool isLastInstallment)
         {
-            if(!isLastInstallment)
-                return Math.Min(suggestedPrincipalPart, remainingPrincipalCents);
-            return remainingPrincipalCents;
+            // If the remaining principal is negative, the data is invalid.
+            if (remainingPrincipalCents < 0)
+                throw new ArgumentOutOfRangeException(nameof(remainingPrincipalCents),"Remaining principal must be non-negative.");
+            // If it's the last installment, the entire remaining principal must be paid.
+            if (isLastInstallment ) return remainingPrincipalCents;
+            //For non-final installments, never allow negative or over-application.
+            var effectivePrincipalPart = Math.Clamp(suggestedPrincipalPart, 0L, remainingPrincipalCents);
+            return effectivePrincipalPart;
         }
-        //更新剩余本金，保证不为负数
+        /// <summary>
+        /// Reduces the remaining principal balance of a loan by a specified payment amount.
+        /// </summary>
+        /// <param name="remainingPrincipalCents">The current remaining principal balance of the loan, in cents.</param>
+        /// <param name="principalCents">The principal payment amount to be deducted, in cents.</param>
+        /// <returns>Returns the new remaining principal balance after the payment has been applied.</returns>
         public static long ReduceRemainingPrincipal(long remainingPrincipalCents, long principalCents)
         {
-            var next = remainingPrincipalCents - principalCents;
-            return next < 0 ? 0 : next;
+            // If the remaining principal is negative, the data is invalid.
+            if (remainingPrincipalCents < 0) throw new ArgumentOutOfRangeException(nameof(remainingPrincipalCents), "Remaining principal must be non-negative.");
+            // Ensure the payment amount is valid by clamping it between 0 and the current remaining principal.
+            var principalPaidCents = Math.Clamp(principalCents, 0L, remainingPrincipalCents);
+            // Subtract the actual payment from the remaining principal to get the new balance.
+            return remainingPrincipalCents - principalPaidCents;
         }
     }
 }
