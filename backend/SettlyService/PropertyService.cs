@@ -102,6 +102,17 @@ namespace SettlyService
                 .ToListAsync();
         }
 
+        public async Task<List<DateTime>> GetInspectionTimeOptionsAsync(int propertyId)
+        {
+            var property = await _context.Properties.AsNoTracking()
+                .FirstOrDefaultAsync(p => p.Id == propertyId);
+
+            if (property == null)
+                throw new Exception("Property not found");
+
+            return property.InspectionTimeOptions ?? new List<DateTime>();
+        }        
+
     }
 
 }
