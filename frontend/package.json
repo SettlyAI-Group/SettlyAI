@@ -15,12 +15,14 @@
     "lint:check": "eslint .",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,css,scss,json,html,md,yaml,yml}\"",
     "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,css,scss,json,html,md,yaml,yml}\"",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "test:ui": "vitest --ui",
-    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest --project unit",
+    "test:ui": "vitest --ui --project unit",
+    "test:coverage": "vitest run --project unit --coverage",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "test": "vitest --project unit",
+    "test:stories": "vitest --project storybook",
+    "test:all": "vitest"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -50,7 +52,7 @@
     "@storybook/react-vite": "^9.1.0",
     "@tanstack/eslint-plugin-query": "^5.81.2",
     "@testing-library/dom": "^10.4.0",
-    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/jest-dom": "^6.7.0",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
     "@types/node": "^24.1.0",

@@ -13,5 +13,12 @@
         "Issuer": "SettlyAI",
         "Audience": "SettlyAI",
         "ExpireSeconds": 7200
+    },
+    "Email": {
+        "SmtpServer": "smtp.gmail.com",
+        "Port": 587,
+        "Username": "your_email@gmail.com",
+        "Password": "your_app_password",
+        "SecureSocketOption": "StartTls"
     }
 }

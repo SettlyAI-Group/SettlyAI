@@ -13,3 +13,10 @@ export interface ILivability {
   secondarySchoolRating: number;
   hospitalDensity: number;
 }
+
+export interface IIncomeEmployment {
+    medianIncome: number;
+    employmentRate: number;
+    whiteCollarRatio: number;
+    jobGrowthRate: number;
+}

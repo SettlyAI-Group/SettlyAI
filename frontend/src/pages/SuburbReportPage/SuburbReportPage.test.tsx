@@ -21,9 +21,7 @@ vi.mock('swiper/react', () => ({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Swiper: ({ children }: any) => <div data-testid="swiper">{children}</div>,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  SwiperSlide: ({ children }: any) => (
-    <div data-testid="swiper-slide">{children}</div>
-  ),
+  SwiperSlide: ({ children }: any) => <div data-testid="swiper-slide">{children}</div>,
 }));
 
 vi.mock('swiper/modules', () => ({ Navigation: 'Navigation' }));

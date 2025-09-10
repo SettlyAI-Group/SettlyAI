@@ -1,15 +1,19 @@
 import ActionButtonWrapper from '@/pages/SuburbReportPage/components/ActionButtonGroup/ActionButtonWrapper';
-import { Box, Button, styled, Typography } from '@mui/material';
+import { Box, Button, styled, Typography  } from '@mui/material';
 import MetricCardsSection from './components/MetricCardsSection';
 import { useQueries } from '@tanstack/react-query';
 import { getSuburbBasicInfo, getSuburbLivability } from '@/api/suburbApi';
 import { Navigate, useParams } from 'react-router-dom';
-import { getDemandAndDev } from '@/api/suburbApi';
-import {
-  mapDevCardData,
-  mapLivability,
-} from './components/MetricCardsSection/utils/dataMapper';
+import { getDemandAndDev, getHousingMarket } from '@/api/suburbApi';
+import { mapDevCardData, mapLivability } from './components/MetricCardsSection/utils/dataMapper';
 import Banner from './components/Banner';
+import IncomeEmploymentCardsSection from './components/IncomeEmploymentCardsSection';
+import { getIncomeEmployment } from '@/api/suburbApi';
+import { mapIncomeEmployment } from './components/IncomeEmploymentCardsSection/utils/incomeEmploymentDataMapper';
+import { mapPropertyCards } from '@/pages/SuburbReportPage/components/PropertyMarketInsightsSection';
+import PropertyMarketInsightsSection from '@/pages/SuburbReportPage/components/PropertyMarketInsightsSection';
+import type { IHousingMarket } from '@/interfaces/housingmarket';
+
 
 const PageContainer = styled(Box)(({ theme }) => ({
   maxWidth: '1440px',
@@ -19,7 +23,6 @@ const PageContainer = styled(Box)(({ theme }) => ({
   margin: '0 auto',
   padding: theme.spacing(8),
 }));
-
 const ContentContainer = styled(Box)(({ theme }) => ({
   maxWidth: '936px',
   display: 'flex',
@@ -29,7 +32,6 @@ const ContentContainer = styled(Box)(({ theme }) => ({
   width: '100%',
   paddingTop: theme.spacing(8),
 }));
-
 const TITLES = {
   incomeEmployment: 'Income & Employment',
   propertyMarketInsights: 'Property Market Insights',
@@ -37,16 +39,13 @@ const TITLES = {
   lifeStyle: 'LifeStyle & Accessibility',
   safetyScore: 'Safety & Score',
 };
-
 const SuburbReportPage = () => {
   const { suburbId } = useParams<{ suburbId: string }>();
-
   if (!suburbId || Number.isNaN(suburbId)) {
     return <Navigate to="/" replace />;
   }
-
   const results = useQueries({
-    queries: [
+    queries: [  
       {
         queryKey: ['SuburbBasicInfo', suburbId],
         queryFn: () => getSuburbBasicInfo(suburbId),
@@ -58,6 +57,14 @@ const SuburbReportPage = () => {
       {
         queryKey: ['livability', suburbId],
         queryFn: () => getSuburbLivability(suburbId),
+      },
+      {
+        queryKey: ['housingMarket', suburbId],
+        queryFn: () => getHousingMarket(Number(suburbId)),
+      },
+      {
+        queryKey: ['incomeEmployment', suburbId],
+        queryFn: () => getIncomeEmployment(parseInt(suburbId)),
       },
     ],
   });
@@ -83,14 +90,18 @@ const SuburbReportPage = () => {
     );
   }
 
+  const incomeEmployment = mapIncomeEmployment(results[4].data);
+
   const formattedData = {
     suburbBasicInfo: results[0].data ? results[0].data : undefined,
     demand: results[1].data ? mapDevCardData(results[1].data) : undefined,
     livability: results[2].data ? mapLivability(results[2].data) : undefined,
+    incomeEmployment,
   };
-
+  const propertyMetrics = results[3]?.data ? mapPropertyCards(results[3].data as IHousingMarket) : [];
   return (
     <PageContainer>
+
       <Banner
         suburb={formattedData.suburbBasicInfo?.name}
         postcode={formattedData.suburbBasicInfo?.postcode}
@@ -110,15 +121,10 @@ const SuburbReportPage = () => {
           </div>
         ) : (
           <>
-            <MetricCardsSection
-              title={TITLES.demandDevelopment}
-              data={formattedData.demand}
-            />
-
-            <MetricCardsSection
-              title={TITLES.lifeStyle}
-              data={formattedData.livability}
-            />
+            <IncomeEmploymentCardsSection title={TITLES.incomeEmployment} data={formattedData.incomeEmployment} />
+            <PropertyMarketInsightsSection title={TITLES.propertyMarketInsights} items={propertyMetrics} />
+            <MetricCardsSection title={TITLES.demandDevelopment} data={formattedData.demand} />
+            <MetricCardsSection title={TITLES.lifeStyle} data={formattedData.livability} />
 
             {/* todo:  replace with real action buttons , feel free to modify*/}
             <ActionButtonWrapper>
@@ -128,8 +134,8 @@ const SuburbReportPage = () => {
           </>
         )}
       </ContentContainer>
+
     </PageContainer>
   );
 };
-
 export default SuburbReportPage;

@@ -34,14 +34,8 @@ export const RegistrationIntro = () => {
           Settly AI
         </Typography>
       </Typography>
-      <Typography
-        color="textPrimary"
-        align="justify"
-        variant="subtitle1"
-        textAlign="center"
-      >
-        Create your free account to unlock suburb insights, personalised
-        reports, and smart financial tools.
+      <Typography color="textPrimary" align="justify" variant="subtitle1" textAlign="center">
+        Create your free account to unlock suburb insights, personalised reports, and smart financial tools.
       </Typography>
       <BackToLoginLink to="/login">
         <ArrowBackIcon />

@@ -19,20 +19,15 @@ interface TestWrapperProps {
   validationRules?: Record<string, any>;
 }
 
-const TestWrapper = ({ 
-  children, 
-  defaultValues = {}, 
-  onSubmit = vi.fn(),
-  validationRules = {}
-}: TestWrapperProps) => {
+const TestWrapper = ({ children, defaultValues = {}, onSubmit = vi.fn(), validationRules = {} }: TestWrapperProps) => {
   const methods = useForm({ defaultValues });
   const { control, handleSubmit } = methods;
-  
+
   // Register fields with validation rules
   Object.entries(validationRules).forEach(([fieldName, rules]) => {
     methods.register(fieldName, rules);
   });
-  
+
   return (
     <ThemeProvider theme={theme}>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -48,16 +43,10 @@ describe('FormCheckbox Component', () => {
     it('should render checkbox with label', () => {
       render(
         <TestWrapper>
-          {(control) => (
-            <FormCheckbox 
-              name="testCheckbox" 
-              control={control} 
-              label="Test Label" 
-            />
-          )}
+          {control => <FormCheckbox name="testCheckbox" control={control} label="Test Label" />}
         </TestWrapper>
       );
-      
+
       expect(screen.getByRole('checkbox')).toBeInTheDocument();
       expect(screen.getByText('Test Label')).toBeInTheDocument();
     });
@@ -65,16 +54,16 @@ describe('FormCheckbox Component', () => {
     it('should render with React node as label', () => {
       render(
         <TestWrapper>
-          {(control) => (
-            <FormCheckbox 
-              name="testCheckbox" 
-              control={control} 
-              label={<span data-testid="custom-label">Custom Label</span>} 
+          {control => (
+            <FormCheckbox
+              name="testCheckbox"
+              control={control}
+              label={<span data-testid="custom-label">Custom Label</span>}
             />
           )}
         </TestWrapper>
       );
-      
+
       expect(screen.getByTestId('custom-label')).toBeInTheDocument();
       expect(screen.getByText('Custom Label')).toBeInTheDocument();
     });
@@ -82,16 +71,10 @@ describe('FormCheckbox Component', () => {
     it('should render with default unchecked state', () => {
       render(
         <TestWrapper>
-          {(control) => (
-            <FormCheckbox 
-              name="testCheckbox" 
-              control={control} 
-              label="Test Checkbox" 
-            />
-          )}
+          {control => <FormCheckbox name="testCheckbox" control={control} label="Test Checkbox" />}
         </TestWrapper>
       );
-      
+
       const checkbox = screen.getByRole('checkbox');
       expect(checkbox).not.toBeChecked();
     });
@@ -99,16 +82,10 @@ describe('FormCheckbox Component', () => {
     it('should render with checked state from form values', () => {
       render(
         <TestWrapper defaultValues={{ testCheckbox: true }}>
-          {(control) => (
-            <FormCheckbox 
-              name="testCheckbox" 
-              control={control} 
-              label="Test Checkbox" 
-            />
-          )}
+          {control => <FormCheckbox name="testCheckbox" control={control} label="Test Checkbox" />}
         </TestWrapper>
       );
-      
+
       const checkbox = screen.getByRole('checkbox');
       expect(checkbox).toBeChecked();
     });
@@ -119,19 +96,13 @@ describe('FormCheckbox Component', () => {
       const user = userEvent.setup();
       render(
         <TestWrapper defaultValues={{ terms: false }}>
-          {(control) => (
-            <FormCheckbox 
-              name="terms" 
-              control={control} 
-              label="I agree" 
-            />
-          )}
+          {control => <FormCheckbox name="terms" control={control} label="I agree" />}
         </TestWrapper>
       );
-      
+
       const checkbox = screen.getByRole('checkbox');
       expect(checkbox).not.toBeChecked();
-      
+
       await user.click(checkbox);
       expect(checkbox).toBeChecked();
     });
@@ -139,44 +110,30 @@ describe('FormCheckbox Component', () => {
     it('should handle form submission with checkbox value', async () => {
       const onSubmit = vi.fn();
       const user = userEvent.setup();
-      
+
       render(
         <TestWrapper onSubmit={onSubmit}>
-          {(control) => (
-            <FormCheckbox 
-              name="terms" 
-              control={control} 
-              label="I agree" 
-            />
-          )}
+          {control => <FormCheckbox name="terms" control={control} label="I agree" />}
         </TestWrapper>
       );
-      
+
       const checkbox = screen.getByRole('checkbox');
       const submitButton = screen.getByText('Submit');
-      
+
       await user.click(checkbox);
       await user.click(submitButton);
-      
+
       expect(onSubmit).toHaveBeenCalled();
     });
 
     it('should toggle checkbox state on click', async () => {
       const user = userEvent.setup();
       render(
-        <TestWrapper>
-          {(control) => (
-            <FormCheckbox 
-              name="testCheckbox" 
-              control={control} 
-              label="Toggle me" 
-            />
-          )}
-        </TestWrapper>
+        <TestWrapper>{control => <FormCheckbox name="testCheckbox" control={control} label="Toggle me" />}</TestWrapper>
       );
-      
+
       const checkbox = screen.getByRole('checkbox');
-      
+
       expect(checkbox).not.toBeChecked();
       await user.click(checkbox);
       expect(checkbox).toBeChecked();
@@ -187,20 +144,12 @@ describe('FormCheckbox Component', () => {
     it('should handle label click to toggle checkbox', async () => {
       const user = userEvent.setup();
       render(
-        <TestWrapper>
-          {(control) => (
-            <FormCheckbox 
-              name="testCheckbox" 
-              control={control} 
-              label="Click me" 
-            />
-          )}
-        </TestWrapper>
+        <TestWrapper>{control => <FormCheckbox name="testCheckbox" control={control} label="Click me" />}</TestWrapper>
       );
-      
+
       const checkbox = screen.getByRole('checkbox');
       const label = screen.getByText('Click me');
-      
+
       expect(checkbox).not.toBeChecked();
       await user.click(label);
       expect(checkbox).toBeChecked();
@@ -213,22 +162,16 @@ describe('FormCheckbox Component', () => {
       render(
         <TestWrapper
           validationRules={{
-            terms: { required: 'You must agree to terms' }
+            terms: { required: 'You must agree to terms' },
           }}
         >
-          {(control) => (
-            <FormCheckbox 
-              name="terms" 
-              control={control} 
-              label="I agree to terms" 
-            />
-          )}
+          {control => <FormCheckbox name="terms" control={control} label="I agree to terms" />}
         </TestWrapper>
       );
-      
+
       const submitButton = screen.getByText('Submit');
       await user.click(submitButton);
-      
+
       expect(screen.getByText('You must agree to terms')).toBeInTheDocument();
     });
 
@@ -237,39 +180,23 @@ describe('FormCheckbox Component', () => {
       render(
         <TestWrapper
           validationRules={{
-            terms: { required: 'Terms must be accepted' }
+            terms: { required: 'Terms must be accepted' },
           }}
         >
-          {(control) => (
-            <FormCheckbox 
-              name="terms" 
-              control={control} 
-              label="Accept terms" 
-            />
-          )}
+          {control => <FormCheckbox name="terms" control={control} label="Accept terms" />}
         </TestWrapper>
       );
-      
+
       const submitButton = screen.getByText('Submit');
       await user.click(submitButton);
-      
+
       const helperText = screen.getByText('Terms must be accepted');
       expect(helperText).toBeInTheDocument();
     });
 
     it('should not show helper text when no error', () => {
-      render(
-        <TestWrapper>
-          {(control) => (
-            <FormCheckbox 
-              name="terms" 
-              control={control} 
-              label="I agree" 
-            />
-          )}
-        </TestWrapper>
-      );
-      
+      render(<TestWrapper>{control => <FormCheckbox name="terms" control={control} label="I agree" />}</TestWrapper>);
+
       expect(screen.queryByText(/error/i)).not.toBeInTheDocument();
     });
   });
@@ -280,22 +207,16 @@ describe('FormCheckbox Component', () => {
       render(
         <TestWrapper
           validationRules={{
-            required: { required: 'This field is required' }
+            required: { required: 'This field is required' },
           }}
         >
-          {(control) => (
-            <FormCheckbox 
-              name="required" 
-              control={control} 
-              label="Required checkbox" 
-            />
-          )}
+          {control => <FormCheckbox name="required" control={control} label="Required checkbox" />}
         </TestWrapper>
       );
-      
+
       const submitButton = screen.getByText('Submit');
       await user.click(submitButton);
-      
+
       expect(screen.getByText('This field is required')).toBeInTheDocument();
     });
 
@@ -304,25 +225,19 @@ describe('FormCheckbox Component', () => {
       render(
         <TestWrapper
           validationRules={{
-            terms: { required: 'Must agree' }
+            terms: { required: 'Must agree' },
           }}
         >
-          {(control) => (
-            <FormCheckbox 
-              name="terms" 
-              control={control} 
-              label="Agree to terms" 
-            />
-          )}
+          {control => <FormCheckbox name="terms" control={control} label="Agree to terms" />}
         </TestWrapper>
       );
-      
+
       const submitButton = screen.getByText('Submit');
       const checkbox = screen.getByRole('checkbox');
-      
+
       await user.click(submitButton);
       expect(screen.getByText('Must agree')).toBeInTheDocument();
-      
+
       await user.click(checkbox);
       expect(screen.queryByText('Must agree')).not.toBeInTheDocument();
     });
@@ -332,16 +247,10 @@ describe('FormCheckbox Component', () => {
     it('should handle undefined/null values', () => {
       render(
         <TestWrapper defaultValues={{ testCheckbox: undefined }}>
-          {(control) => (
-            <FormCheckbox 
-              name="testCheckbox" 
-              control={control} 
-              label="Test Checkbox" 
-            />
-          )}
+          {control => <FormCheckbox name="testCheckbox" control={control} label="Test Checkbox" />}
         </TestWrapper>
       );
-      
+
       const checkbox = screen.getByRole('checkbox');
       expect(checkbox).not.toBeChecked();
     });
@@ -349,16 +258,10 @@ describe('FormCheckbox Component', () => {
     it('should handle empty string values', () => {
       render(
         <TestWrapper defaultValues={{ testCheckbox: '' }}>
-          {(control) => (
-            <FormCheckbox 
-              name="testCheckbox" 
-              control={control} 
-              label="Test Checkbox" 
-            />
-          )}
+          {control => <FormCheckbox name="testCheckbox" control={control} label="Test Checkbox" />}
         </TestWrapper>
       );
-      
+
       const checkbox = screen.getByRole('checkbox');
       expect(checkbox).not.toBeChecked();
     });

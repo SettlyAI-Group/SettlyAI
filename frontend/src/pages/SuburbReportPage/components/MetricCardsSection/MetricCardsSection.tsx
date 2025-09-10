@@ -1,12 +1,5 @@
 import MetricCard from './components/MetricCard';
-import {
-  Box,
-  Stack,
-  styled,
-  Typography,
-  useMediaQuery,
-  useTheme,
-} from '@mui/material';
+import { Box, Stack, styled, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
 
@@ -67,11 +60,7 @@ const MetricCardsSection = ({ title, data }: IMetricCardsSectionProps) => {
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   return (
-    <Stack
-      direction="column"
-      spacing={8}
-      sx={{ overflow: 'hidden', width: '100%' }}
-    >
+    <Stack direction="column" spacing={8} sx={{ overflow: 'hidden', width: '100%' }}>
       <Typography variant="h4">{title}</Typography>
       {!isSmallScreen ? (
         <CardsGroupDesktop>
@@ -80,12 +69,7 @@ const MetricCardsSection = ({ title, data }: IMetricCardsSectionProps) => {
           ))}
         </CardsGroupDesktop>
       ) : (
-        <CardsGroupMobile
-          modules={[Navigation]}
-          spaceBetween={theme.spacing(5)}
-          slidesPerView="auto"
-          navigation
-        >
+        <CardsGroupMobile modules={[Navigation]} spaceBetween={theme.spacing(5)} slidesPerView="auto" navigation>
           {data?.map(card => (
             <SwiperSlide style={{ width: '220px' }} key={card.title}>
               <MetricCard {...card} />
