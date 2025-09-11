@@ -1,10 +1,10 @@
-import { Box, Container, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import HomeIcon from '@mui/icons-material/Home';
-import theme from '@/styles/theme';
 
+// retain for future use
 interface FooterItems {
   items?: string;
 }
@@ -13,25 +13,35 @@ const FooterSection = styled('footer')(({ theme }) => ({
   backgroundColor: theme.palette.grey[900],
   color: theme.palette.grey[400],
   padding: theme.spacing(16, 0),
+  width: '100%',
+}));
+
+const FooterContent = styled(Box)(({ theme }) => ({
+  maxWidth: theme.breakpoints.values.lg,
+  margin: '0 auto',
+  width: '100%',
 }));
 
 const TopFooterSection = styled(Box)(({ theme }) => ({
   display: 'flex',
   gap: theme.spacing(6),
-  margin: theme.spacing(2, -40, 12, -35),
+  marginBottom: theme.spacing(10),
   [theme.breakpoints.down('md')]: {
     flexDirection: 'column',
-    gap: theme.spacing(3),
+    gap: theme.spacing(10),
+    paddingLeft: theme.spacing(4),
   },
 }));
 
 const BottomFooterSection = styled(Box)(({ theme }) => ({
   borderTop: `1px solid ${theme.palette.grey[700]}`,
   paddingTop: theme.spacing(8),
-  margin: theme.spacing(0, -40, 0, -35),
   textAlign: 'center',
+  width: '100vw',
+  marginLeft: `calc(-50vw + 50%)`,
 }));
 
+// ===== Brand  =====
 const BrandSection = styled(Box)({
   flex: 1,
 });
@@ -42,47 +52,9 @@ const BrandHeader = styled(Box)(({ theme }) => ({
   marginBottom: theme.spacing(2),
 }));
 
-const NavigationSection = styled(Box)(({ theme }) => ({
-  flex: 1,
-  display: 'flex',
-  gap: theme.spacing(4),
-}));
-
-const CompanyNavigationColumn = styled(Box)(({ theme }) => ({
-  flex: 1,
-  minWidth: theme.spacing(15),
-}));
-
-const LegalNavigationColumn = styled(Box)(({ theme }) => ({
-  flex: 1,
-  minWidth: theme.spacing(15),
-}));
-
-const SocialMediaColumn = styled(Box)(({ theme }) => ({
-  flex: 1,
-  minWidth: theme.spacing(15),
-}));
-
-const CompanyLinksContainer = styled(Box)({
-  display: 'flex',
-  flexDirection: 'column',
-  gap: theme.spacing(1),
-});
-
-const LegalLinksContainer = styled(Box)({
-  display: 'flex',
-  flexDirection: 'column',
-  gap: theme.spacing(1),
-});
-
-const SocialIconsContainer = styled(Box)({
-  display: 'flex',
-  gap: theme.spacing(5),
-});
-
 const StyledHomeIcon = styled(HomeIcon)(({ theme }) => ({
   color: theme.palette.primary.main,
-  marginLeft: theme.spacing(15),
+  marginLeft: theme.spacing(1),
 }));
 
 const BrandTitle = styled(Typography)(({ theme }) => ({
@@ -92,32 +64,37 @@ const BrandTitle = styled(Typography)(({ theme }) => ({
 
 const BrandDescription = styled(Typography)(({ theme }) => ({
   color: theme.palette.text.secondary,
-  marginLeft: theme.spacing(15),
+  marginLeft: theme.spacing(1),
   maxWidth: theme.spacing(95),
 }));
 
-const CompanyTitle = styled(Typography)(({ theme }) => ({
+// ===== Navigation  =====
+const NavigationSection = styled(Box)(({ theme }) => ({
+  flex: 1,
+  display: 'flex',
+  gap: theme.spacing(4),
+  [theme.breakpoints.down('sm')]: {
+    flexDirection: 'column',
+    gap: theme.spacing(2),
+  },
+}));
+
+const Column = styled(Box)(({ theme }) => ({
+  flex: 1,
+  minWidth: theme.spacing(15),
+  display: 'flex',
+  flexDirection: 'column',
+  gap: theme.spacing(1),
+}));
+
+const ColumnTitle = styled(Typography)(({ theme }) => ({
   color: theme.palette.common.white,
   fontWeight: theme.typography.subtitle2.fontWeight,
   marginBottom: theme.spacing(2),
   fontSize: theme.typography.subtitle2.fontSize,
 }));
 
-const LegalTitle = styled(Typography)(({ theme }) => ({
-  color: theme.palette.common.white,
-  fontWeight: theme.typography.subtitle2.fontWeight,
-  marginBottom: theme.spacing(2),
-  fontSize: theme.typography.subtitle2.fontSize,
-}));
-
-const SocialMediaTitle = styled(Typography)(({ theme }) => ({
-  color: theme.palette.common.white,
-  fontWeight: theme.typography.subtitle2.fontWeight,
-  marginBottom: theme.spacing(2),
-  fontSize: theme.typography.subtitle2.fontSize,
-}));
-
-const AboutUsLink = styled('a')(({ theme }) => ({
+const LinkItem = styled('a')(({ theme }) => ({
   color: theme.palette.grey[400],
   fontSize: '14px',
   cursor: 'pointer',
@@ -125,118 +102,68 @@ const AboutUsLink = styled('a')(({ theme }) => ({
   '&:hover': {
     color: theme.palette.common.white,
   },
+  marginBottom: theme.spacing(1),
 }));
 
-const ContactLink = styled('a')(({ theme }) => ({
-  color: theme.palette.grey[400],
-  fontSize: '14px',
-  cursor: 'pointer',
-  textDecoration: 'none',
-  '&:hover': {
-    color: theme.palette.common.white,
-  },
+const SocialIconsContainer = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  gap: theme.spacing(5),
 }));
 
-const PrivacyPolicyLink = styled('a')(({ theme }) => ({
-  color: theme.palette.grey[400],
-  fontSize: '14px',
-  cursor: 'pointer',
-  textDecoration: 'none',
-  '&:hover': {
-    color: theme.palette.common.white,
-  },
-}));
-
-const TermsOfServiceLink = styled('a')(({ theme }) => ({
-  color: theme.palette.grey[400],
-  fontSize: '14px',
-  cursor: 'pointer',
-  textDecoration: 'none',
-  '&:hover': {
-    color: theme.palette.common.white,
-  },
-}));
-
-const LinkedInLink = styled('a')(({ theme }) => ({
-  color: theme.palette.grey[400],
-  cursor: 'pointer',
-  display: 'inline-flex',
-  alignItems: 'center',
-  '&:hover': {
-    color: theme.palette.common.white,
-  },
-}));
-
-const InstagramLink = styled('a')(({ theme }) => ({
-  color: theme.palette.grey[400],
-  cursor: 'pointer',
-  display: 'inline-flex',
-  alignItems: 'center',
-  '&:hover': {
-    color: theme.palette.common.white,
-  },
-}));
-
+// ===== Copyright =====
 const CopyrightText = styled(Typography)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
 // Main Footer component
-const Footer = ({ items }: FooterItems) => {
+const Footer = () => {
   return (
-    <FooterSection className={items}>
-      <Container maxWidth="lg">
+    <FooterSection>
+      <FooterContent>
         <TopFooterSection>
           <BrandSection>
             <BrandHeader>
               <StyledHomeIcon />
               <BrandTitle variant="h6">Settly AI</BrandTitle>
             </BrandHeader>
-            <BrandDescription variant="body1">
-              Your intelligent companion for finding the perfect suburb to call
-              home.
+            <BrandDescription variant="body2">
+              Your intelligent companion for finding the perfect suburb to call home.
             </BrandDescription>
           </BrandSection>
 
           <NavigationSection>
-            <CompanyNavigationColumn>
-              <CompanyTitle variant="subtitle2">Company</CompanyTitle>
-              <CompanyLinksContainer>
-                <AboutUsLink href="#">About Us</AboutUsLink>
-                <ContactLink href="#">Contact</ContactLink>
-              </CompanyLinksContainer>
-            </CompanyNavigationColumn>
+            <Column>
+              <ColumnTitle variant="subtitle2">Company</ColumnTitle>
+              <LinkItem href="#">About Us</LinkItem>
+              <LinkItem href="#">Contact</LinkItem>
+            </Column>
 
-            <LegalNavigationColumn>
-              <LegalTitle variant="subtitle2">Legal</LegalTitle>
-              <LegalLinksContainer>
-                <PrivacyPolicyLink href="#">Privacy Policy</PrivacyPolicyLink>
-                <TermsOfServiceLink href="#">
-                  Terms of Service
-                </TermsOfServiceLink>
-              </LegalLinksContainer>
-            </LegalNavigationColumn>
+            <Column>
+              <ColumnTitle variant="subtitle2">Legal</ColumnTitle>
+              <LinkItem href="#">Privacy Policy</LinkItem>
+              <LinkItem href="#"> Terms of Service</LinkItem>
+            </Column>
 
-            <SocialMediaColumn>
-              <SocialMediaTitle variant="subtitle2">Follow Us</SocialMediaTitle>
+            <Column>
+              <ColumnTitle variant="subtitle2">Follow Us</ColumnTitle>
               <SocialIconsContainer>
-                <LinkedInLink href="#">
+                <LinkItem href="#">
+                  {' '}
                   <LinkedInIcon />
-                </LinkedInLink>
-                <InstagramLink href="#">
+                </LinkItem>
+                <LinkItem href="#">
+                  {' '}
                   <InstagramIcon />
-                </InstagramLink>
+                </LinkItem>
               </SocialIconsContainer>
-            </SocialMediaColumn>
+            </Column>
           </NavigationSection>
         </TopFooterSection>
 
         <BottomFooterSection>
-          <CopyrightText variant="body1">
-            © 2024 Settly AI. All rights reserved.
-          </CopyrightText>
+          <CopyrightText variant="body2">© 2024 Settly AI. All rights reserved.</CopyrightText>
         </BottomFooterSection>
-      </Container>
+      </FooterContent>
     </FooterSection>
   );
 };
