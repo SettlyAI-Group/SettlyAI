@@ -2,7 +2,6 @@ using QuestPDF.Fluent;
 using QuestPDF.Helpers; 
 using QuestPDF.Infrastructure;
 using ISettlyService;
-
 namespace SettlyService
 {
     public class PdfService: IPdfService
