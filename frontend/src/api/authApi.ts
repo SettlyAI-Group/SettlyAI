@@ -1,5 +1,5 @@
 import httpClient from './httpClient';
-import type { IUser, IVerifyEmailRequest } from '@/interfaces/user';
+import type { IUser, IVerifyEmailRequest, ILoginUser } from '@/interfaces/user';
 
 export const registerUser = async (userData: IUser) => {
   const response = await httpClient.post('/auth/register', userData);
@@ -19,5 +19,10 @@ export const sendVerificationCode = async (
     userId,
     verificationType,
   });
+  return response.data;
+};
+
+export const loginUser = async (userData: ILoginUser) => {
+  const response = await httpClient.post('/auth/login', userData);
   return response.data;
 };

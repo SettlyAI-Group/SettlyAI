@@ -16,3 +16,9 @@ export interface IUserResponse {
   fullName: string;
   email: string;
 }
+
+export interface ILoginUser {
+  email:string;
+  password:string;
+  // Todo: Add rememberMe:true or false to use refresh Token
+}

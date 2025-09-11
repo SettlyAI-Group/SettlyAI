@@ -43,6 +43,7 @@ export const VerificationPage = () => {
   >({
     mutationFn: verifyEmail,
     onSuccess: () => {
+      // navigate('/login');
       navigate('/login');
     },
   });
