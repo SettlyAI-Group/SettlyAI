@@ -79,9 +79,9 @@ export const useFavourite = (targetType: string, targetId: string | number): Use
     if (!isToggling) {
       setIsToggling(true);
       try {
-        const endpoint = `toggle?userId=2`;
-        const newStatus = await getTokenAndFetch<ToggleResponse>(endpoint, 'POST', { targetType, targetId });
+        const newStatus = await getTokenAndFetch<ToggleResponse>('toggle', 'POST', { targetType, targetId });
         setIsSaved(newStatus.isSaved);
+        setMessage(newStatus.message);
       } catch (error) {
         console.error('Error toggling favourite status:', error);
       } finally {
