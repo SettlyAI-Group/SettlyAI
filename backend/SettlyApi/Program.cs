@@ -1,6 +1,7 @@
 using ISettlyService;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using QuestPDF.Infrastructure;
 using SettlyApi.Configuration;
 using SettlyApi.Middlewares;
 using SettlyModels;
@@ -15,6 +16,8 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
         var apiConfigs = builder.Configuration.GetSection("ApiConfigs").Get<ApiConfigs>();
+        //license for QuestPDF Free Version
+        QuestPDF.Settings.License = LicenseType.Community;
         builder.Services.AddDbContext<SettlyDbContext>(
             options => options
                 .UseNpgsql(apiConfigs?.DBConnection ?? throw new InvalidOperationException("Database connection string not found"))
@@ -52,6 +55,7 @@ public class Program
 
 
         builder.Services.AddScoped<ILayoutNavService, LayoutNavService>();
+        builder.Services.AddScoped<IPdfService, PdfService>();
         //Add Swagger
         builder.Services.AddSwaggerConfig();
 
