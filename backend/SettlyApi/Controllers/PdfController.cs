@@ -1,6 +1,6 @@
 using ISettlyService;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+
 
 namespace SettlyApi.Controllers
 {
@@ -9,23 +9,17 @@ namespace SettlyApi.Controllers
     public class PdfController : ControllerBase
     {
         private readonly IPdfService _pdfService;
-        private readonly ISuburbService _suburbService;
-        public PdfController(IPdfService pdfService, ISuburbService suburbService)
+        public PdfController(IPdfService pdfService)
         {
             _pdfService = pdfService;
-            _suburbService = suburbService;
+            //add other services as required
         }
-        [HttpGet("suburb-report/{suburbId}")]
-        public async Task<IActionResult> GetSuburbReport(int suburbId)
+        [HttpGet("test")]
+        public IActionResult GetSampleReport()
         {
-            var suburbData = await _suburbService.GetSuburbDataById(suburbId);
-            if (suburbData == null)
-            {
-                return NotFound();
-            }
-            var pdfBytes = _pdfService.GenerateSuburbReport(suburbData);
-            return File(pdfBytes, "application/pdf", $"SuburbReport_{suburbId}.pdf");
+            var pdfBytes = _pdfService.GenerateSampleReport();
+            return File(pdfBytes, "application/pdf", "SampleReport.pdf");
         }
-        //if other page required, add below as per suburb-report;
+        //Add other pages required for PDF generation heree.g. suburb report, property report etc.;
     }
 }
