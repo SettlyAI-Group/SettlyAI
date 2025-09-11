@@ -1,7 +1,5 @@
 using ISettlyService;
 using Microsoft.AspNetCore.Mvc;
-
-
 namespace SettlyApi.Controllers
 {
     [Route("api/[controller]")]
