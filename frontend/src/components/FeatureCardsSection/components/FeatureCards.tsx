@@ -1,5 +1,5 @@
 import { Home, AttachMoney, TrendingUp } from '@mui/icons-material';
-import FeatureCardGrid from './components/FeatureCardGrid/FeatureCardGrid';
+import FeatureCardGrid from './components';
 
 const featureCards = [
   {
