@@ -1,5 +1,5 @@
 import { Home, AttachMoney, TrendingUp } from '@mui/icons-material';
-import { FeatureCard, FeatureCardGridContainer } from './components';
+import FeatureCardGrid from './components/FeatureCardGrid/FeatureCardGrid';
 
 const featureCards = [
   {
@@ -27,19 +27,6 @@ const featureCards = [
   },
 ];
 
-const FeatureCardsSection = () => (
-  <FeatureCardGridContainer>
-    {featureCards.map((card, index) => (
-      <FeatureCard
-        key={index}
-        title={card.title}
-        description={card.description}
-        icon={card.icon}
-        ctaText={card.ctaText}
-        onClick={card.onClick}
-      />
-    ))}
-  </FeatureCardGridContainer>
-);
+const FeatureCardsSection = () => <FeatureCardGrid cards={featureCards} />;
 
 export default FeatureCardsSection;
