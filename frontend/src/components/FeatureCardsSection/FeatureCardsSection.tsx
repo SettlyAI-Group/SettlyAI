@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
 import { styled } from '@mui/material';
-import FeatureCardsSection from './FeatureCards/FeatureCards';
+import FeatureCards from './FeatureCards/FeatureCards';
 
 const ToolsContainer = styled(Box)(({ theme }) => ({
   background: theme.palette.background.default,
@@ -22,7 +22,7 @@ const Subtitle = styled(Typography)(({ theme }) => ({
   marginTop: theme.spacing(2), 
 }));
 
-const ToolsSection = () => {
+const FeatureCardsSection = () => {
   return (
     <ToolsContainer>
       <HeaderContainer>
@@ -33,9 +33,9 @@ const ToolsSection = () => {
           Let's plan smarter: from viewing a home to securing a loan and optimizing your super
         </Subtitle>
       </HeaderContainer>
-      <FeatureCardsSection />
+      <FeatureCards />
     </ToolsContainer>
   );
 };
 
-export default ToolsSection;
+export default FeatureCardsSection;
