@@ -2,6 +2,12 @@ import React from 'react';
 import { Box, styled, Typography } from '@mui/material';
 import GlobalButton from '@/components/GlobalButton/GlobalButton';
 
+const FlexContainer = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  gap: theme.spacing(4),
+  justifyContent: 'center',
+  flexWrap: 'wrap',
+}));
 
 const StyledCard = styled(Box)(({ theme }) => ({
   background: theme.palette.background.paper,
@@ -67,27 +73,29 @@ interface FeatureCardProps {
   onClick: () => void;
 }
 
-const FeatureCard = ({ title, description, icon, ctaText, onClick }: FeatureCardProps) => {
+const FeatureCardGrid = ({ cards }: { cards: FeatureCardProps[] }) => {
   return (
-    <StyledCard onClick={onClick}>
-      <IconContainer>
-        <StyledIcon>{icon}</StyledIcon>
-      </IconContainer>
-
-      <CardTitle variant="h5">{title}</CardTitle>
-      <CardDescription variant="body2">{description}</CardDescription>
-
-      <StyledGlobalButton
-        onClick={(e) => {
-          e.stopPropagation();
-          onClick();
-        }}
-        variant="contained"
-      >
-        {ctaText}
-      </StyledGlobalButton>
-    </StyledCard>
+    <FlexContainer>
+      {cards.map((card, index) => (
+        <StyledCard key={index} onClick={card.onClick}>
+          <IconContainer>
+            <StyledIcon>{card.icon}</StyledIcon>
+          </IconContainer>
+          <CardTitle variant="h5">{card.title}</CardTitle>
+          <CardDescription variant="body2">{card.description}</CardDescription>
+          <StyledGlobalButton
+            onClick={(e) => {
+              e.stopPropagation();
+              card.onClick();
+            }}
+            variant="contained"
+          >
+            {card.ctaText}
+          </StyledGlobalButton>
+        </StyledCard>
+      ))}
+    </FlexContainer>
   );
 };
 
-export default FeatureCard;
+export default FeatureCardGrid;
