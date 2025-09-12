@@ -12,8 +12,8 @@ using SettlyModels;
 namespace SettlyModels.Migrations
 {
     [DbContext(typeof(SettlyDbContext))]
-    [Migration("20250904232750_AddInspectionTimeOptionsToProperty")]
-    partial class AddInspectionTimeOptionsToProperty
+    [Migration("20250912045825_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
