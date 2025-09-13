@@ -9,7 +9,7 @@ namespace ISettlyService
         Task<HousingMarketDto?> GetHousingMarketAsync(int id);
         Task<PopulationSupplyDto?> GetDemandDevAsync(int id);
         Task<LivabilityDto?> GetLivabilityAsync(int id);
-        Task<RiskDevelopmentDto?> GetSafetyAsync(int id);
+        Task<List<ScoreCardDto>> GetSafetyScoresAsync(int suburbId);
         Task<SuburbSnapshotDto> GetSnapshotAsync(int id);
     }
 }
