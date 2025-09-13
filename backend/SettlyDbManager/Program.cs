@@ -1,34 +1,16 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using SettlyModels;
 
 namespace SettlyDbManager;
 
 public class Program
 {
-    public static async Task<int> Main(string[] args)
+    public static async Task Main(string[] args)
     {
-        // Parse command line arguments
-        var dbOptions = DatabaseOptions.Parse(args);
-
-        // Show help and exit if requested
-        if (dbOptions.Help)
-        {
-            DatabaseOptions.ShowHelp();
-            return 0;
-        }
-
-        // If no operations specified, show help
-        if (!dbOptions.HasDatabaseOperations)
-        {
-            Console.WriteLine("No database operations specified. Use --help for available options.");
-            return 1;
-        }
-
         try
         {
-            // Build configuration
+            // 构建配置
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: true)
@@ -36,63 +18,80 @@ public class Program
                 .AddEnvironmentVariables()
                 .Build();
 
-            // Build services
-            var services = new ServiceCollection();
-            var apiConfigs = configuration.GetSection("ApiConfigs").Get<ApiConfigs>();
+            var connectionString = configuration.GetConnectionString("DefaultConnection");
 
-            if (apiConfigs?.DBConnection == null)
+            if (string.IsNullOrEmpty(connectionString))
             {
-                Console.WriteLine("ERROR: Database connection string not found in configuration.");
-                return 1;
+                Console.WriteLine("❌ 数据库连接字符串未找到！");
+                Console.WriteLine("请创建 appsettings.Development.json 文件并配置数据库连接。");
+                return;
             }
 
-            services.AddDbContext<SettlyDbContext>(options => options
-                .UseNpgsql(apiConfigs.DBConnection)
-                .LogTo(Console.WriteLine, Microsoft.Extensions.Logging.LogLevel.Information)
-                .EnableSensitiveDataLogging()
-                .EnableDetailedErrors()
-            );
+            // 配置数据库上下文
+            var options = new DbContextOptionsBuilder<SettlyDbContext>()
+                .UseNpgsql(connectionString)
+                .Options;
 
-            services.AddScoped<DataSeeder>();
+            using var context = new SettlyDbContext(options);
+            var seeder = new DataSeeder(context);
 
-            var serviceProvider = services.BuildServiceProvider();
+            // 解析命令行参数
+            var command = args.Length > 0 ? args[0] : "--help";
 
-            // Execute database operations
-            using var scope = serviceProvider.CreateScope();
-            var seeder = scope.ServiceProvider.GetRequiredService<DataSeeder>();
-
-            var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production";
-
-            // Execute seeding operations if requested
-            if (dbOptions.Seed)
+            switch (command)
             {
-                Console.WriteLine("Generating fake data...");
-                await seeder.SeedAllAsync();
-                Console.WriteLine("Fake data generation completed successfully!");
-            }
-            else if (dbOptions.ResetSeed)
-            {
-                if (environment != "Development")
-                {
-                    Console.WriteLine("ERROR: --reset-seed is only available in Development environment!");
-                    return 1;
-                }
+                case "--seed":
+                    Console.WriteLine("🌱 生成测试数据...");
+                    await seeder.SeedAllAsync();
+                    Console.WriteLine("✅ 数据生成完成！");
+                    break;
 
-                Console.WriteLine("WARNING: This will clear all existing data and generate new fake data.");
-                Console.WriteLine("Resetting database and generating new fake data...");
-                await seeder.SeedAllAsync();
-                Console.WriteLine("Database reset and fake data generation completed successfully!");
-            }
+                case "--reset":
+                    Console.WriteLine("🔄 重置数据库并生成新数据...");
+                    await seeder.SeedAllAsync();
+                    Console.WriteLine("✅ 数据库重置完成！");
+                    break;
 
-            Console.WriteLine("Database operations completed successfully!");
-            return 0;
+                case "--suburbs":
+                    Console.WriteLine("🏘️ 重新生成 suburb 数据...");
+                    await seeder.ReseedSuburbsAndRelatedDataAsync();
+                    Console.WriteLine("✅ Suburb 数据生成完成！");
+                    break;
+
+                case "--clear":
+                    Console.WriteLine("🧹 清空所有数据...");
+                    await seeder.ClearAllDataAsync();
+                    Console.WriteLine("✅ 数据库已清空！");
+                    break;
+
+                default:
+                    ShowHelp();
+                    break;
+            }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Database operation failed: {ex.Message}");
-            Console.WriteLine($"Inner exception: {ex.InnerException?.Message}");
-            Console.WriteLine($"Stack trace: {ex.StackTrace}");
-            return 1;
+            Console.WriteLine($"❌ 错误: {ex.Message}");
         }
+    }
+
+    private static void ShowHelp()
+    {
+        Console.WriteLine("SettlyAI Database Manager");
+        Console.WriteLine("========================");
+        Console.WriteLine();
+        Console.WriteLine("用法: dotnet run [命令]");
+        Console.WriteLine();
+        Console.WriteLine("命令:");
+        Console.WriteLine("  --seed     生成完整的测试数据");
+        Console.WriteLine("  --suburbs  重新生成 suburb 数据（从 CSV 文件）");
+        Console.WriteLine("  --clear    清空所有数据");
+        Console.WriteLine("  --help     显示帮助信息");
+        Console.WriteLine();
+        Console.WriteLine("示例:");
+        Console.WriteLine("  dotnet run --seed      # 首次设置");
+        Console.WriteLine("  dotnet run --suburbs   # 更新 suburb 数据");
+        Console.WriteLine("  dotnet run --clear     # 清空数据");
+        Console.WriteLine("  dotnet run --clear && dotnet run --seed  # 清空并重新生成");
     }
 }
