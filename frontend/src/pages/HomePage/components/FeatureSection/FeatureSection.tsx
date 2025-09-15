@@ -1,5 +1,6 @@
 import { Box, Typography } from '@mui/material';
 import { styled } from '@mui/material';
+import FeatureCards from './components/FeatureCards';
 
 const SectionContainer = styled(Box)(({ theme }) => ({
   background: theme.palette.background.default,
@@ -31,19 +32,14 @@ const SubTitle = styled(Typography)(({ theme }) => ({
   },
 }));
 
-const CardsContainer = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  borderColor: 'black',
-}));
-
-const FeatureCardsSection = () => {
+const FeatureSection = () => {
   return (
     <SectionContainer>
       <MainTitle>All-in-One Tools to Simplify Your Journey</MainTitle>
       <SubTitle>Let's plan smarter: from viewing a home to securing a loan and optimizing your super</SubTitle>
-      <CardsContainer></CardsContainer>
+      <FeatureCards />
     </SectionContainer>
   );
 };
 
-export default FeatureCardsSection;
+export default FeatureSection;
