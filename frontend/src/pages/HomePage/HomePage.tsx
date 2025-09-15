@@ -33,9 +33,9 @@ const HomePage = () => {
     <Container>
       <HeroSection />
       <FeatureSection />
-      <h1>Home</h1>
+      {/* <h1>Home</h1>
       <button onClick={() => checkSuburb(sydney)}>Go to Sydney</button>
-      <button onClick={() => checkSuburb(melbourne)}>Go to Melbourne</button>
+      <button onClick={() => checkSuburb(melbourne)}>Go to Melbourne</button> */}
     </Container>
   );
 };
