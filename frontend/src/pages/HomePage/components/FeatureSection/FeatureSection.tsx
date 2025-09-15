@@ -11,6 +11,7 @@ const SectionContainer = styled(Box)(({ theme }) => ({
   flexDirection: 'column',
   paddingInline: theme.spacing(20),
   paddingTop: theme.spacing(20),
+  paddingBottom: theme.spacing(30),
 }));
 
 const MainTitle = styled(Typography)(({ theme }) => ({
