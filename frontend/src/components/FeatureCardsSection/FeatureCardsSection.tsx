@@ -1,40 +1,48 @@
-import React from 'react';
 import { Box, Typography } from '@mui/material';
 import { styled } from '@mui/material';
-import { FeatureCards } from './components';
 
-const ToolsContainer = styled(Box)(({ theme }) => ({
+const SectionContainer = styled(Box)(({ theme }) => ({
   background: theme.palette.background.default,
-  margin: '0 auto',
-  padding: theme.spacing(8, 2),
+  width: '100%',
+  display: 'flex',
+  textalign: 'center',
+  alignItems: 'center',
+  flexDirection: 'column',
+  paddingInline: theme.spacing(20),
+  paddingTop: theme.spacing(20),
+}));
 
-  [theme.breakpoints.up('sm')]: {
-    padding: theme.spacing(8, 4),
+const MainTitle = styled(Typography)(({ theme }) => ({
+  ...theme.typography.h3,
+  maxWidth: '100%',
+  paddingBottom: theme.spacing(5),
+  [theme.breakpoints.up('md')]: {
+    maxwidth: 760,
   },
 }));
 
-const HeaderContainer = styled('div')(({ theme }) => ({
-  textAlign: 'center',
-  marginBottom: theme.spacing(6), 
+const SubTitle = styled(Typography)(({ theme }) => ({
+  ...theme.typography.subtitle1,
+  color: theme.palette.text.secondary,
+  maxwidth: '100%',
+  paddingBottom: theme.spacing(10),
+  [theme.breakpoints.up('md')]: {
+    maxwidth: 800,
+  },
 }));
 
-const Subtitle = styled(Typography)(({ theme }) => ({
-  marginTop: theme.spacing(2), 
+const CardsContainer = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  borderColor: 'black',
 }));
 
 const FeatureCardsSection = () => {
   return (
-    <ToolsContainer>
-      <HeaderContainer>
-        <Typography variant="h4">
-          All-in-One Tools to Simplify Your Journey
-        </Typography>
-        <Subtitle variant="body1">
-          Let's plan smarter: from viewing a home to securing a loan and optimizing your super
-        </Subtitle>
-      </HeaderContainer>
-      <FeatureCards />
-    </ToolsContainer>
+    <SectionContainer>
+      <MainTitle>All-in-One Tools to Simplify Your Journey</MainTitle>
+      <SubTitle>Let's plan smarter: from viewing a home to securing a loan and optimizing your super</SubTitle>
+      <CardsContainer></CardsContainer>
+    </SectionContainer>
   );
 };
 
