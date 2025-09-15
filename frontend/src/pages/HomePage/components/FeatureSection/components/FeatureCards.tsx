@@ -3,7 +3,7 @@ import GlobalButton from '@/components/GlobalButton/GlobalButton';
 import { Home, AttachMoney, TrendingUp } from '@mui/icons-material';
 import { Link as RouterLink } from 'react-router-dom';
 
-const CardsContainer = styled(Box)(({ theme }) => ({
+const CardGroupContainer = styled(Box)(({ theme }) => ({
   display: 'grid',
   gap: theme.spacing(4),
   alignItems: 'stretch',
@@ -71,7 +71,7 @@ const CardButton = styled(GlobalButton)(({ theme }) => ({
 
 const FeatureCards = () => {
   return (
-    <CardsContainer>
+    <CardGroupContainer>
       <FeatureCard>
         <LogoContainer>
           <CardLogo>
@@ -115,7 +115,7 @@ const FeatureCards = () => {
           Compare Super Strategy
         </CardButton>
       </FeatureCard>
-    </CardsContainer>
+    </CardGroupContainer>
   );
 };
 
