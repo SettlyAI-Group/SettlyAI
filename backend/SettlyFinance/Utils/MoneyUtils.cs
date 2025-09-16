@@ -9,10 +9,10 @@ namespace SettlyFinance.Utils
 {
     public static class MoneyUtils
     {
-        // Yuan → Cents (integer), ensure precision and avoid floating point errors.
+        // AUD → Cents (integer), ensure precision and avoid floating point errors.
         public static long ToCents(decimal amount) =>
             (long)Math.Round(amount * 100m, 0, MidpointRounding.AwayFromZero);
-        // Cents → Yuan (decimal), used for API/frontend display.
+        // Cents → AUD (decimal), used for API/frontend display.
         public static decimal FromCents(long cents) =>
             cents / 100m;
         //Round to 2 decimal places (cents) using AwayFromZero rule.
