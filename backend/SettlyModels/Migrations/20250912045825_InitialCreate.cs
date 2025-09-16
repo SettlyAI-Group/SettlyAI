@@ -210,7 +210,8 @@ namespace SettlyModels.Migrations
                     YearBuilt = table.Column<int>(type: "integer", nullable: false),
                     Features = table.Column<string[]>(type: "text[]", nullable: false),
                     Summary = table.Column<string>(type: "text", nullable: false),
-                    ImageUrl = table.Column<string>(type: "text", nullable: false)
+                    ImageUrl = table.Column<string>(type: "text", nullable: false),
+                    InspectionTimeOptions = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
