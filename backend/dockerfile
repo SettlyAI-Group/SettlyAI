@@ -10,6 +10,9 @@ COPY ISettlyService/ISettlyService.csproj ISettlyService/
 COPY SettlyService/SettlyService.csproj SettlyService/
 COPY SettlyApiTests/SettlyApiTests.csproj SettlyApiTests/
 
+COPY SettlyFinance/SettlyFinance.csproj SettlyFinance/
+COPY SettlyFinanceTests/SettlyFinanceTests.csproj SettlyFinanceTests/
+
 RUN dotnet restore
 
 RUN dotnet tool install --global dotnet-ef
