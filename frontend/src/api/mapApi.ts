@@ -2,7 +2,6 @@ import type { IGeocodeApiResult, IApiSuburbData } from '@/interfaces/map';
 import httpClient from './httpClient';
 import axios from 'axios';
 
-// https://nominatim.openstreetmap.org/reverse?lat=-33.88179941295437&lon=151.2048942549963
 const GEOCODING_URL = `https://nominatim.openstreetmap.org/reverse`;
 
 export const fetchGeocodingApi = async (lat: number, lon: number): Promise<IApiSuburbData> => {
