@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
+import type { RootState } from './store';
 
 interface MapSuburbState {
   suburb: string | null;
@@ -31,4 +32,5 @@ export const mapSuburbSlice = createSlice({
 });
 
 export const { setSelectedSuburb, clearSelectedSuburb } = mapSuburbSlice.actions;
+export const selectMapSuburb = (state: RootState) => state.mapSuburb;
 export default mapSuburbSlice.reducer;

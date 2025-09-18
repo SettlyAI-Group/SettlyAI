@@ -7,6 +7,8 @@ import { useState, useEffect } from 'react';
 import { Box, styled } from '@mui/material';
 import type { IApiSuburbData } from '@/interfaces/map';
 import { fetchGeocodingApi, getSuburbFromDb } from '@/api/mapApi';
+import { useAppDispatch } from '@/redux/hooks';
+import { setSelectedSuburb, clearSelectedSuburb } from '@/redux/mapSuburbSlice';
 
 const SectionContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -14,9 +16,17 @@ const SectionContainer = styled(Box)(({ theme }) => ({
   height: '400px',
   justifyContent: 'center',
   alignItems: 'center',
+
   [theme.breakpoints.up(480)]: {
     height: '600px',
+    paddingInline: theme.spacing(30),
+    paddingBlock: theme.spacing(6),
   },
+}));
+
+const LeafletMapContainer = styled(MapContainer)(({ theme }) => ({
+  height: '100%',
+  width: '100%',
 }));
 
 const mapPin = Leaflet.divIcon({
@@ -29,10 +39,7 @@ const mapPin = Leaflet.divIcon({
 const Map = () => {
   const [position, setPosition] = useState<{ lat: number; lng: number } | null>(null);
   const [geoData, setGeoData] = useState<IApiSuburbData | null>(null);
-  // const userClick = () => {
-  //   useMapEvents({ click: e => setPosition(e.latlng) });
-  //   return null;
-  // };
+  const dispatch = useAppDispatch();
 
   const zoomMap = () => {
     const map = useMap();
@@ -59,8 +66,14 @@ const Map = () => {
       try {
         const geoApiData = await fetchGeocodingApi(position.lat, position.lng);
         setGeoData(geoApiData);
-        console.log(`Geocode data: `, geoApiData);
+
         const backendData = await getSuburbFromDb(geoApiData);
+        if (backendData) {
+          const { suburb, state, postcode } = backendData;
+          dispatch(setSelectedSuburb({ suburb, state, postcode }));
+        } else {
+          dispatch(clearSelectedSuburb());
+        }
       } catch (err) {
         console.error(`Error: ${err}`);
       }
@@ -70,14 +83,14 @@ const Map = () => {
 
   return (
     <SectionContainer>
-      <MapContainer style={{ height: '80%', width: '60%' }} center={[-37.8136, 144.9631]} zoom={11}>
+      <LeafletMapContainer center={[-37.8136, 144.9631]} zoom={11}>
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution="© OpenStreetMap contributors"
         />
         <UserClickMapData />
         {position && <Marker position={position} icon={mapPin} />}
-      </MapContainer>
+      </LeafletMapContainer>
     </SectionContainer>
   );
 };
