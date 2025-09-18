@@ -65,6 +65,10 @@ public class Program
         // Add a Login rate-limiter policy: 5 requests per 15 minutes per client IP
         builder.Services.AddLoginLimitRater(attempts: 5, miniutes: 15);
 
+        // Register TransferFee services
+        builder.Services.AddSingleton<ITransferFeeRulesProvider, TransferFeeRulesProvider>();
+        builder.Services.AddScoped<ITransferFeeService, TransferFeeService>();
+
         var app = builder.Build();
         // Register middleware first so it catches all exceptions
         app.UseMiddleware<ErrorHandlingMiddleware>();
