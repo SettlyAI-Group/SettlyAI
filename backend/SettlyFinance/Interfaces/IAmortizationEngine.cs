@@ -16,6 +16,6 @@ namespace SettlyFinance.Interfaces
         /// Calculates repayment metrics for a continuous block.
         /// </summary>
         /// <param name="input">The consolidated input parameters for the calculation.</param>
-        Pniresult Calculate (PniInput input);
+        PniResult Calculate (PniInput input);
     }
 }
