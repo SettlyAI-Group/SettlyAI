@@ -13,14 +13,13 @@ import { setSelectedSuburb, clearSelectedSuburb } from '@/redux/mapSuburbSlice';
 const SectionContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   width: '100%',
-  height: '400px',
+  height: '520px',
   justifyContent: 'center',
   alignItems: 'center',
   paddingInline: theme.spacing(8),
   paddingBlock: theme.spacing(4),
 
   [theme.breakpoints.up(480)]: {
-    height: '600px',
     paddingInline: theme.spacing(10),
     paddingBlock: theme.spacing(6),
   },
