@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
 import counterReducer from './counterSlice';
+import mapSuburbReducer from './mapSuburbSlice';
 
 export const store = configureStore({
   reducer: {
     counter: counterReducer,
+    mapSuburb: mapSuburbReducer,
   },
 });
 
