@@ -1,5 +1,12 @@
 import { useNavigate } from 'react-router-dom';
+import { Box, styled } from '@mui/material';
 import HeroSection from './components/HeroSection';
+import FeatureCardsSection from '../../components/FeatureCardsSection';
+
+const Container = styled(Box)(() => ({
+  display: 'flex',
+  flexDirection: 'column',
+}));
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -23,12 +30,13 @@ const HomePage = () => {
   };
 
   return (
-    <>
+    <Container>
       <HeroSection />
+      <FeatureCardsSection />
       <h1>Home</h1>
       <button onClick={() => checkSuburb(sydney)}>Go to Sydney</button>
       <button onClick={() => checkSuburb(melbourne)}>Go to Melbourne</button>
-    </>
+    </Container>
   );
 };
 
