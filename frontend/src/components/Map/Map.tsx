@@ -16,10 +16,12 @@ const SectionContainer = styled(Box)(({ theme }) => ({
   height: '400px',
   justifyContent: 'center',
   alignItems: 'center',
+  paddingInline: theme.spacing(8),
+  paddingBlock: theme.spacing(4),
 
   [theme.breakpoints.up(480)]: {
     height: '600px',
-    paddingInline: theme.spacing(30),
+    paddingInline: theme.spacing(10),
     paddingBlock: theme.spacing(6),
   },
 }));
@@ -30,11 +32,13 @@ const LeafletMapContainer = styled(MapContainer)(({ theme }) => ({
 }));
 
 const mapPin = Leaflet.divIcon({
-  html: renderToStaticMarkup(<PersonPinCircleIcon />),
+  html: renderToStaticMarkup(<PersonPinCircleIcon style={{ color: '#7B61FF', fontSize: 36 }} />),
   className: 'mui-marker',
   iconSize: [24, 24],
   iconAnchor: [12, 24],
 });
+
+const melbourneGeoData: [number, number] = [-37.8136, 144.9631];
 
 const Map = () => {
   const [position, setPosition] = useState<{ lat: number; lng: number } | null>(null);
@@ -83,7 +87,7 @@ const Map = () => {
 
   return (
     <SectionContainer>
-      <LeafletMapContainer center={[-37.8136, 144.9631]} zoom={11}>
+      <LeafletMapContainer center={melbourneGeoData} zoom={11}>
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution="© OpenStreetMap contributors"
