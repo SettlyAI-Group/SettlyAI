@@ -60,17 +60,67 @@ jobs:
             echo "❌ EC2 instance did not register with SSM in time."
             exit 1
           fi
-      - name: Deploy container via SSM
+      - name: Deploy container via SSM (auto-install Docker)
+        env:
+          AWS_REGION: ${{ env.AWS_REGION }}            # 例: ap-southeast-2
+          INSTANCE_ID: ${{ env.INSTANCE_ID }}          # 或者用 secrets
+          ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}    # 例: 123456789012.dkr.ecr.ap-southeast-2.amazonaws.com/my-backend
         run: |
-          aws ssm send-command \
+          set -euo pipefail
+
+          CMD_ID=$(aws ssm send-command \
             --document-name "AWS-RunShellScript" \
-            --region $AWS_REGION \
+            --region "$AWS_REGION" \
             --instance-ids "$INSTANCE_ID" \
-            --comment "Deploy backend container" \
-            --parameters 'commands=[
-              "aws ecr get-login-password --region ap-southeast-2 | docker login --username AWS --password-stdin '${{ secrets.ECR_REGISTRY }}'",
-              "docker pull '${{ secrets.ECR_REGISTRY }}:latest'",
-              "docker stop backend || true",
-              "docker rm backend || true",
-              "docker run -d --name backend -p 5100:5100 -e ASPNETCORE_ENVIRONMENT=Production '${{ secrets.ECR_REGISTRY }}:latest'"
-            ]'
+            --comment "Install Docker if missing and deploy backend container" \
+            --parameters commands='[
+              "set -euo pipefail",
+              "echo === Detect/Install Docker ===",
+              "if ! command -v docker >/dev/null 2>&1; then \
+                if [ -f /etc/debian_version ]; then \
+                  apt-get update -y && apt-get install -y docker.io && systemctl enable --now docker; \
+                elif [ -f /etc/amazon-linux-release ] || [ -f /etc/redhat-release ]; then \
+                  yum install -y docker && (systemctl enable --now docker || service docker start); \
+                else \
+                  echo Unsupported Linux distro; exit 1; \
+                fi; \
+              else \
+                echo Docker already installed; \
+              fi",
+              "echo === ECR Login ===",
+              "ECR_REGISTRY='\''${{ secrets.ECR_REGISTRY }}'\''",
+              "ECR_HOST=$(echo $ECR_REGISTRY | awk -F/ '\''{print $1}'\'')",
+              "aws ecr get-login-password --region '\''$AWS_REGION'\'' | docker login --username AWS --password-stdin $ECR_HOST",
+              "echo === Pull & Run Container ===",
+              "IMAGE='\''${{ secrets.ECR_REGISTRY }}:latest'\''",
+              "docker pull $IMAGE",
+              "docker rm -f backend || true",
+              "docker run -d --name backend --restart unless-stopped -p 5100:5100 -e ASPNETCORE_ENVIRONMENT=Production $IMAGE",
+              "echo === Post-Checks ===",
+              "docker ps",
+              "ss -tulnp | grep :5100 || true",
+              "docker logs --tail 100 backend || true"
+            ]' \
+            --query "Command.CommandId" --output text)
+
+          echo "SSM CommandId: $CMD_ID"
+
+          # 拉取命令执行输出（含每条命令的 stdout/stderr），直到完成
+          aws ssm list-command-invocations \
+            --command-id "$CMD_ID" \
+            --details \
+            --region "$AWS_REGION" \
+            --output table
+              run: |
+                aws ssm send-command \
+                  --document-name "AWS-RunShellScript" \
+                  --region $AWS_REGION \
+                  --instance-ids "$INSTANCE_ID" \
+                  --comment "Deploy backend container" \
+                  --parameters 'commands=[
+                    "aws ecr get-login-password --region ap-southeast-2 | docker login --username AWS --password-stdin '${{ secrets.ECR_REGISTRY }}'",
+                    "docker pull '${{ secrets.ECR_REGISTRY }}:latest'",
+                    "docker stop backend || true",
+                    "docker rm backend || true",
+                    "docker run -d --name backend -p 5100:5100 -e ASPNETCORE_ENVIRONMENT=Production '${{ secrets.ECR_REGISTRY }}:latest'"
+                  ]'
