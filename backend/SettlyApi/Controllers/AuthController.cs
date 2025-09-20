@@ -84,8 +84,8 @@ public class AuthController : ControllerBase
         // Add accessToken into cookies
         AppendCookie("accessToken", result.AccessToken, httpOnly: true, minutes: jwtConfig.ExpireMinutes);
 
-        // Add refreshToken into cookies if refreshToken is available
-        if (result.RefreshToken is not null)
+        // Add refreshToken into cookies
+        if (loginInput.IsLongLifeLogin && result.RefreshToken is not null)
         {
             AppendCookie("refreshToken", result.RefreshToken, httpOnly: true, days: jwtConfig.ExpireDays);
         }
