@@ -22,7 +22,7 @@ This solution consists of four main projects:
 
 ### Quick Setup using docker
 You can use the following command to start the bakend service using docker containers quickly (including conneting to postgres db, db-migration, db-seed)
-```bash 
+```bash
  cd backend 
  docker compose build
  docker compose up

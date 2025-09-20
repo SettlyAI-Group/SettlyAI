@@ -60,44 +60,67 @@ jobs:
           echo "❌ EC2 instance did not register with SSM in time."
           exit 1
 
-      # 3) 生成将要在 EC2 执行的脚本（此处直接内嵌 ECR_REGISTRY / AWS_REGION 值）
-      - name: Build remote deploy script
+      # 3) 生成将要在 EC2 执行的脚本（使用 ECR Credential Helper，无需 docker login）
+      - name: Build remote deploy script (ECR helper, no aws cli login)
         id: build-script
         env:
-          ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
+          ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}  # 形如 0123.dkr.ecr.ap-southeast-2.amazonaws.com/my-backend
           AWS_REGION: ${{ env.AWS_REGION }}
         run: |
           set -euo pipefail
           cat > /tmp/deploy-backend.sh <<BASH
           #!/usr/bin/env bash
           set -Eeuo pipefail
+          export DEBIAN_FRONTEND=noninteractive
 
           echo "=== Detect/Install Docker ==="
           if ! command -v docker >/dev/null 2>&1; then
             if [ -f /etc/debian_version ]; then
-              apt-get update -y && apt-get install -y docker.io && systemctl enable --now docker
+              apt-get update -y
+              apt-get install -y docker.io curl tar
             elif [ -f /etc/system-release ] && grep -qi "Amazon Linux 2" /etc/system-release; then
-              amazon-linux-extras install docker -y && systemctl enable --now docker
+              amazon-linux-extras install docker -y
+              yum install -y curl tar || true
             elif [ -f /etc/amazon-linux-release ] || [ -f /etc/redhat-release ]; then
-              (yum install -y docker || dnf install -y docker) && (systemctl enable --now docker || service docker start)
+              (yum install -y docker || dnf install -y docker)
+              (yum install -y curl tar || dnf install -y curl tar) || true
             else
               echo "Unsupported Linux distro"; exit 1
             fi
-          else
-            echo "Docker already installed"
+          fi
+          systemctl enable --now docker || service docker start || true
+
+          echo "=== Install & configure ECR credential helper ==="
+          ECR_HOST=\$(echo "${ECR_REGISTRY}" | awk -F/ '{print \$1}')
+
+          if ! command -v docker-credential-ecr-login >/dev/null 2>&1; then
+            VER="0.7.1"
+            ARCH="linux-amd64"
+            TMPD="\$(mktemp -d)"
+            curl -fsSL -o "\$TMPD/docker-credential-ecr-login.tar.gz" \
+              "https://github.com/awslabs/amazon-ecr-credential-helper/releases/download/v\${VER}/docker-credential-ecr-login-\${ARCH}-v\${VER}.tar.gz"
+            tar -xzf "\$TMPD/docker-credential-ecr-login.tar.gz" -C "\$TMPD"
+            install -m 0755 "\$TMPD/docker-credential-ecr-login" /usr/local/bin/docker-credential-ecr-login
+            rm -rf "\$TMPD"
           fi
 
-          echo "=== ECR Login ==="
-          ECR_REGISTRY="${ECR_REGISTRY}"
-          REGION="${AWS_REGION}"
-          ECR_HOST=\$(echo "\$ECR_REGISTRY" | awk -F/ '{print \$1}')
-          aws ecr get-login-password --region "\$REGION" | docker login --username AWS --password-stdin "\$ECR_HOST"
+          mkdir -p /root/.docker
+          cat >/root/.docker/config.json <<JSON
+          {
+            "credsHelpers": {
+              "${ECR_HOST}": "ecr-login"
+            }
+          }
+          JSON
 
-          echo "=== Pull & Run Container ==="
-          IMAGE="\${ECR_REGISTRY}:latest"
+          echo "=== Pull & Run Container (no docker login needed) ==="
+          IMAGE="${ECR_REGISTRY}:latest"
+          echo "Pulling \$IMAGE ..."
           docker pull "\$IMAGE"
+
           docker rm -f backend || true
-          docker run -d --name backend --restart unless-stopped -p 5100:5100 -e ASPNETCORE_ENVIRONMENT=Production "\$IMAGE"
+          docker run -d --name backend --restart unless-stopped -p 5100:5100 \
+            -e ASPNETCORE_ENVIRONMENT=Production "\$IMAGE"
 
           echo "=== Post-Checks ==="
           docker ps
@@ -105,9 +128,9 @@ jobs:
           docker logs --tail 100 backend || true
           # 如需强制健康检查，取消下一行注释（失败将退出1）
           # curl -fsS http://localhost:5100/health
-
           BASH
           chmod +x /tmp/deploy-backend.sh
+          echo "script_path=/tmp/deploy-backend.sh" >> "$GITHUB_OUTPUT"
 
       # 4) 把脚本 Base64 编码，生成 SSM parameters（避免引号/换行问题）
       - name: Build SSM parameters JSON (base64 payload)
@@ -116,13 +139,11 @@ jobs:
           set -euo pipefail
           sudo apt-get update -y >/dev/null
           sudo apt-get install -y jq coreutils >/dev/null
-          # -w0: 不换行输出；有的 image 是 --wrap=0
           if base64 --help 2>&1 | grep -q "\-w"; then
             SCRIPT_B64=$(base64 -w0 /tmp/deploy-backend.sh)
           else
             SCRIPT_B64=$(base64 --wrap=0 /tmp/deploy-backend.sh)
           fi
-          # 在目标机上：还原脚本并执行
           REMOTE_CMD="bash -lc 'echo ${SCRIPT_B64} | base64 -d >/tmp/deploy.sh && chmod +x /tmp/deploy.sh && /bin/bash /tmp/deploy.sh'"
           jq -n --arg c "$REMOTE_CMD" '{commands: [$c]}' > /tmp/ssm-params.json
           echo "params_path=/tmp/ssm-params.json" >> "$GITHUB_OUTPUT"
@@ -136,7 +157,7 @@ jobs:
             --document-name "AWS-RunShellScript" \
             --region "$AWS_REGION" \
             --instance-ids "$INSTANCE_ID" \
-            --comment "Install Docker if missing and deploy backend container" \
+            --comment "Install Docker (if needed) + ECR helper + deploy backend" \
             --parameters file://${{ steps.build-params.outputs.params_path }} \
             --query "Command.CommandId" --output text)
           echo "SSM CommandId: $CMD_ID"
