@@ -111,14 +111,10 @@ jobs:
           fi
 
           mkdir -p /root/.docker
-          cat >/root/.docker/config.json <<EOF
+          cat >/root/.docker/config.json <<JSON
           {
             "credHelpers": {
               "${ECR_HOST}": "ecr-login"
-            }
-          }
-          EOF
-              "__ECR_HOST__": "ecr-login"
             }
           }
           JSON
