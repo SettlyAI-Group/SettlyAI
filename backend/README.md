@@ -25,7 +25,7 @@ You can use the following command to start the bakend service using docker conta
 ```bash 
  cd backend 
  docker compose build
- docker compose up
+ docker compose up 
 ```
 
 ### Setup
