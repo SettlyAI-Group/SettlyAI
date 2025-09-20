@@ -40,7 +40,7 @@ You can use the following command to start the bakend service using docker conta
 2. **Configure database connection**
 
    Copy the example configuration files and update with your database settings:
-   ```bash
+   ```bash 
    # Copy API configuration
    cp SettlyApi/appsettings.Development.json.example SettlyApi/appsettings.Development.json
 
