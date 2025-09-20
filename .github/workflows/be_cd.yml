@@ -16,6 +16,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: actions/checkout@v4
+      
       - name: Configure AWS (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -64,13 +66,15 @@ jobs:
       - name: Build remote deploy script (ECR helper, no aws cli login)
         id: build-script
         env:
-          ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}  # 形如 0123.dkr.ecr.ap-southeast-2.amazonaws.com/my-backend
+          ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
           AWS_REGION: ${{ env.AWS_REGION }}
         run: |
           set -euo pipefail
-          cat > /tmp/deploy-backend.sh <<BASH
+
+          # 写入脚本：用带引号 heredoc，避免本地变量展开
+          cat > /tmp/deploy-backend.sh <<'EOF'
           #!/usr/bin/env bash
-          set -Eeuo pipefail
+          set -euo pipefail
           export DEBIAN_FRONTEND=noninteractive
 
           echo "=== Detect/Install Docker ==="
@@ -91,44 +95,57 @@ jobs:
           systemctl enable --now docker || service docker start || true
 
           echo "=== Install & configure ECR credential helper ==="
-          ECR_HOST=\$(echo "${ECR_REGISTRY}" | awk -F/ '{print \$1}')
+          ECR_REGISTRY="__ECR_REGISTRY__"
+          AWS_REGION="__AWS_REGION__"
+          ECR_HOST="__ECR_HOST__"
 
           if ! command -v docker-credential-ecr-login >/dev/null 2>&1; then
             VER="0.7.1"
             ARCH="linux-amd64"
-            TMPD="\$(mktemp -d)"
-            curl -fsSL -o "\$TMPD/docker-credential-ecr-login.tar.gz" \
-              "https://github.com/awslabs/amazon-ecr-credential-helper/releases/download/v\${VER}/docker-credential-ecr-login-\${ARCH}-v\${VER}.tar.gz"
-            tar -xzf "\$TMPD/docker-credential-ecr-login.tar.gz" -C "\$TMPD"
-            install -m 0755 "\$TMPD/docker-credential-ecr-login" /usr/local/bin/docker-credential-ecr-login
-            rm -rf "\$TMPD"
+            TMPD="$(mktemp -d)"
+            curl -fsSL -o "$TMPD/docker-credential-ecr-login.tar.gz" \
+              "https://github.com/awslabs/amazon-ecr-credential-helper/releases/download/v${VER}/docker-credential-ecr-login-${ARCH}-v${VER}.tar.gz"
+            tar -xzf "$TMPD/docker-credential-ecr-login.tar.gz" -C "$TMPD"
+            install -m 0755 "$TMPD/docker-credential-ecr-login" /usr/local/bin/docker-credential-ecr-login
+            rm -rf "$TMPD"
           fi
 
           mkdir -p /root/.docker
-          cat >/root/.docker/config.json <<JSON
+          cat >/root/.docker/config.json <<EOF
           {
-            "credsHelpers": {
+            "credHelpers": {
               "${ECR_HOST}": "ecr-login"
             }
           }
+          EOF
+              "__ECR_HOST__": "ecr-login"
+            }
+          }
           JSON
-
+          
           echo "=== Pull & Run Container (no docker login needed) ==="
           IMAGE="${ECR_REGISTRY}:latest"
-          echo "Pulling \$IMAGE ..."
-          docker pull "\$IMAGE"
-
+          echo "Pulling $IMAGE ..."
+          docker pull "$IMAGE"
+          
           docker rm -f backend || true
           docker run -d --name backend --restart unless-stopped -p 5100:5100 \
-            -e ASPNETCORE_ENVIRONMENT=Production "\$IMAGE"
-
+            -e ASPNETCORE_ENVIRONMENT=Production "$IMAGE"
+          
           echo "=== Post-Checks ==="
           docker ps
           ss -tulnp | grep :5100 || true
           docker logs --tail 100 backend || true
-          # 如需强制健康检查，取消下一行注释（失败将退出1）
-          # curl -fsS http://localhost:5100/health
-          BASH
+          EOF
+
+          # 用实际值替换占位符（仍在 Runner 本地）
+          ECR_HOST="$(echo "$ECR_REGISTRY" | awk -F/ '{print $1}')"
+          sed -i \
+            -e "s|__ECR_REGISTRY__|$ECR_REGISTRY|g" \
+            -e "s|__AWS_REGION__|$AWS_REGION|g" \
+            -e "s|__ECR_HOST__|$ECR_HOST|g" \
+            /tmp/deploy-backend.sh
+
           chmod +x /tmp/deploy-backend.sh
           echo "script_path=/tmp/deploy-backend.sh" >> "$GITHUB_OUTPUT"
 
@@ -139,11 +156,7 @@ jobs:
           set -euo pipefail
           sudo apt-get update -y >/dev/null
           sudo apt-get install -y jq coreutils >/dev/null
-          if base64 --help 2>&1 | grep -q "\-w"; then
-            SCRIPT_B64=$(base64 -w0 /tmp/deploy-backend.sh)
-          else
-            SCRIPT_B64=$(base64 --wrap=0 /tmp/deploy-backend.sh)
-          fi
+          SCRIPT_B64=$(base64 -w0 /tmp/deploy-backend.sh 2>/dev/null || base64 /tmp/deploy-backend.sh | tr -d '\n')
           REMOTE_CMD="bash -lc 'echo ${SCRIPT_B64} | base64 -d >/tmp/deploy.sh && chmod +x /tmp/deploy.sh && /bin/bash /tmp/deploy.sh'"
           jq -n --arg c "$REMOTE_CMD" '{commands: [$c]}' > /tmp/ssm-params.json
           echo "params_path=/tmp/ssm-params.json" >> "$GITHUB_OUTPUT"
