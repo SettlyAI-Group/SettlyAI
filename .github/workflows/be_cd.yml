@@ -140,7 +140,11 @@ jobs:
           docker pull "$IMAGE"
 
           echo "=== Stop & remove old container ==="
+          docker stop backend || true
           docker rm -f backend || true
+          
+          echo "=== Clean up any dangling containers ==="
+          docker container prune -f || true
 
           echo "=== Run new container (listen on 0.0.0.0:5100) ==="
           docker run -d --name backend --restart unless-stopped -p 5100:5100 \
