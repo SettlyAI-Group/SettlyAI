@@ -60,18 +60,24 @@ jobs:
           echo "❌ EC2 instance did not register with SSM in time."
           exit 1
 
-      # 3) 生成要在 EC2 上执行的 bash 脚本（安装 Docker + 登录 ECR + 拉镜像 + 运行容器 + 基本自检）
+      # 3) 生成将要在 EC2 执行的脚本（此处直接内嵌 ECR_REGISTRY / AWS_REGION 值）
       - name: Build remote deploy script
         id: build-script
+        env:
+          ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
+          AWS_REGION: ${{ env.AWS_REGION }}
         run: |
           set -euo pipefail
-          cat > /tmp/deploy-backend.sh <<'BASH'
+          cat > /tmp/deploy-backend.sh <<BASH
+          #!/usr/bin/env bash
           set -Eeuo pipefail
 
           echo "=== Detect/Install Docker ==="
           if ! command -v docker >/dev/null 2>&1; then
             if [ -f /etc/debian_version ]; then
               apt-get update -y && apt-get install -y docker.io && systemctl enable --now docker
+            elif [ -f /etc/system-release ] && grep -qi "Amazon Linux 2" /etc/system-release; then
+              amazon-linux-extras install docker -y && systemctl enable --now docker
             elif [ -f /etc/amazon-linux-release ] || [ -f /etc/redhat-release ]; then
               (yum install -y docker || dnf install -y docker) && (systemctl enable --now docker || service docker start)
             else
@@ -84,42 +90,46 @@ jobs:
           echo "=== ECR Login ==="
           ECR_REGISTRY="${ECR_REGISTRY}"
           REGION="${AWS_REGION}"
-          ECR_HOST=$(echo "$ECR_REGISTRY" | awk -F/ '{print $1}')
-          aws ecr get-login-password --region "$REGION" | docker login --username AWS --password-stdin "$ECR_HOST"
+          ECR_HOST=\$(echo "\$ECR_REGISTRY" | awk -F/ '{print \$1}')
+          aws ecr get-login-password --region "\$REGION" | docker login --username AWS --password-stdin "\$ECR_HOST"
 
           echo "=== Pull & Run Container ==="
-          IMAGE="${ECR_REGISTRY}:latest"
-          docker pull "$IMAGE"
+          IMAGE="\${ECR_REGISTRY}:latest"
+          docker pull "\$IMAGE"
           docker rm -f backend || true
-          docker run -d --name backend --restart unless-stopped -p 5100:5100 -e ASPNETCORE_ENVIRONMENT=Production "$IMAGE"
+          docker run -d --name backend --restart unless-stopped -p 5100:5100 -e ASPNETCORE_ENVIRONMENT=Production "\$IMAGE"
 
           echo "=== Post-Checks ==="
           docker ps
           ss -tulnp | grep :5100 || true
           docker logs --tail 100 backend || true
-
-          # 如有健康检查路由，取消下一行注释可强约束：
+          # 如需强制健康检查，取消下一行注释（失败将退出1）
           # curl -fsS http://localhost:5100/health
-          BASH
-          echo "script_path=/tmp/deploy-backend.sh" >> "$GITHUB_OUTPUT"
 
-      # 4) 用 jq 把脚本打包为 SSM 的 parameters JSON（commands=["bash -lc \"...\""]）
-      - name: Build SSM parameters JSON
+          BASH
+          chmod +x /tmp/deploy-backend.sh
+
+      # 4) 把脚本 Base64 编码，生成 SSM parameters（避免引号/换行问题）
+      - name: Build SSM parameters JSON (base64 payload)
         id: build-params
         run: |
           set -euo pipefail
           sudo apt-get update -y >/dev/null
-          sudo apt-get install -y jq >/dev/null
-          ESCAPED=$(sed 's/"/\\"/g' "${{ steps.build-script.outputs.script_path }}" | awk '{printf "%s\\n", $0}')
-          WRAPPED="bash -lc \"${ESCAPED}\""
-          jq -n --arg cmd "$WRAPPED" '{commands: [$cmd]}' > /tmp/ssm-params.json
+          sudo apt-get install -y jq coreutils >/dev/null
+          # -w0: 不换行输出；有的 image 是 --wrap=0
+          if base64 --help 2>&1 | grep -q "\-w"; then
+            SCRIPT_B64=$(base64 -w0 /tmp/deploy-backend.sh)
+          else
+            SCRIPT_B64=$(base64 --wrap=0 /tmp/deploy-backend.sh)
+          fi
+          # 在目标机上：还原脚本并执行
+          REMOTE_CMD="bash -lc 'echo ${SCRIPT_B64} | base64 -d >/tmp/deploy.sh && chmod +x /tmp/deploy.sh && /bin/bash /tmp/deploy.sh'"
+          jq -n --arg c "$REMOTE_CMD" '{commands: [$c]}' > /tmp/ssm-params.json
           echo "params_path=/tmp/ssm-params.json" >> "$GITHUB_OUTPUT"
 
-      # 5) 发送 SSM 指令
+      # 5) 发送 SSM 命令
       - name: Send SSM command
         id: send
-        env:
-          ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
         run: |
           set -euo pipefail
           CMD_ID=$(aws ssm send-command \
@@ -132,7 +142,7 @@ jobs:
           echo "SSM CommandId: $CMD_ID"
           echo "cmd_id=$CMD_ID" >> "$GITHUB_OUTPUT"
 
-      # 6) 轮询并打印执行结果（stdout/stderr），失败则让 Job 失败
+      # 6) 轮询并打印执行结果（只需 GetCommandInvocation）
       - name: Wait & fetch output
         run: |
           set -euo pipefail
@@ -168,9 +178,3 @@ jobs:
             echo "SSM command finished with status: $STATUS"
             exit 1
           fi
-
-      # 7) （可选）从公网/ALB 再做一次健康探测
-      # - name: External health probe (optional)
-      #   run: |
-      #     set -euo pipefail
-      #     curl -f http://<你的域名或公网IP>:5100/health
