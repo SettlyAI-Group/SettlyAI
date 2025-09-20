@@ -100,11 +100,11 @@ jobs:
           ECR_HOST="__ECR_HOST__"
 
           if ! command -v docker-credential-ecr-login >/dev/null 2>&1; then
-            VER="0.7.1"
+            VER="0.8.0"
             ARCH="linux-amd64"
             TMPD="$(mktemp -d)"
             curl -fsSL -o "$TMPD/docker-credential-ecr-login.tar.gz" \
-              "https://github.com/awslabs/amazon-ecr-credential-helper/releases/download/v${VER}/docker-credential-ecr-login-${ARCH}-v${VER}.tar.gz"
+              "https://amazon-ecr-credential-helper-releases.s3.us-east-2.amazonaws.com/v${VER}/${ARCH}/docker-credential-ecr-login.tar.gz"
             tar -xzf "$TMPD/docker-credential-ecr-login.tar.gz" -C "$TMPD"
             install -m 0755 "$TMPD/docker-credential-ecr-login" /usr/local/bin/docker-credential-ecr-login
             rm -rf "$TMPD"
