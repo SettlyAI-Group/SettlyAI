@@ -31,7 +31,7 @@ You can use the following command to start the bakend service using docker conta
 ### Setup
 
 1. **Clone and restore packages**
-   ```bash
+   ```bash 
    git clone <repository-url>
    cd backend
    dotnet restore backend.sln
