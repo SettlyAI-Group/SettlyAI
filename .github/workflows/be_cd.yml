@@ -1,4 +1,5 @@
 name: BE_CD
+
 on:
   push:
     branches: [ main ]
@@ -17,7 +18,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      
+
+      # 0) 配置 AWS OIDC
       - name: Configure AWS (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -42,12 +44,12 @@ jobs:
           echo "Found EC2 instance ID: $INSTANCE_ID"
           echo "INSTANCE_ID=$INSTANCE_ID" >> $GITHUB_ENV
 
-      # 2) 等待实例在 SSM 中注册为受管
+      # 2) 等待实例在 SSM 中注册
       - name: Wait for SSM registration
         run: |
           set -euo pipefail
           echo "Waiting for EC2 to register with SSM..."
-          for i in {1..10}; do
+          for i in {1..20}; do
             MATCHED=$(aws ssm describe-instance-information \
               --region $AWS_REGION \
               --query "InstanceInformationList[?InstanceId=='$INSTANCE_ID']" \
@@ -62,11 +64,11 @@ jobs:
           echo "❌ EC2 instance did not register with SSM in time."
           exit 1
 
-      # 3) 生成将要在 EC2 执行的脚本（使用 ECR Credential Helper，无需 docker login）
-      - name: Build remote deploy script (ECR helper, no aws cli login)
+      # 3) 生成将要在 EC2 上执行的部署脚本
+      - name: Build remote deploy script
         id: build-script
         env:
-          ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
+          ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}   # 形如: 012345678901.dkr.ecr.ap-southeast-2.amazonaws.com/my-settly-ai-elliott
           AWS_REGION: ${{ env.AWS_REGION }}
           DB_HOST: ${{ secrets.DB_HOST }}
           DB_PORT: ${{ secrets.DB_PORT }}
@@ -76,7 +78,6 @@ jobs:
         run: |
           set -euo pipefail
 
-          # 写入脚本：用带引号 heredoc，避免本地变量展开
           cat > /tmp/deploy-backend.sh <<'EOF'
           #!/usr/bin/env bash
           set -euo pipefail
@@ -102,19 +103,19 @@ jobs:
           echo "=== Install & configure ECR credential helper ==="
           ECR_REGISTRY="__ECR_REGISTRY__"
           AWS_REGION="__AWS_REGION__"
-          ECR_HOST="__ECR_HOST__"
+          ECR_HOST="$(echo "$ECR_REGISTRY" | awk -F/ '{print $1}')"
 
           if ! command -v docker-credential-ecr-login >/dev/null 2>&1; then
             if [ -f /etc/debian_version ]; then
               apt-get update -y
               apt-get install -y amazon-ecr-credential-helper || {
-                echo "Package not available, using direct install"
+                echo "Package not available, using direct binary"
                 curl -fsSL https://github.com/awslabs/amazon-ecr-credential-helper/releases/download/v0.6.0/docker-credential-ecr-login-linux-amd64 -o /usr/local/bin/docker-credential-ecr-login
                 chmod +x /usr/local/bin/docker-credential-ecr-login
               }
             elif [ -f /etc/amazon-linux-release ] || [ -f /etc/redhat-release ]; then
               (yum install -y amazon-ecr-credential-helper || dnf install -y amazon-ecr-credential-helper) || {
-                echo "Package not available, using direct install"
+                echo "Package not available, using direct binary"
                 curl -fsSL https://github.com/awslabs/amazon-ecr-credential-helper/releases/download/v0.6.0/docker-credential-ecr-login-linux-amd64 -o /usr/local/bin/docker-credential-ecr-login
                 chmod +x /usr/local/bin/docker-credential-ecr-login
               }
@@ -132,30 +133,44 @@ jobs:
             }
           }
           JSON
-          
-          echo "=== Pull & Run Container (no docker login needed) ==="
+
+          echo "=== Pull & Run Container ==="
           IMAGE="${ECR_REGISTRY}:latest"
           echo "Pulling $IMAGE ..."
           docker pull "$IMAGE"
-          
+
+          echo "=== Stop & remove old container ==="
           docker rm -f backend || true
+
+          echo "=== Run new container (listen on 0.0.0.0:5100) ==="
           docker run -d --name backend --restart unless-stopped -p 5100:5100 \
-            -e ASPNETCORE_ENVIRONMENT=Production \
+            -e DOTNET_ENVIRONMENT=Production \
+            -e ASPNETCORE_URLS="http://0.0.0.0:5100" \
             -e ApiConfigs__DBConnection="Host=__DB_HOST__;Port=__DB_PORT__;Database=__DB_NAME__;User Id=__DB_USER__;Password=__DB_PASSWORD__" \
             "$IMAGE"
-          
+
           echo "=== Post-Checks ==="
           docker ps
-          ss -tulnp | grep :5100 || true
+          (ss -tulnp || netstat -tulnp) 2>/dev/null | grep ":5100" || true
           docker logs --tail 100 backend || true
+
+          echo "=== Show (redacted) DB connection env ==="
+          # 仅显示 host/db/port，脱敏密码
+          RAW=$(docker exec backend /bin/sh -lc 'printenv ApiConfigs__DBConnection' || true)
+          if [ -n "$RAW" ]; then
+            HOST=$(echo "$RAW" | sed -n 's/.*Host=\([^;]*\).*/\1/p')
+            DB=$(echo "$RAW"   | sed -n 's/.*Database=\([^;]*\).*/\1/p')
+            PORT=$(echo "$RAW" | sed -n 's/.*Port=\([^;]*\).*/\1/p')
+            echo "ApiConfigs__DBConnection => Host=${HOST}; Port=${PORT}; Database=${DB}; User Id=***; Password=***"
+          else
+            echo "ApiConfigs__DBConnection not set (empty)"
+          fi
           EOF
 
-          # 用实际值替换占位符（仍在 Runner 本地）
-          ECR_HOST="$(echo "$ECR_REGISTRY" | awk -F/ '{print $1}')"
+          # 用实际值替换占位符（Runner 本地执行）
           sed -i \
             -e "s|__ECR_REGISTRY__|$ECR_REGISTRY|g" \
             -e "s|__AWS_REGION__|$AWS_REGION|g" \
-            -e "s|__ECR_HOST__|$ECR_HOST|g" \
             -e "s|__DB_HOST__|$DB_HOST|g" \
             -e "s|__DB_PORT__|$DB_PORT|g" \
             -e "s|__DB_NAME__|$DB_NAME|g" \
@@ -166,7 +181,7 @@ jobs:
           chmod +x /tmp/deploy-backend.sh
           echo "script_path=/tmp/deploy-backend.sh" >> "$GITHUB_OUTPUT"
 
-      # 4) 把脚本 Base64 编码，生成 SSM parameters（避免引号/换行问题）
+      # 4) Base64 封装脚本为 SSM 参数
       - name: Build SSM parameters JSON (base64 payload)
         id: build-params
         run: |
@@ -187,13 +202,13 @@ jobs:
             --document-name "AWS-RunShellScript" \
             --region "$AWS_REGION" \
             --instance-ids "$INSTANCE_ID" \
-            --comment "Install Docker (if needed) + ECR helper + deploy backend" \
+            --comment "Install Docker + ECR helper + deploy backend" \
             --parameters file://${{ steps.build-params.outputs.params_path }} \
             --query "Command.CommandId" --output text)
           echo "SSM CommandId: $CMD_ID"
           echo "cmd_id=$CMD_ID" >> "$GITHUB_OUTPUT"
 
-      # 6) 轮询并打印执行结果（只需 GetCommandInvocation）
+      # 6) 等待并抓取执行结果/日志
       - name: Wait & fetch output
         run: |
           set -euo pipefail
