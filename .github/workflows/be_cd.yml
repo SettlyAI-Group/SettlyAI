@@ -153,7 +153,7 @@ jobs:
 
           echo "=== Run database seeding ==="
           docker run --rm --name db-seed \
-            -e ApiConfigs__DBConnection="Host=__DB_HOST__;Port=__DB_PORT__;Database=__DB_NAME__;User Id=__DB_USER__;Password=__DB_PASSWORD__" \
+            -e ConnectionStrings__DefaultConnection="Host=__DB_HOST__;Port=__DB_PORT__;Database=__DB_NAME__;User Id=__DB_USER__;Password=__DB_PASSWORD__" \
             -e ASPNETCORE_ENVIRONMENT=Development \
             "$IMAGE" bash -c "cd /app/SettlyDbManager && dotnet run -- --seed"
 
