@@ -146,6 +146,17 @@ jobs:
           echo "=== Clean up any dangling containers ==="
           docker container prune -f || true
 
+          echo "=== Run database migration ==="
+          docker run --rm --name db-migrate \
+            -e ApiConfigs__DBConnection="Host=__DB_HOST__;Port=__DB_PORT__;Database=__DB_NAME__;User Id=__DB_USER__;Password=__DB_PASSWORD__" \
+            "$IMAGE" bash -c "cd /app/SettlyModels && dotnet ef database update --startup-project ../SettlyApi"
+
+          echo "=== Run database seeding ==="
+          docker run --rm --name db-seed \
+            -e ApiConfigs__DBConnection="Host=__DB_HOST__;Port=__DB_PORT__;Database=__DB_NAME__;User Id=__DB_USER__;Password=__DB_PASSWORD__" \
+            -e ASPNETCORE_ENVIRONMENT=Development \
+            "$IMAGE" bash -c "cd /app/SettlyDbManager && dotnet run -- --seed"
+
           echo "=== Run new container (listen on 0.0.0.0:5100) ==="
           docker run -d --name backend --restart unless-stopped -p 5100:5100 \
             -e DOTNET_ENVIRONMENT=Production \
