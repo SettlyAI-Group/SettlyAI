@@ -39,18 +39,18 @@ const mapPin = Leaflet.divIcon({
 
 const melbourneGeoData: [number, number] = [-37.8136, 144.9631];
 
+const MapZoomHandler = () => {
+  const map = useMap();
+  useEffect(() => {
+    map.scrollWheelZoom.enable();
+  }, [map]);
+  return null;
+};
+
 const Map = () => {
   const [position, setPosition] = useState<{ lat: number; lng: number } | null>(null);
   const [geoData, setGeoData] = useState<IApiSuburbData | null>(null);
   const dispatch = useAppDispatch();
-
-  const zoomMap = () => {
-    const map = useMap();
-    useEffect(() => {
-      map.scrollWheelZoom.enable();
-    }, [map]);
-    return null;
-  };
 
   const UserClickMapData = ({ onPick }: { onPick?: (lat: number, lng: number) => void }) => {
     useMapEvents({
@@ -91,6 +91,7 @@ const Map = () => {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution="© OpenStreetMap contributors"
         />
+        <MapZoomHandler />
         <UserClickMapData />
         {position && <Marker position={position} icon={mapPin} />}
       </LeafletMapContainer>
