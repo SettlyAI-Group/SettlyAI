@@ -8,6 +8,6 @@ namespace SettlyModels.Dtos
         public long Thousands { get; set; }
         public decimal FeeBeforeCap { get; set; }
         public decimal Cap { get; set; }
-        public decimal FinalFee { get; set; }
+        public decimal FeeStatutory { get; set; }
     }
 }

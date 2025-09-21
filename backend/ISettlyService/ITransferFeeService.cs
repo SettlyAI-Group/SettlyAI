@@ -4,6 +4,6 @@ namespace ISettlyService
 {
     public interface ITransferFeeService
     {
-        TransferFeeResponseDto CalculateFee(TransferFeeRequestDto request, string versionTag);
+        TransferFeeResponseDto CalculateFee(TransferFeeRequestDto request);
     }
 }

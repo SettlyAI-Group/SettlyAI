@@ -13,27 +13,40 @@ namespace SettlyService
             _rulesProvider = rulesProvider;
         }
 
-        public TransferFeeResponseDto CalculateFee(TransferFeeRequestDto request, string versionTag)
+        public TransferFeeResponseDto CalculateFee(TransferFeeRequestDto request)
         {
             if (request == null) throw new ArgumentException("request required");
             if (request.DutiableValue <= 0) throw new ArgumentException("dutiableValue must be greater than 0");
             if (request.TitlesCount < 1) throw new ArgumentException("titlesCount must be >= 1");
 
-            var rules = _rulesProvider.GetRuleset(versionTag);
+            var rules = _rulesProvider.GetRuleset(request.VersionTag);
             if (rules == null) throw new InvalidOperationException("ruleset not available");
 
-            // thousands = floor(dutiableValue / 1000)
-            var thousandsDecimal = Math.Floor(request.DutiableValue / 1000m);
-            var thousands = (long)thousandsDecimal;
+            decimal feeRaw;
+            decimal feeCapped;
+            decimal feeStatutory;
+            int thousands;
 
-            // feeRaw = baseFixed + per1000 * thousands
-            decimal feeRaw = rules.BaseFixed + rules.Per1000 * thousands;
+            if (request.DutiableValue < 1000m)
+            {
+                // for dutiableValue < 1000, fee is just baseFixed
+                thousands = 0;
+                feeRaw = rules.BaseFixed;
+                feeCapped = feeRaw;
+                feeStatutory = rules.BaseFixed;
+            }
+            else
+            {
+                // feeRaw = baseFixed + per1000 * thousands
+                thousands = (int)Math.Floor(request.DutiableValue / 1000m);
+                feeRaw = rules.BaseFixed + (rules.Per1000 * thousands);
 
-            // apply cap
-            decimal feeCapped = Math.Min(feeRaw, rules.Cap);
+                // apply cap
+                feeCapped = Math.Min(feeRaw, rules.Cap);
 
-            // round only at the end to nearest whole dollar
-            decimal finalFee = Math.Round(feeCapped, 0, MidpointRounding.AwayFromZero);
+                // round only at the end to nearest whole dollar
+                feeStatutory = Math.Ceiling(feeCapped);
+            }
 
             return new TransferFeeResponseDto
             {
@@ -43,7 +56,7 @@ namespace SettlyService
                 Thousands = thousands,
                 FeeBeforeCap = feeRaw,
                 Cap = rules.Cap,
-                FinalFee = finalFee
+                FeeStatutory = feeStatutory
             };
         }
     }

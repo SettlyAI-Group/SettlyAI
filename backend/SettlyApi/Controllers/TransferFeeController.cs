@@ -9,8 +9,6 @@ namespace SettlyApi.Controllers
     public class TransferFeeController : ControllerBase
     {
         private readonly ITransferFeeService _service;
-        private const string VersionTag = "vic_transfer_2025_26_paper";
-
         public TransferFeeController(ITransferFeeService service)
         {
             _service = service;
@@ -26,7 +24,7 @@ namespace SettlyApi.Controllers
 
             try
             {
-                var resp = _service.CalculateFee(request, VersionTag);
+                var resp = _service.CalculateFee(request);
                 return Ok(resp);
             }
             catch (InvalidOperationException ex) when (ex.Message == "ruleset not available")

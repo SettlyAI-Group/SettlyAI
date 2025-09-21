@@ -15,17 +15,20 @@ namespace SettlyApiTests
         }
 
         [Theory]
-        [InlineData(10, 112)]
+        [InlineData(1, 111.80)]
+        [InlineData(999.99, 111.80)]
+        [InlineData(1000, 115)]
+        [InlineData(609999.99, 1537)]
         [InlineData(770000, 1914)]
         [InlineData(990000, 2429)]
-        [InlineData(1499999, 3621)]
+        [InlineData(1499999, 3620)]
         [InlineData(1500000, 3621)]
         public void CalculateFee_ReturnsExpected(decimal dutiableValue, decimal expected)
         {
             var ruleset = new TransferFeeRuleset
             {
                 BaseFixed = 111.80m,
-                Per1000 = 103m / 44m,
+                Per1000 = 2.34m,
                 Cap = 3621.00m,
                 PerTitle = 0m,
                 VersionTag = "vic_transfer_2025_26_paper"
@@ -33,9 +36,9 @@ namespace SettlyApiTests
 
             var svc = CreateServiceWithRules(ruleset);
             var request = new TransferFeeRequestDto { DutiableValue = dutiableValue };
-            var resp = svc.CalculateFee(request, ruleset.VersionTag);
+            var resp = svc.CalculateFee(request);
 
-            Assert.Equal(expected, resp.FinalFee);
+            Assert.Equal(expected, resp.FeeStatutory);
         }
 
         private class FakeRulesProvider : ITransferFeeRulesProvider
