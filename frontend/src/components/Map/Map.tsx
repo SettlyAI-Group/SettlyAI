@@ -49,7 +49,6 @@ const MapZoomHandler = () => {
 
 const Map = () => {
   const [position, setPosition] = useState<{ lat: number; lng: number } | null>(null);
-  const [geoData, setGeoData] = useState<IApiSuburbData | null>(null);
   const dispatch = useAppDispatch();
 
   const UserClickMapData = ({ onPick }: { onPick?: (lat: number, lng: number) => void }) => {
@@ -65,12 +64,19 @@ const Map = () => {
 
   useEffect(() => {
     if (!position) return;
+
+    let callIsCancelled = false;
+
     (async () => {
       try {
         const geoApiData = await fetchGeocodingApi(position.lat, position.lng);
-        setGeoData(geoApiData);
 
+        //Stop the process when user click a new position before geoApiData is return
+        if (callIsCancelled) return;
         const backendData = await getSuburbFromDb(geoApiData);
+
+        //Stop the process when user click a new position before backend is return
+        if (callIsCancelled) return;
         if (backendData) {
           const { suburb, state, postcode } = backendData;
           dispatch(setSelectedSuburb({ suburb, state, postcode }));
@@ -79,10 +85,15 @@ const Map = () => {
         }
       } catch (err) {
         console.error(`Error: ${err}`);
+        dispatch(clearSelectedSuburb());
       }
     })();
-    return;
-  }, [position]);
+
+    return () => {
+      //Act as a clean up function in case user click a new position
+      callIsCancelled = true;
+    };
+  }, [position, dispatch]);
 
   return (
     <SectionContainer>
