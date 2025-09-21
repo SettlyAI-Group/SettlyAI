@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SettlyFinance.Enums;
-
 namespace SettlyFinance.Models
 {
     /// <summary>
     /// Input parameters for a single, continuous amortization block.
+    /// This can be used for both P&I and IO periods.
     /// </summary>
-    public record PniInput
+    public record AmortizationInput
     (
         /// <summary>Principal amount in AUD (decimal).</summary>
         decimal LoanAmount,
@@ -23,7 +23,9 @@ namespace SettlyFinance.Models
         int TermPeriods,
         /// <summary>Repayment frequency enum.</summary>
         RepaymentFrequency Frequency,
+        /// <summary>The type of repayment for this block (P&I or IO).</summary>
+        RepaymentType Type,
         /// <summary>Whether to generate the full amortization schedule.</summary>
-        bool WithSchedule = false
+        bool GenerateSchedule = false
     );
 }

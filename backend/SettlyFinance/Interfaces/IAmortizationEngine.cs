@@ -1,10 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using SettlyFinance.Models;
-
 namespace SettlyFinance.Interfaces
 {
     /// <summary>
@@ -16,6 +10,6 @@ namespace SettlyFinance.Interfaces
         /// Calculates repayment metrics for a continuous block.
         /// </summary>
         /// <param name="input">The consolidated input parameters for the calculation.</param>
-        PniResult Calculate (PniInput input);
+        AmortizationResult Calculate(AmortizationInput input);
     }
 }

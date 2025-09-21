@@ -27,9 +27,14 @@ namespace SettlyFinance.Calculators.Engines
         /// Calculates repayment metrics for a continuous block (does not cross segments).
         /// </summary>
         /// <param name="input">The consolidated input parameters for the calculation.</param>
-        public PniResult Calculate (PniInput input)
+        public AmortizationResult Calculate (AmortizationInput input)
         {
-            if (input.TermPeriods <= 0) throw new ArgumentOutOfRangeException(nameof(input.TermPeriods), "Term periods must be positive");
+            if (input.TermPeriods <= 0)
+                throw new ArgumentOutOfRangeException(nameof(input.TermPeriods), "Term periods must be positive.");
+            if (input.AnnualInterestRate < 0m)
+                throw new ArgumentOutOfRangeException(nameof(input.AnnualInterestRate), "Rate cannot be negative.");
+            if (_frequencyProvider.GetPeriodsPerYear(input.Frequency) <= 0) throw new ArgumentOutOfRangeException(nameof(input.Frequency), "Frequency must be valid.");
+            if (input.Type != RepaymentType.PrincipalAndInterest) throw new InvalidOperationException("PNI engine only supports PrincipalAndInterest repayment type.");
             var periodsPerYear = _frequencyProvider.GetPeriodsPerYear(input.Frequency);      // 12 / 26 / 52
             var r = (periodsPerYear == 0) ? 0m : input.AnnualInterestRate / periodsPerYear;
             var P = MoneyUtils.ToCents(input.LoanAmount);
@@ -54,7 +59,7 @@ namespace SettlyFinance.Calculators.Engines
             long remaining = P;
             long totalPaid = 0;
             long totalInterest = 0;
-            var scheduleList = input.WithSchedule ? new List<PniScheduleRow>(input.TermPeriods) : null;
+            var scheduleList = input.GenerateSchedule ? new List<AmortizationScheduleRow>(input.TermPeriods) : null;
             for (int k = 1; k <= input.TermPeriods; k++)
             {
                 bool isLast = (k == input.TermPeriods);
@@ -66,23 +71,29 @@ namespace SettlyFinance.Calculators.Engines
                 totalPaid = totalPaid + paidThis;
                 totalInterest = totalInterest + interestCents;
                 remaining = nextRemaining;
-                if (input.WithSchedule)
+                if (input.GenerateSchedule)
                 {
-                    scheduleList!.Add(new PniScheduleRow(
+                    scheduleList!.Add(new AmortizationScheduleRow(
                         Period: k,
                         Payment: MoneyUtils.FromCents(paidThis),
                         Interest: MoneyUtils.FromCents(interestCents),
                         Principal: MoneyUtils.FromCents(principalPart),
-                        Remaining: MoneyUtils.FromCents(remaining)
+                        EndingBalance: MoneyUtils.FromCents(remaining)
                     ));
                 }
             }
             decimal precisePayment = MoneyUtils.FromCents(paymentCents);
             int displayPayment = (int)Math.Ceiling(precisePayment);
-            return new PniResult(
-                 Payment: precisePayment,          
-        DisplayPayment: displayPayment,
+            var totalPrincipalInCents = totalPaid - totalInterest;
+            return new AmortizationResult(
+                LoanAmount: input.LoanAmount,
+                AnnualInterestRate: input.AnnualInterestRate,
+                Frequency: input.Frequency,
+                RepaymentType: input.Type,
+                Payment: precisePayment,          
+                DisplayPayment: displayPayment,
                 TotalInterest: MoneyUtils.FromCents(totalInterest),
+                TotalPrincipal: MoneyUtils.FromCents(totalPrincipalInCents),
                 TotalCost: MoneyUtils.FromCents(totalPaid),
                 TermPeriods: input.TermPeriods,
                 Schedule: scheduleList);
