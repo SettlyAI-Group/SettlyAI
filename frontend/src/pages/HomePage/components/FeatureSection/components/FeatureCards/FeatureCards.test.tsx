@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { describe, it, expect } from 'vitest';
-import FeatureCards from './FeatureCards';
+import FeatureCards from '.';
 
 const renderWithProviders = (ui: React.ReactElement) => {
   const theme = createTheme();
