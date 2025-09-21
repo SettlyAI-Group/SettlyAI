@@ -10,7 +10,6 @@ COPY ISettlyService/ISettlyService.csproj ISettlyService/
 COPY SettlyService/SettlyService.csproj SettlyService/
 COPY SettlyApiTests/SettlyApiTests.csproj SettlyApiTests/
 
-COPY SettlyFinance/SettlyFinance.csproj SettlyFinance/
 
 RUN dotnet restore
 
