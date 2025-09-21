@@ -13,6 +13,7 @@ public class DataSeeder
     public DataSeeder(SettlyDbContext context)
     {
         _context = context;
+        Bogus.Randomizer.Seed = new Random(12345); // 设置全局种子
     }
 
     public async Task SeedAllAsync()
@@ -150,7 +151,7 @@ public class DataSeeder
     // Independent entity seeding methods
     private async Task SeedUsersAsync()
     {
-        var userFaker = new Faker<User>()
+        var userFaker = new Faker<User>("en_AU")
             .RuleFor(u => u.Name, f => f.Person.FullName)
             .RuleFor(u => u.Email, f => f.Person.Email)
             .RuleFor(u => u.PasswordHash, f => f.Internet.Password(8) + "_hashed")
@@ -194,12 +195,17 @@ public class DataSeeder
                 state = state.Trim('"');
                 postcode = postcode.Trim('"');
                 
-                suburbs.Add(new Suburb
+                // Parse ID and use it
+                if (int.TryParse(id, out int suburbId))
                 {
-                    Name = name,
-                    State = state,
-                    Postcode = postcode
-                });
+                    suburbs.Add(new Suburb
+                    {
+                        Id = suburbId, // 使用 CSV 中的固定 ID
+                        Name = name,
+                        State = state,
+                        Postcode = postcode
+                    });
+                }
             }
         }
         
@@ -217,7 +223,7 @@ public class DataSeeder
         };
 
         var superFunds = new List<SuperFund>();
-        var faker = new Faker();
+        var faker = new Faker("en_AU");
         foreach (var fundName in superFundNames)
         {
             superFunds.Add(new SuperFund
@@ -238,7 +244,7 @@ public class DataSeeder
         var policyTypes = new[] { "FirstHomeBuyer", "StampDutyExemption", "GrantScheme", "TaxIncentive" };
         var states = new[] { "NSW", "VIC", "QLD", "WA", "SA", "TAS", "ACT", "NT" };
 
-        var policyRuleFaker = new Faker<PolicyRule>()
+        var policyRuleFaker = new Faker<PolicyRule>("en_AU")
             .RuleFor(pr => pr.SuburbId, f => f.Random.Bool(0.3f) ? (int?)null : f.Random.Int(1, 100))
             .RuleFor(pr => pr.State, f => f.PickRandom(states))
             .RuleFor(pr => pr.RuleType, f => f.PickRandom(policyTypes))
@@ -255,38 +261,92 @@ public class DataSeeder
     // First level dependent entity seeding methods
     private async Task SeedPropertiesAsync()
     {
-        var suburbIds = await _context.Suburbs.Select(s => s.Id).ToListAsync();
+        Console.WriteLine("Loading Victoria addresses from CSV file...");
+        
+        var csvPath = Path.Combine(Directory.GetCurrentDirectory(), "Data/victoria_addresses_cleaned.csv");
+        
+        if (!File.Exists(csvPath))
+        {
+            throw new FileNotFoundException($"CSV file not found at: {csvPath}");
+        }
+
         var propertyTypes = new[] { "House", "Apartment", "Townhouse", "Unit", "Villa" };
         var features = new[] { "Pool", "Garage", "Garden", "Balcony", "Air Conditioning", "Parking", "Modern Kitchen" };
-        var iamges = new[] { "https://cdn.pixabay.com/photo/2020/04/28/04/03/villa-5102551_1280.jpg", "https://cdn.pixabay.com/photo/2020/04/28/04/03/villa-5102547_1280.jpg", "https://cdn.pixabay.com/photo/2017/04/10/22/28/residence-2219972_1280.jpg" };
-        var propertyFaker = new Faker<Property>()
-            .RuleFor(p => p.SuburbId, f => f.PickRandom(suburbIds))
-            .RuleFor(p => p.Address, f => f.Address.StreetAddress())
-            .RuleFor(p => p.PropertyType, f => f.PickRandom(propertyTypes))
-            .RuleFor(p => p.Bedrooms, f => f.Random.Int(1, 5))
-            .RuleFor(p => p.Bathrooms, f => f.Random.Int(1, 3))
-            .RuleFor(p => p.CarSpaces, f => f.Random.Int(0, 3))
-            .RuleFor(p => p.Price, f => f.Random.Int(300000, 2000000))
-            .RuleFor(p => p.InternalArea, f => f.Random.Int(50, 400))
-            .RuleFor(p => p.LandSize, f => f.Random.Int(100, 1000))
-            .RuleFor(p => p.YearBuilt, f => f.Random.Int(1950, 2024))
-            .RuleFor(p => p.Features, f => f.PickRandom(features, 3).ToArray())
-            .RuleFor(p => p.Summary, (f, p) => $"Discover this stunning {p.Bedrooms}-bedroom {p.PropertyType.ToLower()} located in a vibrant suburb. " +
-                $"Featuring {p.Features}, this property offers comfort and convenience for modern living. " +
-                $"Built in {p.YearBuilt}, it boasts {p.Bathrooms} bathrooms and {p.CarSpaces} car spaces.")
-            .RuleFor(p => p.ImageUrl, f => f.PickRandom(iamges))
-            .RuleFor(p => p.InspectionTimeOptions, f =>
+        var images = new[] { "https://cdn.pixabay.com/photo/2020/04/28/04/03/villa-5102551_1280.jpg", "https://cdn.pixabay.com/photo/2020/04/28/04/03/villa-5102547_1280.jpg", "https://cdn.pixabay.com/photo/2017/04/10/22/28/residence-2219972_1280.jpg" };
+        
+        var properties = new List<Property>();
+        var lines = await File.ReadAllLinesAsync(csvPath);
+        var faker = new Faker("en_AU");
+        
+        // Skip header line
+        for (int i = 1; i < lines.Length; i++)
+        {
+            var line = lines[i];
+            if (string.IsNullOrWhiteSpace(line)) continue;
+            
+            var parts = line.Split(',');
+            if (parts.Length >= 4)
             {
-                var count = f.Random.Int(0, 5);
-                var options = new List<DateTime>();
-                for (int i = 0; i < count; i++)
+                // CSV format: Id,SuburbId,PostCode,Address
+                var id = parts[0].Trim();
+                var suburbId = parts[1].Trim();
+                var address = parts[3].Trim(); // 跳过 PostCode，只取 Address
+                
+                // Remove quotes if present
+                address = address.Trim('"');
+                
+                // Parse ID and SuburbId
+                if (int.TryParse(id, out int propertyId) && int.TryParse(suburbId, out int suburbIdInt))
                 {
-                    options.Add(f.Date.Between(DateTime.UtcNow.AddDays(1), DateTime.UtcNow.AddDays(30)));
+                    // 使用 CSV 中的真实地址，其他属性随机生成
+                    var propertyType = faker.PickRandom(propertyTypes);
+                    var bedrooms = faker.Random.Int(1, 5);
+                    var bathrooms = faker.Random.Int(1, 3);
+                    var carSpaces = faker.Random.Int(0, 3);
+                    var price = faker.Random.Int(300000, 2000000);
+                    var internalArea = faker.Random.Int(50, 400);
+                    var landSize = faker.Random.Int(100, 1000);
+                    var yearBuilt = faker.Random.Int(1950, 2024);
+                    var selectedFeatures = faker.PickRandom(features, 3).ToArray();
+                    
+                    properties.Add(new Property
+                    {
+                        Id = propertyId, // 使用 CSV 中的固定 ID
+                        SuburbId = suburbIdInt, // 使用 CSV 中的 SuburbId
+                        Address = address, // 使用 CSV 中的真实地址
+                        // 其他属性随机生成
+                        PropertyType = propertyType,
+                        Bedrooms = bedrooms,
+                        Bathrooms = bathrooms,
+                        CarSpaces = carSpaces,
+                        Price = price,
+                        InternalArea = internalArea,
+                        LandSize = landSize,
+                        YearBuilt = yearBuilt,
+                        Features = selectedFeatures,
+                        Summary = $"Discover this stunning {bedrooms}-bedroom {propertyType.ToLower()} located in a vibrant suburb. " +
+                            $"Featuring {string.Join(", ", selectedFeatures)}, this property offers comfort and convenience for modern living. " +
+                            $"Built in {yearBuilt}, it boasts {bathrooms} bathrooms and {carSpaces} car spaces.",
+                        ImageUrl = faker.PickRandom(images),
+                        InspectionTimeOptions = GenerateInspectionTimes(faker)
+                    });
                 }
-                return options;
-            });
-        var properties = propertyFaker.Generate(500);
+            }
+        }
+        
+        Console.WriteLine($"Loaded {properties.Count} Victoria properties with real addresses from CSV");
         await _context.Properties.AddRangeAsync(properties);
+    }
+
+    private List<DateTime> GenerateInspectionTimes(Faker faker)
+    {
+        var count = faker.Random.Int(0, 5);
+        var options = new List<DateTime>();
+        for (int i = 0; i < count; i++)
+        {
+            options.Add(faker.Date.Between(DateTime.UtcNow.AddDays(1), DateTime.UtcNow.AddDays(30)));
+        }
+        return options;
     }
 
     private async Task SeedHousingMarketsAsync()
@@ -303,7 +363,7 @@ public class DataSeeder
     {
         var userIds = await _context.Users.Select(u => u.Id).ToListAsync();
 
-        var superProjectionInputFaker = new Faker<SuperProjectionInput>()
+        var superProjectionInputFaker = new Faker<SuperProjectionInput>("en_AU")
             .RuleFor(spi => spi.UserId, f => f.PickRandom(userIds))
             .RuleFor(spi => spi.CurrentBalance, f => f.Random.Int(10000, 500000))
             .RuleFor(spi => spi.Salary, f => f.Random.Int(50000, 150000))
@@ -344,27 +404,29 @@ public class DataSeeder
         };
 
         var chatLogs = new List<ChatLog>();
+        var faker = new Faker("en_AU");
+        
         foreach (var userId in userIds.Take(30))
         {
-            var conversationLength = new Faker().Random.Int(2, 10);
+            var conversationLength = faker.Random.Int(2, 10);
             for (int i = 0; i < conversationLength; i++)
             {
                 // User message
                 chatLogs.Add(new ChatLog
                 {
                     UserId = userId,
-                    Message = new Faker().PickRandom(userMessages),
+                    Message = faker.PickRandom(userMessages),
                     IsUser = true,
-                    Timestamp = DateTime.UtcNow.AddDays(-new Faker().Random.Int(1, 30)).AddMinutes(-i * 2)
+                    Timestamp = DateTime.UtcNow.AddDays(-faker.Random.Int(1, 30)).AddMinutes(-i * 2)
                 });
 
                 // AI response
                 chatLogs.Add(new ChatLog
                 {
                     UserId = userId,
-                    Message = new Faker().PickRandom(aiResponses),
+                    Message = faker.PickRandom(aiResponses),
                     IsUser = false,
-                    Timestamp = DateTime.UtcNow.AddDays(-new Faker().Random.Int(1, 30)).AddMinutes(-i * 2 + 1)
+                    Timestamp = DateTime.UtcNow.AddDays(-faker.Random.Int(1, 30)).AddMinutes(-i * 2 + 1)
                 });
             }
         }
@@ -387,10 +449,12 @@ public class DataSeeder
         };
 
         var inspectionPlans = new List<InspectionPlan>();
+        var faker = new Faker("en_AU");
+        
         foreach (var userId in userIds.Take(25))
         {
-            var inspectionCount = new Faker().Random.Int(1, 4);
-            var selectedProperties = new Faker().PickRandom(propertyIds, inspectionCount).ToList();
+            var inspectionCount = faker.Random.Int(1, 4);
+            var selectedProperties = faker.PickRandom(propertyIds, inspectionCount).ToList();
 
             foreach (var propertyId in selectedProperties)
             {
@@ -398,9 +462,9 @@ public class DataSeeder
                 {
                     UserId = userId,
                     PropertyId = propertyId,
-                    ScheduledTime = new Faker().Date.Between(DateTime.UtcNow.AddDays(1), DateTime.UtcNow.AddDays(30)),
-                    Note = new Faker().PickRandom(inspectionNotes),
-                    CreatedAt = new Faker().Date.Between(DateTime.UtcNow.AddDays(-7), DateTime.UtcNow)
+                    ScheduledTime = faker.Date.Between(DateTime.UtcNow.AddDays(1), DateTime.UtcNow.AddDays(30)),
+                    Note = faker.PickRandom(inspectionNotes),
+                    CreatedAt = faker.Date.Between(DateTime.UtcNow.AddDays(-7), DateTime.UtcNow)
                 });
             }
         }
@@ -415,14 +479,15 @@ public class DataSeeder
         var repaymentTypes = new[] { "Principal and Interest", "Interest Only" };
 
         var loanCalculations = new List<LoanCalculation>();
+        var faker = new Faker("en_AU");
+        
         foreach (var userId in userIds.Take(30))
         {
-            var calculationCount = new Faker().Random.Int(1, 3);
-            var selectedProperties = new Faker().PickRandom(propertyIds, calculationCount).ToList();
+            var calculationCount = faker.Random.Int(1, 3);
+            var selectedProperties = faker.PickRandom(propertyIds, calculationCount).ToList();
 
             foreach (var propertyId in selectedProperties)
             {
-                var faker = new Faker();
                 var depositAmount = faker.Random.Int(50000, 400000);
                 var loanAmount = faker.Random.Int(300000, 1200000);
                 var interestRate = faker.Random.Decimal(0.03m, 0.07m);
@@ -468,9 +533,10 @@ public class DataSeeder
         var inputIds = await _context.SuperProjectionInputs.Select(spi => spi.Id).ToListAsync();
 
         var superProjectionResults = new List<SuperProjectionResult>();
+        var faker = new Faker("en_AU");
+        
         foreach (var inputId in inputIds)
         {
-            var faker = new Faker();
             var projectedBalance = faker.Random.Int(500000, 2000000);
             var fhssAmount = faker.Random.Int(30000, 50000);
 
@@ -510,9 +576,10 @@ public class DataSeeder
         };
 
         var superProjectionInsights = new List<SuperProjectionInsight>();
+        var faker = new Faker("en_AU");
+        
         foreach (var inputId in inputIds)
         {
-            var faker = new Faker();
             var yearsToRetirement = faker.Random.Int(10, 40);
 
             superProjectionInsights.Add(new SuperProjectionInsight
@@ -533,9 +600,10 @@ public class DataSeeder
         var inputIds = await _context.SuperProjectionInputs.Select(spi => spi.Id).ToListAsync();
 
         var userFundSelections = new List<UserFundSelection>();
+        var faker = new Faker("en_AU");
+        
         foreach (var inputId in inputIds)
         {
-            var faker = new Faker();
             var userId = faker.PickRandom(userIds);
             var fundId = faker.PickRandom(fundIds);
 
