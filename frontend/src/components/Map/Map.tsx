@@ -5,7 +5,6 @@ import PersonPinCircleIcon from '@mui/icons-material/PersonPinCircle';
 import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-leaflet';
 import { useState, useEffect } from 'react';
 import { Box, styled } from '@mui/material';
-import type { IApiSuburbData } from '@/interfaces/map';
 import { fetchGeocodingApi, getSuburbFromDb } from '@/api/mapApi';
 import { useAppDispatch } from '@/redux/hooks';
 import { setSelectedSuburb, clearSelectedSuburb } from '@/redux/mapSuburbSlice';
