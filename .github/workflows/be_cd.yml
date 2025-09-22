@@ -44,18 +44,37 @@ jobs:
           echo "Found EC2 instance ID: $INSTANCE_ID"
           echo "INSTANCE_ID=$INSTANCE_ID" >> $GITHUB_ENV
 
-      # 2) 等待实例在 SSM 中注册
-      - name: Wait for SSM registration
+      # 2) 等待实例在 SSM 中注册并检查状态
+      - name: Wait for SSM registration and check status
         run: |
           set -euo pipefail
           echo "Waiting for EC2 to register with SSM..."
           for i in {1..20}; do
-            MATCHED=$(aws ssm describe-instance-information \
+            INSTANCE_INFO=$(aws ssm describe-instance-information \
               --region $AWS_REGION \
               --query "InstanceInformationList[?InstanceId=='$INSTANCE_ID']" \
-              --output text)
-            if [ -n "$MATCHED" ]; then
+              --output json)
+            
+            if [ "$(echo "$INSTANCE_INFO" | jq length)" -gt 0 ]; then
               echo "✅ EC2 instance registered with SSM!"
+              
+              # 检查详细状态
+              echo "===== SSM Instance Details ====="
+              echo "$INSTANCE_INFO" | jq .
+              
+              PING_STATUS=$(echo "$INSTANCE_INFO" | jq -r '.[0].PingStatus // "Unknown"')
+              LAST_PING=$(echo "$INSTANCE_INFO" | jq -r '.[0].LastPingDateTime // "Unknown"')
+              AGENT_VERSION=$(echo "$INSTANCE_INFO" | jq -r '.[0].AgentVersion // "Unknown"')
+              
+              echo "Ping Status: $PING_STATUS"
+              echo "Last Ping: $LAST_PING"
+              echo "Agent Version: $AGENT_VERSION"
+              
+              if [ "$PING_STATUS" != "Online" ]; then
+                echo "⚠️ Warning: Instance ping status is $PING_STATUS"
+                echo "This may cause SSM commands to fail"
+              fi
+              
               exit 0
             fi
             echo "⏳ Not yet registered... retry in 5 seconds"
@@ -82,6 +101,22 @@ jobs:
           #!/usr/bin/env bash
           set -euo pipefail
           export DEBIAN_FRONTEND=noninteractive
+          
+          # Set timeouts and add logging
+          exec > >(tee -a /tmp/deploy.log)
+          exec 2>&1
+          echo "=== Deployment started at $(date) ==="
+          
+          # Function to run commands with timeout
+          run_with_timeout() {
+            local timeout=$1
+            shift
+            echo "Running with ${timeout}s timeout: $*"
+            timeout "$timeout" "$@" || {
+              echo "Command timed out after ${timeout}s: $*"
+              return 1
+            }
+          }
 
           echo "=== Detect/Install Docker ==="
           if ! command -v docker >/dev/null 2>&1; then
@@ -137,7 +172,7 @@ jobs:
           echo "=== Pull & Run Container ==="
           IMAGE="${ECR_REGISTRY}:latest"
           echo "Pulling $IMAGE ..."
-          docker pull "$IMAGE"
+          run_with_timeout 600 docker pull "$IMAGE"
 
           echo "=== Stop & remove old container ==="
           docker stop backend || true
@@ -147,12 +182,12 @@ jobs:
           docker container prune -f || true
 
           echo "=== Run database migration ==="
-          docker run --rm --name db-migrate \
+          run_with_timeout 300 docker run --rm --name db-migrate \
             -e ApiConfigs__DBConnection="Host=__DB_HOST__;Port=__DB_PORT__;Database=__DB_NAME__;User Id=__DB_USER__;Password=__DB_PASSWORD__" \
             "$IMAGE" bash -c "cd /app/SettlyModels && dotnet ef database update --startup-project ../SettlyApi"
 
           echo "=== Run database seeding ==="
-          docker run --rm --name db-seed \
+          run_with_timeout 600 docker run --rm --name db-seed \
             -e ApiConfigs__DBConnection="Host=__DB_HOST__;Port=__DB_PORT__;Database=__DB_NAME__;User Id=__DB_USER__;Password=__DB_PASSWORD__" \
             -e ASPNETCORE_ENVIRONMENT=Development \
             "$IMAGE" bash -c "cd /app/SettlyDbManager && dotnet run -- --seed"
@@ -196,6 +231,16 @@ jobs:
           
           echo "=== Test API endpoint ==="
           docker exec backend curl -f http://localhost:5100/api/suburb/1 || echo "API endpoint test failed"
+          
+          echo "=== Deployment completed at $(date) ==="
+          echo "=== Deployment log saved to /tmp/deploy.log ==="
+          
+          # Clean up any stuck processes
+          pkill -f "docker pull" || true
+          pkill -f "dotnet ef" || true
+          pkill -f "dotnet run" || true
+          
+          echo "=== Script finished successfully ==="
           EOF
 
           # 用实际值替换占位符（Runner 本地执行）

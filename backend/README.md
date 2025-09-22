@@ -14,7 +14,7 @@ This solution consists of four main projects:
 
 ## Quick Start
 
-### Prerequisites 
+### Prerequisites  
 
 - .NET 8 SDK
 - PostgreSQL database
