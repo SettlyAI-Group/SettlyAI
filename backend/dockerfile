@@ -11,11 +11,12 @@ COPY ISettlyService/ISettlyService.csproj ISettlyService/
 COPY SettlyService/SettlyService.csproj SettlyService/
 
 # Restore packages
-RUN dotnet restore --no-cache
+RUN dotnet restore
 
 # Copy source and build
 COPY . .
-RUN dotnet publish SettlyApi/SettlyApi.csproj -c Release -o /app/publish --no-restore
+RUN dotnet build --no-restore -c Release
+RUN dotnet publish SettlyApi/SettlyApi.csproj -c Release -o /app/publish --no-build
 
 # Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine
