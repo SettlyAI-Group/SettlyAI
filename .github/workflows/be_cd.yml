@@ -244,34 +244,64 @@ jobs:
         run: |
           set -euo pipefail
           CMD_ID="${{ steps.send.outputs.cmd_id }}"
-          for i in {1..60}; do
-            STATUS=$(aws ssm get-command-invocation \
+          echo "Waiting for SSM command: $CMD_ID"
+          
+          for i in {1..120}; do
+            echo "Check attempt $i/120 ($(date))..."
+            
+            # Get full command details
+            COMMAND_DETAILS=$(aws ssm get-command-invocation \
               --command-id "$CMD_ID" \
               --instance-id "$INSTANCE_ID" \
               --region "$AWS_REGION" \
-              --query "Status" --output text || true)
+              --output json || echo '{}')
+            
+            STATUS=$(echo "$COMMAND_DETAILS" | jq -r '.Status // "Unknown"')
             echo "Invocation status: $STATUS"
+            
             case "$STATUS" in
-              Success|Cancelled|TimedOut|Failed) break ;;
-              *) sleep 5 ;;
+              Success|Cancelled|TimedOut|Failed) 
+                echo "Command completed with status: $STATUS"
+                break 
+                ;;
+              InProgress|Pending|Delayed) 
+                echo "Command still running, waiting 15 seconds..."
+                # Show partial output if available
+                PARTIAL_OUTPUT=$(echo "$COMMAND_DETAILS" | jq -r '.StandardOutputContent // ""' | tail -5)
+                if [ -n "$PARTIAL_OUTPUT" ]; then
+                  echo "Latest output: $PARTIAL_OUTPUT"
+                fi
+                sleep 15 
+                ;;
+              *) 
+                echo "Unknown status: $STATUS, waiting 10 seconds..."
+                sleep 10 
+                ;;
             esac
           done
-
+          
+          # If still in progress after all attempts, show what we have
+          if [ "$STATUS" = "InProgress" ]; then
+            echo "⚠️ Command still in progress after 30 minutes, showing current output..."
+          fi
+          
+          echo "===== COMMAND DETAILS ====="
+          echo "$COMMAND_DETAILS" | jq .
+          
           echo "===== STDOUT ====="
-          aws ssm get-command-invocation \
-            --command-id "$CMD_ID" \
-            --instance-id "$INSTANCE_ID" \
-            --region "$AWS_REGION" \
-            --query "StandardOutputContent" --output text || true
-
+          echo "$COMMAND_DETAILS" | jq -r '.StandardOutputContent // "No stdout"'
+          
           echo "===== STDERR ====="
-          aws ssm get-command-invocation \
-            --command-id "$CMD_ID" \
-            --instance-id "$INSTANCE_ID" \
-            --region "$AWS_REGION" \
-            --query "StandardErrorContent" --output text || true
-
+          echo "$COMMAND_DETAILS" | jq -r '.StandardErrorContent // "No stderr"'
+          
+          echo "===== STATUS DETAILS ====="
+          echo "Status: $(echo "$COMMAND_DETAILS" | jq -r '.Status // "Unknown"')"
+          echo "Status Details: $(echo "$COMMAND_DETAILS" | jq -r '.StatusDetails // "No details"')"
+          echo "Response Code: $(echo "$COMMAND_DETAILS" | jq -r '.ResponseCode // "No code"')"
+          
           if [ "$STATUS" != "Success" ]; then
-            echo "SSM command finished with status: $STATUS"
+            echo "❌ SSM command failed with status: $STATUS"
             exit 1
           fi
+          
+          echo "✅ SSM command completed successfully"
