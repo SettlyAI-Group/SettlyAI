@@ -37,7 +37,7 @@ You can use the following command to start the bakend service using docker conta
    dotnet restore backend.sln
    ```
 
-2. **Configure database connection** 
+2. **Configure database connection**
 
    Copy the example configuration files and update with your database settings:
    ```bash
