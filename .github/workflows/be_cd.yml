@@ -208,6 +208,10 @@ jobs:
           echo "Container started, waiting for it to be ready..."
           sleep 10
 
+          
+          echo "Container started, waiting for it to be ready..."
+          sleep 10
+
           echo "=== Post-Checks ==="
           docker ps
           (ss -tulnp || netstat -tulnp) 2>/dev/null | grep ":5100" || true
