@@ -16,7 +16,8 @@ This solution consists of four main projects:
 
 
 
-### Prerequisites
+
+### Prerequisites 
 
 - .NET 8 SDK
 - PostgreSQL database
