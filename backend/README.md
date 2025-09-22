@@ -20,7 +20,7 @@ This solution consists of four main projects:
 - PostgreSQL database
 - Visual Studio, VS Code, or Rider (recommended)
 
-### Quick Setup using docker
+### Quick Setup using docker 
 You can use the following command to start the bakend service using docker containers quickly (including conneting to postgres db, db-migration, db-seed)
 ```bash
  cd backend 
