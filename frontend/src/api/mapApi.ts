@@ -8,15 +8,11 @@ export const fetchGeocodingApi = async (lat: number, lon: number): Promise<IApiS
   const { data } = await axios.get<IGeocodeApiResult>(GEOCODING_URL, {
     params: { format: 'jsonv2', addressdetails: 1, lat, lon },
   });
-  return requiredData(data);
-};
-
-const requiredData = (apiData: IGeocodeApiResult): IApiSuburbData => {
-  const data = apiData.address ?? {};
+  const suburbData = data.address ?? {};
   return {
-    suburb: data.suburb,
-    state: data.state,
-    postcode: data.postcode,
+    suburb: suburbData.suburb ?? 'unknown',
+    state: suburbData.state ?? 'unknown',
+    postcode: suburbData.postcode ?? 'unknown',
   };
 };
 

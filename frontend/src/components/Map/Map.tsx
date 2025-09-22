@@ -50,7 +50,7 @@ const Map = () => {
   const [position, setPosition] = useState<{ lat: number; lng: number } | null>(null);
   const dispatch = useAppDispatch();
 
-  const UserClickMapData = ({ onPick }: { onPick?: (lat: number, lng: number) => void }) => {
+  const UserGeoData = ({ onPick }: { onPick?: (lat: number, lng: number) => void }) => {
     useMapEvents({
       click: e => {
         const { lat, lng } = e.latlng;
@@ -68,16 +68,16 @@ const Map = () => {
 
     (async () => {
       try {
-        const geoApiData = await fetchGeocodingApi(position.lat, position.lng);
+        const rawSuburbData = await fetchGeocodingApi(position.lat, position.lng);
 
-        //Stop the process when user click a new position before geoApiData is return
+        //Stop the process when user click a new position before rawSuburbData is return
         if (callIsCancelled) return;
-        const backendData = await getSuburbFromDb(geoApiData);
+        const suburbData = await getSuburbFromDb(rawSuburbData);
 
         //Stop the process when user click a new position before backend is return
         if (callIsCancelled) return;
-        if (backendData) {
-          const { suburb, state, postcode } = backendData;
+        if (suburbData) {
+          const { suburb, state, postcode } = suburbData;
           dispatch(setSelectedSuburb({ suburb, state, postcode }));
         } else {
           dispatch(clearSelectedSuburb());
@@ -102,7 +102,7 @@ const Map = () => {
           attribution="© OpenStreetMap contributors"
         />
         <MapZoomHandler />
-        <UserClickMapData />
+        <UserGeoData />
         {position && <Marker position={position} icon={mapPin} />}
       </LeafletMapContainer>
     </SectionContainer>
