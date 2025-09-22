@@ -146,7 +146,7 @@ jobs:
           echo "=== Clean up any dangling containers ==="
           docker container prune -f || true
 
-          echo "=== Run new container (listen on 0.0.0.0:5100) ===
+          echo "=== Run new container (listen on 0.0.0.0:5100) ==="
           docker run -d --name backend --restart unless-stopped -p 5100:5100 \
             -e ASPNETCORE_ENVIRONMENT=Production \
             -e ASPNETCORE_URLS="http://0.0.0.0:5100" \

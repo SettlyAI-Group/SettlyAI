@@ -12,7 +12,9 @@ COPY SettlyService/SettlyService.csproj SettlyService/
 
 # Copy source and publish
 COPY . .
-RUN dotnet publish SettlyApi/SettlyApi.csproj -c Release -o /app/publish
+RUN dotnet publish SettlyApi/SettlyApi.csproj -c Release -o /app/publish \
+    && rm -rf /root/.nuget/packages \
+    && rm -rf /tmp/*
 
 # Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine
