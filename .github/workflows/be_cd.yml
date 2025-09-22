@@ -159,14 +159,16 @@ jobs:
 
           echo "=== Run new container (listen on 0.0.0.0:5100) ==="
           docker run -d --name backend --restart unless-stopped -p 5100:5100 \
-            -e DOTNET_ENVIRONMENT=Production \
+            -e ASPNETCORE_ENVIRONMENT=Production \
             -e ASPNETCORE_URLS="http://0.0.0.0:5100" \
+            -e ASPNETCORE_HTTP_PORTS="5100" \
+            -e DOTNET_URLS="http://0.0.0.0:5100" \
             -e ApiConfigs__DBConnection="Host=__DB_HOST__;Port=__DB_PORT__;Database=__DB_NAME__;User Id=__DB_USER__;Password=__DB_PASSWORD__" \
             -e JWTConfig__SecretKey="SettlyAISuperSecretKey!@#$%^&*()_+1234567890" \
             -e JWTConfig__Issuer="SettlyAI" \
             -e JWTConfig__Audience="SettlyAI" \
             -e JWTConfig__ExpireSeconds="7200" \
-            "$IMAGE"
+            "$IMAGE" bash -c "cd /app/SettlyApi && dotnet run --urls='http://0.0.0.0:5100'"
 
           echo "=== Post-Checks ==="
           docker ps
