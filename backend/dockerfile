@@ -1,28 +1,35 @@
-FROM mcr.microsoft.com/dotnet/sdk:8.0
-
+# Build stage
+FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS build
 WORKDIR /app
 
+# Copy project files
 COPY backend.sln ./
 COPY SettlyApi/SettlyApi.csproj SettlyApi/
 COPY SettlyModels/SettlyModels.csproj SettlyModels/
 COPY SettlyDbManager/SettlyDbManager.csproj SettlyDbManager/
 COPY ISettlyService/ISettlyService.csproj ISettlyService/
 COPY SettlyService/SettlyService.csproj SettlyService/
-COPY SettlyApiTests/SettlyApiTests.csproj SettlyApiTests/
 
-# COPY SettlyFinance/SettlyFinance.csproj SettlyFinance/
+# Restore packages
+RUN dotnet restore --no-cache
 
-RUN dotnet restore
+# Copy source and build
+COPY . .
+RUN dotnet publish SettlyApi/SettlyApi.csproj -c Release -o /app/publish --no-restore
 
-RUN dotnet tool install --global dotnet-ef
+# Runtime stage
+FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine
+WORKDIR /app
+
+# Install EF tools (only if needed for migrations)
+RUN dotnet tool install --global dotnet-ef --version 8.0.0
 ENV PATH="$PATH:/root/.dotnet/tools"
 
-COPY . .
+COPY --from=build /app/publish .
 
-ENV ASPNETCORE_ENVIRONMENT=Development
+ENV ASPNETCORE_ENVIRONMENT=Production
 ENV ASPNETCORE_URLS=http://+:5100
 
 EXPOSE 5100
 
-WORKDIR /app/SettlyApi
-CMD ["dotnet", "run"]
+ENTRYPOINT ["dotnet", "SettlyApi.dll"]
