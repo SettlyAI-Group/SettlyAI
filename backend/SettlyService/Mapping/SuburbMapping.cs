@@ -1,6 +1,7 @@
 using AutoMapper;
 using SettlyModels.Dtos;
 using SettlyModels.Entities;
+using SettlyService.Factories;
 
 namespace SettlyService.Mapping
 {
@@ -12,8 +13,7 @@ namespace SettlyService.Mapping
             CreateMap<HousingMarket, HousingMarketDto>();
             CreateMap<Livability, LivabilityDto>();
             CreateMap<PopulationSupply, PopulationSupplyDto>();
-            CreateMap<RiskDevelopment, RiskDevelopmentDto>();
-            CreateMap<SettlyAIScore, SettlyAIScoreDto>();
+            CreateMap<ScoresCardsAggregateDto, List<ScoreCardDto>>().ConvertUsing(src => ScoreCardFactory.Build(src));
             CreateMap<Suburb, SuburbDto>();
         }
     }
