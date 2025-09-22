@@ -1,6 +1,7 @@
 using System;
 using SettlyModels.Dtos;
 using ISettlyService;
+using SettlyModels.Exceptions;
 
 namespace SettlyService
 {
@@ -20,7 +21,7 @@ namespace SettlyService
             if (request.TitlesCount < 1) throw new ArgumentException("titlesCount must be >= 1");
 
             var rules = _rulesProvider.GetRuleset(request.VersionTag);
-            if (rules == null) throw new InvalidOperationException("ruleset not available");
+            if (rules == null) throw new RulesetNotFoundException(request.VersionTag);
 
             decimal feeRaw;
             decimal feeCapped;

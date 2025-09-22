@@ -1,4 +1,4 @@
-using Microsoft.Extensions.Configuration;
+using System.Text.Json;
 using SettlyModels.Entities;
 using ISettlyService;
 
@@ -6,27 +6,22 @@ namespace SettlyService
 {
     public class TransferFeeRulesProvider : ITransferFeeRulesProvider
     {
-        private readonly IConfiguration _configuration;
+        private readonly string _rulesPath;
 
-        public TransferFeeRulesProvider(IConfiguration configuration)
+        public TransferFeeRulesProvider()
         {
-            _configuration = configuration;
+            _rulesPath = Path.Combine(AppContext.BaseDirectory, "Data", "TransferFeeRulesets");
         }
 
         public TransferFeeRuleset? GetRuleset(string versionTag)
         {
             if (string.IsNullOrWhiteSpace(versionTag)) return null;
 
-            var section = _configuration.GetSection($"TransferFeeRulesets:{versionTag}");
-            if (!section.Exists()) return null;
+            var filePath = Path.Combine(_rulesPath, $"{versionTag}.json");
+            if (!File.Exists(filePath)) return null;
 
-            var rules = section.Get<TransferFeeRuleset>();
-            if (rules != null && string.IsNullOrWhiteSpace(rules.VersionTag))
-            {
-                rules.VersionTag = versionTag;
-            }
-
-            return rules;
+            var json = File.ReadAllText(filePath);
+            return JsonSerializer.Deserialize<TransferFeeRuleset>(json);
         }
     }
 }

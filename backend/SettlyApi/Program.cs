@@ -66,7 +66,7 @@ public class Program
         builder.Services.AddLoginLimitRater(attempts: 5, miniutes: 15);
 
         // Register TransferFee services
-        builder.Services.AddSingleton<ITransferFeeRulesProvider, TransferFeeRulesProvider>();
+        builder.Services.AddScoped<ITransferFeeRulesProvider, TransferFeeRulesProvider>();
         builder.Services.AddScoped<ITransferFeeService, TransferFeeService>();
 
         var app = builder.Build();

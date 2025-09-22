@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SettlyModels.Dtos;
 using ISettlyService;
+using SettlyModels.Exceptions;
 
 namespace SettlyApi.Controllers
 {
@@ -27,13 +28,17 @@ namespace SettlyApi.Controllers
                 var resp = _service.CalculateFee(request);
                 return Ok(resp);
             }
-            catch (InvalidOperationException ex) when (ex.Message == "ruleset not available")
-            {
-                return UnprocessableEntity(new { error = "ruleset not available" });
-            }
             catch (ArgumentException ex)
             {
                 return BadRequest(new { error = ex.Message });
+            }
+            catch (RulesetNotFoundException ex)
+            {
+                return UnprocessableEntity(new { error = ex.Message, versionTag = ex.RequestedVersionTag });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "Unexpected error", details = ex.Message });
             }
         }
     }
