@@ -203,7 +203,10 @@ jobs:
             -e JWTConfig__Issuer="SettlyAI" \
             -e JWTConfig__Audience="SettlyAI" \
             -e JWTConfig__ExpireSeconds="7200" \
-            "$IMAGE" bash -c "cd /app/SettlyApi && dotnet run --urls='http://0.0.0.0:5100'"
+            "$IMAGE"
+          
+          echo "Container started, waiting for it to be ready..."
+          sleep 10
 
           echo "=== Post-Checks ==="
           docker ps
