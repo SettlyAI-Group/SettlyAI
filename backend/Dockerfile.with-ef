@@ -17,9 +17,13 @@ RUN dotnet restore --no-cache
 COPY . .
 RUN dotnet publish SettlyApi/SettlyApi.csproj -c Release -o /app/publish --no-restore
 
-# Runtime stage
-FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine
+# Runtime stage with SDK (for EF tools)
+FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine
 WORKDIR /app
+
+# Install EF tools
+RUN dotnet tool install --global dotnet-ef --version 8.0.0
+ENV PATH="$PATH:/root/.dotnet/tools"
 
 COPY --from=build /app/publish .
 
