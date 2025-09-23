@@ -44,37 +44,18 @@ jobs:
           echo "Found EC2 instance ID: $INSTANCE_ID"
           echo "INSTANCE_ID=$INSTANCE_ID" >> $GITHUB_ENV
 
-      # 2) 等待实例在 SSM 中注册并检查状态
-      - name: Wait for SSM registration and check status
+      # 2) 等待实例在 SSM 中注册
+      - name: Wait for SSM registration
         run: |
           set -euo pipefail
           echo "Waiting for EC2 to register with SSM..."
           for i in {1..20}; do
-            INSTANCE_INFO=$(aws ssm describe-instance-information \
+            MATCHED=$(aws ssm describe-instance-information \
               --region $AWS_REGION \
               --query "InstanceInformationList[?InstanceId=='$INSTANCE_ID']" \
-              --output json)
-            
-            if [ "$(echo "$INSTANCE_INFO" | jq length)" -gt 0 ]; then
+              --output text)
+            if [ -n "$MATCHED" ]; then
               echo "✅ EC2 instance registered with SSM!"
-              
-              # 检查详细状态
-              echo "===== SSM Instance Details ====="
-              echo "$INSTANCE_INFO" | jq .
-              
-              PING_STATUS=$(echo "$INSTANCE_INFO" | jq -r '.[0].PingStatus // "Unknown"')
-              LAST_PING=$(echo "$INSTANCE_INFO" | jq -r '.[0].LastPingDateTime // "Unknown"')
-              AGENT_VERSION=$(echo "$INSTANCE_INFO" | jq -r '.[0].AgentVersion // "Unknown"')
-              
-              echo "Ping Status: $PING_STATUS"
-              echo "Last Ping: $LAST_PING"
-              echo "Agent Version: $AGENT_VERSION"
-              
-              if [ "$PING_STATUS" != "Online" ]; then
-                echo "⚠️ Warning: Instance ping status is $PING_STATUS"
-                echo "This may cause SSM commands to fail"
-              fi
-              
               exit 0
             fi
             echo "⏳ Not yet registered... retry in 5 seconds"
@@ -87,7 +68,7 @@ jobs:
       - name: Build remote deploy script
         id: build-script
         env:
-          ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
+          ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}   # 形如: 012345678901.dkr.ecr.ap-southeast-2.amazonaws.com/my-settly-ai-elliott
           AWS_REGION: ${{ env.AWS_REGION }}
           DB_HOST: ${{ secrets.DB_HOST }}
           DB_PORT: ${{ secrets.DB_PORT }}
@@ -101,22 +82,6 @@ jobs:
           #!/usr/bin/env bash
           set -euo pipefail
           export DEBIAN_FRONTEND=noninteractive
-          
-          # Set timeouts and add logging
-          exec > >(tee -a /tmp/deploy.log)
-          exec 2>&1
-          echo "=== Deployment started at $(date) ==="
-          
-          # Function to run commands with timeout
-          run_with_timeout() {
-            local timeout=$1
-            shift
-            echo "Running with ${timeout}s timeout: $*"
-            timeout "$timeout" "$@" || {
-              echo "Command timed out after ${timeout}s: $*"
-              return 1
-            }
-          }
 
           echo "=== Detect/Install Docker ==="
           if ! command -v docker >/dev/null 2>&1; then
@@ -172,7 +137,7 @@ jobs:
           echo "=== Pull & Run Container ==="
           IMAGE="${ECR_REGISTRY}:latest"
           echo "Pulling $IMAGE ..."
-          run_with_timeout 600 docker pull "$IMAGE"
+          docker pull "$IMAGE"
 
           echo "=== Stop & remove old container ==="
           docker stop backend || true
@@ -180,17 +145,6 @@ jobs:
           
           echo "=== Clean up any dangling containers ==="
           docker container prune -f || true
-
-          echo "=== Run database migration ==="
-          run_with_timeout 300 docker run --rm --name db-migrate \
-            -e ApiConfigs__DBConnection="Host=__DB_HOST__;Port=__DB_PORT__;Database=__DB_NAME__;User Id=__DB_USER__;Password=__DB_PASSWORD__" \
-            "$IMAGE" bash -c "cd /app/SettlyModels && dotnet ef database update --startup-project ../SettlyApi"
-
-          echo "=== Run database seeding ==="
-          run_with_timeout 600 docker run --rm --name db-seed \
-            -e ApiConfigs__DBConnection="Host=__DB_HOST__;Port=__DB_PORT__;Database=__DB_NAME__;User Id=__DB_USER__;Password=__DB_PASSWORD__" \
-            -e ASPNETCORE_ENVIRONMENT=Development \
-            "$IMAGE" bash -c "cd /app/SettlyDbManager && dotnet run -- --seed"
 
           echo "=== Run new container (listen on 0.0.0.0:5100) ==="
           docker run -d --name backend --restart unless-stopped -p 5100:5100 \
@@ -203,10 +157,7 @@ jobs:
             -e JWTConfig__Issuer="SettlyAI" \
             -e JWTConfig__Audience="SettlyAI" \
             -e JWTConfig__ExpireSeconds="7200" \
-            "$IMAGE"
-
-          echo "Container started, waiting for it to be ready..."
-          sleep 10
+            "$IMAGE" bash -c "cd /app/SettlyApi && dotnet run --urls='http://0.0.0.0:5100'"
 
           echo "=== Post-Checks ==="
           docker ps
@@ -234,16 +185,6 @@ jobs:
           
           echo "=== Test API endpoint ==="
           docker exec backend curl -f http://localhost:5100/api/suburb/1 || echo "API endpoint test failed"
-          
-          echo "=== Deployment completed at $(date) ==="
-          echo "=== Deployment log saved to /tmp/deploy.log ==="
-          
-          # Clean up any stuck processes
-          pkill -f "docker pull" || true
-          pkill -f "dotnet ef" || true
-          pkill -f "dotnet run" || true
-          
-          echo "=== Script finished successfully ==="
           EOF
 
           # 用实际值替换占位符（Runner 本地执行）
@@ -292,64 +233,34 @@ jobs:
         run: |
           set -euo pipefail
           CMD_ID="${{ steps.send.outputs.cmd_id }}"
-          echo "Waiting for SSM command: $CMD_ID"
-          
-          for i in {1..120}; do
-            echo "Check attempt $i/120 ($(date))..."
-            
-            # Get full command details
-            COMMAND_DETAILS=$(aws ssm get-command-invocation \
+          for i in {1..60}; do
+            STATUS=$(aws ssm get-command-invocation \
               --command-id "$CMD_ID" \
               --instance-id "$INSTANCE_ID" \
               --region "$AWS_REGION" \
-              --output json || echo '{}')
-            
-            STATUS=$(echo "$COMMAND_DETAILS" | jq -r '.Status // "Unknown"')
+              --query "Status" --output text || true)
             echo "Invocation status: $STATUS"
-            
             case "$STATUS" in
-              Success|Cancelled|TimedOut|Failed) 
-                echo "Command completed with status: $STATUS"
-                break 
-                ;;
-              InProgress|Pending|Delayed) 
-                echo "Command still running, waiting 15 seconds..."
-                # Show partial output if available
-                PARTIAL_OUTPUT=$(echo "$COMMAND_DETAILS" | jq -r '.StandardOutputContent // ""' | tail -5)
-                if [ -n "$PARTIAL_OUTPUT" ]; then
-                  echo "Latest output: $PARTIAL_OUTPUT"
-                fi
-                sleep 15 
-                ;;
-              *) 
-                echo "Unknown status: $STATUS, waiting 10 seconds..."
-                sleep 10 
-                ;;
+              Success|Cancelled|TimedOut|Failed) break ;;
+              *) sleep 5 ;;
             esac
           done
-          
-          # If still in progress after all attempts, show what we have
-          if [ "$STATUS" = "InProgress" ]; then
-            echo "⚠️ Command still in progress after 30 minutes, showing current output..."
-          fi
-          
-          echo "===== COMMAND DETAILS ====="
-          echo "$COMMAND_DETAILS" | jq .
-          
+
           echo "===== STDOUT ====="
-          echo "$COMMAND_DETAILS" | jq -r '.StandardOutputContent // "No stdout"'
-          
+          aws ssm get-command-invocation \
+            --command-id "$CMD_ID" \
+            --instance-id "$INSTANCE_ID" \
+            --region "$AWS_REGION" \
+            --query "StandardOutputContent" --output text || true
+
           echo "===== STDERR ====="
-          echo "$COMMAND_DETAILS" | jq -r '.StandardErrorContent // "No stderr"'
-          
-          echo "===== STATUS DETAILS ====="
-          echo "Status: $(echo "$COMMAND_DETAILS" | jq -r '.Status // "Unknown"')"
-          echo "Status Details: $(echo "$COMMAND_DETAILS" | jq -r '.StatusDetails // "No details"')"
-          echo "Response Code: $(echo "$COMMAND_DETAILS" | jq -r '.ResponseCode // "No code"')"
-          
+          aws ssm get-command-invocation \
+            --command-id "$CMD_ID" \
+            --instance-id "$INSTANCE_ID" \
+            --region "$AWS_REGION" \
+            --query "StandardErrorContent" --output text || true
+
           if [ "$STATUS" != "Success" ]; then
-            echo "❌ SSM command failed with status: $STATUS"
+            echo "SSM command finished with status: $STATUS"
             exit 1
           fi
-          
-          echo "✅ SSM command completed successfully"
