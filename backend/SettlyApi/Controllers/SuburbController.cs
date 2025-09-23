@@ -36,9 +36,9 @@ namespace SettlyApi.Controllers
         [SwaggerOperation(Summary = "Get suburb housing market data", Description = "Returns the suburb's latest housing markets data for the given ID.")]
         public async Task<ActionResult<HousingMarketDto>> GetHousingMarket(int id)
         {
-           
-                var dto = await _suburbService.GetHousingMarketAsync(id);
-                return Ok(dto);
+
+            var dto = await _suburbService.GetHousingMarketAsync(id);
+            return Ok(dto);
         }
         [SwaggerOperation(Summary = "Get suburb demand and development data", Description = "Returns the suburb's latest demand and development data for the given ID.")]
         [HttpGet("demand-development")]
@@ -56,9 +56,10 @@ namespace SettlyApi.Controllers
         }
         [HttpGet("safety")]
         [SwaggerOperation(Summary = "Get suburb safety", Description = "Returns the suburb's latest livability data for the given ID.")]
-        public async Task<ActionResult> GetSafety(int id)
+        public async Task<ActionResult<List<ScoreCardDto>>> GetSafetyScores(int id)
         {
-            return Ok();
+            var result = await _suburbService.GetSafetyScoresAsync(id);
+            return Ok(result);
         }
         [HttpGet("snapshot")]
         public async Task<ActionResult<SuburbSnapshotDto>> GetSnapshot(int id)
