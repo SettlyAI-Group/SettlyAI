@@ -16,7 +16,7 @@ A modern React application that combines feature-based and page-based architectu
 - **Data Validation**: Zod
 - **Code Quality**: ESLint + Prettier
 
-## Project Structure  
+## Project Structure   
 
 The project uses a hybrid of feature-based and page-based architecture:
 
