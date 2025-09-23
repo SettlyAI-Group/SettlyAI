@@ -6,7 +6,7 @@ const ExplorePage = () => {
   const label = location ? decodeURIComponent(location) : 'Unknown';
   return (
     <div>
-      <p>Selected Suggestion: {label}</p>
+      {/* <p>Selected Suggestion: {label}</p> */}
       <Map />
     </div>
   );
