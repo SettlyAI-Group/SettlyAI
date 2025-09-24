@@ -30,6 +30,7 @@ const FeatureCard = styled(Box)(({ theme }) => ({
   '&&': { borderRadius: theme.spacing(4) },
   [theme.breakpoints.up('lg')]: {
     maxWidth: '420px',
+    minHeight: 240,
   },
 }));
 
