@@ -2,6 +2,8 @@ import type { ILivability, ISuburbBasicInfo, IIncomeEmployment } from '@/interfa
 import httpClient from './httpClient';
 import type { IDemandAndDev } from '@/interfaces/DemandAndDev';
 import type { IHousingMarket } from '@/interfaces/housingmarket';
+import type { IScoresCardsDto } from '@/pages/SuburbReportPage/components/SafetyScoresSection/components/ScoresCardsContainer';
+
 
 
 export const getSuburbBasicInfo = async (suburbId: string): Promise<ISuburbBasicInfo> => {
@@ -29,3 +31,10 @@ export const getHousingMarket = async (suburbId: number): Promise<IHousingMarket
   const response = await httpClient.get<IHousingMarket>(`/suburb/${suburbId}/housingmarket`);
   return response.data;
 };
+
+export const getSafetyScores = async (suburbId: number):Promise<IScoresCardsDto[]> => {
+  const response = await httpClient.get<IScoresCardsDto[]>(`/Suburb/${suburbId}/safety`);
+
+  return response.data;
+};
+
