@@ -12,10 +12,11 @@ namespace SettlyFinance.Calculators.Orchestrators
     /// Orchestrates mixed IO/PNI segments. Each segment starts with the
     /// previous segment's ending balance as its principal (loan amount).
     /// </summary>
-    public sealed class PiecewiseAmortizer
+    public sealed class PiecewiseAmortizer :IPiecewiseAmortizer
     {
-        private readonly IAmortizationEngineFactory factory;
-        public PiecewiseAmortizer(IAmortizationEngineFactory factory) => _factory = factory ?? throw new ArgumentNullException(nameof(factory));
+        private readonly IAmortizationEngineFactory _factory;
+        public PiecewiseAmortizer(IAmortizationEngineFactory factory)
+            => _factory = factory ?? throw new ArgumentNullException(nameof(factory));
         public PiecewiseResult Calculate (PiecewiseInput input)
         {
             if (input.InitialLoanAmount <= 0m) throw new ArgumentOutOfRangeException(nameof(input.InitialLoanAmount), "Initial loan must be positive.");
