@@ -12,15 +12,15 @@ namespace SettlyService.Factories
             new {
                 Title = "Crime Rate",
                 Value = src.CrimeRate,
-                MaxValue = 1000m,
+                MaxValue = 10m,
                 ShowProgress = false,
                 ShowLevelText = true,
-                GetLevelText = (Func<decimal, string>)(v => v < 300 ? "Low" : v < 700 ? "Medium" : "High"),
-                GetColor = (Func<decimal, string>)(v => v < 300 ? "success" : v < 700 ? "warning" : "error")
+                GetLevelText = (Func<decimal, string>)(v => v < 3 ? "Low" : v < 7 ? "Medium" : "High"),
+                GetColor = (Func<decimal, string>)(v => v < 3 ? "success" : v < 7 ? "primary" : "error")
             },
 
             new {
-                Title = "Affordability",
+                Title = "Affordability Score",
                 Value = src.AffordabilityScore,
                 MaxValue = 10m,
                 ShowProgress = true,
@@ -36,7 +36,7 @@ namespace SettlyService.Factories
                 ShowProgress = true,
                 ShowLevelText = false,
                 GetLevelText = (Func<decimal, string>)(v => string.Empty),
-                GetColor = (Func<decimal, string>)(v => "primary")
+                GetColor = (Func<decimal, string>)(v => "success")
             }
         };
 
