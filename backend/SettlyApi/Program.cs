@@ -4,6 +4,8 @@ using Microsoft.OpenApi.Models;
 using SettlyApi.Configuration;
 using SettlyApi.Filters;
 using SettlyApi.Middlewares;
+using SettlyFinance.Calculators;
+using SettlyFinance.Interfaces;
 using SettlyModels;
 using SettlyService;
 
@@ -50,8 +52,10 @@ public class Program
         builder.Services.AddTransient<IPopulationSupplyService, PopulationSupplyService>();
         builder.Services.AddScoped<ILoanService, LoanService>();
         builder.Services.AddScoped<ITestimonialService, TestimonialService>();
-
-
+        
+        builder.Services.AddScoped<ILoanCalculatorService, LoanCalculatorService>();
+        builder.Services.AddSingleton<IFrequencyProvider, FrequencyProvider>();
+        builder.Services.AddSingleton<IAmortizationEngineFactory, AmortizationEngineFactory>();
         builder.Services.AddScoped<ILayoutNavService, LayoutNavService>();
         //Add Swagger
         builder.Services.AddSwaggerConfig();
