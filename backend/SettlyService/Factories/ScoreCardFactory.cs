@@ -37,6 +37,7 @@ namespace SettlyService.Factories
                 ShowLevelText = false,
                 GetLevelText = (Func<decimal, string>)(v => string.Empty),
                 GetColor = (Func<decimal, string>)(v => "success")
+
             }
         };
 
