@@ -28,6 +28,15 @@ namespace SettlyService
             var medianPrice = metrics.MedianPrice;
             var priceGrowth3yr = metrics.PriceGrowth3Yr;
             var summary = await GetSummary(medianPrice, priceGrowth3yr);
+
+            var highlights = await GetHighlight(metrics);
+            return new SuburbOverviewDto
+            {
+                Suburb = suburb,
+                Metrics = metrics,
+                Summary = summary,
+                Highlights = highlights,
+            };
         }
 
 
@@ -108,7 +117,7 @@ namespace SettlyService
         private async Task<SuburbOverviewMetricsDto> GetMetricsAsyc(int suburbId)
         {
             var price = await metricsPrice(suburbId);
-            var crime= await metricsCrime(suburbId);
+            var crime = await metricsCrime(suburbId);
             var affortability = await metricsAffortability(suburbId);
             return new SuburbOverviewMetricsDto
             {
@@ -127,7 +136,7 @@ namespace SettlyService
                 .Select(h => new { h.MedianPrice, h.PriceGrowth3Yr })
                 .FirstAsync();
             return (data.MedianPrice, data.PriceGrowth3Yr);
-                
+
         }
 
         private async Task<SafetyDto> metricsCrime(int suburbId)
@@ -194,5 +203,35 @@ namespace SettlyService
             };
         }
 
+        //4-Highlight Section
+        private async Task<IReadOnlyList<string>> GetHighlight(SuburbOverviewMetricsDto metrics)
+        {
+            var highlight = new List<string>();
+
+            var safetyLabel = metrics.Safety?.SafetyLabel;
+            if (string.Equals(safetyLabel, "High", StringComparison.OrdinalIgnoreCase))
+            {
+                highlight.Add("Low Crime");
+            }
+
+            decimal priceGrowth3yr = metrics.PriceGrowth3Yr;
+            const decimal priceGrowthThreshold = 3.0m;
+            if (priceGrowth3yr <= priceGrowthThreshold)
+            {
+                highlight.Add("Affordable Choicee");
+            }
+
+
+
+            decimal affortableScore = metrics.Affordability.Score;
+            const decimal affordThreshold = 6.0m;
+            if (affortableScore >= affordThreshold)
+            {
+                highlight.Add("Affortable Choice");
+            }
+
+            return highlight;
+
+        }
     }
 }
