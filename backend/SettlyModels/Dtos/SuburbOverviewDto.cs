@@ -14,7 +14,7 @@ namespace SettlyModels.Dtos
     //1.Dto for helper function 
    public class SuburbOverviewSuburbDto
     {
-        public int? Id { get; set; }
+        public int Id { get; set; }
         public string? Name { get; set; }
 
         public string? State { get; set; }
@@ -26,7 +26,7 @@ namespace SettlyModels.Dtos
     public class SuburbOverviewMetricsDto
     {
         public int MedianPrice { get; set; }
-        public decimal PriceGrowth3yrPct { get; set; }
+        public decimal PriceGrowth3Yr { get; set; }
 
         public SafetyDto Safety { get; set; }
 
@@ -35,8 +35,8 @@ namespace SettlyModels.Dtos
 
     public class SafetyDto
     {
-        public string CrimeLevel { get; set; }
-        public string SafetyLabel { get; set; }
+        public string? CrimeLevel { get; set; }
+        public string? SafetyLabel { get; set; }
     }
 
     public class AffordabilityDto

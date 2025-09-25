@@ -23,6 +23,7 @@ namespace SettlyService
         {
             var suburb = await GetSuburbAsyc(input);
             var suburbId = suburb.Id;
+            var metrics = await GetMetricsAsyc(suburbId);
         }
 
 
@@ -96,6 +97,82 @@ namespace SettlyService
                 Name = s.Name,
                 State = s.State,
                 Postcode = s.Postcode
+            };
+        }
+
+        //2-Metrics Section
+        private async Task<SuburbOverviewMetricsDto> GetMetricsAsyc(int suburbId)
+        {
+            var price = await metricsPrice(suburbId);
+            var crime= await metricsCrime(suburbId);
+            var affortability = await metricsAffortability(suburbId);
+            return new SuburbOverviewMetricsDto
+            {
+                MedianPrice = price.MedianPrice,
+                PriceGrowth3Yr = price.PriceGrowth3Yr,
+                Safety = crime,
+                Affordability = affortability,
+            };
+
+        }
+
+        private async Task<(int MedianPrice, decimal PriceGrowth3Yr)> metricsPrice(int suburbId)
+        {
+            var data = await _context.HousingMarkets
+                .Where(h => h.SuburbId == suburbId)
+                .Select(h => new { h.MedianPrice, h.PriceGrowth3Yr })
+                .FirstAsync();
+            return (data.MedianPrice, data.PriceGrowth3Yr);
+                
+        }
+
+        private async Task<SafetyDto> metricsCrime(int suburbId)
+        {
+            var crimeRate = await _context.RiskDevelopments
+                .Where(r => r.SuburbId == suburbId)
+                .Select(r => r.CrimeRate)
+                .FirstAsync();
+
+            var crimeLevel = crimeRate switch
+            {
+                <= 3m => "low",
+                <= 6m => "medium",
+                _ => "high"
+            };
+
+            return new SafetyDto
+            {
+                CrimeLevel = crimeLevel,
+                SafetyLabel = crimeLevel switch
+                {
+                    "low" => "High",
+                    "medium" => "Medium",
+                    "high" => "Low",
+                    _ => "Unknown"
+                }
+            };
+
+        }
+
+        private async Task<AffordabilityDto> metricsAffortability(int suburbId)
+        {
+            var affordabilityScore = await _context.SettlyAIScores
+                .Where(s => s.SuburbId == suburbId)
+                .Select(s => s.AffordabilityScore)
+                .FirstAsync();
+
+            var affortableLevel = affordabilityScore switch
+            {
+                <= 3m => "High",
+                <= 6m => "Medium",
+                _ => "Low"
+            };
+
+            return new AffordabilityDto
+            {
+                Score = affordabilityScore,
+                Label = affortableLevel
+
             };
         }
 
