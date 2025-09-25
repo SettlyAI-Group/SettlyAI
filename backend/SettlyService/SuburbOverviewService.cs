@@ -9,7 +9,7 @@ using SettlyModels.Dtos;
 
 namespace SettlyService
 {
-    public class SuburbOverviewService: ISuburbOverview
+    public class SuburbOverviewService : ISuburbOverview
     {
         private readonly SettlyDbContext _context;
 
@@ -50,14 +50,14 @@ namespace SettlyService
 
         //Getting Suburb data
         private async Task<SuburbOverviewSuburbDto> GetSuburbAsyc(MapInputDto input)
-        {            
+        {
             var postcodeMatch = await PostCodeMatching(input.Postcode);
-            if (postcodeMatch !=null)
+            if (postcodeMatch != null)
             {
                 return postcodeMatch;
             }
             var suburbMatch = await suburbMatching(input.Suburb);
-            if (suburbMatch!= null)
+            if (suburbMatch != null)
             {
                 return suburbMatch;
             }
