@@ -32,7 +32,7 @@ jobs:
         run: pnpm install
         working-directory: frontend
       - name: Build
-        run: pnpm build
+        run: pnpm build:prod
         working-directory: frontend
       - name: Configure AWS (OIDC)
         if: ${{ env.S3_BUCKET != '' }}

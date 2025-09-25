@@ -17,29 +17,39 @@ services:
       timeout: 5s
       retries: 3
 
-  db-migrate:
+  settly-app:
     build: .
+    image: settly-backend:latest
     environment:
       - ApiConfigs__DBConnection=Host=postgres;Port=5432;Database=settly;User Id=postgres;Password=password;Include Error Detail=true
     depends_on:
       postgres:
-          condition: service_healthy
-    command: bash -c "sleep 10 && cd /app/SettlyModels && dotnet ef database update --startup-project ../SettlyApi"
+        condition: service_healthy
+
+  db-migrate:
+    image: settly-backend:latest
+    environment:
+      - ApiConfigs__DBConnection=Host=postgres;Port=5432;Database=settly;User Id=postgres;Password=password;Include Error Detail=true
+    depends_on:
+      settly-app:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
+    command: bash -c "sleep 5 && cd /app/SettlyModels && dotnet ef database update --startup-project ../SettlyApi"
     restart: "no"
 
   db-seed:
-    build: .
+    image: settly-backend:latest
     environment:
       - ApiConfigs__DBConnection=Host=postgres;Port=5432;Database=settly;User Id=postgres;Password=password;Include Error Detail=true
     depends_on:
-      postgres:
-          condition: service_healthy
       db-migrate:
-          condition: service_completed_successfully
+        condition: service_completed_successfully
     command: bash -c "cd /app/SettlyDbManager && ASPNETCORE_ENVIRONMENT=Development dotnet run -- --seed"
     restart: "no"
+
   api:
-    build: .
+    image: settly-backend:latest
     ports:
       - "5100:5100"
     environment:
@@ -48,7 +58,14 @@ services:
       - ASPNETCORE_HTTP_PORTS=5100
       - DOTNET_URLS=http://0.0.0.0:5100
     depends_on:
-      postgres:
-        condition: service_healthy
+      db-seed:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:5100/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
 volumes:
   postgres_data:

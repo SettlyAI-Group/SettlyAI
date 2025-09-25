@@ -18,14 +18,22 @@ public class Program
                 .AddEnvironmentVariables()
                 .Build();
 
-            var connectionString = configuration.GetConnectionString("DefaultConnection");
+            // 尝试从多个来源获取数据库连接字符串
+            var connectionString = configuration.GetConnectionString("DefaultConnection") 
+                                ?? configuration["ApiConfigs:DBConnection"]
+                                ?? configuration["ApiConfigs__DBConnection"];
 
             if (string.IsNullOrEmpty(connectionString))
             {
                 Console.WriteLine("❌ 数据库连接字符串未找到！");
-                Console.WriteLine("请创建 appsettings.Development.json 文件并配置数据库连接。");
+                Console.WriteLine("请设置以下任一环境变量：");
+                Console.WriteLine("  - ConnectionStrings__DefaultConnection");
+                Console.WriteLine("  - ApiConfigs__DBConnection");
+                Console.WriteLine("或创建 appsettings.Development.json 文件并配置数据库连接。");
                 return;
             }
+            
+            Console.WriteLine($"✅ 使用数据库连接: {connectionString.Substring(0, Math.Min(50, connectionString.Length))}...");
 
             // 配置数据库上下文
             var options = new DbContextOptionsBuilder<SettlyDbContext>()
