@@ -109,12 +109,17 @@ public class AuthController : ControllerBase
 
     private void AppendCookie(string name, string value, bool httpOnly = true, int? minutes = null, int? days = null)
     {
+        string path = "/";
+        if (name == "refresToken")
+        {
+            path = "/auth/refresh";
+        }
         var opts = new CookieOptions
         {
             HttpOnly = httpOnly,
             Secure = true,                
             SameSite = SameSiteMode.Lax,  
-            Path = "/"
+            Path = path
         };
         if (minutes.HasValue) opts.Expires = DateTimeOffset.UtcNow.AddMinutes(minutes.Value);
         if (days.HasValue) opts.Expires = DateTimeOffset.UtcNow.AddDays(days.Value);
