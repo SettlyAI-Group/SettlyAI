@@ -24,6 +24,10 @@ namespace SettlyService
             var suburb = await GetSuburbAsyc(input);
             var suburbId = suburb.Id;
             var metrics = await GetMetricsAsyc(suburbId);
+
+            var medianPrice = metrics.MedianPrice;
+            var priceGrowth3yr = metrics.PriceGrowth3Yr;
+            var summary = await GetSummary(medianPrice, priceGrowth3yr);
         }
 
 
@@ -172,7 +176,21 @@ namespace SettlyService
             {
                 Score = affordabilityScore,
                 Label = affortableLevel
+            };
+        }
 
+        //3-Summary Section
+        private async Task<SuburbOverviewSummaryDto> GetSummary(int medianPrice, decimal priceGrowth3yr)
+        {
+            var millionUnit = 1000000;
+            var text = $"Carnegie’s median price is ${medianPrice / millionUnit}M, with {priceGrowth3yr}% growth over the past 3 years. Safety is rated High, and affordability is High.";
+            var status = "ready";
+            var source = "template";
+            return new SuburbOverviewSummaryDto
+            {
+                Text = text,
+                Status = status,
+                Source = source,
             };
         }
 
