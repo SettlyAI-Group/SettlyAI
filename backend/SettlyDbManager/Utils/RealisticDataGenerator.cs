@@ -17,7 +17,8 @@ public class RealisticDataGenerator
     public RealisticDataGenerator(SettlyDbContext context)
     {
         _context = context;
-        _faker = new Faker();
+        Bogus.Randomizer.Seed = new Random(12345); // 设置全局种子
+        _faker = new Faker("en_AU");
     }
 
     /// <summary>
