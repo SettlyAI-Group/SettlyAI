@@ -97,7 +97,7 @@ namespace SettlyService
         private async Task<SuburbOverviewSuburbDto> statebMatching(string state)
         {
             return await _context.Suburbs
-                 .Where(s => EF.Functions.ILike(s.Name, state))
+                 .Where(s => EF.Functions.ILike(s.State, state))
                     .Select(ToSuburbDto())
                  .FirstAsync();
         }
@@ -215,8 +215,8 @@ namespace SettlyService
             }
 
             decimal priceGrowth3yr = metrics.PriceGrowth3Yr;
-            const decimal priceGrowthThreshold = 3.0m;
-            if (priceGrowth3yr <= priceGrowthThreshold)
+            const decimal priceGrowthThreshold = 6.0m;
+            if (priceGrowth3yr >= priceGrowthThreshold)
             {
                 highlight.Add("Affordable Choicee");
             }
@@ -224,8 +224,8 @@ namespace SettlyService
 
 
             decimal affortableScore = metrics.Affordability.Score;
-            const decimal affordThreshold = 6.0m;
-            if (affortableScore >= affordThreshold)
+            const decimal affordThreshold = 3.0m;
+            if (affortableScore <= affordThreshold)
             {
                 highlight.Add("Affortable Choice");
             }
