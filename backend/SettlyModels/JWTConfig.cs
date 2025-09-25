@@ -7,6 +7,7 @@ namespace SettlyModels
         public string Issuer { get; set; }
         public string Audience { get; set; }
 
-        public int ExpireSeconds { get; set; }
+        public int ExpireMinutes { get; set; }
+        public int ExpireDays { get; set; }
     }
 }

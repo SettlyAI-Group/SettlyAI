@@ -22,6 +22,16 @@ namespace SettlyApi.Configuration
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jWTConfig.SecretKey))
                 };
+
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = ctx =>
+                    {
+                        // get accessToken from HttpOnly Cookie
+                        ctx.Token = ctx.Request.Cookies["accessToken"];
+                        return Task.CompletedTask;
+                    }
+                };
             });
         }
     }
