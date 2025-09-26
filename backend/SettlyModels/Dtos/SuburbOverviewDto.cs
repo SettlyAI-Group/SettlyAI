@@ -17,7 +17,7 @@ namespace SettlyModels.Dtos
         public int Id { get; set; }
         public string? Name { get; set; }
 
-        public string StateCode { get; set; }
+        public string StateCode { get; set; } = "VIC";
 
         public string? Postcode { get; set; }
     }
@@ -25,8 +25,8 @@ namespace SettlyModels.Dtos
     //2.Dto for helper function 
     public class SuburbOverviewMetricsDto
     {
-        public int? MedianPrice { get; set; }
-        //public decimal? PriceGrowth3Yr { get; set; }
+        public int? MedianPrice { get; set; }        
+        public string? MedianPriceFormatted => MedianPrice?.ToString("N0");
         public decimal? PriceGrowth3YrPct { get; set; }
 
         public SafetyDto? Safety { get; set; }
