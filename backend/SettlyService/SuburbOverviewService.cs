@@ -7,7 +7,7 @@ using SettlyModels.Entities;
 
 namespace SettlyService
 {
-    public class SuburbOverviewService : ISuburbOverview
+    public class SuburbOverviewService : ISuburbOverviewService
     {
         private readonly SettlyDbContext _context;
 
@@ -113,10 +113,23 @@ namespace SettlyService
             var price = await metricsPrice(suburbId);
             var crime = await metricsCrime(suburbId);
             var affortability = await metricsAffortability(suburbId);
+
+            //Keeping value with 2 decimal place only
+            if(affortability?.Score is decimal score)
+            {
+                affortability.Score = decimal.Round(score, 2, MidpointRounding.ToEven);
+            }
+
+            decimal? growthPct = price.PriceGrowth3Yr is decimal g
+    ? decimal.Round(g * 100m, 2, MidpointRounding.ToEven)
+    : null;
+
+
             return new SuburbOverviewMetricsDto
             {
                 MedianPrice = price.MedianPrice,
-                PriceGrowth3Yr = price.PriceGrowth3Yr,
+                //PriceGrowth3Yr = price.PriceGrowth3Yr,
+                PriceGrowth3YrPct = growthPct,
                 Safety = crime,
                 Affordability = affortability,
             };
@@ -187,10 +200,10 @@ namespace SettlyService
         {
             string text = string.Empty;
             if (metrics.MedianPrice is int medianPrice &&
-                metrics.PriceGrowth3Yr is decimal priceGrowth3yr)
+                metrics.PriceGrowth3YrPct is decimal priceGrowth3yrPct)
             {
                 var millionUnit = 1000000;
-                text = $"Carnegie’s median price is ${medianPrice / millionUnit}M, with {priceGrowth3yr}% growth over the past 3 years. Safety is rated High, and affordability is High.";                
+                text = $"Carnegie’s median price is ${medianPrice / millionUnit}M, with {priceGrowth3yrPct}% growth over the past 3 years. Safety is rated High, and affordability is High.";                
             };
              
             var status = "ready";
@@ -214,9 +227,9 @@ namespace SettlyService
                 highlight.Add("Low Crime");
             }            
 
-            var priceGrowth3yr = metrics.PriceGrowth3Yr;
+            var priceGrowth3yrPct = metrics.PriceGrowth3YrPct;
             const decimal priceGrowthThreshold = 6.0m;
-            if (priceGrowth3yr is decimal growthRate && growthRate >= priceGrowthThreshold)
+            if (priceGrowth3yrPct is decimal growthRate && growthRate >= priceGrowthThreshold)
             {
                 highlight.Add("Strong Growth");
             }
