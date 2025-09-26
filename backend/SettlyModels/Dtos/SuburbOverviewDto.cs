@@ -26,7 +26,8 @@ namespace SettlyModels.Dtos
     public class SuburbOverviewMetricsDto
     {
         public int? MedianPrice { get; set; }
-        public decimal? PriceGrowth3Yr { get; set; }
+        //public decimal? PriceGrowth3Yr { get; set; }
+        public decimal? PriceGrowth3YrPct { get; set; }
 
         public SafetyDto? Safety { get; set; }
 
