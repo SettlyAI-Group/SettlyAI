@@ -20,15 +20,13 @@ namespace SettlyApi.Controllers
         [HttpGet("overview")]
         [SwaggerOperation(Summary = "Suburb overview based on user clkcing the map")]
         [SwaggerResponse(200, "Successfully retrieved suburb overview result", typeof(SuburbOverviewDto))]
+        [SwaggerResponse(404, "Suburb not found")]
         public async Task<ActionResult<SuburbOverviewDto>> GetAsync([FromQuery] MapInputDto input)
         {
             var result = await _suburbOverviewService.GetSuburbOverviewAsync(input);
+            if (result == null) return NotFound();
             return Ok(result);
         }
-
     }
-
-
-
-    }
+}
 
