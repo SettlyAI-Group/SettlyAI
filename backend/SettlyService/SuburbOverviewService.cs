@@ -1,11 +1,9 @@
-using System.ComponentModel;
 using System.Linq.Expressions;
-using SettlyModels.Entities;
-using System.Reflection.Metadata.Ecma335;
 using ISettlyService;
 using Microsoft.EntityFrameworkCore;
 using SettlyModels;
 using SettlyModels.Dtos;
+using SettlyModels.Entities;
 
 namespace SettlyService
 {
@@ -21,15 +19,10 @@ namespace SettlyService
 
         public async Task<SuburbOverviewDto> GetSuburbOverviewAsync(MapInputDto input)
         {
-            var suburb = await GetSuburbAsyc(input);
-            var suburbId = suburb.Id;
-            var metrics = await GetMetricsAsyc(suburbId);
-
-            var medianPrice = metrics.MedianPrice;
-            var priceGrowth3yr = metrics.PriceGrowth3Yr;
-            var summary = await GetSummary(medianPrice, priceGrowth3yr);
-
-            var highlights = await GetHighlight(metrics);
+            var suburb = await GetSuburbAsyc(input);            
+            var metrics = await GetMetricsAsyc(suburb);            
+            var summary = GetSummary(metrics);
+            var highlights = GetHighlight(metrics);
             return new SuburbOverviewDto
             {
                 Suburb = suburb,
@@ -42,7 +35,7 @@ namespace SettlyService
 
         //1-Suburb Section
         //Convert data state from frontend to statecode
-        private static readonly Dictionary<string, string> StateCodes =
+        private static readonly Dictionary<string, string> ConvertStateCodes =
             new(StringComparer.OrdinalIgnoreCase)
             {
                 ["New South Wales"] = "NSW",
@@ -57,12 +50,12 @@ namespace SettlyService
 
         private static string GetStatecode(string stateName)
         {
-            return StateCodes.TryGetValue(stateName, out var code)
-            ? code
+            return ConvertStateCodes.TryGetValue(stateName, out var stateCode)
+            ? stateCode
             : stateName;
         }
 
-        //Getting Suburb data
+        //1-Suburb Section
         private async Task<SuburbOverviewSuburbDto> GetSuburbAsyc(MapInputDto input)
         {
             var postcodeMatch = await PostCodeMatching(input.Postcode);
@@ -70,13 +63,13 @@ namespace SettlyService
             {
                 return postcodeMatch;
             }
-            var suburbMatch = await suburbMatching(input.Suburb);
+            var suburbMatch = await SuburbMatching(input.Suburb);
             if (suburbMatch != null)
             {
                 return suburbMatch;
             }
             var stateCode = GetStatecode(input.State);
-            return await statebMatching(stateCode);
+            return await StateCodeMatching(stateCode);
         }
         private async Task<SuburbOverviewSuburbDto?> PostCodeMatching(string postcode)
         {
@@ -86,7 +79,7 @@ namespace SettlyService
                 .FirstOrDefaultAsync();
         }
 
-        private async Task<SuburbOverviewSuburbDto?> suburbMatching(string suburb)
+        private async Task<SuburbOverviewSuburbDto?> SuburbMatching(string suburb)
         {
             return await _context.Suburbs
                  .Where(s => EF.Functions.ILike(s.Name, suburb))
@@ -94,10 +87,10 @@ namespace SettlyService
                  .FirstOrDefaultAsync();
         }
 
-        private async Task<SuburbOverviewSuburbDto> statebMatching(string state)
+        private async Task<SuburbOverviewSuburbDto> StateCodeMatching(string stateCode)
         {
             return await _context.Suburbs
-                 .Where(s => EF.Functions.ILike(s.State, state))
+                 .Where(s => EF.Functions.ILike(s.State, stateCode))
                     .Select(ToSuburbDto())
                  .FirstAsync();
         }
@@ -108,14 +101,15 @@ namespace SettlyService
             {
                 Id = s.Id,
                 Name = s.Name,
-                State = s.State,
+                StateCode = s.State,
                 Postcode = s.Postcode
             };
         }
 
         //2-Metrics Section
-        private async Task<SuburbOverviewMetricsDto> GetMetricsAsyc(int suburbId)
+        private async Task<SuburbOverviewMetricsDto> GetMetricsAsyc(SuburbOverviewSuburbDto suburb)
         {
+            var suburbId = suburb.Id;
             var price = await metricsPrice(suburbId);
             var crime = await metricsCrime(suburbId);
             var affortability = await metricsAffortability(suburbId);
@@ -189,10 +183,16 @@ namespace SettlyService
         }
 
         //3-Summary Section
-        private async Task<SuburbOverviewSummaryDto> GetSummary(int medianPrice, decimal priceGrowth3yr)
+        private SuburbOverviewSummaryDto GetSummary(SuburbOverviewMetricsDto metrics)
         {
-            var millionUnit = 1000000;
-            var text = $"Carnegie’s median price is ${medianPrice / millionUnit}M, with {priceGrowth3yr}% growth over the past 3 years. Safety is rated High, and affordability is High.";
+            string text = string.Empty;
+            if (metrics.MedianPrice is int medianPrice &&
+                metrics.PriceGrowth3Yr is decimal priceGrowth3yr)
+            {
+                var millionUnit = 1000000;
+                text = $"Carnegie’s median price is ${medianPrice / millionUnit}M, with {priceGrowth3yr}% growth over the past 3 years. Safety is rated High, and affordability is High.";                
+            };
+             
             var status = "ready";
             var source = "template";
             return new SuburbOverviewSummaryDto
@@ -204,7 +204,7 @@ namespace SettlyService
         }
 
         //4-Highlight Section
-        private async Task<IReadOnlyList<string>> GetHighlight(SuburbOverviewMetricsDto metrics)
+        private IReadOnlyList<string> GetHighlight(SuburbOverviewMetricsDto metrics)
         {
             var highlight = new List<string>();
 
@@ -212,22 +212,22 @@ namespace SettlyService
             if (string.Equals(safetyLabel, "High", StringComparison.OrdinalIgnoreCase))
             {
                 highlight.Add("Low Crime");
-            }
+            }            
 
-            decimal priceGrowth3yr = metrics.PriceGrowth3Yr;
+            var priceGrowth3yr = metrics.PriceGrowth3Yr;
             const decimal priceGrowthThreshold = 6.0m;
-            if (priceGrowth3yr >= priceGrowthThreshold)
+            if (priceGrowth3yr is decimal growthRate && growthRate >= priceGrowthThreshold)
             {
-                highlight.Add("Affordable Choicee");
+                highlight.Add("Strong Growth");
             }
 
 
 
-            decimal affortableScore = metrics.Affordability.Score;
+            var affordableScore = metrics.Affordability?.Score;
             const decimal affordThreshold = 3.0m;
-            if (affortableScore <= affordThreshold)
+            if (affordableScore  is decimal score && score <= affordThreshold)
             {
-                highlight.Add("Affortable Choice");
+                highlight.Add("Affordable Choice");
             }
 
             return highlight;
