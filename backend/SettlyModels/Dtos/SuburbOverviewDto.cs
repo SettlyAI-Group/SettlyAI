@@ -17,7 +17,7 @@ namespace SettlyModels.Dtos
         public int Id { get; set; }
         public string? Name { get; set; }
 
-        public string? State { get; set; }
+        public string StateCode { get; set; }
 
         public string? Postcode { get; set; }
     }
@@ -25,12 +25,12 @@ namespace SettlyModels.Dtos
     //2.Dto for helper function 
     public class SuburbOverviewMetricsDto
     {
-        public int MedianPrice { get; set; }
-        public decimal PriceGrowth3Yr { get; set; }
+        public int? MedianPrice { get; set; }
+        public decimal? PriceGrowth3Yr { get; set; }
 
-        public SafetyDto Safety { get; set; }
+        public SafetyDto? Safety { get; set; }
 
-        public AffordabilityDto Affordability { get; set; }
+        public AffordabilityDto? Affordability { get; set; }
     }
 
     public class SafetyDto
@@ -41,15 +41,15 @@ namespace SettlyModels.Dtos
 
     public class AffordabilityDto
     {
-        public decimal Score { get; set; }
+        public decimal? Score { get; set; }
 
-        public string Label { get; set; }
+        public string? Label { get; set; }
     }
 
     //3.Dto for helper function
     public class SuburbOverviewSummaryDto
     {
-        public string Text { get; set; }
+        public string? Text { get; set; }
         public string Status { get; set; } = "ready";
         public string Source { get; set; } = "template";
     }
