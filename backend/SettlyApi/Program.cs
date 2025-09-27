@@ -35,6 +35,7 @@ public class Program
         builder.Services.AddScoped<IVerificationCodeService, VerificationCodeService>();
         builder.Services.AddTransient<ICreateTokenService, CreateTokenService>();
         builder.Services.AddScoped<IAuthService, AuthService>();
+        builder.Services.AddScoped<ISuburbOverviewService, SuburbOverviewService>();
         //Register ISearchApi with SearchApiService
         builder.Services.AddScoped<ISettlyService.ISearchService, SettlyService.SearchService>();
 
