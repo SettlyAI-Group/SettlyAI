@@ -16,7 +16,7 @@ namespace SettlyService
             _context = context;
         }
 
-        public async Task<SuburbOverviewDto> GetSuburbOverviewAsync(MapInputDto input)
+        public async Task<SuburbOverviewDto?> GetSuburbOverviewAsync(MapInputDto input)
         {
             var suburb = await GetSuburbAsync(input);            
             var metrics = await GetMetricsAsync(suburb);            
@@ -117,6 +117,7 @@ namespace SettlyService
         private async Task<SuburbOverviewMetricsDto> GetMetricsAsync(SuburbOverviewSuburbDto suburb)
         {
             var suburbId = suburb.Id;
+             if (suburb == null) return null;
             var price = await MetricsPrice(suburbId);
             var crime = await MetricsCrime(suburbId);
             var affordability = await MetricsAffordability(suburbId);
@@ -158,7 +159,7 @@ namespace SettlyService
         {
             var crimeRate = await _context.RiskDevelopments
                 .Where(r => r.SuburbId == suburbId)
-                .Select(r => (decimal?)r.CrimeRate)
+                .Select(r => (decimal?)r.CrimeRate)                
                 .FirstOrDefaultAsync();
 
             var crimeLevel = crimeRate switch

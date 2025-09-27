@@ -2,11 +2,11 @@ namespace SettlyModels.Dtos
 {
     public class SuburbOverviewDto
     {
-        public SuburbOverviewSuburbDto Suburb { get; set; }
+        public SuburbOverviewSuburbDto? Suburb { get; set; }
 
-        public SuburbOverviewMetricsDto Metrics { get; set; }
+        public SuburbOverviewMetricsDto? Metrics { get; set; }
 
-        public SuburbOverviewSummaryDto Summary { get; set; }
+        public SuburbOverviewSummaryDto? Summary { get; set; }
 
         public IReadOnlyList<string> Highlights { get; set; } = Array.Empty<string>();
     }
