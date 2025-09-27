@@ -6,6 +6,6 @@ namespace SettlyModels.Dtos
     {
         public string? Suburb { get; set; }
         public string? Postcode { get; set; }
-        [Required] public string State { get; set; } 
+        [Required] public string State { get; set; } = "VIC";
     }
 }
