@@ -18,7 +18,8 @@ namespace SettlyService
 
         public async Task<SuburbOverviewDto?> GetSuburbOverviewAsync(MapInputDto input)
         {
-            var suburb = await GetSuburbAsync(input);            
+            var suburb = await GetSuburbAsync(input);    
+             if (suburb == null) return null;        
             var metrics = await GetMetricsAsync(suburb);            
             var summary = GetSummary(metrics, suburb);
             var highlights = GetHighlight(metrics);
@@ -114,10 +115,10 @@ namespace SettlyService
         }
 
         //2-Metrics Section
-        private async Task<SuburbOverviewMetricsDto> GetMetricsAsync(SuburbOverviewSuburbDto suburb)
+        private async Task<SuburbOverviewMetricsDto?> GetMetricsAsync(SuburbOverviewSuburbDto suburb)
         {
-            var suburbId = suburb.Id;
-             if (suburb == null) return null;
+            if (suburb == null) return null;
+            var suburbId = suburb.Id;             
             var price = await MetricsPrice(suburbId);
             var crime = await MetricsCrime(suburbId);
             var affordability = await MetricsAffordability(suburbId);
