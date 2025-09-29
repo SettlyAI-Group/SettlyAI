@@ -21,6 +21,7 @@ namespace SettlyFinance.Models
         decimal TotalInterest,
         decimal TotalCost,
         int TotalPeriods,
-        IReadOnlyList<PiecewiseScheduleRow>? Schedule
+        IReadOnlyList<PiecewiseScheduleRow>? Schedule,
+        decimal FirstSegmentPayment
     );
 }

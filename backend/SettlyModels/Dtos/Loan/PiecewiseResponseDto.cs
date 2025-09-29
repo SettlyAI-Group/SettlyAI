@@ -12,6 +12,7 @@ namespace SettlyModels.DTOs.Loan
     decimal TotalInterest,
     decimal TotalCost,
     int TotalPeriods,
+    decimal FirstSegmentPayment,
     IReadOnlyList<PiecewiseScheduleRowDto>? Schedule
 );
 }

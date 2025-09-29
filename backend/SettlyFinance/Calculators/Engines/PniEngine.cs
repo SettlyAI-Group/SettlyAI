@@ -16,7 +16,7 @@ namespace SettlyFinance.Calculators.Engines
     /// r = annualRate / periodsPerYear; n = total periods.
     /// Zero-rate fallback: evenly split principal to cents.
     /// </summary>
-    public sealed class PniEngine: IAmortizationEngine
+    public sealed class PniEngine : IAmortizationEngine
     {
         private readonly IFrequencyProvider _frequencyProvider;
         public PniEngine(IFrequencyProvider frequencyProvider)
@@ -27,14 +27,14 @@ namespace SettlyFinance.Calculators.Engines
         /// Calculates repayment metrics for a continuous block (does not cross segments).
         /// </summary>
         /// <param name="input">The consolidated input parameters for the calculation.</param>
-        public AmortizationResult Calculate (AmortizationInput input)
+        public AmortizationResult Calculate(AmortizationInput input)
         {
             if (input.TermPeriods <= 0)
                 throw new ArgumentOutOfRangeException(nameof(input.TermPeriods), "Term periods must be positive.");
             if (input.AnnualInterestRate < 0m)
                 throw new ArgumentOutOfRangeException(nameof(input.AnnualInterestRate), "Rate cannot be negative.");
             if (_frequencyProvider.GetPeriodsPerYear(input.Frequency) <= 0) throw new ArgumentOutOfRangeException(nameof(input.Frequency), "Frequency must be valid.");
-            if (input.Type != RepaymentType.PrincipalAndInterest) throw new InvalidOperationException("PNI engine only supports PrincipalAndInterest repayment type.");
+            if (input.RepaymentType != RepaymentType.PrincipalAndInterest) throw new InvalidOperationException("PNI engine only supports PrincipalAndInterest repayment type.");
             var periodsPerYear = _frequencyProvider.GetPeriodsPerYear(input.Frequency);      // 12 / 26 / 52
             var r = (periodsPerYear == 0) ? 0m : input.AnnualInterestRate / periodsPerYear;
             var P = MoneyUtils.ToCents(input.LoanAmount);
@@ -89,13 +89,14 @@ namespace SettlyFinance.Calculators.Engines
                 LoanAmount: input.LoanAmount,
                 AnnualInterestRate: input.AnnualInterestRate,
                 Frequency: input.Frequency,
-                RepaymentType: input.Type,
-                Payment: precisePayment,          
+                RepaymentType: input.RepaymentType,
+                Payment: precisePayment,
                 DisplayPayment: displayPayment,
                 TotalInterest: MoneyUtils.FromCents(totalInterest),
                 TotalPrincipal: MoneyUtils.FromCents(totalPrincipalInCents),
                 TotalCost: MoneyUtils.FromCents(totalPaid),
                 TermPeriods: input.TermPeriods,
+                EndingBalance: MoneyUtils.FromCents(remaining),
                 Schedule: scheduleList);
         }
     }

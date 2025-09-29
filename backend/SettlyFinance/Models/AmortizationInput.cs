@@ -24,7 +24,7 @@ namespace SettlyFinance.Models
         /// <summary>Repayment frequency enum.</summary>
         RepaymentFrequency Frequency,
         /// <summary>The type of repayment for this block (P&I or IO).</summary>
-        RepaymentType Type,
+        RepaymentType RepaymentType,
         /// <summary>Whether to generate the full amortization schedule.</summary>
         bool GenerateSchedule = false
     );

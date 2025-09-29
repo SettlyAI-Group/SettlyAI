@@ -11,7 +11,7 @@ namespace SettlyFinance.Models
     /// Represents the input parameters for a single segment of a piecewise loan.
     /// A piecewise loan is composed of one or more sequential segments, each with its own terms.
     /// </summary>
-    /// <param name="Type">The type of repayment for this segment (e.g., Interest Only, Principal & Interest).</param>
+    /// <param name="RepaymentType">The type of repayment for this segment (e.g., Interest Only, Principal & Interest).</param>
     /// <param name="AnnualInterestRate">The annual interest rate for this segment.</param>
     /// <param name="TermPeriods">The duration of this segment, expressed in the number of periods (e.g., 36 months).</param>
     /// <param name="Frequency">The repayment frequency for this segment (e.g., Monthly, Weekly).</param>
@@ -19,7 +19,7 @@ namespace SettlyFinance.Models
     /// <param name="Label">An optional label for the segment for easy identification (e.g., "IO-36m").</param>
     public sealed record PiecewiseSegmentInput
     (
-        RepaymentType Type,
+        RepaymentType RepaymentType,
         decimal AnnualInterestRate,
         int TermPeriods,
         RepaymentFrequency Frequency,

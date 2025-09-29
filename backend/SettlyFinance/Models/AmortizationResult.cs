@@ -36,6 +36,10 @@ namespace SettlyFinance.Models
         /// </summary>
         int TermPeriods,
         /// <summary>
+        /// The **exact** remaining balance (principal) at the end of this block.
+        /// </summary>
+        decimal EndingBalance,
+        /// <summary>
         /// Optional full amortization schedule.
         /// Can be null when caller disables schedule generation for performance.
         /// </summary>

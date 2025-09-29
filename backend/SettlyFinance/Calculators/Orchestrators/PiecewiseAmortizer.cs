@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SettlyFinance.Interfaces;
 using SettlyFinance.Models;
+using SettlyFinance.Utils;
 
 namespace SettlyFinance.Calculators.Orchestrators
 {
@@ -28,6 +29,7 @@ namespace SettlyFinance.Calculators.Orchestrators
             decimal totalInterest = 0m;
             decimal totalPrincipal = 0m;
             int globalPeriod = 0;
+            decimal firstSegmentPayment = 0m;
             for (int i = 0; i < input.Segments.Count; i++)
             {
                 var seg = input.Segments[i];
@@ -37,13 +39,17 @@ namespace SettlyFinance.Calculators.Orchestrators
                    TermPeriods: seg.TermPeriods,
                    Frequency: seg.Frequency,
                    GenerateSchedule: generateSchedule && seg.GenerateSchedule,
-                   Type: seg.Type
+                   RepaymentType: seg.RepaymentType
                );
-                var engine = _factory.GetEngine(seg.Type);
+                var engine = _factory.GetEngine(seg.RepaymentType);
                 var segResult = engine.Calculate(segInput);
+                if (i == 0)
+                {
+                    firstSegmentPayment = segResult.Payment;
+                }
                 totalInterest += segResult.TotalInterest;
                 totalPrincipal += segResult.TotalPrincipal;
-                var nextPrincipal = currentPrincipal - segResult.TotalPrincipal;
+                //var nextPrincipal = currentPrincipal - segResult.TotalPrincipal;
                 if (generateSchedule && segResult.Schedule is not null)
                 {
                     for (int k = 0; k < segResult.Schedule.Count; k++)
@@ -64,7 +70,8 @@ namespace SettlyFinance.Calculators.Orchestrators
                 {
                     globalPeriod += seg.TermPeriods;
                 }
-                currentPrincipal = nextPrincipal;
+                //currentPrincipal = nextPrincipal;
+                currentPrincipal = segResult.EndingBalance;
             }
             var totalCost = Math.Round(input.InitialLoanAmount + totalInterest, 2);
             var result = new PiecewiseResult(
@@ -73,9 +80,9 @@ namespace SettlyFinance.Calculators.Orchestrators
                 TotalInterest: Math.Round(totalInterest, 2),
                 TotalCost: totalCost,
                 TotalPeriods: globalPeriod,
-                Schedule: schedule
+                Schedule: schedule,
+                FirstSegmentPayment: firstSegmentPayment
             );
-
             return result;
         }
     }

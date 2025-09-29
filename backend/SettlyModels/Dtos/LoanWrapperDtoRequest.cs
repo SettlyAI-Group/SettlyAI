@@ -7,7 +7,7 @@ using SettlyModels.DTOs.Loan;
 
 namespace SettlyModels.DTOs
 {
-    public sealed class LoanWrapperDtoRequest
+    public sealed record LoanWrapperDtoRequest
     (
         AmortizationRequestDto? Amortization,
         PiecewiseRequestDto? Piecewise

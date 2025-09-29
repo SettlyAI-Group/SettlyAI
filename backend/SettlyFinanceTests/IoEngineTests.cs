@@ -83,7 +83,7 @@ namespace SettlyFinanceTests
             Assert.Equal(result.TotalInterest, result.TotalCost);
             // 5) The sum of all interest in the schedule matches TotalInterest
             var sumInterest = result.Schedule.Sum(r => r.Interest);
-            Assert.Equal(result.TotalInterest, Math.Round(sumInterest, 2));
+            Assert.Equal(result.TotalInterest, Math.Round(sumInterest,2));
             // 6) Every payment in the schedule equals the Payment property
             Assert.All(result.Schedule!, r => Assert.Equal(result.Payment, r.Payment));
         }

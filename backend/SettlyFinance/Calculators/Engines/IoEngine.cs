@@ -4,7 +4,7 @@ using SettlyFinance.Utils;
 using SettlyFinance.Enums;
 namespace SettlyFinance.Calculators.Engines
 {
-    public sealed class IoEngine: IAmortizationEngine
+    public sealed class IoEngine : IAmortizationEngine
     {
         private readonly IFrequencyProvider _frequencyProvider;
         public IoEngine(IFrequencyProvider frequencyProvider)
@@ -16,9 +16,9 @@ namespace SettlyFinance.Calculators.Engines
             if (input.TermPeriods <= 0)
                 throw new ArgumentOutOfRangeException(nameof(input.TermPeriods), "Term periods must be positive.");
             if (input.AnnualInterestRate < 0m)
-    throw new ArgumentOutOfRangeException(nameof(input.AnnualInterestRate), "Rate cannot be negative.");
+                throw new ArgumentOutOfRangeException(nameof(input.AnnualInterestRate), "Rate cannot be negative.");
             if (_frequencyProvider.GetPeriodsPerYear(input.Frequency) <= 0) throw new ArgumentOutOfRangeException(nameof(input.Frequency), "Frequency must be valid.");
-if (input.Type != RepaymentType.InterestOnly) throw new InvalidOperationException("IO engine only supports InterestOnly repayment type.");
+            if (input.RepaymentType != RepaymentType.InterestOnly) throw new InvalidOperationException("IO engine only supports InterestOnly repayment type.");
             var periodsPerYear = _frequencyProvider.GetPeriodsPerYear(input.Frequency);
             var r = (periodsPerYear == 0) ? 0m : input.AnnualInterestRate / periodsPerYear;
             long principalCents = MoneyUtils.ToCents(input.LoanAmount);
@@ -57,13 +57,14 @@ if (input.Type != RepaymentType.InterestOnly) throw new InvalidOperationExceptio
                 LoanAmount: input.LoanAmount,
                 AnnualInterestRate: input.AnnualInterestRate,
                 Frequency: input.Frequency,
-                RepaymentType: input.Type,
+                RepaymentType: input.RepaymentType,
                 Payment: precisePayment,
                 DisplayPayment: displayPayment,
                 TotalInterest: MoneyUtils.FromCents(totalInterest),
                 TotalPrincipal: 0m,
                 TotalCost: MoneyUtils.FromCents(totalPaid),
                 TermPeriods: input.TermPeriods,
+                EndingBalance: MoneyUtils.FromCents(principalCents),
                 Schedule: scheduleList
             );
         }

@@ -28,7 +28,7 @@ namespace SettlyFinanceTests.Helpers
             TermPeriods: _periods,
             Frequency: _freq,
             GenerateSchedule: _withSchedule,
-            Type: RepaymentType.PrincipalAndInterest // 关键：固定为 PNI
+            RepaymentType: RepaymentType.PrincipalAndInterest // 关键：固定为 PNI
         );
     }
 }

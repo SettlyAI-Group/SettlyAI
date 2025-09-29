@@ -86,9 +86,9 @@ namespace SettlyFinance.Tests.Calculators.Engines
             Assert.Equal(loanAmount, Math.Round(sumPrincipal, 2));
             // 4) Sum of interest repayments equals TotalInterest.
             var sumInterest = result.Schedule.Sum(r => r.Interest);
-            Assert.Equal(result.TotalInterest, Math.Round(sumInterest, 2));
+            Assert.Equal(result.TotalInterest, Math.Round(sumInterest,2));
             // 5) Total cost matches principal + interest.
-            Assert.Equal(result.TotalCost, Math.Round(loanAmount + result.TotalInterest, 2));
+            Assert.Equal(result.TotalCost, loanAmount + result.TotalInterest);
             // 6) Ending balance is zero
             var lastRemaining = result.Schedule.Last().EndingBalance;
             Assert.Equal(0m, lastRemaining);
@@ -134,7 +134,7 @@ namespace SettlyFinance.Tests.Calculators.Engines
         {
             var loan = 200_000m;
             var annual = 0.06m;
-            var periods = 120; // 固定期数，比较不同 ppy 的每期利率
+            var periods = 120;
 
             var monthlyEngine = new PniEngine(new FakeFrequencyProvider(12));
             var monthlyPayment = monthlyEngine.Calculate(

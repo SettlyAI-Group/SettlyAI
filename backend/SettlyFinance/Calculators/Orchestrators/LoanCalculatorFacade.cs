@@ -20,8 +20,8 @@ namespace SettlyFinance.Calculators.Orchestrators
             _piecewise = piecewise ?? throw new ArgumentNullException(nameof(piecewise));
         }
         public AmortizationResult CalculateSingle(AmortizationInput input)
-           => _factory.GetEngine(input.Type).Calculate(input);
-        public PiecewiseResult CalculatePiecewise(PiecewiseInput input)
+           => _factory.GetEngine(input.RepaymentType).Calculate(input);
+        public PiecewiseResult CalculateLoan(PiecewiseInput input)
             => _piecewise.Calculate(input);
     }
 }

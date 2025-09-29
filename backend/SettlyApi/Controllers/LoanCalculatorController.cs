@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SettlyFinance.Calculators.Orchestrators;
 using SettlyFinance.Models;
+using SettlyModels.DTOs;
 using SettlyModels.DTOs.Loan;
 
 namespace SettlyApi.Controllers
@@ -12,37 +13,99 @@ namespace SettlyApi.Controllers
     public class LoanCalculatorController : ControllerBase
     {
         private readonly ILoanCalculatorService _service;
-        public LoanCalculatorController(ILoanCalculatorService service) => _service = service;
-        // <summary>
-        /// Calculate amortization schedule or summary for a loan.
-        /// </summary>
-        [HttpPost("calculate")]
-        [ProducesResponseType(typeof(AmortizationResponseDto), 200)]
-        public ActionResult<AmortizationResponseDto> Calculate([FromBody] AmortizationRequestDto dto)
+        private readonly ILogger<LoanCalculatorController> _logger;
+        public LoanCalculatorController(
+         ILoanCalculatorService service,
+         ILogger<LoanCalculatorController> logger)
         {
-            var response = _service.Calculate(dto);
-            return Ok(response);
+            _service = service ?? throw new ArgumentNullException(nameof(service));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
-        [HttpPost("calculate/piecewise")]
-        [ProducesResponseType(typeof(PiecewiseResult), 200)]
-        public ActionResult<PiecewiseResult> CalculatePiecewise([FromBody] PiecewiseRequestDto dto, [FromServices] LoanCalculatorFacade facade)
+        [HttpPost("calculate")]
+        [ProducesResponseType(typeof(LoanWrapperDtoResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        public ActionResult<LoanWrapperDtoResponse> Calculate(
+            [FromBody] LoanWrapperDtoRequest request,
+            CancellationToken ct)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
+            if (request is null)
+                return BadRequest(Problem("Request body is required."));
+            bool hasAm = request.Amortization is not null;
+            bool hasPw = request.Piecewise is not null;
+            if (!(hasAm ^ hasPw))
+                return BadRequest(Problem("Request must contain exactly one of 'Amortization' or 'Piecewise'."));
+            if (hasPw && (request.Piecewise!.Segments is null || request.Piecewise.Segments.Count == 0))
+                return BadRequest(Problem("Piecewise.Segments must contain at least one segment."));
+            try
+            {
+                var resp = _service.Calculate(request);
+                return Ok(resp);
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "Validation failed in LoanCalculatorController.Calculate");
+                return BadRequest(Problem(ex.Message));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error in LoanCalculatorController.Calculate");
+                return StatusCode(StatusCodes.Status500InternalServerError, Problem("Internal server error."));
+            }
+        }
+        [HttpPost("single")]
+        [ProducesResponseType(typeof(LoanWrapperDtoResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        public ActionResult<LoanWrapperDtoResponse> CalculateSingle(
+            [FromBody] AmortizationRequestDto dto,
+            CancellationToken ct)
+        {
+            if (dto is null)
+                return BadRequest(Problem("Request body is required."));
+            try
+            {
+                var wrapper = new LoanWrapperDtoRequest(Amortization: dto, Piecewise: null);
+                var resp = _service.Calculate(wrapper);
+                return Ok(resp);
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "Validation failed in LoanCalculatorController.CalculateSingle");
+                return BadRequest(Problem(ex.Message));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error in LoanCalculatorController.CalculateSingle");
+                return StatusCode(StatusCodes.Status500InternalServerError, Problem("Internal server error."));
+            }
+        }
+        [HttpPost("piecewise")]
+        [ProducesResponseType(typeof(LoanWrapperDtoResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        public ActionResult<LoanWrapperDtoResponse> CalculatePiecewise(
+            [FromBody] PiecewiseRequestDto dto,
+            CancellationToken ct)
+        {
+            if (dto is null)
+                return BadRequest(Problem("Request body is required."));
 
-            var input = new PiecewiseInput(
-                InitialLoanAmount: dto.InitialLoanAmount,
-                GenerateSchedule: dto.GenerateSchedule,
-                Segments: dto.Segments.ConvertAll(s => new PiecewiseSegmentInput(
-                    Type: s.Type,
-                    AnnualInterestRate: s.AnnualInterestRate,
-                    TermPeriods: s.TermPeriods,
-                    Frequency: s.Frequency,
-                    GenerateSchedule: s.GenerateSchedule,
-                    Label: s.Label
-                ))
-            );
-            var result = facade.CalculatePiecewise(input);
-            return Ok(result);
+            if (dto.Segments is null || dto.Segments.Count == 0)
+                return BadRequest(Problem("Piecewise.Segments must contain at least one segment."));
+            try
+            {
+                var wrapper = new LoanWrapperDtoRequest(Amortization: null, Piecewise: dto);
+                var resp = _service.Calculate(wrapper);
+                return Ok(resp);
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "Validation failed in LoanCalculatorController.CalculatePiecewise");
+                return BadRequest(Problem(ex.Message));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error in LoanCalculatorController.CalculatePiecewise");
+                return StatusCode(StatusCodes.Status500InternalServerError, Problem("Internal server error."));
+            }
         }
     }
 }

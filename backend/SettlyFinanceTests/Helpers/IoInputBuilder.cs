@@ -27,7 +27,7 @@ namespace SettlyFinanceTests.Helpers
                 TermPeriods: _periods,
                 Frequency: _freq,
                 GenerateSchedule: _withSchedule,
-                Type: RepaymentType.InterestOnly);
+                RepaymentType: RepaymentType.InterestOnly);
         }
     }
 }

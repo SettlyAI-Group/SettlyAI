@@ -9,6 +9,6 @@ namespace SettlyFinance.Interfaces
 {
     public interface ILoanCalculatorFacade
     {
-        PiecewiseResult CalculatePiecewise(PiecewiseInput input);
+        PiecewiseResult CalculateLoan(PiecewiseInput input);
     }
 }

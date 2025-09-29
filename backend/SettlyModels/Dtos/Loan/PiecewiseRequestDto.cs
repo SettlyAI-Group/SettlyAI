@@ -8,7 +8,7 @@ namespace SettlyModels.DTOs.Loan
 {
     public sealed record PiecewiseRequestDto(
         decimal InitialLoanAmount,
-        bool GenerateSchedule,
-        IReadOnlyList<PiecewiseSegmentDto> Segments
+        IReadOnlyList<PiecewiseSegmentDto> Segments,
+        bool GenerateSchedule = true
     );
 }

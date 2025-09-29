@@ -20,7 +20,7 @@ namespace SettlyModels.DTOs.Loan
        [property: JsonConverter(typeof(JsonStringEnumConverter))]
         RepaymentFrequency Frequency,
         [property: JsonConverter(typeof(JsonStringEnumConverter))]
-        RepaymentType Type,
-        bool GenerateSchedule
+        RepaymentType RepaymentType,
+        bool GenerateSchedule = false
     );
 }

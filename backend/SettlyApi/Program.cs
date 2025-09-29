@@ -5,6 +5,7 @@ using SettlyApi.Configuration;
 using SettlyApi.Filters;
 using SettlyApi.Middlewares;
 using SettlyFinance.Calculators;
+using SettlyFinance.Calculators.Orchestrators;
 using SettlyFinance.Interfaces;
 using SettlyModels;
 using SettlyService;
@@ -52,7 +53,9 @@ public class Program
         builder.Services.AddTransient<IPopulationSupplyService, PopulationSupplyService>();
         builder.Services.AddScoped<ILoanService, LoanService>();
         builder.Services.AddScoped<ITestimonialService, TestimonialService>();
-        
+
+        builder.Services.AddScoped<ILoanCalculatorFacade, LoanCalculatorFacade>();
+        builder.Services.AddScoped<IPiecewiseAmortizer, PiecewiseAmortizer>();
         builder.Services.AddScoped<ILoanCalculatorService, LoanCalculatorService>();
         builder.Services.AddSingleton<IFrequencyProvider, FrequencyProvider>();
         builder.Services.AddSingleton<IAmortizationEngineFactory, AmortizationEngineFactory>();
