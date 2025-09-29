@@ -10,5 +10,7 @@ namespace SettlyModels.Dtos
 
         [Required(ErrorMessage = "Password is required")]
         public string Password { get; set; } = null!;
+
+        public bool IsLongLifeLogin { get; set; } = false;
     }
 }
