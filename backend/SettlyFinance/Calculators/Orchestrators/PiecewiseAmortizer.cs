@@ -73,7 +73,7 @@ namespace SettlyFinance.Calculators.Orchestrators
                 //currentPrincipal = nextPrincipal;
                 currentPrincipal = segResult.EndingBalance;
             }
-            var totalCost = Math.Round(input.InitialLoanAmount + totalInterest, 2);
+            var totalCost = Math.Round(totalPrincipal + totalInterest, 2);
             var result = new PiecewiseResult(
                 InitialLoanAmount: input.InitialLoanAmount,
                 TotalPrincipal: Math.Round(totalPrincipal, 2),

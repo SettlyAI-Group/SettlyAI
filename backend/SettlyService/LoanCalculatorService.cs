@@ -30,6 +30,8 @@ namespace SettlyService
             var hasPw = dto.Piecewise is not null;
             if (!hasAm && !hasPw)
                 throw new ArgumentException("Request must contain exactly one of 'Amortization' or 'Piecewise'.");
+            if (hasAm == hasPw)
+                throw new ArgumentException("Request must contain exactly one of 'Amortization' or 'Piecewise'.", nameof(dto));
             AmortizationResponseDto? amortizationResponse = null;
             PiecewiseResponseDto? piecewiseResponse = null;
             if (hasPw)
