@@ -38,6 +38,10 @@ public class Program
         //Register ISearchApi with SearchApiService
         builder.Services.AddScoped<ISettlyService.ISearchService, SettlyService.SearchService>();
 
+        // Super Estimate services
+        builder.Services.AddScoped<IProjectionService, ProjectionService>();
+        builder.Services.AddScoped<IFhssService, FhssService>();
+
         // Add your custom API behavior config
         builder.Services.AddCustomApiBehavior();
         // Add services to the container.
