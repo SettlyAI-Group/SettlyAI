@@ -95,6 +95,7 @@ public class AuthController : ControllerBase
         return Ok(result);
     }
     [HttpPost("oauth/login")]
+    [EnableRateLimiting("LoginIpFixedWindow")]
     [SwaggerOperation(Summary = "OAuth login")]
     [SwaggerResponse(200, "OAuth login successful", typeof(LoginOutputDto))]
     public async Task<ActionResult<LoginOutputDto>> OAuthLogin([FromBody] OAuthLoginRequestDto authLoginRequest)
