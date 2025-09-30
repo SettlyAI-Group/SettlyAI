@@ -95,6 +95,12 @@ public class AuthService : IAuthService
             return null;
         }
 
+        // OAuth users cannot login with password
+        if (string.IsNullOrEmpty(user.PasswordHash))
+        {
+            return null;
+        }
+
         if (!BCrypt.Net.BCrypt.Verify(loginInput.Password, user.PasswordHash))
         {
             return null;
@@ -107,7 +113,7 @@ public class AuthService : IAuthService
         {
             refreshToken = _createTokenService.CreateRefreshToken(user.Name, user.Id);
         }
-        
+
         LoginOutputDto loginOutputDto = new LoginOutputDto
         {
             UserName = user.Name,
