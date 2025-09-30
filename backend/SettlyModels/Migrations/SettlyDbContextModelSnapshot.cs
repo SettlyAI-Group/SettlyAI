@@ -447,6 +447,10 @@ namespace SettlyModels.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("InspectionTimeOptions")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<int>("InternalArea")
                         .HasColumnType("integer");
 

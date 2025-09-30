@@ -2,6 +2,7 @@ using ISettlyService;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using SettlyApi.Configuration;
+using SettlyApi.Filters;
 using SettlyApi.Middlewares;
 using SettlyModels;
 using SettlyService;
@@ -59,11 +60,24 @@ public class Program
         builder.Services.Configure<JWTConfig>(builder.Configuration.GetSection(JWTConfig.Section));
         var jwtConfig = builder.Configuration.GetSection(JWTConfig.Section).Get<JWTConfig>();
         builder.Services.AddJWT(jwtConfig);
-
+        // Register the custom filter with the DI container.
+        builder.Services.AddScoped<UserIdFilterAttribute>();
         // Add a Login rate-limiter policy: 5 requests per 15 minutes per client IP
         builder.Services.AddLoginLimitRater(attempts: 5, miniutes: 15);
 
+        // Register TransferFee services
+        builder.Services.AddScoped<ITransferFeeRulesProvider, TransferFeeRulesProvider>();
+        builder.Services.AddScoped<ITransferFeeService, TransferFeeService>();
+
         var app = builder.Build();
+        
+        // Configure URLs - bind to all interfaces in production
+        if (app.Environment.IsProduction())
+        {
+            app.Urls.Clear();
+            app.Urls.Add("http://0.0.0.0:5100");
+        }
+        
         // Register middleware first so it catches all exceptions
         app.UseMiddleware<ErrorHandlingMiddleware>();
 
