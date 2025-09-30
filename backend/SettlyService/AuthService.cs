@@ -95,6 +95,11 @@ public class AuthService : IAuthService
             return null;
         }
 
+        if (!user.IsActive)
+        {
+            throw new EmailUnverifiedException("Your account is not activated. Please check your email for verification code.");
+        }
+
         // OAuth users cannot login with password
         if (string.IsNullOrEmpty(user.PasswordHash))
         {
