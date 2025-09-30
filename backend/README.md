@@ -14,18 +14,18 @@ This solution consists of four main projects:
 
 ## Quick Start
 
-### Prerequisites
+### Prerequisites 
 
 - .NET 8 SDK
 - PostgreSQL database
 - Visual Studio, VS Code, or Rider (recommended)
 
-### Quick Setup using docker
+### Quick Setup using docker 
 You can use the following command to start the bakend service using docker containers quickly (including conneting to postgres db, db-migration, db-seed)
 ```bash
- cd backend
+ cd backend 
  docker compose build
- docker compose up
+ docker compose up 
 ```
 
 ### Setup
@@ -37,7 +37,7 @@ You can use the following command to start the bakend service using docker conta
    dotnet restore backend.sln
    ```
 
-2. **Configure database connection**
+2. **Configure database connection** 
 
    Copy the example configuration files and update with your database settings:
    ```bash

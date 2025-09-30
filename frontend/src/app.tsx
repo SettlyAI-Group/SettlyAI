@@ -12,6 +12,12 @@ import { VerificationPage } from './pages/VerificationPage';
 import { OAuthCallbackPage } from './pages/OAuthCallbackPage';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import ExplorePage from './pages/ExplorePage';
+import LoanCalculatorPage from './pages/LoanCalculatorPage';
+import SuperPage from './pages/SuperPage';
+import FavouritesPage from './pages/FavouritesPage';
+import FeaturesPage from './pages/FeaturesPage';
+import ChatBotPage from './pages/ChatBotPage';
+import AboutPage from './pages/AboutPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -22,7 +28,6 @@ const queryClient = new QueryClient({
 
 const App = () => {
   return (
-
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
@@ -33,16 +38,20 @@ const App = () => {
 
             <Route path="/explore/:location" element={<ExplorePage />} />
             <Route path="/suburb/:suburbId" element={<SuburbReportPage />} />
-
           </Route>
           <Route path="/" element={<ThemeDemo />} />
           <Route path="/registration" element={<RegistrationPage />} />
           <Route path="/verify-email/:userId" element={<VerificationPage />} />
-          <Route path="/oauth/callback/:provider" element={<OAuthCallbackPage />} />
+          <Route path="/loan-calculator" element={<LoanCalculatorPage />} />
+          <Route path="/super" element={<SuperPage />} />
+          <Route path="/favourites" element={<FavouritesPage />} />
+          <Route path="/features" element={<FeaturesPage />} />
+          <Route path="/chat" element={<ChatBotPage />} />
+
+          <Route path="/about" element={<AboutPage />} />
         </Routes>
       </ThemeProvider>
     </QueryClientProvider>
-
   );
 };
 

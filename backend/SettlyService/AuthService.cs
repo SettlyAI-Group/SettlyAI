@@ -1,4 +1,5 @@
 using ISettlyService;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using SettlyModels;
 using SettlyModels.Dtos;
@@ -99,12 +100,19 @@ public class AuthService : IAuthService
             return null;
         }
 
-        string accessToken = _createTokenService.CreateToken(user);
+        string accessToken = _createTokenService.CreateAccessToken(user.Name, user.Id);
+        string refreshToken = null;
 
+        if (loginInput.IsLongLifeLogin)
+        {
+            refreshToken = _createTokenService.CreateRefreshToken(user.Name, user.Id);
+        }
+        
         LoginOutputDto loginOutputDto = new LoginOutputDto
         {
             UserName = user.Name,
             AccessToken = accessToken,
+            RefreshToken = refreshToken
         };
 
         return loginOutputDto;

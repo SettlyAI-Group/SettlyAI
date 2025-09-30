@@ -1,0 +1,2929 @@
+ID,suburb,state,postcode
+1,Melbourne,VIC,3000
+2,Melbourne,VIC,3001
+3,East Melbourne,VIC,3002
+4,West Melbourne,VIC,3003
+5,Melbourne,VIC,3004
+6,South Wharf,VIC,3006
+7,Docklands,VIC,3008
+8,University Of Melbourne,VIC,3010
+9,Footscray,VIC,3011
+10,Seddon,VIC,3011
+11,Seddon West,VIC,3011
+12,Brooklyn,VIC,3012
+13,Kingsville,VIC,3012
+14,Maidstone,VIC,3012
+15,Tottenham,VIC,3012
+16,West Footscray,VIC,3012
+17,Newport,VIC,3015
+18,South Kingsville,VIC,3015
+19,Spotswood,VIC,3015
+20,Williamstown,VIC,3016
+21,Altona,VIC,3018
+22,Seaholme,VIC,3018
+23,Braybrook,VIC,3019
+24,Albion,VIC,3020
+25,Sunshine,VIC,3020
+26,Sunshine West,VIC,3020
+27,Albanvale,VIC,3021
+28,Kealba,VIC,3021
+29,Kings Park,VIC,3021
+30,St Albans,VIC,3021
+31,Ardeer,VIC,3022
+32,Deer Park East,VIC,3022
+33,Burnside,VIC,3023
+34,Burnside Heights,VIC,3023
+35,Cairnlea,VIC,3023
+36,Caroline Springs,VIC,3023
+37,Deer Park,VIC,3023
+38,Deer Park North,VIC,3023
+39,Ravenhall,VIC,3023
+40,Fieldstone,VIC,3024
+41,Mambourin,VIC,3024
+42,Manor Lakes,VIC,3024
+43,Mount Cottrell,VIC,3024
+44,Wyndham Vale,VIC,3024
+45,Altona East,VIC,3025
+46,Altona Gate,VIC,3025
+47,Altona North,VIC,3025
+48,Derrimut,VIC,3026
+49,Laverton North,VIC,3026
+50,Williams Landing,VIC,3027
+51,Altona Meadows,VIC,3028
+52,Laverton,VIC,3028
+53,Seabrook,VIC,3028
+54,Tarneit,VIC,3029
+55,Truganina,VIC,3029
+56,Cocoroc,VIC,3030
+57,Point Cook,VIC,3030
+58,Quandong,VIC,3030
+59,Werribee,VIC,3030
+60,Werribee South,VIC,3030
+61,Flemington,VIC,3031
+62,Kensington,VIC,3031
+63,Ascot Vale,VIC,3032
+64,Maribyrnong,VIC,3032
+65,Travancore,VIC,3032
+66,Keilor East,VIC,3033
+67,Keilor,VIC,3036
+68,Keilor North,VIC,3036
+69,Calder Park,VIC,3037
+70,Delahey,VIC,3037
+71,Hillside,VIC,3037
+72,Sydenham,VIC,3037
+73,Taylors Hill,VIC,3037
+74,Keilor Downs,VIC,3038
+75,Keilor Lodge,VIC,3038
+76,Taylors Lakes,VIC,3038
+77,Watergardens,VIC,3038
+78,Moonee Ponds,VIC,3039
+79,Aberfeldie,VIC,3040
+80,Essendon,VIC,3040
+81,Essendon West,VIC,3040
+82,Essendon Fields,VIC,3041
+83,Essendon North,VIC,3041
+84,Strathmore,VIC,3041
+85,Airport West,VIC,3042
+86,Keilor Park,VIC,3042
+87,Niddrie,VIC,3042
+88,Gladstone Park,VIC,3043
+89,Gowanbrae,VIC,3043
+90,Tullamarine,VIC,3043
+91,Pascoe Vale,VIC,3044
+92,Melbourne Airport,VIC,3045
+93,Glenroy,VIC,3046
+94,Hadfield,VIC,3046
+95,Oak Park,VIC,3046
+96,Broadmeadows,VIC,3047
+97,Dallas,VIC,3047
+98,Jacana,VIC,3047
+99,Coolaroo,VIC,3048
+100,Meadow Heights,VIC,3048
+101,Attwood,VIC,3049
+102,Westmeadows,VIC,3049
+103,Royal Melbourne Hospital,VIC,3050
+104,Hotham Hill,VIC,3051
+105,Melbourne University,VIC,3052
+106,Parkville,VIC,3052
+107,Carlton,VIC,3053
+108,Carlton South,VIC,3053
+109,Carlton North,VIC,3054
+110,Princes Hill,VIC,3054
+111,Brunswick South,VIC,3055
+112,Brunswick West,VIC,3055
+113,Moonee Vale,VIC,3055
+114,Moreland West,VIC,3055
+115,Brunswick,VIC,3056
+116,Brunswick North,VIC,3056
+117,Brunswick East,VIC,3057
+118,Sumner,VIC,3057
+119,Batman,VIC,3058
+120,Coburg,VIC,3058
+121,Coburg North,VIC,3058
+122,Merlynston,VIC,3058
+123,Moreland,VIC,3058
+124,Greenvale,VIC,3059
+125,Fawkner,VIC,3060
+126,Campbellfield,VIC,3061
+127,Somerton,VIC,3062
+128,Yuroke,VIC,3063
+129,Craigieburn,VIC,3064
+130,Donnybrook,VIC,3064
+131,Kalkallo,VIC,3064
+132,Mickleham,VIC,3064
+133,Roxburgh Park,VIC,3064
+134,Fitzroy,VIC,3065
+135,Collingwood,VIC,3066
+136,Abbotsford,VIC,3067
+137,Clifton Hill,VIC,3068
+138,Fitzroy North,VIC,3068
+139,Northcote,VIC,3070
+140,Thornbury,VIC,3071
+141,Gilberton,VIC,3072
+142,Preston,VIC,3072
+143,Preston South,VIC,3072
+144,Preston West,VIC,3072
+145,Regent West,VIC,3072
+146,Reservoir,VIC,3073
+147,Thomastown,VIC,3074
+148,Lalor,VIC,3075
+149,Epping,VIC,3076
+150,Alphington,VIC,3078
+151,Fairfield,VIC,3078
+152,Ivanhoe,VIC,3079
+153,Ivanhoe East,VIC,3079
+154,Ivanhoe North,VIC,3079
+155,Bellfield,VIC,3081
+156,Heidelberg West,VIC,3081
+157,Mill Park,VIC,3082
+158,Bundoora,VIC,3083
+159,Kingsbury,VIC,3083
+160,La Trobe University,VIC,3083
+161,Banyule,VIC,3084
+162,Eaglemont,VIC,3084
+163,Heidelberg,VIC,3084
+164,Rosanna,VIC,3084
+165,Viewbank,VIC,3084
+166,Macleod,VIC,3085
+167,Macleod West,VIC,3085
+168,Yallambie,VIC,3085
+169,Watsonia,VIC,3087
+170,Watsonia North,VIC,3087
+171,Briar Hill,VIC,3088
+172,Greensborough,VIC,3088
+173,St Helena,VIC,3088
+174,Diamond Creek,VIC,3089
+175,Plenty,VIC,3090
+176,Yarrambat,VIC,3091
+177,Lower Plenty,VIC,3093
+178,Montmorency,VIC,3094
+179,Eltham,VIC,3095
+180,Eltham North,VIC,3095
+181,Research,VIC,3095
+182,Wattle Glen,VIC,3096
+183,Bend Of Islands,VIC,3097
+184,Watsons Creek,VIC,3097
+185,Cottles Bridge,VIC,3099
+186,Hurstbridge,VIC,3099
+187,Nutfield,VIC,3099
+188,Strathewen,VIC,3099
+189,Cotham,VIC,3101
+190,Kew,VIC,3101
+191,Kew East,VIC,3102
+192,Balwyn,VIC,3103
+193,Balwyn East,VIC,3103
+194,Deepdene,VIC,3103
+195,Balwyn North,VIC,3104
+196,Greythorn,VIC,3104
+197,Bulleen,VIC,3105
+198,Templestowe,VIC,3106
+199,Doncaster,VIC,3108
+200,Doncaster East,VIC,3109
+201,Donvale,VIC,3111
+202,Warrandyte,VIC,3113
+203,Park Orchards,VIC,3114
+204,Wonga Park,VIC,3115
+205,Chirnside Park,VIC,3116
+206,Burnley,VIC,3121
+207,Burnley North,VIC,3121
+208,Cremorne,VIC,3121
+209,Richmond,VIC,3121
+210,Richmond East,VIC,3121
+211,Richmond North,VIC,3121
+212,Richmond South,VIC,3121
+213,Auburn South,VIC,3122
+214,Glenferrie South,VIC,3122
+215,Hawthorn,VIC,3122
+216,Hawthorn North,VIC,3122
+217,Hawthorn West,VIC,3122
+218,Auburn,VIC,3123
+219,Hawthorn East,VIC,3123
+220,Camberwell,VIC,3124
+221,Camberwell North,VIC,3124
+222,Camberwell South,VIC,3124
+223,Camberwell West,VIC,3124
+224,Hartwell,VIC,3124
+225,Burwood,VIC,3125
+226,Camberwell East,VIC,3126
+227,Canterbury,VIC,3126
+228,Mont Albert,VIC,3127
+229,Surrey Hills,VIC,3127
+230,Box Hill,VIC,3128
+231,Box Hill South,VIC,3128
+232,Wattle Park,VIC,3128
+233,Box Hill North,VIC,3129
+234,Kerrimuir,VIC,3129
+235,Blackburn,VIC,3130
+236,Blackburn North,VIC,3130
+237,Blackburn South,VIC,3130
+238,Laburnum,VIC,3130
+239,Forest Hill,VIC,3131
+240,Nunawading,VIC,3131
+241,Mitcham,VIC,3132
+242,Mitcham North,VIC,3132
+243,Vermont,VIC,3133
+244,Vermont South,VIC,3133
+245,Heathwood,VIC,3134
+246,Ringwood,VIC,3134
+247,Ringwood North,VIC,3134
+248,Warranwood,VIC,3134
+249,Bedford Road,VIC,3135
+250,Heathmont,VIC,3135
+251,Ringwood East,VIC,3135
+252,Croydon,VIC,3136
+253,Croydon Hills,VIC,3136
+254,Croydon North,VIC,3136
+255,Croydon South,VIC,3136
+256,Kilsyth,VIC,3137
+257,Kilsyth South,VIC,3137
+258,Mooroolbark,VIC,3138
+259,Beenak,VIC,3139
+260,Don Valley,VIC,3139
+261,Hoddles Creek,VIC,3139
+262,Launching Place,VIC,3139
+263,Seville,VIC,3139
+264,Seville East,VIC,3139
+265,Wandin East,VIC,3139
+266,Wandin North,VIC,3139
+267,Woori Yallock,VIC,3139
+268,Yellingbo,VIC,3139
+269,Lilydale,VIC,3140
+270,South Yarra,VIC,3141
+271,Hawksburn,VIC,3142
+272,Toorak,VIC,3142
+273,Armadale,VIC,3143
+274,Kooyong,VIC,3144
+275,Malvern,VIC,3144
+276,Caulfield East,VIC,3145
+277,Central Park,VIC,3145
+278,Darling,VIC,3145
+279,Malvern East,VIC,3145
+280,Glen Iris,VIC,3146
+281,Ashburton,VIC,3147
+282,Ashwood,VIC,3147
+283,Chadstone,VIC,3148
+284,Holmesglen,VIC,3148
+285,Mount Waverley,VIC,3149
+286,Pinewood,VIC,3149
+287,Syndal,VIC,3149
+288,Brandon Park,VIC,3150
+289,Glen Waverley,VIC,3150
+290,Wheelers Hill,VIC,3150
+291,Burwood East,VIC,3151
+292,Burwood Heights,VIC,3151
+293,Knox City Centre,VIC,3152
+294,Studfield,VIC,3152
+295,Wantirna,VIC,3152
+296,Wantirna South,VIC,3152
+297,Bayswater,VIC,3153
+298,Bayswater North,VIC,3153
+299,The Basin,VIC,3154
+300,Boronia,VIC,3155
+301,Ferntree Gully,VIC,3156
+302,Mountain Gate,VIC,3156
+303,Upwey,VIC,3158
+304,Menzies Creek,VIC,3159
+305,Selby,VIC,3159
+306,Belgrave,VIC,3160
+307,Belgrave Heights,VIC,3160
+308,Belgrave South,VIC,3160
+309,Tecoma,VIC,3160
+310,Caulfield North,VIC,3161
+311,Caulfield,VIC,3162
+312,Caulfield South,VIC,3162
+313,Carnegie,VIC,3163
+314,Glen Huntly,VIC,3163
+315,Murrumbeena,VIC,3163
+316,Dandenong South,VIC,3164
+317,Bentleigh East,VIC,3165
+318,Hughesdale,VIC,3166
+319,Huntingdale,VIC,3166
+320,Oakleigh,VIC,3166
+321,Oakleigh East,VIC,3166
+322,Oakleigh South,VIC,3167
+323,Clayton,VIC,3168
+324,Notting Hill,VIC,3168
+325,Clarinda,VIC,3169
+326,Clayton South,VIC,3169
+327,Mulgrave,VIC,3170
+328,Sandown Village,VIC,3171
+329,Springvale,VIC,3171
+330,Dingley Village,VIC,3172
+331,Springvale South,VIC,3172
+332,Keysborough,VIC,3173
+333,Noble Park,VIC,3174
+334,Noble Park North,VIC,3174
+335,Bangholme,VIC,3175
+336,Dandenong,VIC,3175
+337,Dandenong East,VIC,3175
+338,Dandenong North,VIC,3175
+339,Dandenong South,VIC,3175
+340,Dunearn,VIC,3175
+341,Scoresby Bc,VIC,3176
+342,Doveton,VIC,3177
+343,Eumemmerring,VIC,3177
+344,Rowville,VIC,3178
+345,Scoresby,VIC,3179
+346,Knoxfield,VIC,3180
+347,Prahran,VIC,3181
+348,Prahran East,VIC,3181
+349,Windsor,VIC,3181
+350,St Kilda,VIC,3182
+351,St Kilda South,VIC,3182
+352,St Kilda West,VIC,3182
+353,Balaclava,VIC,3183
+354,St Kilda East,VIC,3183
+355,Brighton Road,VIC,3184
+356,Elwood,VIC,3184
+357,Elsternwick,VIC,3185
+358,Gardenvale,VIC,3185
+359,Ripponlea,VIC,3185
+360,Brighton,VIC,3186
+361,Brighton North,VIC,3186
+362,Dendy,VIC,3186
+363,Were Street Po,VIC,3186
+364,Brighton East,VIC,3187
+365,North Road,VIC,3187
+366,Hampton,VIC,3188
+367,Hampton East,VIC,3188
+368,Hampton North,VIC,3188
+369,Moorabbin,VIC,3189
+370,Moorabbin East,VIC,3189
+371,Wishart,VIC,3189
+372,Highett,VIC,3190
+373,Sandringham,VIC,3191
+374,Cheltenham,VIC,3192
+375,Cheltenham East,VIC,3192
+376,Beaumaris,VIC,3193
+377,Black Rock,VIC,3193
+378,Cromer,VIC,3193
+379,Mentone,VIC,3194
+380,Mentone East,VIC,3194
+381,Aspendale,VIC,3195
+382,Aspendale Gardens,VIC,3195
+383,Braeside,VIC,3195
+384,Mordialloc,VIC,3195
+385,Parkdale,VIC,3195
+386,Waterways,VIC,3195
+387,Bonbeach,VIC,3196
+388,Chelsea,VIC,3196
+389,Chelsea Heights,VIC,3196
+390,Edithvale,VIC,3196
+391,Carrum,VIC,3197
+392,Patterson Lakes,VIC,3197
+393,Seaford,VIC,3198
+394,Frankston,VIC,3199
+395,Frankston East,VIC,3199
+396,Frankston Heights,VIC,3199
+397,Frankston South,VIC,3199
+398,Karingal Centre,VIC,3199
+399,Frankston North,VIC,3200
+400,Pines Forest,VIC,3200
+401,Carrum Downs,VIC,3201
+402,Heatherton,VIC,3202
+403,Bentleigh,VIC,3204
+404,Mckinnon,VIC,3204
+405,Ormond,VIC,3204
+406,Patterson,VIC,3204
+407,Albert Park,VIC,3206
+408,Middle Park,VIC,3206
+409,Garden City,VIC,3207
+410,Little River,VIC,3211
+411,Avalon,VIC,3212
+412,Lara,VIC,3212
+413,Point Wilson,VIC,3212
+414,Anakie,VIC,3213
+415,Batesford,VIC,3213
+416,Lovely Banks,VIC,3213
+417,Moorabool,VIC,3213
+418,Corio,VIC,3214
+419,Norlane,VIC,3214
+420,North Shore,VIC,3214
+421,Bell Park,VIC,3215
+422,Bell Post Hill,VIC,3215
+423,Drumcondra,VIC,3215
+424,Geelong North,VIC,3215
+425,Hamlyn Heights,VIC,3215
+426,North Geelong,VIC,3215
+427,Rippleside,VIC,3215
+428,Belmont,VIC,3216
+429,Grovedale,VIC,3216
+430,Grovedale East,VIC,3216
+431,Marshall,VIC,3216
+432,Wandana Heights,VIC,3216
+433,Waurn Ponds,VIC,3216
+434,Armstrong Creek,VIC,3217
+435,Charlemont,VIC,3217
+436,Freshwater Creek,VIC,3217
+437,Mount Duneed,VIC,3217
+438,Fyansford,VIC,3218
+439,Geelong West,VIC,3218
+440,Herne Hill,VIC,3218
+441,Manifold Heights,VIC,3218
+442,Murgheboluc,VIC,3218
+443,Stonehaven,VIC,3218
+444,Breakwater,VIC,3219
+445,East Geelong,VIC,3219
+446,Newcomb,VIC,3219
+447,St Albans Park,VIC,3219
+448,Thomson,VIC,3219
+449,Whittington,VIC,3219
+450,Bareena,VIC,3220
+451,Geelong,VIC,3220
+452,Newtown,VIC,3220
+453,South Geelong,VIC,3220
+454,Barrabool,VIC,3221
+455,Ceres,VIC,3221
+456,Gnarwarre,VIC,3221
+457,Clifton Springs,VIC,3222
+458,Curlewis,VIC,3222
+459,Drysdale,VIC,3222
+460,Mannerim,VIC,3222
+461,Marcus Hill,VIC,3222
+462,Wallington,VIC,3222
+463,Bellarine,VIC,3223
+464,Indented Head,VIC,3223
+465,Portarlington,VIC,3223
+466,Leopold,VIC,3224
+467,Moolap,VIC,3224
+468,Point Lonsdale,VIC,3225
+469,Queenscliff,VIC,3225
+470,Swan Island,VIC,3225
+471,Ocean Grove,VIC,3226
+472,Barwon Heads,VIC,3227
+473,Breamlea,VIC,3227
+474,Connewarre,VIC,3227
+475,Bellbrae,VIC,3228
+476,Bells Beach,VIC,3228
+477,Jan Juc,VIC,3228
+478,Torquay,VIC,3228
+479,Anglesea,VIC,3230
+480,Aireys Inlet,VIC,3231
+481,Big Hill,VIC,3231
+482,Eastern View,VIC,3231
+483,Fairhaven,VIC,3231
+484,Moggs Creek,VIC,3231
+485,Lorne,VIC,3232
+486,Apollo Bay,VIC,3233
+487,Cape Otway,VIC,3233
+488,Marengo,VIC,3233
+489,Petticoat Creek,VIC,3233
+490,Skenes Creek,VIC,3233
+491,Grey River,VIC,3234
+492,Kennett River,VIC,3234
+493,Separation Creek,VIC,3234
+494,Sugarloaf,VIC,3234
+495,Wongarra,VIC,3234
+496,Wye River,VIC,3234
+497,Boonah,VIC,3235
+498,Deans Marsh,VIC,3235
+499,Pennyroyal,VIC,3235
+500,Forrest,VIC,3236
+501,Mount Sabine,VIC,3236
+502,Aire Valley,VIC,3237
+503,Beech Forest,VIC,3237
+504,Ferguson,VIC,3237
+505,Wattle Hill,VIC,3237
+506,Weeaproinah,VIC,3237
+507,Wyelangta,VIC,3237
+508,Yuulong,VIC,3237
+509,Glenaire,VIC,3238
+510,Hordern Vale,VIC,3238
+511,Johanna,VIC,3238
+512,Lavers Hill,VIC,3238
+513,Carlisle River,VIC,3239
+514,Chapple Vale,VIC,3239
+515,Gellibrand,VIC,3239
+516,Kennedys Creek,VIC,3239
+517,Buckley,VIC,3240
+518,Gherang,VIC,3240
+519,Modewarre,VIC,3240
+520,Moriac,VIC,3240
+521,Mount Moriac,VIC,3240
+522,Paraparap,VIC,3240
+523,Bambra,VIC,3241
+524,Ombersley,VIC,3241
+525,Wensleydale,VIC,3241
+526,Winchelsea,VIC,3241
+527,Wurdiboluc,VIC,3241
+528,Birregurra,VIC,3242
+529,Barwon Downs,VIC,3243
+530,Murroon,VIC,3243
+531,Warncoort,VIC,3243
+532,Whoorel,VIC,3243
+533,Alvie,VIC,3249
+534,Balintore,VIC,3249
+535,Barongarook,VIC,3249
+536,Barramunga,VIC,3249
+537,Coragulac,VIC,3249
+538,Corunnun,VIC,3249
+539,Dreeite,VIC,3249
+540,Dreeite South,VIC,3249
+541,Irrewarra,VIC,3249
+542,Irrewillipe,VIC,3249
+543,Irrewillipe East,VIC,3249
+544,Kawarren,VIC,3249
+545,Larpent,VIC,3249
+546,Nalangil,VIC,3249
+547,Ondit,VIC,3249
+548,Pirron Yallock,VIC,3249
+549,Pomborneit East,VIC,3249
+550,Swan Marsh,VIC,3249
+551,Tanybryn,VIC,3249
+552,Warrion,VIC,3249
+553,Wool Wool,VIC,3249
+554,Yeo,VIC,3249
+555,Yeodene,VIC,3249
+556,Colac,VIC,3250
+557,Colac East,VIC,3250
+558,Colac West,VIC,3250
+559,Elliminyt,VIC,3250
+560,Beeac,VIC,3251
+561,Cundare,VIC,3251
+562,Cundare North,VIC,3251
+563,Eurack,VIC,3251
+564,Weering,VIC,3251
+565,Cororooke,VIC,3254
+566,Bookaar,VIC,3260
+567,Bostocks Creek,VIC,3260
+568,Bungador,VIC,3260
+569,Camperdown,VIC,3260
+570,Carpendeit,VIC,3260
+571,Chocolyn,VIC,3260
+572,Gnotuk,VIC,3260
+573,Kariah,VIC,3260
+574,Koallah,VIC,3260
+575,Leslie Manor,VIC,3260
+576,Pomborneit,VIC,3260
+577,Skibo,VIC,3260
+578,Stonyford,VIC,3260
+579,Tandarook,VIC,3260
+580,Tesbury,VIC,3260
+581,Weerite,VIC,3260
+582,Terang,VIC,3264
+583,Boorcan,VIC,3265
+584,Cudgee,VIC,3265
+585,Dixie,VIC,3265
+586,Ecklin South,VIC,3265
+587,Ellerslie,VIC,3265
+588,Framlingham,VIC,3265
+589,Garvoc,VIC,3265
+590,Kolora,VIC,3265
+591,Laang,VIC,3265
+592,Noorat,VIC,3265
+593,Noorat East,VIC,3265
+594,Panmure,VIC,3265
+595,Taroon,VIC,3265
+596,Bullaharre,VIC,3266
+597,Cobden,VIC,3266
+598,Cobrico,VIC,3266
+599,Elingamite,VIC,3266
+600,Elingamite North,VIC,3266
+601,Glenfyne,VIC,3266
+602,Naroghid,VIC,3266
+603,Simpson,VIC,3266
+604,Scotts Creek,VIC,3267
+605,Ayrford,VIC,3268
+606,Brucknell,VIC,3268
+607,Cooriemungle,VIC,3268
+608,Cowleys Creek,VIC,3268
+609,Curdies River,VIC,3268
+610,Curdievale,VIC,3268
+611,Nirranda,VIC,3268
+612,Nirranda East,VIC,3268
+613,Nirranda South,VIC,3268
+614,Nullawarre,VIC,3268
+615,Paaratte,VIC,3268
+616,The Cove,VIC,3268
+617,Timboon,VIC,3268
+618,Timboon West,VIC,3268
+619,Port Campbell,VIC,3269
+620,Princetown,VIC,3269
+621,Waarre,VIC,3269
+622,Peterborough,VIC,3270
+623,Darlington,VIC,3271
+624,Dundonnell,VIC,3271
+625,Pura Pura,VIC,3271
+626,Mortlake,VIC,3272
+627,Woorndoo,VIC,3272
+628,Hexham,VIC,3273
+629,Caramut,VIC,3274
+630,Mailors Flat,VIC,3275
+631,Minjah,VIC,3276
+632,Woolsthorpe,VIC,3276
+633,Allansford,VIC,3277
+634,Mepunga,VIC,3277
+635,Mepunga East,VIC,3277
+636,Mepunga West,VIC,3277
+637,Naringal,VIC,3277
+638,Naringal East,VIC,3277
+639,Purnim,VIC,3278
+640,Purnim West,VIC,3278
+641,Ballangeich,VIC,3279
+642,Wangoom,VIC,3279
+643,Dennington,VIC,3280
+644,Warrnambool,VIC,3280
+645,Bushfield,VIC,3281
+646,Grassmere,VIC,3281
+647,Winslow,VIC,3281
+648,Woodford,VIC,3281
+649,Illowa,VIC,3282
+650,Koroit,VIC,3282
+651,Crossley,VIC,3283
+652,Killarney,VIC,3283
+653,Kirkstall,VIC,3283
+654,Southern Cross,VIC,3283
+655,Tarrone,VIC,3283
+656,Tower Hill,VIC,3283
+657,Warrong,VIC,3283
+658,Willatook,VIC,3283
+659,Yangery,VIC,3283
+660,Yarpturk,VIC,3283
+661,Orford,VIC,3284
+662,Port Fairy,VIC,3284
+663,Codrington,VIC,3285
+664,Narrawong,VIC,3285
+665,Rosebrook,VIC,3285
+666,St Helens,VIC,3285
+667,Toolong,VIC,3285
+668,Tyrendarra,VIC,3285
+669,Tyrendarra East,VIC,3285
+670,Yambuk,VIC,3285
+671,Condah Swamp,VIC,3286
+672,Knebsworth,VIC,3286
+673,Macarthur,VIC,3286
+674,Warrabkook,VIC,3286
+675,Hawkesdale,VIC,3287
+676,Minhamite,VIC,3287
+677,Gazette,VIC,3289
+678,Gerrigerrup,VIC,3289
+679,Penshurst,VIC,3289
+680,Purdeet,VIC,3289
+681,Tabor,VIC,3289
+682,Glenthompson,VIC,3293
+683,Nareeb,VIC,3293
+684,Dunkeld,VIC,3294
+685,Karabeal,VIC,3294
+686,Mirranatwa,VIC,3294
+687,Moutajup,VIC,3294
+688,Victoria Point,VIC,3294
+689,Victoria Valley,VIC,3294
+690,Woodhouse,VIC,3294
+691,Byaduk North,VIC,3300
+692,Hamilton,VIC,3300
+693,Bochara,VIC,3301
+694,Broadwater,VIC,3301
+695,Buckley Swamp,VIC,3301
+696,Byaduk,VIC,3301
+697,Croxton East,VIC,3301
+698,Hensley Park,VIC,3301
+699,Morgiana,VIC,3301
+700,Mount Napier,VIC,3301
+701,Strathkellar,VIC,3301
+702,Tahara,VIC,3301
+703,Tarrington,VIC,3301
+704,Wannon,VIC,3301
+705,Warrayure,VIC,3301
+706,Yatchaw,VIC,3301
+707,Yulecart,VIC,3301
+708,Branxholme,VIC,3302
+709,Grassdale,VIC,3302
+710,Breakaway Creek,VIC,3303
+711,Condah,VIC,3303
+712,Hotspur,VIC,3303
+713,Lake Condah,VIC,3303
+714,Wallacedale,VIC,3303
+715,Bessiebelle,VIC,3304
+716,Dartmoor,VIC,3304
+717,Drik Drik,VIC,3304
+718,Drumborg,VIC,3304
+719,Greenwald,VIC,3304
+720,Heywood,VIC,3304
+721,Homerton,VIC,3304
+722,Milltown,VIC,3304
+723,Mumbannar,VIC,3304
+724,Myamyn,VIC,3304
+725,Winnap,VIC,3304
+726,Allestree,VIC,3305
+727,Bolwarra,VIC,3305
+728,Cashmore,VIC,3305
+729,Dutton Way,VIC,3305
+730,Gorae,VIC,3305
+731,Gorae West,VIC,3305
+732,Heathmere,VIC,3305
+733,Mount Richmond,VIC,3305
+734,Portland,VIC,3305
+735,Portland North,VIC,3305
+736,Portland West,VIC,3305
+737,Digby,VIC,3309
+738,Merino,VIC,3310
+739,Tahara West,VIC,3310
+740,Casterton,VIC,3311
+741,Corndale,VIC,3311
+742,Bahgallah,VIC,3312
+743,Brimboal,VIC,3312
+744,Carapook,VIC,3312
+745,Chetwynd,VIC,3312
+746,Dergholm,VIC,3312
+747,Dorodong,VIC,3312
+748,Dunrobin,VIC,3312
+749,Henty,VIC,3312
+750,Killara,VIC,3312
+751,Lake Mundi,VIC,3312
+752,Lindsay,VIC,3312
+753,Nangeela,VIC,3312
+754,Poolaijelo,VIC,3312
+755,Powers Creek,VIC,3312
+756,Sandford,VIC,3312
+757,Strathdownie,VIC,3312
+758,Wando Bridge,VIC,3312
+759,Wando Vale,VIC,3312
+760,Warrock,VIC,3312
+761,Bulart,VIC,3314
+762,Cavendish,VIC,3314
+763,Glenisla,VIC,3314
+764,Grampians,VIC,3314
+765,Mooralla,VIC,3314
+766,Brit Brit,VIC,3315
+767,Clover Flat,VIC,3315
+768,Coleraine,VIC,3315
+769,Coojar,VIC,3315
+770,Culla,VIC,3315
+771,Gringegalgona,VIC,3315
+772,Gritjurk,VIC,3315
+773,Hilgay,VIC,3315
+774,Konongwootong,VIC,3315
+775,Muntham,VIC,3315
+776,Nareen,VIC,3315
+777,Paschendale,VIC,3315
+778,Tahara Bridge,VIC,3315
+779,Tarrayoukyan,VIC,3315
+780,Tarrenlea,VIC,3315
+781,Wootong Vale,VIC,3315
+782,Harrow,VIC,3317
+783,Charam,VIC,3318
+784,Connewirricoo,VIC,3318
+785,Edenhope,VIC,3318
+786,Kadnook,VIC,3318
+787,Langkoop,VIC,3318
+788,Patyah,VIC,3318
+789,Ullswater,VIC,3318
+790,Apsley,VIC,3319
+791,Benayeo,VIC,3319
+792,Bringalbert,VIC,3319
+793,Hesse,VIC,3321
+794,Inverleigh,VIC,3321
+795,Wingeel,VIC,3321
+796,Cressy,VIC,3322
+797,Berrybank,VIC,3323
+798,Duverney,VIC,3323
+799,Foxhow,VIC,3323
+800,Lismore,VIC,3324
+801,Mingay,VIC,3324
+802,Mount Bute,VIC,3324
+803,Derrinallum,VIC,3325
+804,Larralea,VIC,3325
+805,Vite Vite,VIC,3325
+806,Vite Vite North,VIC,3325
+807,Teesdale,VIC,3328
+808,Barunah Park,VIC,3329
+809,Barunah Plains,VIC,3329
+810,Shelford,VIC,3329
+811,Rokewood,VIC,3330
+812,Bannockburn,VIC,3331
+813,Gheringhap,VIC,3331
+814,Maude,VIC,3331
+815,Russells Bridge,VIC,3331
+816,Steiglitz,VIC,3331
+817,Lethbridge,VIC,3332
+818,Bamganie,VIC,3333
+819,Meredith,VIC,3333
+820,Bungal,VIC,3334
+821,Cargerie,VIC,3334
+822,Elaine,VIC,3334
+823,Morrisons,VIC,3334
+824,Mount Doran,VIC,3334
+825,Bonnie Brook,VIC,3335
+826,Grangefields,VIC,3335
+827,Plumpton,VIC,3335
+828,Rockbank,VIC,3335
+829,Thornhill Park,VIC,3335
+830,Aintree,VIC,3336
+831,Deanside,VIC,3336
+832,Fraser Rise,VIC,3336
+833,Harkness,VIC,3337
+834,Kurunjang,VIC,3337
+835,Melton,VIC,3337
+836,Melton West,VIC,3337
+837,Toolern Vale,VIC,3337
+838,Brookfield,VIC,3338
+839,Cobblebank,VIC,3338
+840,Exford,VIC,3338
+841,Eynesbury,VIC,3338
+842,Melton South,VIC,3338
+843,Strathtulloh,VIC,3338
+844,Weir Views,VIC,3338
+845,Bacchus Marsh,VIC,3340
+846,Balliang,VIC,3340
+847,Balliang East,VIC,3340
+848,Coimadai,VIC,3340
+849,Darley,VIC,3340
+850,Glenmore,VIC,3340
+851,Hopetoun Park,VIC,3340
+852,Long Forest,VIC,3340
+853,Maddingley,VIC,3340
+854,Merrimu,VIC,3340
+855,Parwan,VIC,3340
+856,Rowsley,VIC,3340
+857,Staughton Vale,VIC,3340
+858,Dales Creek,VIC,3341
+859,Greendale,VIC,3341
+860,Korobeit,VIC,3341
+861,Myrniong,VIC,3341
+862,Pentland Hills,VIC,3341
+863,Ballan,VIC,3342
+864,Beremboke,VIC,3342
+865,Blakeville,VIC,3342
+866,Bunding,VIC,3342
+867,Colbrook,VIC,3342
+868,Durdidwarrah,VIC,3342
+869,Fiskville,VIC,3342
+870,Ingliston,VIC,3342
+871,Mount Wallace,VIC,3342
+872,Gordon,VIC,3345
+873,Alfredton,VIC,3350
+874,Ballarat,VIC,3350
+875,Ballarat Central,VIC,3350
+876,Ballarat East,VIC,3350
+877,Ballarat North,VIC,3350
+878,Ballarat West,VIC,3350
+879,Black Hill,VIC,3350
+880,Brown Hill,VIC,3350
+881,Canadian,VIC,3350
+882,Eureka,VIC,3350
+883,Golden Point,VIC,3350
+884,Invermay Park,VIC,3350
+885,Lake Wendouree,VIC,3350
+886,Lucas,VIC,3350
+887,Mount Clear,VIC,3350
+888,Mount Helen,VIC,3350
+889,Mount Pleasant,VIC,3350
+890,Nerrina,VIC,3350
+891,Newington,VIC,3350
+892,Redan,VIC,3350
+893,Soldiers Hill,VIC,3350
+894,Berringa,VIC,3351
+895,Bo Peep,VIC,3351
+896,Cape Clear,VIC,3351
+897,Carngham,VIC,3351
+898,Chepstowe,VIC,3351
+899,Haddon,VIC,3351
+900,Hillcrest,VIC,3351
+901,Illabarook,VIC,3351
+902,Lake Bolac,VIC,3351
+903,Mininera,VIC,3351
+904,Mount Emu,VIC,3351
+905,Nerrin Nerrin,VIC,3351
+906,Newtown,VIC,3351
+907,Nintingbool,VIC,3351
+908,Piggoreet,VIC,3351
+909,Pitfield,VIC,3351
+910,Ross Creek,VIC,3351
+911,Scarsdale,VIC,3351
+912,Smythes Creek,VIC,3351
+913,Smythesdale,VIC,3351
+914,Snake Valley,VIC,3351
+915,Springdallah,VIC,3351
+916,Staffordshire Reef,VIC,3351
+917,Streatham,VIC,3351
+918,Wallinduc,VIC,3351
+919,Westmere,VIC,3351
+920,Addington,VIC,3352
+921,Blowhard,VIC,3352
+922,Bolwarrah,VIC,3352
+923,Bonshaw,VIC,3352
+924,Brewster,VIC,3352
+925,Bullarook,VIC,3352
+926,Bungaree,VIC,3352
+927,Bunkers Hill,VIC,3352
+928,Burrumbeet,VIC,3352
+929,Cambrian Hill,VIC,3352
+930,Cardigan,VIC,3352
+931,Cardigan Village,VIC,3352
+932,Chapel Flat,VIC,3352
+933,Clarendon,VIC,3352
+934,Claretown,VIC,3352
+935,Clarkes Hill,VIC,3352
+936,Corindhap,VIC,3352
+937,Dereel,VIC,3352
+938,Dunnstown,VIC,3352
+939,Durham Lead,VIC,3352
+940,Enfield,VIC,3352
+941,Ercildoune,VIC,3352
+942,Garibaldi,VIC,3352
+943,Glenbrae,VIC,3352
+944,Glen Park,VIC,3352
+945,Gong Gong,VIC,3352
+946,Grenville,VIC,3352
+947,Invermay,VIC,3352
+948,Lal Lal,VIC,3352
+949,Lamplough,VIC,3352
+950,Langi Kal Kal,VIC,3352
+951,Learmonth,VIC,3352
+952,Leigh Creek,VIC,3352
+953,Lexton,VIC,3352
+954,Magpie,VIC,3352
+955,Millbrook,VIC,3352
+956,Miners Rest,VIC,3352
+957,Mollongghip,VIC,3352
+958,Mount Bolton,VIC,3352
+959,Mount Egerton,VIC,3352
+960,Mount Mercer,VIC,3352
+961,Mount Rowan,VIC,3352
+962,Napoleons,VIC,3352
+963,Navigators,VIC,3352
+964,Pootilla,VIC,3352
+965,Scotchmans Lead,VIC,3352
+966,Scotsburn,VIC,3352
+967,Springbank,VIC,3352
+968,Sulky,VIC,3352
+969,Wallace,VIC,3352
+970,Warrenheip,VIC,3352
+971,Wattle Flat,VIC,3352
+972,Waubra,VIC,3352
+973,Weatherboard,VIC,3352
+974,Werneth,VIC,3352
+975,Windermere,VIC,3352
+976,Yendon,VIC,3352
+977,Ballarat,VIC,3353
+978,Ballarat Mc,VIC,3354
+979,Lake Gardens,VIC,3355
+980,Mitchell Park,VIC,3355
+981,Wendouree,VIC,3355
+982,Delacombe,VIC,3356
+983,Sebastopol,VIC,3356
+984,Buninyong,VIC,3357
+985,Winter Valley,VIC,3358
+986,Happy Valley,VIC,3360
+987,Linton,VIC,3360
+988,Mannibadar,VIC,3360
+989,Pittong,VIC,3360
+990,Bradvale,VIC,3361
+991,Carranballac,VIC,3361
+992,Skipton,VIC,3361
+993,Creswick,VIC,3363
+994,Creswick North,VIC,3363
+995,Dean,VIC,3363
+996,Glendaruel,VIC,3363
+997,Langdons Hill,VIC,3363
+998,Tourello,VIC,3363
+999,Allendale,VIC,3364
+1000,Ascot,VIC,3364
+1001,Bald Hills,VIC,3364
+1002,Barkstead,VIC,3364
+1003,Blampied,VIC,3364
+1004,Broomfield,VIC,3364
+1005,Cabbage Tree,VIC,3364
+1006,Campbelltown,VIC,3364
+1007,Coghills Creek,VIC,3364
+1008,Glendonald,VIC,3364
+1009,Joyces Creek,VIC,3364
+1010,Kingston,VIC,3364
+1011,Kooroocheang,VIC,3364
+1012,Lawrence,VIC,3364
+1013,Mount Prospect,VIC,3364
+1014,Newlyn,VIC,3364
+1015,Newlyn North,VIC,3364
+1016,Rocklyn,VIC,3364
+1017,Smeaton,VIC,3364
+1018,Smokeytown,VIC,3364
+1019,Springmount,VIC,3364
+1020,Strathlea,VIC,3364
+1021,Werona,VIC,3364
+1022,Clunes,VIC,3370
+1023,Glengower,VIC,3370
+1024,Mount Cameron,VIC,3370
+1025,Ullina,VIC,3370
+1026,Amherst,VIC,3371
+1027,Caralulup,VIC,3371
+1028,Dunach,VIC,3371
+1029,Evansford,VIC,3371
+1030,Lillicur,VIC,3371
+1031,Mount Glasgow,VIC,3371
+1032,Red Lion,VIC,3371
+1033,Stony Creek,VIC,3371
+1034,Talbot,VIC,3371
+1035,Beaufort,VIC,3373
+1036,Chute,VIC,3373
+1037,Cross Roads,VIC,3373
+1038,Lake Goldsmith,VIC,3373
+1039,Lake Wongan,VIC,3373
+1040,Main Lead,VIC,3373
+1041,Mena Park,VIC,3373
+1042,Nerring,VIC,3373
+1043,Raglan,VIC,3373
+1044,Stockyard Hill,VIC,3373
+1045,Stoneleigh,VIC,3373
+1046,Trawalla,VIC,3373
+1047,Waterloo,VIC,3373
+1048,Great Western,VIC,3374
+1049,Ballyrogan,VIC,3375
+1050,Bayindeen,VIC,3375
+1051,Buangor,VIC,3375
+1052,Middle Creek,VIC,3375
+1053,Ararat,VIC,3377
+1054,Bulgana,VIC,3377
+1055,Cathcart,VIC,3377
+1056,Crowlands,VIC,3377
+1057,Denicull Creek,VIC,3377
+1058,Dobie,VIC,3377
+1059,Dunneworthy,VIC,3377
+1060,Eversley,VIC,3377
+1061,Langi Logan,VIC,3377
+1062,Maroona,VIC,3377
+1063,Mount Cole,VIC,3377
+1064,Moyston,VIC,3377
+1065,Norval,VIC,3377
+1066,Rhymney,VIC,3377
+1067,Rossbridge,VIC,3377
+1068,Shays Flat,VIC,3377
+1069,Warrak,VIC,3377
+1070,Tatyoon,VIC,3378
+1071,Poora,VIC,3378
+1072,Bornes Hill,VIC,3379
+1073,Chatsworth,VIC,3379
+1074,Mafeking,VIC,3379
+1075,Stavely,VIC,3379
+1076,Wickliffe,VIC,3379
+1077,Willaura,VIC,3379
+1078,Willaura North,VIC,3379
+1079,Stawell,VIC,3380
+1080,Bellellen,VIC,3381
+1081,Bellfield,VIC,3381
+1082,Black Range,VIC,3381
+1083,Fyans Creek,VIC,3381
+1084,Halls Gap,VIC,3381
+1085,Illawarra,VIC,3381
+1086,Lake Fyans,VIC,3381
+1087,Lake Lonsdale,VIC,3381
+1088,Mokepilly,VIC,3381
+1089,Mount Dryden,VIC,3381
+1090,Pomonal,VIC,3381
+1091,Barkly,VIC,3384
+1092,Concongella,VIC,3384
+1093,Joel Joel,VIC,3384
+1094,Joel South,VIC,3384
+1095,Landsborough,VIC,3384
+1096,Navarre,VIC,3384
+1097,Tulkara,VIC,3384
+1098,Wattle Creek,VIC,3384
+1099,Deep Lead,VIC,3385
+1100,Glenorchy,VIC,3385
+1101,Ledcourt,VIC,3385
+1102,Lubeck,VIC,3385
+1103,Riachella,VIC,3385
+1104,Roses Gap,VIC,3385
+1105,Wal Wal,VIC,3385
+1106,Bolangum,VIC,3387
+1107,Callawadda,VIC,3387
+1108,Campbells Bridge,VIC,3387
+1109,Germania,VIC,3387
+1110,Greens Creek,VIC,3387
+1111,Kanya,VIC,3387
+1112,Marnoo,VIC,3387
+1113,Marnoo West,VIC,3387
+1114,Morrl Morrl,VIC,3387
+1115,Wallaloo,VIC,3387
+1116,Wallaloo East,VIC,3387
+1117,Banyena,VIC,3388
+1118,Rupanyup,VIC,3388
+1119,Kewell,VIC,3390
+1120,Murtoa,VIC,3390
+1121,Brim,VIC,3391
+1122,Boolite,VIC,3392
+1123,Minyip,VIC,3392
+1124,Sheep Hills,VIC,3392
+1125,Aubrey,VIC,3393
+1126,Bangerang,VIC,3393
+1127,Cannum,VIC,3393
+1128,Crymelon,VIC,3393
+1129,Kellalac,VIC,3393
+1130,Lah,VIC,3393
+1131,Warracknabeal,VIC,3393
+1132,Wilkur,VIC,3393
+1133,Willenabrina,VIC,3393
+1134,Beulah,VIC,3395
+1135,Kenmare,VIC,3395
+1136,Rosebery,VIC,3395
+1137,Hopetoun,VIC,3396
+1138,Horsham,VIC,3400
+1139,Blackheath,VIC,3401
+1140,Brimpaen,VIC,3401
+1141,Bungalally,VIC,3401
+1142,Cherrypool,VIC,3401
+1143,Dooen,VIC,3401
+1144,Drung,VIC,3401
+1145,Gymbowen,VIC,3401
+1146,Haven,VIC,3401
+1147,Jung,VIC,3401
+1148,Kalkee,VIC,3401
+1149,Kanagulk,VIC,3401
+1150,Karnak,VIC,3401
+1151,Laharum,VIC,3401
+1152,Longerenong,VIC,3401
+1153,Lower Norton,VIC,3401
+1154,Mckenzie Creek,VIC,3401
+1155,Mockinya,VIC,3401
+1156,Murra Warra,VIC,3401
+1157,Nurcoung,VIC,3401
+1158,Nurrabiel,VIC,3401
+1159,Pimpinio,VIC,3401
+1160,Quantong,VIC,3401
+1161,Riverside,VIC,3401
+1162,Rocklands,VIC,3401
+1163,St Helens Plains,VIC,3401
+1164,Telangatuk East,VIC,3401
+1165,Toolondo,VIC,3401
+1166,Vectis,VIC,3401
+1167,Wail,VIC,3401
+1168,Wallup,VIC,3401
+1169,Wartook,VIC,3401
+1170,Wonwondah,VIC,3401
+1171,Zumsteins,VIC,3401
+1172,Horsham,VIC,3402
+1173,Balmoral,VIC,3407
+1174,Englefield,VIC,3407
+1175,Gatum,VIC,3407
+1176,Pigeon Ponds,VIC,3407
+1177,Vasey,VIC,3407
+1178,Arapiles,VIC,3409
+1179,Clear Lake,VIC,3409
+1180,Douglas,VIC,3409
+1181,Duchembegarra,VIC,3409
+1182,Grass Flat,VIC,3409
+1183,Jilpanger,VIC,3409
+1184,Miga Lake,VIC,3409
+1185,Mitre,VIC,3409
+1186,Natimuk,VIC,3409
+1187,Noradjuha,VIC,3409
+1188,Tooan,VIC,3409
+1189,Wombelano,VIC,3409
+1190,Goroke,VIC,3412
+1191,Minimay,VIC,3413
+1192,Neuarpurr,VIC,3413
+1193,Ozenkadnook,VIC,3413
+1194,Peronne,VIC,3413
+1195,Antwerp,VIC,3414
+1196,Dimboola,VIC,3414
+1197,Tarranyurk,VIC,3414
+1198,Miram,VIC,3415
+1199,Broughton,VIC,3418
+1200,Glenlee,VIC,3418
+1201,Kiata,VIC,3418
+1202,Lawloit,VIC,3418
+1203,Little Desert,VIC,3418
+1204,Lorquon,VIC,3418
+1205,Netherby,VIC,3418
+1206,Nhill,VIC,3418
+1207,Yanac,VIC,3418
+1208,Kaniva,VIC,3419
+1209,Lillimur,VIC,3420
+1210,Serviceton,VIC,3420
+1211,Telopea Downs,VIC,3420
+1212,Jeparit,VIC,3423
+1213,Albacutya,VIC,3424
+1214,Rainbow,VIC,3424
+1215,Yaapeet,VIC,3424
+1216,Diggers Rest,VIC,3427
+1217,Bulla,VIC,3428
+1218,Sunbury,VIC,3429
+1219,Wildwood,VIC,3429
+1220,Clarkefield,VIC,3430
+1221,Riddells Creek,VIC,3431
+1222,Bolinda,VIC,3432
+1223,Monegeetta,VIC,3433
+1224,Cherokee,VIC,3434
+1225,Kerrie,VIC,3434
+1226,Romsey,VIC,3434
+1227,Springfield,VIC,3434
+1228,Benloch,VIC,3435
+1229,Goldie,VIC,3435
+1230,Lancefield,VIC,3435
+1231,Nulla Vale,VIC,3435
+1232,Bullengarook,VIC,3437
+1233,Gisborne,VIC,3437
+1234,Gisborne South,VIC,3437
+1235,New Gisborne,VIC,3438
+1236,Macedon,VIC,3440
+1237,Mount Macedon,VIC,3441
+1238,Ashbourne,VIC,3442
+1239,Cadello,VIC,3442
+1240,Carlsruhe,VIC,3442
+1241,Cobaw,VIC,3442
+1242,Hesket,VIC,3442
+1243,Newham,VIC,3442
+1244,Rochford,VIC,3442
+1245,Woodend,VIC,3442
+1246,Woodend North,VIC,3442
+1247,Barfold,VIC,3444
+1248,Baynton,VIC,3444
+1249,Baynton East,VIC,3444
+1250,Edgecombe,VIC,3444
+1251,Glenhope,VIC,3444
+1252,Kyneton,VIC,3444
+1253,Kyneton South,VIC,3444
+1254,Langley,VIC,3444
+1255,Lauriston,VIC,3444
+1256,Lyal,VIC,3444
+1257,Metcalfe East,VIC,3444
+1258,Mia Mia,VIC,3444
+1259,Pastoria,VIC,3444
+1260,Pastoria East,VIC,3444
+1261,Pipers Creek,VIC,3444
+1262,Redesdale,VIC,3444
+1263,Sidonia,VIC,3444
+1264,Tylden,VIC,3444
+1265,Tylden South,VIC,3444
+1266,Drummond North,VIC,3446
+1267,Malmsbury,VIC,3446
+1268,Taradale,VIC,3447
+1269,Elphinstone,VIC,3448
+1270,Metcalfe,VIC,3448
+1271,Sutton Grange,VIC,3448
+1272,Moonlight Flat,VIC,3450
+1273,Barkers Creek,VIC,3451
+1274,Campbells Creek,VIC,3451
+1275,Chewton,VIC,3451
+1276,Chewton Bushlands,VIC,3451
+1277,Faraday,VIC,3451
+1278,Fryerstown,VIC,3451
+1279,Glenluce,VIC,3451
+1280,Golden Point,VIC,3451
+1281,Guildford,VIC,3451
+1282,Irishtown,VIC,3451
+1283,Mckenzie Hill,VIC,3451
+1284,Muckleford,VIC,3451
+1285,Tarilta,VIC,3451
+1286,Vaughan,VIC,3451
+1287,Yapeen,VIC,3451
+1288,Ravenswood,VIC,3453
+1289,Blackwood,VIC,3458
+1290,Fern Hill,VIC,3458
+1291,Lerderderg,VIC,3458
+1292,Little Hampton,VIC,3458
+1293,Newbury,VIC,3458
+1294,Trentham,VIC,3458
+1295,Trentham East,VIC,3458
+1296,Basalt,VIC,3460
+1297,Daylesford,VIC,3460
+1298,Bullarto,VIC,3461
+1299,Bullarto South,VIC,3461
+1300,Clydesdale,VIC,3461
+1301,Coomoora,VIC,3461
+1302,Denver,VIC,3461
+1303,Drummond,VIC,3461
+1304,Dry Diggings,VIC,3461
+1305,Eganstown,VIC,3461
+1306,Elevated Plains,VIC,3461
+1307,Franklinford,VIC,3461
+1308,Glenlyon,VIC,3461
+1309,Hepburn,VIC,3461
+1310,Hepburn Springs,VIC,3461
+1311,Korweinguboora,VIC,3461
+1312,Leonards Hill,VIC,3461
+1313,Mount Franklin,VIC,3461
+1314,Musk,VIC,3461
+1315,Musk Vale,VIC,3461
+1316,Porcupine Ridge,VIC,3461
+1317,Sailors Falls,VIC,3461
+1318,Sailors Hill,VIC,3461
+1319,Spargo Creek,VIC,3461
+1320,Strangways,VIC,3461
+1321,Wheatsheaf,VIC,3461
+1322,Yandoit,VIC,3461
+1323,Yandoit Hills,VIC,3461
+1324,Green Gully,VIC,3462
+1325,Newstead,VIC,3462
+1326,Sandon,VIC,3462
+1327,Welshmans Reef,VIC,3462
+1328,Baringhup,VIC,3463
+1329,Baringhup West,VIC,3463
+1330,Bradford,VIC,3463
+1331,Gower,VIC,3463
+1332,Laanecoorie,VIC,3463
+1333,Maldon,VIC,3463
+1334,Neereman,VIC,3463
+1335,Nuggetty,VIC,3463
+1336,Tarrengower,VIC,3463
+1337,Walmer,VIC,3463
+1338,Woodstock West,VIC,3463
+1339,Carisbrook,VIC,3464
+1340,Adelaide Lead,VIC,3465
+1341,Alma,VIC,3465
+1342,Bowenvale,VIC,3465
+1343,Bung Bong,VIC,3465
+1344,Cotswold,VIC,3465
+1345,Craigie,VIC,3465
+1346,Daisy Hill,VIC,3465
+1347,Flagstaff,VIC,3465
+1348,Golden Point,VIC,3465
+1349,Havelock,VIC,3465
+1350,Homebush,VIC,3465
+1351,Majorca,VIC,3465
+1352,Maryborough,VIC,3465
+1353,Moolort,VIC,3465
+1354,Moonlight Flat,VIC,3465
+1355,Natte Yallock,VIC,3465
+1356,Rathscar,VIC,3465
+1357,Rathscar West,VIC,3465
+1358,Simson,VIC,3465
+1359,Timor,VIC,3465
+1360,Timor West,VIC,3465
+1361,Wareek,VIC,3465
+1362,Avoca,VIC,3467
+1363,Amphitheatre,VIC,3468
+1364,Mount Lonarch,VIC,3468
+1365,Elmhurst,VIC,3469
+1366,Glenlofty,VIC,3469
+1367,Glenlogie,VIC,3469
+1368,Glenpatrick,VIC,3469
+1369,Nowhere Creek,VIC,3469
+1370,Bet Bet,VIC,3472
+1371,Betley,VIC,3472
+1372,Bromley,VIC,3472
+1373,Dunluce,VIC,3472
+1374,Dunolly,VIC,3472
+1375,Eddington,VIC,3472
+1376,Goldsborough,VIC,3472
+1377,Inkerman,VIC,3472
+1378,Mcintyre,VIC,3472
+1379,Moliagul,VIC,3472
+1380,Mount Hooghly,VIC,3472
+1381,Archdale,VIC,3475
+1382,Bealiba,VIC,3475
+1383,Burkes Flat,VIC,3475
+1384,Cochranes Creek,VIC,3475
+1385,Emu,VIC,3475
+1386,Logan,VIC,3475
+1387,Avon Plains,VIC,3477
+1388,Beazleys Bridge,VIC,3477
+1389,Carapooee,VIC,3477
+1390,Carapooee West,VIC,3477
+1391,Coonooer Bridge,VIC,3477
+1392,Coonooer West,VIC,3477
+1393,Dalyenong,VIC,3477
+1394,Gooroc,VIC,3477
+1395,Gowar East,VIC,3477
+1396,Grays Bridge,VIC,3477
+1397,Gre Gre,VIC,3477
+1398,Gre Gre North,VIC,3477
+1399,Gre Gre South,VIC,3477
+1400,Kooreh,VIC,3477
+1401,Marnoo East,VIC,3477
+1402,Moolerr,VIC,3477
+1403,Moyreisk,VIC,3477
+1404,Paradise,VIC,3477
+1405,Redbank,VIC,3477
+1406,Rostron,VIC,3477
+1407,Slaty Creek,VIC,3477
+1408,St Arnaud East,VIC,3477
+1409,St Arnaud North,VIC,3477
+1410,Stuart Mill,VIC,3477
+1411,Sutherland,VIC,3477
+1412,Swanwater,VIC,3477
+1413,Tottington,VIC,3477
+1414,Traynors Lagoon,VIC,3477
+1415,Winjallok,VIC,3477
+1416,York Plains,VIC,3477
+1417,Dooboobetic,VIC,3478
+1418,Moonambel,VIC,3478
+1419,Percydale,VIC,3478
+1420,St Arnaud,VIC,3478
+1421,Tanwood,VIC,3478
+1422,Warrenmang,VIC,3478
+1423,Yawong Hills,VIC,3478
+1424,Areegra,VIC,3480
+1425,Carron,VIC,3480
+1426,Cope Cope,VIC,3480
+1427,Corack,VIC,3480
+1428,Corack East,VIC,3480
+1429,Donald,VIC,3480
+1430,Gil Gil,VIC,3480
+1431,Jeffcott,VIC,3480
+1432,Jeffcott North,VIC,3480
+1433,Laen,VIC,3480
+1434,Laen East,VIC,3480
+1435,Laen North,VIC,3480
+1436,Lawler,VIC,3480
+1437,Litchfield,VIC,3480
+1438,Rich Avon,VIC,3480
+1439,Rich Avon East,VIC,3480
+1440,Rich Avon West,VIC,3480
+1441,Swanwater West,VIC,3480
+1442,Morton Plains,VIC,3482
+1443,Warmur,VIC,3482
+1444,Watchem,VIC,3482
+1445,Watchem West,VIC,3482
+1446,Ballapur,VIC,3483
+1447,Birchip,VIC,3483
+1448,Birchip West,VIC,3483
+1449,Curyo,VIC,3483
+1450,Jil Jil,VIC,3483
+1451,Karyrie,VIC,3483
+1452,Kinnabulla,VIC,3483
+1453,Marlbed,VIC,3483
+1454,Narraport,VIC,3483
+1455,Whirily,VIC,3483
+1456,Banyan,VIC,3485
+1457,Watchupga,VIC,3485
+1458,Willangie,VIC,3485
+1459,Woomelang,VIC,3485
+1460,Lascelles,VIC,3487
+1461,Speed,VIC,3488
+1462,Turriff,VIC,3488
+1463,Turriff East,VIC,3488
+1464,Tempy,VIC,3489
+1465,Big Desert,VIC,3490
+1466,Boinka,VIC,3490
+1467,Kulwin,VIC,3490
+1468,Mittyack,VIC,3490
+1469,Sunset,VIC,3490
+1470,Ouyen,VIC,3490
+1471,Torrita,VIC,3490
+1472,Tutye,VIC,3490
+1473,Patchewollock,VIC,3491
+1474,Carwarp,VIC,3494
+1475,Colignan,VIC,3494
+1476,Iraak,VIC,3494
+1477,Nangiloc,VIC,3494
+1478,Cardross,VIC,3496
+1479,Cullulleraine,VIC,3496
+1480,Lindsay Point,VIC,3496
+1481,Meringur,VIC,3496
+1482,Merrinee,VIC,3496
+1483,Red Cliffs,VIC,3496
+1484,Sunnycliffs,VIC,3496
+1485,Werrimull,VIC,3496
+1486,Irymple,VIC,3498
+1487,Mildura,VIC,3500
+1488,Mildura West,VIC,3500
+1489,Hattah,VIC,3501
+1490,Koorlong,VIC,3501
+1491,Mildura Centre Plaza,VIC,3501
+1492,Mildura South,VIC,3501
+1493,Nichols Point,VIC,3501
+1494,Mildura,VIC,3502
+1495,Birdwoodton,VIC,3505
+1496,Cabarita,VIC,3505
+1497,Merbein,VIC,3505
+1498,Merbein South,VIC,3505
+1499,Merbein West,VIC,3505
+1500,Wargan,VIC,3505
+1501,Yelta,VIC,3505
+1502,Cowangie,VIC,3506
+1503,Walpeup,VIC,3507
+1504,Linga,VIC,3509
+1505,Underbool,VIC,3509
+1506,Carina,VIC,3512
+1507,Murrayville,VIC,3512
+1508,Panitya,VIC,3512
+1509,Marong,VIC,3515
+1510,Shelbourne,VIC,3515
+1511,Wilsons Hill,VIC,3515
+1512,Bridgewater,VIC,3516
+1513,Bridgewater On Loddon,VIC,3516
+1514,Derby,VIC,3516
+1515,Leichardt,VIC,3516
+1516,Yarraberb,VIC,3516
+1517,Bears Lagoon,VIC,3517
+1518,Brenanah,VIC,3517
+1519,Glenalbyn,VIC,3517
+1520,Inglewood,VIC,3517
+1521,Jarklin,VIC,3517
+1522,Kingower,VIC,3517
+1523,Kurting,VIC,3517
+1524,Powlett Plains,VIC,3517
+1525,Rheola,VIC,3517
+1526,Serpentine,VIC,3517
+1527,Berrimal,VIC,3518
+1528,Borung,VIC,3518
+1529,Fentons Creek,VIC,3518
+1530,Fernihurst,VIC,3518
+1531,Fiery Flat,VIC,3518
+1532,Kurraca,VIC,3518
+1533,Kurraca West,VIC,3518
+1534,Mysia,VIC,3518
+1535,Nine Mile,VIC,3518
+1536,Richmond Plains,VIC,3518
+1537,Skinners Flat,VIC,3518
+1538,Wedderburn,VIC,3518
+1539,Wehla,VIC,3518
+1540,Woolshed Flat,VIC,3518
+1541,Woosang,VIC,3518
+1542,Kinypanial,VIC,3520
+1543,Korong Vale,VIC,3520
+1544,Pyalong,VIC,3521
+1545,Glenhope East,VIC,3522
+1546,Tooborac,VIC,3522
+1547,Argyle,VIC,3523
+1548,Costerfield,VIC,3523
+1549,Derrinal,VIC,3523
+1550,Heathcote,VIC,3523
+1551,Heathcote South,VIC,3523
+1552,Knowsley,VIC,3523
+1553,Ladys Pass,VIC,3523
+1554,Moormbool West,VIC,3523
+1555,Mount Camel,VIC,3523
+1556,Redcastle,VIC,3523
+1557,Barrakee,VIC,3525
+1558,Buckrabanyule,VIC,3525
+1559,Charlton,VIC,3525
+1560,Chirrip,VIC,3525
+1561,Granite Flat,VIC,3525
+1562,Lake Marmal,VIC,3525
+1563,Nareewillock,VIC,3525
+1564,Terrappee,VIC,3525
+1565,Wooroonook,VIC,3525
+1566,Wychitella,VIC,3525
+1567,Yeungroon,VIC,3525
+1568,Yeungroon East,VIC,3525
+1569,Bunguluke,VIC,3527
+1570,Dumosa,VIC,3527
+1571,Glenloth,VIC,3527
+1572,Glenloth East,VIC,3527
+1573,Jeruk,VIC,3527
+1574,Ninyeunook,VIC,3527
+1575,Teddywaddy,VIC,3527
+1576,Teddywaddy West,VIC,3527
+1577,Thalia,VIC,3527
+1578,Towaninny,VIC,3527
+1579,Towaninny South,VIC,3527
+1580,Wycheproof,VIC,3527
+1581,Kalpienung,VIC,3529
+1582,Nullawil,VIC,3529
+1583,Culgoa,VIC,3530
+1584,Sutton,VIC,3530
+1585,Wangie,VIC,3530
+1586,Warne,VIC,3530
+1587,Berriwillock,VIC,3531
+1588,Boigbeat,VIC,3531
+1589,Bimbourie,VIC,3533
+1590,Lake Tyrrell,VIC,3533
+1591,Myall,VIC,3533
+1592,Nandaly,VIC,3533
+1593,Ninda,VIC,3533
+1594,Nyarrin,VIC,3533
+1595,Pier Milan,VIC,3533
+1596,Sea Lake,VIC,3533
+1597,Straten,VIC,3533
+1598,Tyenna,VIC,3533
+1599,Tyrrell,VIC,3533
+1600,Tyrrell Downs,VIC,3533
+1601,Barraport,VIC,3537
+1602,Barraport West,VIC,3537
+1603,Boort,VIC,3537
+1604,Canary Island,VIC,3537
+1605,Catumnal,VIC,3537
+1606,Gredgwin,VIC,3537
+1607,Leaghur,VIC,3537
+1608,Minmindie,VIC,3537
+1609,Yando,VIC,3537
+1610,Cannie,VIC,3540
+1611,Oakvale,VIC,3540
+1612,Quambatook,VIC,3540
+1613,Cokum,VIC,3542
+1614,Lalbert,VIC,3542
+1615,Tittybong,VIC,3542
+1616,Chinangin,VIC,3544
+1617,Gowanford,VIC,3544
+1618,Murnungin,VIC,3544
+1619,Springfield,VIC,3544
+1620,Ultima,VIC,3544
+1621,Ultima East,VIC,3544
+1622,Waitchie,VIC,3544
+1623,Bolton,VIC,3546
+1624,Chinkapook,VIC,3546
+1625,Cocamba,VIC,3546
+1626,Gerahmin,VIC,3546
+1627,Manangatang,VIC,3546
+1628,Turoar,VIC,3546
+1629,Winnambool,VIC,3546
+1630,Annuello,VIC,3549
+1631,Bannerton,VIC,3549
+1632,Happy Valley,VIC,3549
+1633,Liparoo,VIC,3549
+1634,Robinvale,VIC,3549
+1635,District Section B,VIC,3549
+1636,Robinvale Irrigation District Section C,VIC,3549
+1637,Robinvale Irrigation District Section D,VIC,3549
+1638,Robinvale Irrigation District Section E,VIC,3549
+1639,Tol Tol,VIC,3549
+1640,Wandown,VIC,3549
+1641,Bendigo,VIC,3550
+1642,East Bendigo,VIC,3550
+1643,Flora Hill,VIC,3550
+1644,Ironbark,VIC,3550
+1645,Kennington,VIC,3550
+1646,Long Gully,VIC,3550
+1647,North Bendigo,VIC,3550
+1648,Quarry Hill,VIC,3550
+1649,Sandhurst East,VIC,3550
+1650,Spring Gully,VIC,3550
+1651,Strathdale,VIC,3550
+1652,West Bendigo,VIC,3550
+1653,White Hills,VIC,3550
+1654,Arnold,VIC,3551
+1655,Arnold West,VIC,3551
+1656,Ascot,VIC,3551
+1657,Axe Creek,VIC,3551
+1658,Axedale,VIC,3551
+1659,Bagshot,VIC,3551
+1660,Bagshot North,VIC,3551
+1661,Cornella,VIC,3551
+1662,Emu Creek,VIC,3551
+1663,Eppalock,VIC,3551
+1664,Epsom,VIC,3551
+1665,Huntly North,VIC,3551
+1666,Junortoun,VIC,3551
+1667,Kimbolton,VIC,3551
+1668,Lake Eppalock,VIC,3551
+1669,Llanelly,VIC,3551
+1670,Lockwood,VIC,3551
+1671,Lockwood South,VIC,3551
+1672,Longlea,VIC,3551
+1673,Maiden Gully,VIC,3551
+1674,Mandurang,VIC,3551
+1675,Murphys Creek,VIC,3551
+1676,Myola,VIC,3551
+1677,Myrtle Creek,VIC,3551
+1678,Newbridge,VIC,3551
+1679,Painswick,VIC,3551
+1680,Sedgwick,VIC,3551
+1681,Strathfieldsaye,VIC,3551
+1682,Tarnagulla,VIC,3551
+1683,Toolleen,VIC,3551
+1684,Waanyarra,VIC,3551
+1685,Wellsford,VIC,3551
+1686,Bendigo,VIC,3552
+1687,Bendigo Dc,VIC,3554
+1688,Big Hill,VIC,3555
+1689,Golden Gully,VIC,3555
+1690,Golden Square,VIC,3555
+1691,Kangaroo Flat,VIC,3555
+1692,Lansell Plaza,VIC,3555
+1693,California Gully,VIC,3556
+1694,Eaglehawk,VIC,3556
+1695,Jackass Flat,VIC,3556
+1696,Myers Flat,VIC,3556
+1697,Sailors Gully,VIC,3556
+1698,Sebastian,VIC,3556
+1699,Whipstick,VIC,3556
+1700,Woodvale,VIC,3556
+1701,Barnadown,VIC,3557
+1702,Fosterville,VIC,3557
+1703,Goornong,VIC,3557
+1704,Muskerry,VIC,3557
+1705,Burnewang,VIC,3558
+1706,Elmore,VIC,3558
+1707,Hunter,VIC,3558
+1708,Runnymede,VIC,3558
+1709,Avonmore,VIC,3559
+1710,Burramboot,VIC,3559
+1711,Colbinabbin,VIC,3559
+1712,Corop,VIC,3559
+1713,Gobarup,VIC,3559
+1714,Ballendella,VIC,3561
+1715,Bamawm,VIC,3561
+1716,Bonn,VIC,3561
+1717,Diggora,VIC,3561
+1718,Fairy Dell,VIC,3561
+1719,Nanneella,VIC,3561
+1720,Rochester,VIC,3561
+1721,Timmering,VIC,3561
+1722,Torrumbarry,VIC,3562
+1723,Lockington,VIC,3563
+1724,Echuca,VIC,3564
+1725,Echuca South,VIC,3564
+1726,Echuca Village,VIC,3564
+1727,Echuca West,VIC,3564
+1728,Kanyapella,VIC,3564
+1729,Patho,VIC,3564
+1730,Roslynmead,VIC,3564
+1731,Wharparilla,VIC,3564
+1732,Kotta,VIC,3565
+1733,Gunbower,VIC,3566
+1734,Horfield,VIC,3567
+1735,Leitchville,VIC,3567
+1736,Burkes Bridge,VIC,3568
+1737,Cohuna,VIC,3568
+1738,Cullen,VIC,3568
+1739,Daltons Bridge,VIC,3568
+1740,Gannawarra,VIC,3568
+1741,Keely,VIC,3568
+1742,Macorna North,VIC,3568
+1743,Mcmillans,VIC,3568
+1744,Mead,VIC,3568
+1745,Mincha West,VIC,3568
+1746,Wee Wee Rup,VIC,3568
+1747,Auchmore,VIC,3570
+1748,Drummartin,VIC,3570
+1749,Kamarooka,VIC,3570
+1750,Neilborough,VIC,3570
+1751,Raywood,VIC,3570
+1752,Dingee,VIC,3571
+1753,Pompapiel,VIC,3571
+1754,Tandarra,VIC,3571
+1755,Milloo,VIC,3572
+1756,Prairie,VIC,3572
+1757,Tennyson,VIC,3572
+1758,Calivil,VIC,3573
+1759,Mitiamo,VIC,3573
+1760,Pine Grove,VIC,3573
+1761,Gladfield,VIC,3575
+1762,Jungaburra,VIC,3575
+1763,Loddon Vale,VIC,3575
+1764,Mincha,VIC,3575
+1765,Mologa,VIC,3575
+1766,Pyramid Hill,VIC,3575
+1767,Sylvaterre,VIC,3575
+1768,Terrick Terrick,VIC,3575
+1769,Durham Ox,VIC,3576
+1770,Appin,VIC,3579
+1771,Appin South,VIC,3579
+1772,Bael Bael,VIC,3579
+1773,Beauchamp,VIC,3579
+1774,Benjeroop,VIC,3579
+1775,Budgerum East,VIC,3579
+1776,Capels Crossing,VIC,3579
+1777,Dingwall,VIC,3579
+1778,Fairley,VIC,3579
+1779,Gonn Crossing,VIC,3579
+1780,Kerang,VIC,3579
+1781,Kerang East,VIC,3579
+1782,Koroop,VIC,3579
+1783,Lake Meran,VIC,3579
+1784,Macorna,VIC,3579
+1785,Meering West,VIC,3579
+1786,Milnes Bridge,VIC,3579
+1787,Murrabit,VIC,3579
+1788,Murrabit West,VIC,3579
+1789,Myall,VIC,3579
+1790,Mystic Park,VIC,3579
+1791,Normanville,VIC,3579
+1792,Pine View,VIC,3579
+1793,Sandhill Lake,VIC,3579
+1794,Teal Point,VIC,3579
+1795,Tragowel,VIC,3579
+1796,Wandella,VIC,3579
+1797,Westby,VIC,3579
+1798,Koondrook,VIC,3580
+1799,Lake Charm,VIC,3581
+1800,Tresco,VIC,3583
+1801,Lake Boga,VIC,3584
+1802,Tresco West,VIC,3584
+1803,Chillingollah,VIC,3585
+1804,Fish Point,VIC,3585
+1805,Goschen,VIC,3585
+1806,Kunat,VIC,3585
+1807,Meatian,VIC,3585
+1808,Nowie,VIC,3585
+1809,Nyrraby,VIC,3585
+1810,Pira,VIC,3585
+1811,Polisbet,VIC,3585
+1812,Speewa,VIC,3585
+1813,Swan Hill,VIC,3585
+1814,Swan Hill West,VIC,3585
+1815,Winlaton,VIC,3585
+1816,Bulga,VIC,3586
+1817,Murrawee,VIC,3586
+1818,Murraydale,VIC,3586
+1819,Pental Island,VIC,3586
+1820,Tyntynder,VIC,3586
+1821,Woorinen South,VIC,3588
+1822,Woorinen,VIC,3589
+1823,Woorinen North,VIC,3589
+1824,Beverford,VIC,3590
+1825,Vinifera,VIC,3591
+1826,Nyah,VIC,3594
+1827,Nyah West,VIC,3595
+1828,Miralie,VIC,3596
+1829,Towan,VIC,3596
+1830,Wood Wood,VIC,3596
+1831,Kenley,VIC,3597
+1832,Kooloonong,VIC,3597
+1833,Lake Powell,VIC,3597
+1834,Narrung,VIC,3597
+1835,Natya,VIC,3597
+1836,Piangil,VIC,3597
+1837,Boundary Bend,VIC,3599
+1838,Tabilk,VIC,3607
+1839,Bailieston,VIC,3608
+1840,Goulburn Weir,VIC,3608
+1841,Graytown,VIC,3608
+1842,Kirwans Bridge,VIC,3608
+1843,Mitchellstown,VIC,3608
+1844,Nagambie,VIC,3608
+1845,Wahring,VIC,3608
+1846,Wirrate,VIC,3608
+1847,Dhurringile,VIC,3610
+1848,Moorilim,VIC,3610
+1849,Murchison,VIC,3610
+1850,Murchison East,VIC,3610
+1851,Moora,VIC,3612
+1852,Rushworth,VIC,3612
+1853,Wanalta,VIC,3612
+1854,Waranga Shores,VIC,3612
+1855,Whroo,VIC,3612
+1856,Toolamba,VIC,3614
+1857,Toolamba West,VIC,3614
+1858,Cooma,VIC,3616
+1859,Gillieston,VIC,3616
+1860,Girgarre East,VIC,3616
+1861,Harston,VIC,3616
+1862,Mooroopna North West,VIC,3616
+1863,Tatura,VIC,3616
+1864,Tatura East,VIC,3616
+1865,Waranga,VIC,3616
+1866,Byrneside,VIC,3617
+1867,Merrigum,VIC,3618
+1868,Kyabram,VIC,3619
+1869,Kyabram,VIC,3620
+1870,Kyabram South,VIC,3620
+1871,Lancaster,VIC,3620
+1872,St Germains,VIC,3620
+1873,Wyuna,VIC,3620
+1874,Wyuna East,VIC,3620
+1875,Kyvalley,VIC,3621
+1876,Tongala,VIC,3621
+1877,Yambuna,VIC,3621
+1878,Koyuga,VIC,3622
+1879,Strathallan,VIC,3622
+1880,Carag Carag,VIC,3623
+1881,Stanhope,VIC,3623
+1882,Stanhope South,VIC,3623
+1883,Girgarre,VIC,3624
+1884,Ardmona,VIC,3629
+1885,Coomboona,VIC,3629
+1886,Mooroopna,VIC,3629
+1887,Undera,VIC,3629
+1888,Caniambo,VIC,3630
+1889,Dunkirk,VIC,3630
+1890,Arcadia,VIC,3631
+1891,Arcadia South,VIC,3631
+1892,Branditt,VIC,3631
+1893,Cosgrove,VIC,3631
+1894,Cosgrove South,VIC,3631
+1895,Grahamvale,VIC,3631
+1896,Karramomus,VIC,3631
+1897,Kialla,VIC,3631
+1898,Kialla East,VIC,3631
+1899,Kialla West,VIC,3631
+1900,Lemnos,VIC,3631
+1901,Orrvale,VIC,3631
+1902,Pine Lodge,VIC,3631
+1903,Shepparton East,VIC,3631
+1904,Shepparton,VIC,3632
+1905,Congupna,VIC,3633
+1906,Bunbartha,VIC,3634
+1907,Katandra,VIC,3634
+1908,Katandra West,VIC,3634
+1909,Marionvale,VIC,3634
+1910,Marungi,VIC,3634
+1911,Tallygaroopna,VIC,3634
+1912,Zeerust,VIC,3634
+1913,Kaarimba,VIC,3635
+1914,Mundoona,VIC,3635
+1915,Wunghnu,VIC,3635
+1916,Drumanure,VIC,3636
+1917,Invergordon,VIC,3636
+1918,Naring,VIC,3636
+1919,Numurkah,VIC,3636
+1920,Waaia,VIC,3637
+1921,Yalca,VIC,3637
+1922,Kotupna,VIC,3638
+1923,Nathalia,VIC,3638
+1924,Yielima,VIC,3638
+1925,Barmah,VIC,3639
+1926,Lower Moira,VIC,3639
+1927,Picola,VIC,3639
+1928,Picola West,VIC,3639
+1929,Katunga,VIC,3640
+1930,Bearii,VIC,3641
+1931,Mywee,VIC,3641
+1932,Strathmerton,VIC,3641
+1933,Ulupna,VIC,3641
+1934,Cobram,VIC,3643
+1935,Cobram,VIC,3644
+1936,Cobram East,VIC,3644
+1937,Koonoomoo,VIC,3644
+1938,Muckatah,VIC,3644
+1939,Yarroweyah,VIC,3644
+1940,Dookie,VIC,3646
+1941,Mount Major,VIC,3646
+1942,Nalinga,VIC,3646
+1943,Waggarandall,VIC,3646
+1944,Yabba North,VIC,3646
+1945,Yabba South,VIC,3646
+1946,Youanmite,VIC,3646
+1947,Dookie College,VIC,3647
+1948,Katamatite,VIC,3649
+1949,Katamatite East,VIC,3649
+1950,Broadford,VIC,3658
+1951,Clonbinane,VIC,3658
+1952,Hazeldene,VIC,3658
+1953,Strath Creek,VIC,3658
+1954,Sunday Creek,VIC,3658
+1955,Tyaak,VIC,3658
+1956,Waterford Park,VIC,3658
+1957,Tallarook,VIC,3659
+1958,Caveat,VIC,3660
+1959,Dropmore,VIC,3660
+1960,Hilldene,VIC,3660
+1961,Kerrisdale,VIC,3660
+1962,Northwood,VIC,3660
+1963,Seymour,VIC,3660
+1964,Seymour South,VIC,3660
+1965,Trawool,VIC,3660
+1966,Seymour,VIC,3661
+1967,Puckapunyal,VIC,3662
+1968,Mangalore,VIC,3663
+1969,Avenel,VIC,3664
+1970,Upton Hill,VIC,3664
+1971,Locksley,VIC,3665
+1972,Longwood,VIC,3665
+1973,Balmattum,VIC,3666
+1974,Euroa,VIC,3666
+1975,Gooram,VIC,3666
+1976,Kithbrook,VIC,3666
+1977,Longwood East,VIC,3666
+1978,Miepoll,VIC,3666
+1979,Moglonemby,VIC,3666
+1980,Molka,VIC,3666
+1981,Pranjip,VIC,3666
+1982,Riggs Creek,VIC,3666
+1983,Ruffy,VIC,3666
+1984,Sheans Creek,VIC,3666
+1985,Strathbogie,VIC,3666
+1986,Tarcombe,VIC,3666
+1987,Boho,VIC,3669
+1988,Boho South,VIC,3669
+1989,Creek Junction,VIC,3669
+1990,Earlston,VIC,3669
+1991,Gowangardie,VIC,3669
+1992,Koonda,VIC,3669
+1993,Marraweeney,VIC,3669
+1994,Tamleugh,VIC,3669
+1995,Tamleugh North,VIC,3669
+1996,Upotipotpon,VIC,3669
+1997,Violet Town,VIC,3669
+1998,Tarnook,VIC,3670
+1999,Warrenbayne,VIC,3670
+2000,Benalla,VIC,3671
+2001,Benalla,VIC,3672
+2002,Broken Creek,VIC,3673
+2003,Goomalibee,VIC,3673
+2004,Lima,VIC,3673
+2005,Lima East,VIC,3673
+2006,Lima South,VIC,3673
+2007,Lurg,VIC,3673
+2008,Molyullah,VIC,3673
+2009,Moorngag,VIC,3673
+2010,Samaria,VIC,3673
+2011,Swanpool,VIC,3673
+2012,Tatong,VIC,3673
+2013,Upper Lurg,VIC,3673
+2014,Winton,VIC,3673
+2015,Winton North,VIC,3673
+2016,Boweya,VIC,3675
+2017,Boweya North,VIC,3675
+2018,Glenrowan,VIC,3675
+2019,Glenrowan West,VIC,3675
+2020,Greta,VIC,3675
+2021,Greta South,VIC,3675
+2022,Greta West,VIC,3675
+2023,Hansonville,VIC,3675
+2024,Mount Bruno,VIC,3675
+2025,Taminick,VIC,3675
+2026,Wangaratta,VIC,3676
+2027,Wangaratta,VIC,3677
+2028,Yarrunga,VIC,3677
+2029,Bobinawarrah,VIC,3678
+2030,Boorhaman,VIC,3678
+2031,Boorhaman East,VIC,3678
+2032,Bowser,VIC,3678
+2033,Byawatha,VIC,3678
+2034,Carboor,VIC,3678
+2035,Cheshunt,VIC,3678
+2036,Cheshunt South,VIC,3678
+2037,Docker,VIC,3678
+2038,Dockers Plains,VIC,3678
+2039,East Wangaratta,VIC,3678
+2040,Edi,VIC,3678
+2041,Edi Upper,VIC,3678
+2042,Everton,VIC,3678
+2043,Everton Upper,VIC,3678
+2044,Killawarra,VIC,3678
+2045,Laceby,VIC,3678
+2046,Londrigan,VIC,3678
+2047,Markwood,VIC,3678
+2048,Meadow Creek,VIC,3678
+2049,Milawa,VIC,3678
+2050,Oxley,VIC,3678
+2051,Oxley Flats,VIC,3678
+2052,Peechelba,VIC,3678
+2053,Peechelba East,VIC,3678
+2054,Rose River,VIC,3678
+2055,Tarrawingee,VIC,3678
+2056,Wabonga,VIC,3678
+2057,Waldara,VIC,3678
+2058,Wangandary,VIC,3678
+2059,Whitlands,VIC,3678
+2060,Boralma,VIC,3682
+2061,Lilliput,VIC,3682
+2062,Norong,VIC,3682
+2063,Springhurst,VIC,3682
+2064,Chiltern,VIC,3683
+2065,Chiltern Valley,VIC,3683
+2066,Cornishtown,VIC,3683
+2067,Brimin,VIC,3685
+2068,Browns Plains,VIC,3685
+2069,Carlyle,VIC,3685
+2070,Gooramadda,VIC,3685
+2071,Rutherglen,VIC,3685
+2072,Wahgunyah,VIC,3687
+2073,Barnawartha,VIC,3688
+2074,Indigo Valley,VIC,3688
+2075,Wodonga,VIC,3689
+2076,West Wodonga,VIC,3690
+2077,Wodonga,VIC,3690
+2078,Wodonga Plaza,VIC,3690
+2079,Allans Flat,VIC,3691
+2080,Bandiana,VIC,3691
+2081,Baranduda,VIC,3691
+2082,Bellbridge,VIC,3691
+2083,Berringama,VIC,3691
+2084,Bethanga,VIC,3691
+2085,Bonegilla,VIC,3691
+2086,Bungil,VIC,3691
+2087,Castle Creek,VIC,3691
+2088,Coral Bank,VIC,3691
+2089,Dederang,VIC,3691
+2090,Ebden,VIC,3691
+2091,Gateway Island,VIC,3691
+2092,Glen Creek,VIC,3691
+2093,Gundowring,VIC,3691
+2094,Huon Creek,VIC,3691
+2095,Kancoona,VIC,3691
+2096,Kergunyah,VIC,3691
+2097,Kergunyah South,VIC,3691
+2098,Kiewa,VIC,3691
+2099,Killara,VIC,3691
+2100,Leneva,VIC,3691
+2101,Lucyvale,VIC,3691
+2102,Mongans Bridge,VIC,3691
+2103,Running Creek,VIC,3691
+2104,Staghorn Flat,VIC,3691
+2105,Talgarno,VIC,3691
+2106,Tangambalanga,VIC,3691
+2107,Thologolong,VIC,3691
+2108,Bandiana Milpo,VIC,3694
+2109,Charleroi,VIC,3695
+2110,Huon,VIC,3695
+2111,Tawonga,VIC,3697
+2112,Tawonga South,VIC,3698
+2113,Bogong,VIC,3699
+2114,Falls Creek,VIC,3699
+2115,Mount Beauty,VIC,3699
+2116,Nelse,VIC,3699
+2117,Bullioh,VIC,3700
+2118,Georges Creek,VIC,3700
+2119,Jarvis Creek,VIC,3700
+2120,Tallangatta,VIC,3700
+2121,Tallangatta East,VIC,3700
+2122,Dartmouth,VIC,3701
+2123,Eskdale,VIC,3701
+2124,Granya,VIC,3701
+2125,Mitta Mitta,VIC,3701
+2126,Old Tallangatta,VIC,3701
+2127,Shelley,VIC,3701
+2128,Tallandoon,VIC,3701
+2129,Koetong,VIC,3704
+2130,Cudgewa,VIC,3705
+2131,Biggara,VIC,3707
+2132,Colac Colac,VIC,3707
+2133,Corryong,VIC,3707
+2134,Nariel Valley,VIC,3707
+2135,Thowgla Valley,VIC,3707
+2136,Tom Groggin,VIC,3707
+2137,Towong,VIC,3707
+2138,Towong Upper,VIC,3707
+2139,Tintaldra,VIC,3708
+2140,Burrowye,VIC,3709
+2141,Guys Forest,VIC,3709
+2142,Mount Alfred,VIC,3709
+2143,Pine Mountain,VIC,3709
+2144,Walwa,VIC,3709
+2145,Buxton,VIC,3711
+2146,Rubicon,VIC,3712
+2147,Thornton,VIC,3712
+2148,Eildon,VIC,3713
+2149,Lake Eildon,VIC,3713
+2150,Taylor Bay,VIC,3713
+2151,Acheron,VIC,3714
+2152,Alexandra,VIC,3714
+2153,Cathkin,VIC,3714
+2154,Devils River,VIC,3714
+2155,Fawcett,VIC,3714
+2156,Koriella,VIC,3714
+2157,Maintongoon,VIC,3714
+2158,Taggerty,VIC,3714
+2159,Whanregarwen,VIC,3714
+2160,Ancona,VIC,3715
+2161,Merton,VIC,3715
+2162,Woodfield,VIC,3715
+2163,Flowerdale,VIC,3717
+2164,Ghin Ghin,VIC,3717
+2165,Glenburn,VIC,3717
+2166,Homewood,VIC,3717
+2167,Killingworth,VIC,3717
+2168,Limestone,VIC,3717
+2169,Murrindindi,VIC,3717
+2170,Yea,VIC,3717
+2171,Molesworth,VIC,3718
+2172,Gobur,VIC,3719
+2173,Kanumbra,VIC,3719
+2174,Terip Terip,VIC,3719
+2175,Yarck,VIC,3719
+2176,Bonnie Doon,VIC,3720
+2177,Barwite,VIC,3722
+2178,Mansfield,VIC,3722
+2179,Mirimbah,VIC,3722
+2180,Barjarg,VIC,3723
+2181,Boorolite,VIC,3723
+2182,Bridge Creek,VIC,3723
+2183,Delatite,VIC,3723
+2184,Enochs Point,VIC,3723
+2185,Gaffneys Creek,VIC,3723
+2186,Goughs Bay,VIC,3723
+2187,Howes Creek,VIC,3723
+2188,Howqua,VIC,3723
+2189,Howqua Hills,VIC,3723
+2190,Howqua Inlet,VIC,3723
+2191,Jamieson,VIC,3723
+2192,Kevington,VIC,3723
+2193,Knockwood,VIC,3723
+2194,Macs Cove,VIC,3723
+2195,Maindample,VIC,3723
+2196,Matlock,VIC,3723
+2197,Merrijig,VIC,3723
+2198,Mountain Bay,VIC,3723
+2199,Mount Buller,VIC,3723
+2200,Piries,VIC,3723
+2201,Tolmie,VIC,3723
+2202,Woods Point,VIC,3723
+2203,Mansfield,VIC,3724
+2204,Boxwood,VIC,3725
+2205,Chesney Vale,VIC,3725
+2206,Goorambat,VIC,3725
+2207,Major Plains,VIC,3725
+2208,Stewarton,VIC,3725
+2209,Bungeet,VIC,3726
+2210,Bungeet West,VIC,3726
+2211,Devenish,VIC,3726
+2212,Thoona,VIC,3726
+2213,Almonds,VIC,3727
+2214,Lake Rowan,VIC,3727
+2215,Pelluebla,VIC,3727
+2216,St James,VIC,3727
+2217,Yundool,VIC,3727
+2218,Tungamah,VIC,3728
+2219,Wilby,VIC,3728
+2220,Youarang,VIC,3728
+2221,Bathumi,VIC,3730
+2222,Boosey,VIC,3730
+2223,Bundalong,VIC,3730
+2224,Burramine,VIC,3730
+2225,Burramine South,VIC,3730
+2226,Esmond,VIC,3730
+2227,Telford,VIC,3730
+2228,Moyhu,VIC,3732
+2229,Myrrhee,VIC,3732
+2230,Whitfield,VIC,3733
+2231,Bowmans Forest,VIC,3735
+2232,Whorouly,VIC,3735
+2233,Whorouly East,VIC,3735
+2234,Whorouly South,VIC,3735
+2235,Myrtleford,VIC,3736
+2236,Abbeyard,VIC,3737
+2237,Barwidgee,VIC,3737
+2238,Buffalo River,VIC,3737
+2239,Dandongadale,VIC,3737
+2240,Gapsted,VIC,3737
+2241,Havilah,VIC,3737
+2242,Merriang,VIC,3737
+2243,Merriang South,VIC,3737
+2244,Mudgegonga,VIC,3737
+2245,Nug Nug,VIC,3737
+2246,Rosewhite,VIC,3737
+2247,Selwyn,VIC,3737
+2248,Wonnangatta,VIC,3737
+2249,Ovens,VIC,3738
+2250,Eurobin,VIC,3739
+2251,Buckland,VIC,3740
+2252,Mount Buffalo,VIC,3740
+2253,Porepunkah,VIC,3740
+2254,Bright,VIC,3741
+2255,Freeburgh,VIC,3741
+2256,Germantown,VIC,3741
+2257,Harrietville,VIC,3741
+2258,Hotham Heights,VIC,3741
+2259,Mount Hotham,VIC,3741
+2260,Smoko,VIC,3741
+2261,Wandiligong,VIC,3744
+2262,Eldorado,VIC,3746
+2263,Beechworth,VIC,3747
+2264,Murmungee,VIC,3747
+2265,Stanley,VIC,3747
+2266,Wooragee,VIC,3747
+2267,Bruarong,VIC,3749
+2268,Yackandandah,VIC,3749
+2269,Wollert,VIC,3750
+2270,Woodstock,VIC,3751
+2271,South Morang,VIC,3752
+2272,Beveridge,VIC,3753
+2273,Doreen,VIC,3754
+2274,Mernda,VIC,3754
+2275,Yan Yean,VIC,3755
+2276,Chintin,VIC,3756
+2277,Darraweit Guim,VIC,3756
+2278,Upper Plenty,VIC,3756
+2279,Wallan,VIC,3756
+2280,Eden Park,VIC,3757
+2281,Humevale,VIC,3757
+2282,Kinglake Central,VIC,3757
+2283,Kinglake West,VIC,3757
+2284,Pheasant Creek,VIC,3757
+2285,Whittlesea,VIC,3757
+2286,Wandong,VIC,3758
+2287,Panton Hill,VIC,3759
+2288,St Andrews,VIC,3761
+2289,Bylands,VIC,3762
+2290,Kinglake,VIC,3763
+2291,Forbes,VIC,3764
+2292,Glenaroua,VIC,3764
+2293,High Camp,VIC,3764
+2294,Kilmore,VIC,3764
+2295,Kilmore East,VIC,3764
+2296,Moranding,VIC,3764
+2297,Tantaraboo,VIC,3764
+2298,Willowmavin,VIC,3764
+2299,Montrose,VIC,3765
+2300,Kalorama,VIC,3766
+2301,Coldstream,VIC,3770
+2302,Gruyere,VIC,3770
+2303,Yering,VIC,3770
+2304,Christmas Hills,VIC,3775
+2305,Dixons Creek,VIC,3775
+2306,Steels Creek,VIC,3775
+2307,Tarrawarra,VIC,3775
+2308,Yarra Glen,VIC,3775
+2309,Badger Creek,VIC,3777
+2310,Castella,VIC,3777
+2311,Chum Creek,VIC,3777
+2312,Healesville,VIC,3777
+2313,Healesville Main Street,VIC,3777
+2314,Toolangi,VIC,3777
+2315,Fernshaw,VIC,3778
+2316,Narbethong,VIC,3778
+2317,Cambarville,VIC,3779
+2318,Marysville,VIC,3779
+2319,Cockatoo,VIC,3781
+2320,Mount Burnett,VIC,3781
+2321,Nangana,VIC,3781
+2322,Avonsleigh,VIC,3782
+2323,Clematis,VIC,3782
+2324,Emerald,VIC,3782
+2325,Macclesfield,VIC,3782
+2326,Gembrook,VIC,3783
+2327,Tremont,VIC,3785
+2328,Ferny Creek,VIC,3786
+2329,Sassafras,VIC,3787
+2330,Sassafras Gully,VIC,3787
+2331,Olinda,VIC,3788
+2332,Sherbrooke,VIC,3789
+2333,Kallista,VIC,3791
+2334,The Patch,VIC,3792
+2335,Silvan,VIC,3795
+2336,Mount Evelyn,VIC,3796
+2337,Gladysdale,VIC,3797
+2338,Powelltown,VIC,3797
+2339,Three Bridges,VIC,3797
+2340,Yarra Junction,VIC,3797
+2341,Big Pats Creek,VIC,3799
+2342,East Warburton,VIC,3799
+2343,Mcmahons Creek,VIC,3799
+2344,Millgrove,VIC,3799
+2345,Reefton,VIC,3799
+2346,Warburton,VIC,3799
+2347,Wesburn,VIC,3799
+2348,Endeavour Hills,VIC,3802
+2349,Hallam,VIC,3803
+2350,Narre Warren North,VIC,3804
+2351,Fountain Gate,VIC,3805
+2352,Narre Warren,VIC,3805
+2353,Narre Warren South,VIC,3805
+2354,Berwick,VIC,3806
+2355,Harkaway,VIC,3806
+2356,Beaconsfield,VIC,3807
+2357,Guys Hill,VIC,3807
+2358,Dewhurst,VIC,3808
+2359,Officer,VIC,3809
+2360,Officer South,VIC,3809
+2361,Pakenham,VIC,3810
+2362,Pakenham South,VIC,3810
+2363,Pakenham Upper,VIC,3810
+2364,Rythdale,VIC,3810
+2365,Maryknoll,VIC,3812
+2366,Nar Nar Goon,VIC,3812
+2367,Tynong,VIC,3813
+2368,Tynong North,VIC,3813
+2369,Cora Lynn,VIC,3814
+2370,Garfield,VIC,3814
+2371,Garfield North,VIC,3814
+2372,Vervale,VIC,3814
+2373,Bunyip,VIC,3815
+2374,Bunyip North,VIC,3815
+2375,Iona,VIC,3815
+2376,Tonimbuk,VIC,3815
+2377,Labertouche,VIC,3816
+2378,Longwarry,VIC,3816
+2379,Modella,VIC,3816
+2380,Athlone,VIC,3818
+2381,Drouin,VIC,3818
+2382,Drouin East,VIC,3818
+2383,Drouin South,VIC,3818
+2384,Drouin West,VIC,3818
+2385,Hallora,VIC,3818
+2386,Jindivick,VIC,3818
+2387,Ripplebrook,VIC,3818
+2388,Bona Vista,VIC,3820
+2389,Lillico,VIC,3820
+2390,Warragul,VIC,3820
+2391,Brandy Creek,VIC,3821
+2392,Bravington,VIC,3821
+2393,Buln Buln,VIC,3821
+2394,Buln Buln East,VIC,3821
+2395,Crossover,VIC,3821
+2396,Ellinbank,VIC,3821
+2397,Ferndale,VIC,3821
+2398,Lardner,VIC,3821
+2399,Nilma,VIC,3821
+2400,Nilma North,VIC,3821
+2401,Rokeby,VIC,3821
+2402,Seaview,VIC,3821
+2403,Shady Creek,VIC,3821
+2404,Tetoora Road,VIC,3821
+2405,Warragul South,VIC,3821
+2406,Warragul West,VIC,3821
+2407,Cloverlea,VIC,3822
+2408,Darnum,VIC,3822
+2409,Gainsborough,VIC,3822
+2410,Allambee,VIC,3823
+2411,Yarragon,VIC,3823
+2412,Yarragon South,VIC,3823
+2413,Childers,VIC,3824
+2414,Narracan,VIC,3824
+2415,Thorpdale South,VIC,3824
+2416,Trafalgar,VIC,3824
+2417,Trafalgar East,VIC,3824
+2418,Trafalgar South,VIC,3824
+2419,Aberfeldy,VIC,3825
+2420,Amor,VIC,3825
+2421,Boola,VIC,3825
+2422,Caringal,VIC,3825
+2423,Coalville,VIC,3825
+2424,Coopers Creek,VIC,3825
+2425,Erica,VIC,3825
+2426,Fumina,VIC,3825
+2427,Fumina South,VIC,3825
+2428,Hernes Oak,VIC,3825
+2429,Hill End,VIC,3825
+2430,Jacob Creek,VIC,3825
+2431,Jericho,VIC,3825
+2432,Moe,VIC,3825
+2433,Moe South,VIC,3825
+2434,Moondarra,VIC,3825
+2435,Newborough,VIC,3825
+2436,Rawson,VIC,3825
+2437,Tanjil,VIC,3825
+2438,Tanjil South,VIC,3825
+2439,Thalloo,VIC,3825
+2440,Thomson,VIC,3825
+2441,Toombon,VIC,3825
+2442,Walhalla,VIC,3825
+2443,Walhalla East,VIC,3825
+2444,Westbury,VIC,3825
+2445,Willow Grove,VIC,3825
+2446,Yallourn,VIC,3825
+2447,Yallourn North,VIC,3825
+2448,Neerim,VIC,3831
+2449,Neerim East,VIC,3831
+2450,Neerim South,VIC,3831
+2451,Nayook,VIC,3832
+2452,Neerim Junction,VIC,3832
+2453,Neerim North,VIC,3832
+2454,Ada,VIC,3833
+2455,Baw Baw,VIC,3833
+2456,Baw Baw Village,VIC,3833
+2457,Gentle Annie,VIC,3833
+2458,Icy Creek,VIC,3833
+2459,Loch Valley,VIC,3833
+2460,Noojee,VIC,3833
+2461,Piedmont,VIC,3833
+2462,Tanjil Bren,VIC,3833
+2463,Toorongo,VIC,3833
+2464,Vesper,VIC,3833
+2465,Thorpdale,VIC,3835
+2466,Driffield,VIC,3840
+2467,Hazelwood,VIC,3840
+2468,Jeeralang,VIC,3840
+2469,Maryvale,VIC,3840
+2470,Morwell,VIC,3840
+2471,Gippsland Mc,VIC,3841
+2472,Churchill,VIC,3842
+2473,Blackwarry,VIC,3844
+2474,Callignee,VIC,3844
+2475,Callignee North,VIC,3844
+2476,Callignee South,VIC,3844
+2477,Carrajung,VIC,3844
+2478,Flynn,VIC,3844
+2479,Flynns Creek,VIC,3844
+2480,Koornalla,VIC,3844
+2481,Loy Yang,VIC,3844
+2482,Mount Tassie,VIC,3844
+2483,Traralgon,VIC,3844
+2484,Traralgon East,VIC,3844
+2485,Tyers,VIC,3844
+2486,Hiamdale,VIC,3847
+2487,Nambrok,VIC,3847
+2488,Rosedale,VIC,3847
+2489,Willung,VIC,3847
+2490,Willung South,VIC,3847
+2491,Sale,VIC,3850
+2492,Wurruk,VIC,3850
+2493,Airly,VIC,3851
+2494,Bundalaguah,VIC,3851
+2495,Clydebank,VIC,3851
+2496,Cobains,VIC,3851
+2497,Darriman,VIC,3851
+2498,Dutson,VIC,3851
+2499,Dutson Downs,VIC,3851
+2500,Flamingo Beach,VIC,3851
+2501,Fulham,VIC,3851
+2502,Giffard,VIC,3851
+2503,Giffard West,VIC,3851
+2504,Glomar Beach,VIC,3851
+2505,Kilmany,VIC,3851
+2506,Lake Wellington,VIC,3851
+2507,Loch Sport,VIC,3851
+2508,Longford,VIC,3851
+2509,Montgomery,VIC,3851
+2510,Myrtlebank,VIC,3851
+2511,Paradise Beach,VIC,3851
+2512,Pearsondale,VIC,3851
+2513,Seacombe,VIC,3851
+2514,Seaspray,VIC,3851
+2515,The Heart,VIC,3851
+2516,The Honeysuckles,VIC,3851
+2517,East Sale,VIC,3852
+2518,Sale East Raaf,VIC,3852
+2519,Sale,VIC,3853
+2520,Glengarry,VIC,3854
+2521,Glengarry North,VIC,3854
+2522,Glengarry West,VIC,3854
+2523,Toongabbie,VIC,3856
+2524,Cowwarr,VIC,3857
+2525,Arbuckle,VIC,3858
+2526,Billabong,VIC,3858
+2527,Buragwonduc,VIC,3858
+2528,Crookayan,VIC,3858
+2529,Dawson,VIC,3858
+2530,Denison,VIC,3858
+2531,Gillum,VIC,3858
+2532,Glenfalloch,VIC,3858
+2533,Glenmaggie,VIC,3858
+2534,Heyfield,VIC,3858
+2535,Howitt Plains,VIC,3858
+2536,Licola,VIC,3858
+2537,Licola North,VIC,3858
+2538,Reynard,VIC,3858
+2539,Sargood,VIC,3858
+2540,Seaton,VIC,3858
+2541,Tamboritha,VIC,3858
+2542,Winnindoo,VIC,3858
+2543,Worrowing,VIC,3858
+2544,Yangoura,VIC,3858
+2545,Newry,VIC,3859
+2546,Tinamba,VIC,3859
+2547,Tinamba West,VIC,3859
+2548,Boisdale,VIC,3860
+2549,Briagolong,VIC,3860
+2550,Bushy Park,VIC,3860
+2551,Coongulla,VIC,3860
+2552,Koorool,VIC,3860
+2553,Maffra,VIC,3860
+2554,Monomak,VIC,3860
+2555,Moroka,VIC,3860
+2556,Nap Nap Marra,VIC,3860
+2557,Riverslea,VIC,3860
+2558,Toolome,VIC,3860
+2559,Valencia Creek,VIC,3860
+2560,Woolenook,VIC,3860
+2561,Wrathung,VIC,3860
+2562,Wrixon,VIC,3860
+2563,Budgee Budgee,VIC,3862
+2564,Cobbannah,VIC,3862
+2565,Cowa,VIC,3862
+2566,Crooked River,VIC,3862
+2567,Dargo,VIC,3862
+2568,Hawkhurst,VIC,3862
+2569,Hollands Landing,VIC,3862
+2570,Llowalong,VIC,3862
+2571,Meerlieu,VIC,3862
+2572,Miowera,VIC,3862
+2573,Moornapa,VIC,3862
+2574,Munro,VIC,3862
+2575,Perry Bridge,VIC,3862
+2576,Stockdale,VIC,3862
+2577,Stratford,VIC,3862
+2578,Wongungarra,VIC,3862
+2579,Fernbank,VIC,3864
+2580,Glenaladale,VIC,3864
+2581,Lindenow,VIC,3865
+2582,Jumbuk,VIC,3869
+2583,Yinnar,VIC,3869
+2584,Yinnar South,VIC,3869
+2585,Boolarra,VIC,3870
+2586,Boolarra South,VIC,3870
+2587,Budgeree,VIC,3870
+2588,Grand Ridge,VIC,3870
+2589,Allambee Reserve,VIC,3871
+2590,Allambee South,VIC,3871
+2591,Baromi,VIC,3871
+2592,Darlimurla,VIC,3871
+2593,Delburn,VIC,3871
+2594,Dollar,VIC,3871
+2595,Mirboo,VIC,3871
+2596,Mirboo North,VIC,3871
+2597,Gormandale,VIC,3873
+2598,Woodside,VIC,3874
+2599,Woodside Beach,VIC,3874
+2600,Woodside North,VIC,3874
+2601,Bairnsdale,VIC,3875
+2602,Bengworden,VIC,3875
+2603,Broadlands,VIC,3875
+2604,Bullumwaal,VIC,3875
+2605,Calulu,VIC,3875
+2606,Clifton Creek,VIC,3875
+2607,Deptford,VIC,3875
+2608,East Bairnsdale,VIC,3875
+2609,Eastwood,VIC,3875
+2610,Ellaswood,VIC,3875
+2611,Fairy Dell,VIC,3875
+2612,Flaggy Creek,VIC,3875
+2613,Forge Creek,VIC,3875
+2614,Goon Nure,VIC,3875
+2615,Granite Rock,VIC,3875
+2616,Hillside,VIC,3875
+2617,Iguana Creek,VIC,3875
+2618,Lindenow South,VIC,3875
+2619,Lucknow,VIC,3875
+2620,Marthavale,VIC,3875
+2621,Merrijig,VIC,3875
+2622,Mount Taylor,VIC,3875
+2623,Newlands Arm,VIC,3875
+2624,Ryans,VIC,3875
+2625,Sarsfield,VIC,3875
+2626,Tabberabbera,VIC,3875
+2627,Walpa,VIC,3875
+2628,Waterholes,VIC,3875
+2629,Wentworth,VIC,3875
+2630,Woodglen,VIC,3875
+2631,Wuk Wuk,VIC,3875
+2632,Wy Yung,VIC,3875
+2633,Eagle Point,VIC,3878
+2634,Boole Poole,VIC,3880
+2635,Ocean Grange,VIC,3880
+2636,Paynesville,VIC,3880
+2637,Raymond Island,VIC,3880
+2638,Nicholson,VIC,3882
+2639,Brumby,VIC,3885
+2640,Bruthen,VIC,3885
+2641,Buchan,VIC,3885
+2642,Buchan South,VIC,3885
+2643,Butchers Ridge,VIC,3885
+2644,Gelantipy,VIC,3885
+2645,Mossiface,VIC,3885
+2646,Murrindal,VIC,3885
+2647,Tambo Upper,VIC,3885
+2648,Timbarra,VIC,3885
+2649,Wiseleigh,VIC,3885
+2650,W Tree,VIC,3885
+2651,Wulgulmerang,VIC,3885
+2652,Yalmy,VIC,3885
+2653,Newmerella,VIC,3886
+2654,Lake Tyers,VIC,3887
+2655,Nowa Nowa,VIC,3887
+2656,Wairewa,VIC,3887
+2657,Bendoc,VIC,3888
+2658,Bete Bolong,VIC,3888
+2659,Bonang,VIC,3888
+2660,Brodribb River,VIC,3888
+2661,Cape Conran,VIC,3888
+2662,Corringle,VIC,3888
+2663,Deddick Valley,VIC,3888
+2664,Delegate River,VIC,3888
+2665,Goongerah,VIC,3888
+2666,Jarrahmond,VIC,3888
+2667,Marlo,VIC,3888
+2668,Nurran,VIC,3888
+2669,Orbost,VIC,3888
+2670,Simpsons Creek,VIC,3888
+2671,Tostaree,VIC,3888
+2672,Tubbut,VIC,3888
+2673,Waygara,VIC,3888
+2674,Wombat Creek,VIC,3888
+2675,Bellbird Creek,VIC,3889
+2676,Bemm River,VIC,3889
+2677,Cabbage Tree Creek,VIC,3889
+2678,Club Terrace,VIC,3889
+2679,Combienbar,VIC,3889
+2680,Errinundra,VIC,3889
+2681,Manorina,VIC,3889
+2682,Buldah,VIC,3890
+2683,Cann River,VIC,3890
+2684,Chandlers Creek,VIC,3890
+2685,Noorinbee,VIC,3890
+2686,Noorinbee North,VIC,3890
+2687,Tamboon,VIC,3890
+2688,Tonghi Creek,VIC,3890
+2689,Genoa,VIC,3891
+2690,Gipsy Point,VIC,3891
+2691,Maramingo Creek,VIC,3891
+2692,Wallagaraugh,VIC,3891
+2693,Wangarabell,VIC,3891
+2694,Wingan River,VIC,3891
+2695,Wroxham,VIC,3891
+2696,Mallacoota,VIC,3892
+2697,Stirling,VIC,3893
+2698,Tambo Crossing,VIC,3893
+2699,Doctors Flat,VIC,3895
+2700,Ensay,VIC,3895
+2701,Ensay North,VIC,3895
+2702,Bindi,VIC,3896
+2703,Brookville,VIC,3896
+2704,Nunniong,VIC,3896
+2705,Swifts Creek,VIC,3896
+2706,Tongio,VIC,3896
+2707,Anglers Rest,VIC,3898
+2708,Bingo Munjie,VIC,3898
+2709,Bundara,VIC,3898
+2710,Cassilis,VIC,3898
+2711,Cobungra,VIC,3898
+2712,Dinner Plain,VIC,3898
+2713,Glen Valley,VIC,3898
+2714,Glen Wills,VIC,3898
+2715,Hinnomunjie,VIC,3898
+2716,Omeo,VIC,3898
+2717,Omeo Valley,VIC,3898
+2718,Shannonvale,VIC,3898
+2719,Benambra,VIC,3900
+2720,Cobberas,VIC,3900
+2721,Bumberrah,VIC,3902
+2722,Johnsonville,VIC,3902
+2723,Swan Reach,VIC,3903
+2724,Metung,VIC,3904
+2725,Kalimna,VIC,3909
+2726,Kalimna West,VIC,3909
+2727,Lake Bunga,VIC,3909
+2728,Lakes Entrance,VIC,3909
+2729,Lake Tyers Beach,VIC,3909
+2730,Nungurner,VIC,3909
+2731,Nyerimilang,VIC,3909
+2732,Toorloo Arm,VIC,3909
+2733,Langwarrin,VIC,3910
+2734,Baxter,VIC,3911
+2735,Pearcedale,VIC,3912
+2736,Somerville,VIC,3912
+2737,Tyabb,VIC,3913
+2738,Hastings,VIC,3915
+2739,Tuerong,VIC,3915
+2740,Merricks,VIC,3916
+2741,Point Leo,VIC,3916
+2742,Shoreham,VIC,3916
+2743,Bittern,VIC,3918
+2744,Crib Point,VIC,3919
+2745,Hmas Cerberus,VIC,3920
+2746,Elizabeth Island,VIC,3921
+2747,Cowes,VIC,3922
+2748,Silverleaves,VIC,3922
+2749,Smiths Beach,VIC,3922
+2750,Summerlands,VIC,3922
+2751,Sunderland Bay,VIC,3922
+2752,Sunset Strip,VIC,3922
+2753,Surf Beach,VIC,3922
+2754,Ventnor,VIC,3922
+2755,Rhyll,VIC,3923
+2756,Cape Woolamai,VIC,3925
+2757,Churchill Island,VIC,3925
+2758,Newhaven,VIC,3925
+2759,San Remo,VIC,3925
+2760,Balnarring,VIC,3926
+2761,Merricks Beach,VIC,3926
+2762,Merricks North,VIC,3926
+2763,Somers,VIC,3927
+2764,Main Ridge,VIC,3928
+2765,Flinders,VIC,3929
+2766,Kunyung,VIC,3930
+2767,Mount Eliza,VIC,3930
+2768,Mornington,VIC,3931
+2769,Moorooduc,VIC,3933
+2770,Mount Martha,VIC,3934
+2771,Dromana,VIC,3936
+2772,Safety Beach,VIC,3936
+2773,Red Hill South,VIC,3937
+2774,Mccrae,VIC,3938
+2775,Boneo,VIC,3939
+2776,Cape Schanck,VIC,3939
+2777,Fingal,VIC,3939
+2778,Rosebud,VIC,3939
+2779,Capel Sound,VIC,3940
+2780,Rye,VIC,3941
+2781,Tootgarook,VIC,3941
+2782,Blairgowrie,VIC,3942
+2783,Sorrento,VIC,3943
+2784,Portsea,VIC,3944
+2785,Jeetho,VIC,3945
+2786,Krowera,VIC,3945
+2787,Loch,VIC,3945
+2788,Woodleigh,VIC,3945
+2789,Bena,VIC,3946
+2790,Kardella South,VIC,3950
+2791,Korumburra,VIC,3950
+2792,Strzelecki,VIC,3950
+2793,Whitelaw,VIC,3950
+2794,Arawata,VIC,3951
+2795,Fairbank,VIC,3951
+2796,Jumbunna,VIC,3951
+2797,Kardella,VIC,3951
+2798,Kongwak,VIC,3951
+2799,Moyarra,VIC,3951
+2800,Outtrim,VIC,3951
+2801,Ranceby,VIC,3951
+2802,Berrys Creek,VIC,3953
+2803,Boorool,VIC,3953
+2804,Hallston,VIC,3953
+2805,Koorooman,VIC,3953
+2806,Leongatha,VIC,3953
+2807,Leongatha North,VIC,3953
+2808,Leongatha South,VIC,3953
+2809,Mardan,VIC,3953
+2810,Mount Eccles,VIC,3953
+2811,Nerrena,VIC,3953
+2812,Ruby,VIC,3953
+2813,Trida,VIC,3953
+2814,Wild Dog Valley,VIC,3953
+2815,Wooreen,VIC,3953
+2816,Koonwarra,VIC,3954
+2817,Dumbalk,VIC,3956
+2818,Dumbalk North,VIC,3956
+2819,Meeniyan,VIC,3956
+2820,Middle Tarwin,VIC,3956
+2821,Tarwin,VIC,3956
+2822,Tarwin Lower,VIC,3956
+2823,Venus Bay,VIC,3956
+2824,Walkerville,VIC,3956
+2825,Stony Creek,VIC,3957
+2826,Buffalo,VIC,3958
+2827,Fish Creek,VIC,3959
+2828,Sandy Point,VIC,3959
+2829,Waratah Bay,VIC,3959
+2830,Bennison,VIC,3960
+2831,Boolarong,VIC,3960
+2832,Foster,VIC,3960
+2833,Foster North,VIC,3960
+2834,Gunyah,VIC,3960
+2835,Mount Best,VIC,3960
+2836,Tidal River,VIC,3960
+2837,Turtons Creek,VIC,3960
+2838,Wonga,VIC,3960
+2839,Woorarra West,VIC,3960
+2840,Yanakie,VIC,3960
+2841,Agnes,VIC,3962
+2842,Toora,VIC,3962
+2843,Toora North,VIC,3962
+2844,Wonyip,VIC,3962
+2845,Woorarra East,VIC,3962
+2846,Port Franklin,VIC,3964
+2847,Port Welshpool,VIC,3965
+2848,Binginwarri,VIC,3966
+2849,Hazel Park,VIC,3966
+2850,Welshpool,VIC,3966
+2851,Hedley,VIC,3967
+2852,Alberton,VIC,3971
+2853,Alberton West,VIC,3971
+2854,Balook,VIC,3971
+2855,Calrossie,VIC,3971
+2856,Devon North,VIC,3971
+2857,Gelliondale,VIC,3971
+2858,Hiawatha,VIC,3971
+2859,Jack River,VIC,3971
+2860,Langsborough,VIC,3971
+2861,Macks Creek,VIC,3971
+2862,Madalya,VIC,3971
+2863,Manns Beach,VIC,3971
+2864,Port Albert,VIC,3971
+2865,Snake Island,VIC,3971
+2866,Staceys Bridge,VIC,3971
+2867,Tarra Valley,VIC,3971
+2868,Tarraville,VIC,3971
+2869,Won Wron,VIC,3971
+2870,Yarram,VIC,3971
+2871,Lynbrook,VIC,3975
+2872,Hampton Park,VIC,3976
+2873,Botanic Ridge,VIC,3977
+2874,Cannons Creek,VIC,3977
+2875,Cranbourne,VIC,3977
+2876,Cranbourne East,VIC,3977
+2877,Devon Meadows,VIC,3977
+2878,Junction Village,VIC,3977
+2879,Sandhurst,VIC,3977
+2880,Skye,VIC,3977
+2881,Cardinia,VIC,3978
+2882,Clyde,VIC,3978
+2883,Clyde North,VIC,3978
+2884,Almurta,VIC,3979
+2885,Glen Alvie,VIC,3979
+2886,Kernot,VIC,3979
+2887,Blind Bight,VIC,3980
+2888,Tooradin,VIC,3980
+2889,Warneet,VIC,3980
+2890,Bayles,VIC,3981
+2891,Catani,VIC,3981
+2892,Dalmore,VIC,3981
+2893,Heath Hill,VIC,3981
+2894,Koo Wee Rup,VIC,3981
+2895,Yannathan,VIC,3981
+2896,Adams Estate,VIC,3984
+2897,Caldermeade,VIC,3984
+2898,Corinella,VIC,3984
+2899,Coronet Bay,VIC,3984
+2900,Grantville,VIC,3984
+2901,Lang Lang,VIC,3984
+2902,Lang Lang East,VIC,3984
+2903,Monomeith,VIC,3984
+2904,Queensferry,VIC,3984
+2905,Tenby Point,VIC,3984
+2906,The Gurdies,VIC,3984
+2907,Nyora,VIC,3987
+2908,Mountain View,VIC,3988
+2909,Poowong,VIC,3988
+2910,Poowong East,VIC,3988
+2911,Poowong North,VIC,3988
+2912,Glen Forbes,VIC,3990
+2913,Bass,VIC,3991
+2914,Dalyston,VIC,3992
+2915,Ryanston,VIC,3992
+2916,West Creek,VIC,3992
+2917,Anderson,VIC,3995
+2918,Cape Paterson,VIC,3995
+2919,Harmers Haven,VIC,3995
+2920,Kilcunda,VIC,3995
+2921,Lance Creek,VIC,3995
+2922,North Wonthaggi,VIC,3995
+2923,South Dudley,VIC,3995
+2924,Wattle Bank,VIC,3995
+2925,Wonthaggi,VIC,3995
+2926,Woolamai,VIC,3995
+2927,Inverloch,VIC,3996
+2928,Pound Creek,VIC,3996
