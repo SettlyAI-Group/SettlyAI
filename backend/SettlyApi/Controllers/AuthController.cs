@@ -100,14 +100,23 @@ public class AuthController : ControllerBase
     public async Task<ActionResult<LoginOutputDto>> OAuthLogin([FromBody] OAuthLoginRequestDto authLoginRequest)
     {
         var tokenResult = await _oAuthService.ExchangeTokenAsync(authLoginRequest.Provider, authLoginRequest.Code);
-        
+
         var externalUser = await _oAuthService.GetUserAsync(
-            authLoginRequest.Provider, 
-            tokenResult.AccessToken, 
+            authLoginRequest.Provider,
+            tokenResult.AccessToken,
             tokenResult.IdToken);
-        
+
         var loginResult = await _authService.OAuthLoginAsync(externalUser);
-        
+
+        // Add accessToken into cookies
+        AppendCookie("accessToken", loginResult.AccessToken, httpOnly: true, minutes: jwtConfig.ExpireMinutes);
+
+        // Add refreshToken into cookies
+        if (loginResult.RefreshToken is not null)
+        {
+            AppendCookie("refreshToken", loginResult.RefreshToken, httpOnly: true, days: jwtConfig.ExpireDays);
+        }
+
         return Ok(loginResult);
     }
 

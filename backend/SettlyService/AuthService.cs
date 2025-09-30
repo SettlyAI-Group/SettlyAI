@@ -213,12 +213,14 @@ public class AuthService : IAuthService
 
     private LoginOutputDto GenerateLoginResponse(User user)
     {
-        string accessToken = _createTokenService.CreateToken(user);
+        string accessToken = _createTokenService.CreateAccessToken(user.Name, user.Id);
+        string refreshToken = _createTokenService.CreateRefreshToken(user.Name, user.Id);
 
         return new LoginOutputDto
         {
             UserName = user.Name,
-            AccessToken = accessToken
+            AccessToken = accessToken,
+            RefreshToken = refreshToken
         };
     }
 
