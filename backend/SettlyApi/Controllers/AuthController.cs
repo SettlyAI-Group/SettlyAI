@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using SettlyModels;
 using SettlyModels.Dtos;
+using SettlyModels.OAutOptions;
 using SettlyService;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -16,14 +17,16 @@ public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
     private readonly SettlyDbContext _context;
+    private readonly IOAuthService _oAuthService;
     private readonly JWTConfig jwtConfig;
     private readonly ICreateTokenService _createTokenService;
 
-    public AuthController(IAuthService authService, SettlyDbContext context,
+    public AuthController(IAuthService authService, SettlyDbContext context, IOAuthService oAuthService,
         IOptions<JWTConfig> options, ICreateTokenService createTokenService)
     {
         _authService = authService;
         _context = context;
+        _oAuthService = oAuthService;
         jwtConfig = options.Value;
         _createTokenService = createTokenService;
     }
@@ -91,6 +94,32 @@ public class AuthController : ControllerBase
         }
         return Ok(result);
     }
+    [HttpPost("oauth/login")]
+    [EnableRateLimiting("LoginIpFixedWindow")]
+    [SwaggerOperation(Summary = "OAuth login")]
+    [SwaggerResponse(200, "OAuth login successful", typeof(LoginOutputDto))]
+    public async Task<ActionResult<LoginOutputDto>> OAuthLogin([FromBody] OAuthLoginRequestDto authLoginRequest)
+    {
+        var tokenResult = await _oAuthService.ExchangeTokenAsync(authLoginRequest.Provider, authLoginRequest.Code);
+
+        var externalUser = await _oAuthService.GetUserAsync(
+            authLoginRequest.Provider,
+            tokenResult.AccessToken,
+            tokenResult.IdToken);
+
+        var loginResult = await _authService.OAuthLoginAsync(externalUser);
+
+        // Add accessToken into cookies
+        AppendCookie("accessToken", loginResult.AccessToken, httpOnly: true, minutes: jwtConfig.ExpireMinutes);
+
+        // Add refreshToken into cookies
+        if (loginResult.RefreshToken is not null)
+        {
+            AppendCookie("refreshToken", loginResult.RefreshToken, httpOnly: true, days: jwtConfig.ExpireDays);
+        }
+
+        return Ok(loginResult);
+    }
 
     [HttpPost("refresh")]
     public IActionResult Refresh()
@@ -110,15 +139,15 @@ public class AuthController : ControllerBase
     private void AppendCookie(string name, string value, bool httpOnly = true, int? minutes = null, int? days = null)
     {
         string path = "/";
-        if (name == "refresToken")
+        if (name == "refreshToken")
         {
-            path = "/auth/refresh";
+            path = "/api/auth/refresh";
         }
         var opts = new CookieOptions
         {
             HttpOnly = httpOnly,
-            Secure = true,                
-            SameSite = SameSiteMode.Lax,  
+            Secure = true,
+            SameSite = SameSiteMode.Lax,
             Path = path
         };
         if (minutes.HasValue) opts.Expires = DateTimeOffset.UtcNow.AddMinutes(minutes.Value);
