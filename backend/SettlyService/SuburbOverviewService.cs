@@ -41,8 +41,7 @@ namespace SettlyService
             };
         }
 
-        #region Help Functions
-        //1-Suburb Section
+        #region Help Functions        
         //Convert data state from frontend to statecode
         private static readonly Dictionary<string, string> ConvertStateCodes =
             new(StringComparer.OrdinalIgnoreCase)
