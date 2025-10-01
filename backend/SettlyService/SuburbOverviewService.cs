@@ -16,10 +16,19 @@ namespace SettlyService
             _context = context;
         }
 
-        public async Task<SuburbOverviewDto?> GetSuburbOverviewAsync(MapInputDto input)
+        public async Task<SuburbOverviewDto> GetSuburbOverviewAsync(MapInputDto input)
         {
             var suburb = await GetSuburbAsync(input);    
-             if (suburb == null) return null;        
+             if (suburb == null)
+            {
+                return new SuburbOverviewDto
+                {
+                    Suburb = null,
+                    Metrics = null,
+                    Summary = null,
+                    Highlights = Array.Empty<string>()
+                };
+            }
             var metrics = await GetMetricsAsync(suburb);            
             var summary = GetSummary(metrics, suburb);
             var highlights = GetHighlight(metrics);
