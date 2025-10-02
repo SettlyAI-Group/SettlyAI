@@ -1,8 +1,10 @@
+using SettlyModels;
+
 namespace SettlyService.Exceptions;
 
-public class EmailUnverifiedException : Exception
+public class EmailUnverifiedException : AppException
 {
-    public EmailUnverifiedException(string message) : base(message)
+    public EmailUnverifiedException(string message) : base(message, statusCode: 400)
     {
     }
 }
