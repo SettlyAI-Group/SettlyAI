@@ -11,10 +11,7 @@ export const verifyEmail = async (data: IVerifyEmailRequest) => {
   return response.data;
 };
 
-export const sendVerificationCode = async (
-  userId: number,
-  verificationType: number
-) => {
+export const sendVerificationCode = async (userId: number, verificationType: number) => {
   const response = await httpClient.post('/auth/send-verification-code', {
     userId,
     verificationType,

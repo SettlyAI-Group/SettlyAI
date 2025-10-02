@@ -42,6 +42,7 @@ const App = () => {
           <Route path="/" element={<ThemeDemo />} />
           <Route path="/registration" element={<RegistrationPage />} />
           <Route path="/verify-email/:userId" element={<VerificationPage />} />
+          <Route path="/oauth/callback/:provider" element={<OAuthCallbackPage />} />
           <Route path="/loan-calculator" element={<LoanCalculatorPage />} />
           <Route path="/super" element={<SuperPage />} />
           <Route path="/favourites" element={<FavouritesPage />} />
