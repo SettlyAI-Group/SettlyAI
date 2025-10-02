@@ -16,6 +16,7 @@ namespace SettlyModels.DTOs.Loan
         [property: JsonConverter(typeof(JsonStringEnumConverter))]
         RepaymentFrequency Frequency,
         List<PiecewiseSegmentDto> Segments,
-        bool GenerateSchedule = true
+        bool GenerateSchedule = true,
+        decimal? NetAnnualIncome = null
     );
 }

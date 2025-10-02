@@ -22,6 +22,7 @@ namespace SettlyModels.DTOs.Loan
     decimal TotalPrincipal,
     decimal TotalCost,
     int TermPeriods,
-    IReadOnlyList<AmortizationScheduleRowDto>? Schedule
+    IReadOnlyList<AmortizationScheduleRowDto>? Schedule,
+    string? PaymentToIncomeRatioPercent = null
 );
     }

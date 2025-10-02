@@ -13,6 +13,7 @@ namespace SettlyModels.DTOs.Loan
     decimal TotalCost,
     int TotalPeriods,
     decimal FirstSegmentPayment,
-    IReadOnlyList<PiecewiseScheduleRowDto>? Schedule
+    IReadOnlyList<PiecewiseScheduleRowDto>? Schedule,
+    string? FirstSegmentPaymentToIncomeRatioPercent = null
 );
 }

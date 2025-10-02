@@ -59,6 +59,11 @@ namespace SettlyService
                     GenerateSchedule: pwReq.GenerateSchedule
                 );
                 var result = _facade.CalculateLoan(domainInput);
+                string? ratioPercent = ComputePaymentToIncomeRatioPercent(
+                    paymentPerPeriod: result.FirstSegmentPayment,
+                    netAnnualIncome: pwReq.NetAnnualIncome,
+                    frequency: pwReq.Frequency
+                );
                 piecewiseResponse = new PiecewiseResponseDto(
                     InitialLoanAmount: result.InitialLoanAmount,
                     TotalPrincipal: result.TotalPrincipal,
@@ -75,7 +80,8 @@ namespace SettlyService
                         Principal: r.Principal,
                         EndingBalance: r.EndingBalance,
                         SegmentLabel: r.SegmentLabel
-                    )).ToList()
+                    )).ToList(),
+                    FirstSegmentPaymentToIncomeRatioPercent: ratioPercent
                 );
             }
             else
@@ -107,6 +113,11 @@ namespace SettlyService
                     Principal: row.Principal,
                     EndingBalance: row.EndingBalance
                 )).ToList();
+                string? ratioPercent = ComputePaymentToIncomeRatioPercent(
+                    paymentPerPeriod: firstPayment,
+                    netAnnualIncome: amReq.NetAnnualIncome,
+                    frequency: amReq.Frequency
+                );
                 amortizationResponse = new AmortizationResponseDto(
                     LoanAmount: amReq.LoanAmount,
                     AnnualInterestRate: amReq.AnnualInterestRate,
@@ -118,7 +129,8 @@ namespace SettlyService
                     TotalPrincipal: pwResult.TotalPrincipal,
                     TotalCost: pwResult.TotalCost,
                     TermPeriods: pwResult.TotalPeriods,
-                    Schedule: scheduleRows
+                    Schedule: scheduleRows,
+                    PaymentToIncomeRatioPercent: ratioPercent
                 );
             }
             return new LoanWrapperDtoResponse(amortizationResponse, piecewiseResponse);
@@ -142,5 +154,14 @@ namespace SettlyService
             RepaymentFrequency.Weekly => 52,
             _ => throw new NotSupportedException($"Unsupported frequency: {frequency}")
         };
+        private static string? ComputePaymentToIncomeRatioPercent(decimal paymentPerPeriod, decimal? netAnnualIncome, RepaymentFrequency frequency)
+        {
+            if (netAnnualIncome is null || netAnnualIncome <= 0m) return null;
+            var ppy = GetPeriodsPerYear(frequency);
+            var incomePerPeriod = netAnnualIncome.Value / ppy;
+            if (incomePerPeriod <= 0m) return null;
+            var ratio = paymentPerPeriod / incomePerPeriod; 
+            return $"{(ratio * 100m):0.00}%"; 
+        }
     }
 }
