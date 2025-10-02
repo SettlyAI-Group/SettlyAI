@@ -15,6 +15,7 @@ public class SuburbReportPdfRequest
     public List<ScoreCardDto>? SafetyScores { get; set; }
     public Dictionary<string, object> Metrics { get; set; } = new();
     public string? Summary { get; set; }
+    
     public List<string> Charts { get; set; } = new(); // base64 PNG
     public PdfOptions Options { get; set; } = new();
 }

@@ -29,7 +29,7 @@ public class PdfController : ControllerBase
     {
         try
         {
-            // Fetch data from your existing services
+            // Fetch data from existing services
             var suburbBasicInfo = await _suburbService.GetSuburbsByIdAsync(suburbId);
             var housingMarket = await _suburbService.GetHousingMarketAsync(suburbId);
             var livability = await _suburbService.GetLivabilityAsync(suburbId);
