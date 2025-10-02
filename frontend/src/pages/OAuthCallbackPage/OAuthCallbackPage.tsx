@@ -2,7 +2,9 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Box, CircularProgress, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { loginWithOAuth } from '@/api/authApi';
+import { loginWithOAuth, getCurrentUser } from '@/api/authApi';
+import { useAppDispatch } from '@/redux/hooks';
+import { setUser } from '@/redux/authSlice';
 
 const CenteredContainer = styled(Box)({
   display: 'flex',
@@ -16,6 +18,7 @@ const CenteredContainer = styled(Box)({
 export const OAuthCallbackPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -36,12 +39,15 @@ export const OAuthCallbackPage = () => {
 
         // 从路径中提取提供商名称 (/oauth/callback/google -> google)
         const provider = location.pathname.split('/').pop() || '';
-        
-        // 使用第三方授权码登录
-        const { token, user } = await loginWithOAuth(code, provider);
 
-        localStorage.setItem('token', token);
-        localStorage.setItem('user', JSON.stringify(user));
+        // 使用第三方授权码登录
+        await loginWithOAuth(code, provider);
+
+        // 登录成功后获取用户信息
+        const user = await getCurrentUser();
+
+        // 存储到 Redux
+        dispatch(setUser(user));
 
         navigate('/');
       } catch (err) {
@@ -53,7 +59,7 @@ export const OAuthCallbackPage = () => {
     };
 
     processCallback();
-  }, [navigate, location.search, location.pathname]);
+  }, [navigate, location.search, location.pathname, dispatch]);
 
   if (loading) {
     return (

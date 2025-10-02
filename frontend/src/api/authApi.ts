@@ -26,3 +26,8 @@ export const loginWithOAuth = async (code: string, provider: string) => {
   });
   return response.data;
 };
+
+export const getCurrentUser = async () => {
+  const response = await httpClient.get('/auth/me');
+  return response.data;
+};
