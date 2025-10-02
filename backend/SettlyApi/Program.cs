@@ -50,7 +50,7 @@ public class Program
         builder.Services.AddTransient<IPopulationSupplyService, PopulationSupplyService>();
         builder.Services.AddScoped<ILoanService, LoanService>();
         builder.Services.AddScoped<ITestimonialService, TestimonialService>();
-        builder.Services.AddScoped<IPdfService, PdfService>();
+        builder.Services.AddScoped<IPdfExportService, PdfService>();
 
 
         builder.Services.AddScoped<ILayoutNavService, LayoutNavService>();
