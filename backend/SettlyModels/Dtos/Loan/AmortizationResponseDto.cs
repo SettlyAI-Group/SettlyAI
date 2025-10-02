@@ -17,7 +17,7 @@ namespace SettlyModels.DTOs.Loan
     RepaymentFrequency Frequency,
     RepaymentType RepaymentType,
     decimal Payment,
-    int DisplayPayment,
+    //int DisplayPayment,
     decimal TotalInterest,
     decimal TotalPrincipal,
     decimal TotalCost,

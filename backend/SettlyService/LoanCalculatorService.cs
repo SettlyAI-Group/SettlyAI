@@ -105,7 +105,7 @@ namespace SettlyService
                 );
                 var pwResult = _facade.CalculateLoan(pwForSingle);
                 var firstPayment = pwResult.FirstSegmentPayment;
-                var displayPayment = (int)Math.Ceiling(firstPayment);
+                // var displayPayment = (int)Math.Ceiling(firstPayment);
                 var scheduleRows = pwResult.Schedule?.Select(row => new AmortizationScheduleRowDto(
                     Period: row.GlobalPeriod,
                     Payment: row.Payment,
@@ -124,7 +124,7 @@ namespace SettlyService
                     Frequency: amReq.Frequency,
                     RepaymentType: amReq.RepaymentType,
                     Payment: firstPayment,
-                    DisplayPayment: displayPayment,
+                    //DisplayPayment: displayPayment,
                     TotalInterest: pwResult.TotalInterest,
                     TotalPrincipal: pwResult.TotalPrincipal,
                     TotalCost: pwResult.TotalCost,

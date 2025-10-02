@@ -17,7 +17,7 @@ namespace SettlyFinance.Models
         /// For piecewise cases, this is the first segment's payment.
         /// </summary>
         decimal Payment,
-        int DisplayPayment,
+        // int DisplayPayment,
         /// <summary>
         /// Total interest paid for this result.
         /// (This could be for a single segment or the aggregated total horizon).

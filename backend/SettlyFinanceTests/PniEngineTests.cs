@@ -59,16 +59,17 @@ namespace SettlyFinance.Tests.Calculators.Engines
         /// </summary>
         [Theory]
         // loanAmount, annualRate, periodsPerYear, termPeriods, expectedPrecisePayment, expectedDisplayPayment
-        [InlineData(100_000, 0.06, 12, 360, 599.55, 600)]   // 100k, 6%, Monthly, 30y
-        [InlineData(350_000, 0.0584, 12, 300, 2220.95, 2221)]   // 350k, 5.84%, Monthly, 25y
-        [InlineData(500_000, 0.065, 26, 260, 2617.63, 2618)]   // 500k, 6.5%, Fortnightly, 10y
+        [InlineData(100_000, 0.06, 12, 360, 599.55)]   // 100k, 6%, Monthly, 30y
+        [InlineData(350_000, 0.0584, 12, 300, 2220.95)]   // 350k, 5.84%, Monthly, 25y
+        [InlineData(500_000, 0.065, 26, 260, 2617.63)]   // 500k, 6.5%, Fortnightly, 10y
         public void Calculate_NonZeroRate_CoreInvariants_Hold(
             decimal loanAmount,
             decimal annualRate,
             int periodsPerYear,
             int termPeriods,
-            decimal expectedPrecisePayment,
-            int expectedDisplayPayment)
+            decimal expectedPrecisePayment
+            // int expectedDisplayPayment
+            )
         {
             var engine = new PniEngine(new FakeFrequencyProvider(periodsPerYear));
             var input = new PniInputBuilder()
@@ -77,7 +78,7 @@ namespace SettlyFinance.Tests.Calculators.Engines
             var result = engine.Calculate(input);
             // 1) Payment matches "Golden Value"
             Assert.Equal(expectedPrecisePayment, result.Payment);
-            Assert.Equal(expectedDisplayPayment, result.DisplayPayment);
+            // Assert.Equal(expectedDisplayPayment, result.DisplayPayment);
             // 2) Schedule length
             Assert.NotNull(result.Schedule);
             Assert.Equal(termPeriods, result.Schedule!.Count);

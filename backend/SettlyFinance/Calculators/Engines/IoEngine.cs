@@ -52,14 +52,14 @@ namespace SettlyFinance.Calculators.Engines
                 }
             }
             decimal precisePayment = MoneyUtils.FromCents(paymentCents);
-            int displayPayment = (int)Math.Ceiling(precisePayment);
+            // int displayPayment = (int)Math.Ceiling(precisePayment);
             return new AmortizationResult(
                 LoanAmount: input.LoanAmount,
                 AnnualInterestRate: input.AnnualInterestRate,
                 Frequency: input.Frequency,
                 RepaymentType: input.RepaymentType,
                 Payment: precisePayment,
-                DisplayPayment: displayPayment,
+                // DisplayPayment: displayPayment,
                 TotalInterest: MoneyUtils.FromCents(totalInterest),
                 TotalPrincipal: 0m,
                 TotalCost: MoneyUtils.FromCents(totalPaid),

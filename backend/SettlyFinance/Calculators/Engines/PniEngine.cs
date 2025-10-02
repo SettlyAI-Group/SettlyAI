@@ -83,7 +83,7 @@ namespace SettlyFinance.Calculators.Engines
                 }
             }
             decimal precisePayment = MoneyUtils.FromCents(paymentCents);
-            int displayPayment = (int)Math.Ceiling(precisePayment);
+            // int displayPayment = (int)Math.Ceiling(precisePayment);
             var totalPrincipalInCents = totalPaid - totalInterest;
             return new AmortizationResult(
                 LoanAmount: input.LoanAmount,
@@ -91,7 +91,7 @@ namespace SettlyFinance.Calculators.Engines
                 Frequency: input.Frequency,
                 RepaymentType: input.RepaymentType,
                 Payment: precisePayment,
-                DisplayPayment: displayPayment,
+                // DisplayPayment: displayPayment,
                 TotalInterest: MoneyUtils.FromCents(totalInterest),
                 TotalPrincipal: MoneyUtils.FromCents(totalPrincipalInCents),
                 TotalCost: MoneyUtils.FromCents(totalPaid),
