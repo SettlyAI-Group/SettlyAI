@@ -3,6 +3,9 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
+# Development settings (contains local connection strings, etc.)
+backend/SettlyApi/appsettings.Development.json
+
 # User-specific files
 *.rsuser
 *.suo
