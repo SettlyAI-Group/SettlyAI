@@ -52,7 +52,7 @@ namespace SettlyFinance.Tests.Calculators.Engines
             Assert.Equal(periods, result.TermPeriods);
             Assert.Null(result.Schedule);
         }
-        // <summary>
+        ///<summary>
         /// Verifies core invariants for non-zero rate loans, 
         /// including golden payment values, schedule length, 
         /// balance progression, and interest summation.

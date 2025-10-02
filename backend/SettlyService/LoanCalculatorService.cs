@@ -1,14 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ISettlyService;
+using SettlyFinance.Enums;
 using SettlyFinance.Interfaces;
 using SettlyFinance.Models;
 using SettlyModels.DTOs;
 using SettlyModels.DTOs.Loan;
-
 namespace SettlyService
 {
     /// <summary>
@@ -19,6 +17,7 @@ namespace SettlyService
     public sealed class LoanCalculatorService : ILoanCalculatorService
     {
         private readonly ILoanCalculatorFacade _facade;
+
         public LoanCalculatorService(ILoanCalculatorFacade facade)
         {
             _facade = facade ?? throw new ArgumentNullException(nameof(facade));
@@ -28,8 +27,6 @@ namespace SettlyService
             if (dto is null) throw new ArgumentNullException(nameof(dto));
             var hasAm = dto.Amortization is not null;
             var hasPw = dto.Piecewise is not null;
-            if (!hasAm && !hasPw)
-                throw new ArgumentException("Request must contain exactly one of 'Amortization' or 'Piecewise'.");
             if (hasAm == hasPw)
                 throw new ArgumentException("Request must contain exactly one of 'Amortization' or 'Piecewise'.", nameof(dto));
             AmortizationResponseDto? amortizationResponse = null;
@@ -39,16 +36,26 @@ namespace SettlyService
                 var pwReq = dto.Piecewise!;
                 if (pwReq.Segments is null || pwReq.Segments.Count == 0)
                     throw new ArgumentException("Piecewise.Segments must contain at least one segment.");
+                int ppy = GetPeriodsPerYear(pwReq.Frequency);
+
+                var segments = pwReq.Segments.Select((s, idx) =>
+                {
+                    if (s.LoanTermYears <= 0)
+                        throw new ArgumentException($"Segments[{idx}].LoanTermYears must be > 0.");
+                    int termPeriods = checked(s.LoanTermYears * ppy);
+                    var normalizedRate = NormalizeAnnualRate(s.AnnualInterestRate);
+                    return new PiecewiseSegmentInput(
+                        RepaymentType: s.RepaymentType,
+                        AnnualInterestRate: normalizedRate,
+                        TermPeriods: termPeriods,
+                        Frequency: pwReq.Frequency, 
+                        GenerateSchedule: true,    
+                        Label: MakeSegmentLabel(s.RepaymentType, s.LoanTermYears, normalizedRate, pwReq.Frequency)
+                    );
+                }).ToList();
                 var domainInput = new PiecewiseInput(
                     InitialLoanAmount: pwReq.InitialLoanAmount,
-                    Segments: pwReq.Segments.Select(s => new PiecewiseSegmentInput(
-                        RepaymentType: s.RepaymentType,
-                        AnnualInterestRate: s.AnnualInterestRate,
-                        TermPeriods: s.TermPeriods,
-                        Frequency: s.Frequency,
-                        GenerateSchedule: s.GenerateSchedule,
-                        Label: s.Label
-                    )).ToList(),
+                    Segments: segments,
                     GenerateSchedule: pwReq.GenerateSchedule
                 );
                 var result = _facade.CalculateLoan(domainInput);
@@ -74,13 +81,16 @@ namespace SettlyService
             else
             {
                 var amReq = dto.Amortization!;
+                if (amReq.LoanTermYears <= 0)
+                    throw new ArgumentException("Amortization.loanTermYears must be > 0.");
+                int resolvedTerm = checked(amReq.LoanTermYears * GetPeriodsPerYear(amReq.Frequency));
                 var singleSegment = new PiecewiseSegmentInput(
                     RepaymentType: amReq.RepaymentType,
-                    AnnualInterestRate: amReq.AnnualInterestRate,
-                    TermPeriods: amReq.TermPeriods,
+                    AnnualInterestRate: NormalizeAnnualRate(amReq.AnnualInterestRate),
+                    TermPeriods: resolvedTerm,
                     Frequency: amReq.Frequency,
-                    GenerateSchedule: amReq.GenerateSchedule,
-                    Label: null
+                    GenerateSchedule: true, 
+                    Label: MakeSegmentLabel(amReq.RepaymentType, amReq.LoanTermYears, NormalizeAnnualRate(amReq.AnnualInterestRate), amReq.Frequency)
                 );
                 var pwForSingle = new PiecewiseInput(
                     InitialLoanAmount: amReq.LoanAmount,
@@ -113,5 +123,24 @@ namespace SettlyService
             }
             return new LoanWrapperDtoResponse(amortizationResponse, piecewiseResponse);
         }
+        private static decimal NormalizeAnnualRate(decimal r)
+        {
+            if (r < 0) throw new ArgumentOutOfRangeException(nameof(r), "Annual interest rate cannot be negative");
+            if (r <= 1m) return r;
+            if (r <= 100m) return r / 100m;
+            throw new ArgumentOutOfRangeException(nameof(r),"Annual interest rate looks too large. Use decimal (e.g., 0.065) or percent (e.g., 6.5).");
+        }
+        private static string MakeSegmentLabel(RepaymentType type, int years, decimal annualRate, RepaymentFrequency freq)
+        {
+            var kind = type == RepaymentType.InterestOnly ? "IO" : "P&I";
+            return $"{kind} {years}y @ {(annualRate * 100m):0.###}% ({freq})";
+        }
+        private static int GetPeriodsPerYear(RepaymentFrequency frequency) => frequency switch
+        {
+            RepaymentFrequency.Monthly => 12,
+            RepaymentFrequency.Fortnightly => 26,
+            RepaymentFrequency.Weekly => 52,
+            _ => throw new NotSupportedException($"Unsupported frequency: {frequency}")
+        };
     }
 }

@@ -8,14 +8,13 @@ using SettlyFinance.Enums;
 
 namespace SettlyModels.DTOs.Loan
 {
+
     public sealed record PiecewiseSegmentDto(
-       [property: JsonConverter(typeof(JsonStringEnumConverter))]
+        [property: JsonConverter(typeof(JsonStringEnumConverter))]
         RepaymentType RepaymentType,
         decimal AnnualInterestRate,
-        int TermPeriods,
-       [property: JsonConverter(typeof(JsonStringEnumConverter))]
-        RepaymentFrequency Frequency,
-        bool GenerateSchedule = true,
-        string? Label = null
+        int LoanTermYears
+        //[property: JsonConverter(typeof(JsonStringEnumConverter))]
+        //RepaymentFrequency Frequency
     );
 }

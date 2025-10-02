@@ -49,7 +49,7 @@ namespace SettlyFinance.Calculators.Orchestrators
                 }
                 totalInterest += segResult.TotalInterest;
                 totalPrincipal += segResult.TotalPrincipal;
-                //var nextPrincipal = currentPrincipal - segResult.TotalPrincipal;
+                
                 if (generateSchedule && segResult.Schedule is not null)
                 {
                     for (int k = 0; k < segResult.Schedule.Count; k++)
@@ -70,7 +70,7 @@ namespace SettlyFinance.Calculators.Orchestrators
                 {
                     globalPeriod += seg.TermPeriods;
                 }
-                //currentPrincipal = nextPrincipal;
+                
                 currentPrincipal = segResult.EndingBalance;
             }
             var totalCost = Math.Round(totalPrincipal + totalInterest, 2);

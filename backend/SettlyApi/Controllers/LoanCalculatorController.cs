@@ -21,37 +21,38 @@ namespace SettlyApi.Controllers
             _service = service ?? throw new ArgumentNullException(nameof(service));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
-        [HttpPost("calculate")]
-        [ProducesResponseType(typeof(LoanWrapperDtoResponse), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
-        public ActionResult<LoanWrapperDtoResponse> Calculate(
-            [FromBody] LoanWrapperDtoRequest request,
-            CancellationToken ct)
-        {
-            if (request is null)
-                return BadRequest(Problem("Request body is required."));
-            bool hasAm = request.Amortization is not null;
-            bool hasPw = request.Piecewise is not null;
-            if (!(hasAm ^ hasPw))
-                return BadRequest(Problem("Request must contain exactly one of 'Amortization' or 'Piecewise'."));
-            if (hasPw && (request.Piecewise!.Segments is null || request.Piecewise.Segments.Count == 0))
-                return BadRequest(Problem("Piecewise.Segments must contain at least one segment."));
-            try
-            {
-                var resp = _service.Calculate(request);
-                return Ok(resp);
-            }
-            catch (ArgumentException ex)
-            {
-                _logger.LogWarning(ex, "Validation failed in LoanCalculatorController.Calculate");
-                return BadRequest(Problem(ex.Message));
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Unexpected error in LoanCalculatorController.Calculate");
-                return StatusCode(StatusCodes.Status500InternalServerError, Problem("Internal server error."));
-            }
-        }
+        //[HttpPost("calculate")]
+        //[ProducesResponseType(typeof(LoanWrapperDtoResponse), StatusCodes.Status200OK)]
+        //[ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        //public ActionResult<LoanWrapperDtoResponse> Calculate(
+        //    [FromBody] LoanWrapperDtoRequest request,
+        //    CancellationToken ct)
+        //{
+        //    if (request is null)
+        //        return BadRequest(Problem("Request body is required."));
+        //    
+        //    bool hasAm = request.Amortization is not null;
+        //    bool hasPw = request.Piecewise is not null;
+        //    if (!(hasAm ^ hasPw))
+        //        return BadRequest(Problem("Request must contain exactly one of 'Amortization' or 'Piecewise'."));
+        //    if (hasPw && (request.Piecewise!.Segments is null || request.Piecewise.Segments.Count == 0))
+        //        return BadRequest(Problem("Piecewise.Segments must contain at least one segment."));
+        //    try
+        //    {
+        //        var resp = _service.Calculate(request);
+        //        return Ok(resp);
+        //    }
+        //    catch (ArgumentException ex)
+        //    {
+        //        _logger.LogWarning(ex, "Validation failed in LoanCalculatorController.Calculate");
+        //        return BadRequest(Problem(ex.Message));
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Unexpected error in LoanCalculatorController.Calculate");
+        //        return StatusCode(StatusCodes.Status500InternalServerError, Problem("Internal server error."));
+        //    }
+        //}
         [HttpPost("single")]
         [ProducesResponseType(typeof(LoanWrapperDtoResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
