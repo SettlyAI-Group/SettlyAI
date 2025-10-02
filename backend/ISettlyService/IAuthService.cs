@@ -12,4 +12,5 @@ public interface IAuthService
     Task<LoginOutputDto> OAuthLoginAsync(ExternalUser externalUser);
     Task<bool> ActivateUserAsync(VerifyCodeDto verifyCodeDto);
     Task SendVerificationCodeAsync(User user, VerificationType verificationType);
+    Task<ResponseUserDto?> GetUserInfoAsync(int userId);
 }

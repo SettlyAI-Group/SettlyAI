@@ -40,24 +40,15 @@ public class AuthService : IAuthService
             var existing = await _context.Users.FirstOrDefaultAsync(u => u.Email == registerUser.Email);
             if (existing is not null && existing.IsActive)
             {
-                if (string.IsNullOrEmpty(existing.PasswordHash))
-                {
-                    existing.PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerUser.Password);
-                    existing.Name = registerUser.FullName;
-                    await _context.SaveChangesAsync();
-                    
-                    return new ResponseUserDto
-                    {
-                        Id = existing.Id,
-                        FullName = existing.Name,
-                        Email = existing.Email
-                    };
-                }
                 throw new ArgumentException("Email is already registered.");
             }
 
             if (existing is not null && !existing.IsActive)
-                throw new EmailUnverifiedException("Email is registered but not yet verified.");
+            {
+                // Delete existing unactivated user and recreate
+                _context.Users.Remove(existing);
+                await _context.SaveChangesAsync();
+            }
 
             var user = new User
             {
@@ -265,5 +256,21 @@ public class AuthService : IAuthService
             default:
                 throw new ArgumentException($"Unsupported verification type: {verificationType}");
         }
+    }
+
+    public async Task<ResponseUserDto?> GetUserInfoAsync(int userId)
+    {
+        var user = await _context.Users.FindAsync(userId);
+        if (user is null)
+        {
+            return null;
+        }
+
+        return new ResponseUserDto
+        {
+            Id = user.Id,
+            FullName = user.Name,
+            Email = user.Email
+        };
     }
 }
