@@ -40,9 +40,9 @@ public class PdfController : ControllerBase
             var request = new SuburbReportPdfRequest
             {
                 SuburbId = suburbId,
-                SuburbName = suburbBasicInfo?.Name ?? "Unknown",
-                State = suburbBasicInfo?.State ?? "Unknown",
-                Postcode = suburbBasicInfo?.Postcode ?? "Unknown",
+                SuburbName = suburbBasicInfo.Name,
+                State = suburbBasicInfo.State,
+                Postcode = suburbBasicInfo.Postcode,
                 HousingMarket = housingMarket,
                 Livability = livability,
                 IncomeEmployment = incomeEmployment,
@@ -54,6 +54,10 @@ public class PdfController : ControllerBase
             var pdfBytes = _pdfService.GenerateSuburbReport(request);
             var fileName = $"suburb-report-{request.SuburbName.Replace(" ", "-")}-{DateTime.UtcNow:yyyyMMdd}.pdf";
             return File(pdfBytes, "application/pdf", fileName);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
         }
         catch (Exception ex)
         {

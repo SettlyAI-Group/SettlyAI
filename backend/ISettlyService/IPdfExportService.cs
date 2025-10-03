@@ -3,5 +3,5 @@ namespace ISettlyService;
 
 public interface IPdfExportService
 {
-    byte[] GenerateSuburbReport(SuburbReportPdfRequest request);
+    Task<byte[]> GenerateSuburbReportAsync(SuburbReportPdfRequest request, CancellationToken cancellationToken = default);
 }
