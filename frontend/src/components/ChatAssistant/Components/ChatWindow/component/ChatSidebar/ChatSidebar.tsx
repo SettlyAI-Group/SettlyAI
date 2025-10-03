@@ -44,7 +44,7 @@ const ChatSidebar = ({ conversations, activeKey, onActiveChange, onNewChat }: Ch
   return (
     <SidebarContainer>
       <SidebarHeader>
-        <Typography variant="subtitle2">Chats</Typography>
+        <Typography variant="subtitle2">Recents</Typography>
         <IconButton size="small" onClick={onNewChat}>
           <AddIcon fontSize="small" />
         </IconButton>
