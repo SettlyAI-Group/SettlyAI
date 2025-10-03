@@ -754,6 +754,55 @@ namespace SettlyModels.Migrations
                     b.ToTable("UserFundSelections");
                 });
 
+            modelBuilder.Entity("SettlyModels.Entities.UserOAuth", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AvatarUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Provider")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("ProviderUserId")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("Provider", "ProviderUserId")
+                        .IsUnique();
+
+                    b.ToTable("UserOAuths");
+                });
+
             modelBuilder.Entity("SettlyModels.Entities.Verification", b =>
                 {
                     b.Property<int>("Id")
@@ -999,6 +1048,17 @@ namespace SettlyModels.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("SettlyModels.Entities.UserOAuth", b =>
+                {
+                    b.HasOne("SettlyModels.Entities.User", "User")
+                        .WithMany("OAuthAccounts")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("SettlyModels.Entities.Verification", b =>
                 {
                     b.HasOne("SettlyModels.Entities.User", "User")
@@ -1061,6 +1121,8 @@ namespace SettlyModels.Migrations
                     b.Navigation("InspectionPlans");
 
                     b.Navigation("LoanCalculations");
+
+                    b.Navigation("OAuthAccounts");
 
                     b.Navigation("SuperProjectionInputs");
 
