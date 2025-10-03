@@ -18,6 +18,7 @@ import FavouritesPage from './pages/FavouritesPage';
 import FeaturesPage from './pages/FeaturesPage';
 import ChatBotPage from './pages/ChatBotPage';
 import AboutPage from './pages/AboutPage';
+import ChatAssistant from './components/ChatAssistant';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -35,7 +36,6 @@ const App = () => {
           <Route path="/" element={<Layout />}>
             <Route path="/theme" element={<ThemeDemo />} />
             <Route index element={<HomePage />} />
-
             <Route path="/explore/:location" element={<ExplorePage />} />
             <Route path="/suburb/:suburbId" element={<SuburbReportPage />} />
           </Route>
@@ -48,9 +48,9 @@ const App = () => {
           <Route path="/favourites" element={<FavouritesPage />} />
           <Route path="/features" element={<FeaturesPage />} />
           <Route path="/chat" element={<ChatBotPage />} />
-
           <Route path="/about" element={<AboutPage />} />
         </Routes>
+        <ChatAssistant />
       </ThemeProvider>
     </QueryClientProvider>
   );

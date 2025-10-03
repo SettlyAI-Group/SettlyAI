@@ -4,6 +4,9 @@ using Microsoft.OpenApi.Models;
 using SettlyApi.Configuration;
 using SettlyApi.Filters;
 using SettlyApi.Middlewares;
+using SettlyFinance.Calculators;
+using SettlyFinance.Calculators.Orchestrators;
+using SettlyFinance.Interfaces;
 using SettlyModels;
 using SettlyModels.OAutOptions;
 using SettlyService;
@@ -59,7 +62,11 @@ public class Program
         builder.Services.AddScoped<IPdfExportService, PdfService>();
         builder.Services.AddScoped<IOAuthService, OAuthService>();
 
-
+        builder.Services.AddScoped<ILoanCalculatorFacade, LoanCalculatorFacade>();
+        builder.Services.AddScoped<IPiecewiseAmortizer, PiecewiseAmortizer>();
+        builder.Services.AddScoped<ILoanCalculatorService, LoanCalculatorService>();
+        builder.Services.AddSingleton<IFrequencyProvider, FrequencyProvider>();
+        builder.Services.AddSingleton<IAmortizationEngineFactory, AmortizationEngineFactory>();
         builder.Services.AddScoped<ILayoutNavService, LayoutNavService>();
         //Add Swagger
         builder.Services.AddSwaggerConfig();
