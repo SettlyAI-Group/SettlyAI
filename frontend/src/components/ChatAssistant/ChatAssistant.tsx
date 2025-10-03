@@ -4,6 +4,7 @@ import ChatIcon from '@mui/icons-material/Chat';
 import CloseIcon from '@mui/icons-material/Close';
 import { styled } from '@mui/material/styles';
 import Draggable from 'react-draggable';
+import ChatWindow from './Components/ChatWindow';
 
 const FloatingButton = styled(Fab)(({ theme }) => ({
   zIndex: 1000,
@@ -28,24 +29,6 @@ const DraggableWrapper = styled('div')(() => ({
   zIndex: 1000,
 }));
 
-const ChatWindow = styled('div')(({ theme }) => ({
-  position: 'absolute',
-  bottom: 68,
-  right: 0,
-  width: 400,
-  height: 600,
-  backgroundColor: theme.palette.background.paper,
-  borderRadius: theme.spacing(2),
-  boxShadow: theme.shadows[16],
-  display: 'flex',
-  flexDirection: 'column',
-  overflow: 'hidden',
-  [theme.breakpoints.down('sm')]: {
-    width: 320,
-    height: 500,
-  },
-}));
-
 const ChatAssistant = () => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -56,7 +39,7 @@ const ChatAssistant = () => {
   return (
     <Draggable bounds="parent">
       <DraggableWrapper>
-        {isOpen && <ChatWindow>Chat Assistant Placeholder</ChatWindow>}
+        {isOpen && <ChatWindow />}
 
         <Tooltip title={isOpen ? 'Close AI Assistant' : 'Open AI Assistant'} placement="left">
           <FloatingButton
