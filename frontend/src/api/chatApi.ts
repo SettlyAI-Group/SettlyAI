@@ -1,3 +1,5 @@
+import httpClient from './httpClient';
+
 interface ChatMessage {
   role: 'user' | 'assistant';
   content: string;
@@ -8,6 +10,34 @@ interface ChatSSEOptions {
   onError?: (error: Error) => void;
   onComplete?: () => void;
   signal?: AbortSignal;
+}
+
+export interface ConversationResponse {
+  id: string;
+  title: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface MessageResponse {
+  id: string;
+  role: 'user' | 'assistant';
+  content: string;
+  createdAt: string;
+}
+
+export interface ConversationResponse {
+  id: string;
+  title: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface MessageResponse {
+  id: string;
+  role: 'user' | 'assistant';
+  content: string;
+  createdAt: string;
 }
 
 /**
@@ -120,4 +150,22 @@ export const sendChatMessage = async (
       onError?.(new Error('Unknown error occurred'));
     }
   }
+};
+
+/**
+ * 获取对话列表
+ */
+export const fetchConversations = async (): Promise<ConversationResponse[]> => {
+  const { data } = await httpClient.get<ConversationResponse[]>('/chat/conversations');
+  return data;
+};
+
+/**
+ * 获取某个对话的消息历史
+ */
+export const fetchConversationMessages = async (
+  conversationId: string
+): Promise<MessageResponse[]> => {
+  const { data } = await httpClient.get<MessageResponse[]>(`/chat/conversations/${conversationId}/messages`);
+  return data;
 };

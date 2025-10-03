@@ -1,12 +1,11 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Box, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { Bubble, Sender } from '@ant-design/x';
 import ChatIcon from '@mui/icons-material/Chat';
 import ChatSidebar from './component/ChatSidebar';
 import { Button } from 'antd';
-import type { ButtonProps } from 'antd';
-import { sendChatMessage } from '@/api/chatApi';
+import { sendChatMessage, fetchConversations, fetchConversationMessages } from '@/api/chatApi';
 
 const WindowContainer = styled(Box)(({ theme }) => ({
   position: 'absolute',
@@ -82,21 +81,88 @@ interface ConversationItem {
 }
 
 const ChatWindow = () => {
-  const [conversations, setConversations] = useState<ConversationItem[]>([
-    {
-      key: '1',
-      label: 'New Chat',
-      timestamp: Date.now(),
-      messages: [],
-    },
-  ]);
-  const [activeKey, setActiveKey] = useState<string>('1');
+  const [conversations, setConversations] = useState<ConversationItem[]>([]);
+  const [activeKey, setActiveKey] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [inputValue, setInputValue] = useState('');
+  const [isLoadingConversations, setIsLoadingConversations] = useState(true);
   const abortControllerRef = useRef<AbortController | null>(null);
 
   const currentConversation = conversations.find((conv) => conv.key === activeKey);
   const messages = currentConversation?.messages || [];
+
+  // 加载对话列表
+  useEffect(() => {
+    const loadConversations = async () => {
+      try {
+        setIsLoadingConversations(true);
+        const data = await fetchConversations();
+
+        // 转换后端数据为前端格式
+        const convs: ConversationItem[] = data.map((conv) => ({
+          key: conv.id,
+          label: conv.title,
+          timestamp: new Date(conv.createdAt).getTime(),
+          messages: [],
+        }));
+
+        if (convs.length === 0) {
+          // 如果没有对话，创建一个新的
+          convs.push({
+            key: 'new-1',
+            label: 'New Chat',
+            timestamp: Date.now(),
+            messages: [],
+          });
+        }
+
+        setConversations(convs);
+        setActiveKey(convs[0].key);
+      } catch (error) {
+        console.error('Failed to load conversations:', error);
+        // 出错时创建默认对话
+        const newConv: ConversationItem = {
+          key: 'new-1',
+          label: 'New Chat',
+          timestamp: Date.now(),
+          messages: [],
+        };
+        setConversations([newConv]);
+        setActiveKey('new-1');
+      } finally {
+        setIsLoadingConversations(false);
+      }
+    };
+
+    loadConversations();
+  }, []);
+
+  // 当切换对话时加载消息历史
+  useEffect(() => {
+    if (!activeKey || activeKey.startsWith('new-')) return;
+
+    const loadMessages = async () => {
+      try {
+        const data = await fetchConversationMessages(activeKey);
+        const msgs: Message[] = data.map((msg) => ({
+          id: msg.id,
+          role: msg.role,
+          content: msg.content,
+          createAt: new Date(msg.createdAt).getTime(),
+        }));
+
+        setConversations((prev) =>
+          prev.map((conv) =>
+            conv.key === activeKey ? { ...conv, messages: msgs } : conv
+          )
+        );
+      } catch (error) {
+        console.error('Failed to load messages:', error);
+      }
+    };
+
+    loadMessages();
+  }, [activeKey]);
 
   const handleSend = async (message: string) => {
     const newMessage: Message = {
@@ -203,6 +269,24 @@ const ChatWindow = () => {
     setConversations([...conversations, newConversation]);
     setActiveKey(newKey);
   };
+
+  if (isLoadingConversations) {
+    return (
+      <WindowContainer>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100%',
+            width: '100%',
+          }}
+        >
+          <Typography>Loading conversations...</Typography>
+        </Box>
+      </WindowContainer>
+    );
+  }
 
   return (
     <WindowContainer>
