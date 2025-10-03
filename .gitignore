@@ -5,6 +5,7 @@
 
 # Development settings (contains local connection strings, etc.)
 backend/SettlyApi/appsettings.Development.json
+e --abort
 
 # User-specific files
 *.rsuser
