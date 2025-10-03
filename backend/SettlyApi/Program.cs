@@ -56,11 +56,8 @@ public class Program
         builder.Services.AddTransient<IPopulationSupplyService, PopulationSupplyService>();
         builder.Services.AddScoped<ILoanService, LoanService>();
         builder.Services.AddScoped<ITestimonialService, TestimonialService>();
-<<<<<<< HEAD
         builder.Services.AddScoped<IPdfExportService, PdfService>();
-=======
         builder.Services.AddScoped<IOAuthService, OAuthService>();
->>>>>>> main
 
 
         builder.Services.AddScoped<ILayoutNavService, LayoutNavService>();
