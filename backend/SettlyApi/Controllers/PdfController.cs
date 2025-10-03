@@ -51,7 +51,7 @@ public class PdfController : ControllerBase
             };
 
             // Generate PDF
-            var pdfBytes = _pdfService.GenerateSuburbReport(request);
+            var pdfBytes = await _pdfService.GenerateSuburbReportAsync(request);
             var fileName = $"suburb-report-{request.SuburbName.Replace(" ", "-")}-{DateTime.UtcNow:yyyyMMdd}.pdf";
             return File(pdfBytes, "application/pdf", fileName);
         }
@@ -61,7 +61,12 @@ public class PdfController : ControllerBase
         }
         catch (Exception ex)
         {
-            return BadRequest($"Failed to generate PDF: {ex.Message}");
+            return ex switch
+           {
+                KeyNotFoundException => NotFound($"Suburb data not found for ID {suburbId}"),
+                NotImplementedException => NotFound($"Suburb not found for ID {suburbId}"),
+                _ => StatusCode(500, "An error occurred while generating the PDF report")
+            };
         }
     }
 }

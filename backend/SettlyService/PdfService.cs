@@ -60,8 +60,10 @@ public class PdfService : IPdfExportService
         return document.GeneratePdf();
     }
 
-    public byte[] GenerateSuburbReport(SuburbReportPdfRequest request)
-    {
+    public async Task<byte[]> GenerateSuburbReportAsync(SuburbReportPdfRequest request, CancellationToken cancellationToken = default)
+    { 
+        return await Task.Run(() =>
+    { 
         var document = Document.Create(container =>
         {
             container.Page(page =>
@@ -215,7 +217,7 @@ public class PdfService : IPdfExportService
                     });
             });
         });
-
         return document.GeneratePdf();
+    }, cancellationToken);
     }
 }
