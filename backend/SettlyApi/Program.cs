@@ -5,6 +5,7 @@ using SettlyApi.Configuration;
 using SettlyApi.Filters;
 using SettlyApi.Middlewares;
 using SettlyModels;
+using SettlyModels.OAutOptions;
 using SettlyService;
 
 
@@ -25,8 +26,11 @@ public class Program
                 .EnableSensitiveDataLogging()
                 .EnableDetailedErrors()
         );
-        // 绑定 Email 节点到 EmailSettings
+        // EmailSettings
         builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("Email"));
+        // OAuth
+        builder.Services.Configure<OAuthOptions>(
+            builder.Configuration.GetSection("OAuth"));
         // Add CORS services
         builder.Services.AddCorsPolicies();
         // Add application services
@@ -35,11 +39,13 @@ public class Program
         builder.Services.AddScoped<IVerificationCodeService, VerificationCodeService>();
         builder.Services.AddTransient<ICreateTokenService, CreateTokenService>();
         builder.Services.AddScoped<IAuthService, AuthService>();
+        builder.Services.AddScoped<ISuburbOverviewService, SuburbOverviewService>();
         //Register ISearchApi with SearchApiService
         builder.Services.AddScoped<ISettlyService.ISearchService, SettlyService.SearchService>();
 
         // Add your custom API behavior config
         builder.Services.AddCustomApiBehavior();
+        builder.Services.AddHttpClient();
         // Add services to the container.
         builder.Services.AddControllers();
         // Add AutoMapper - scan all assemblies for profiles
@@ -50,6 +56,8 @@ public class Program
         builder.Services.AddTransient<IPopulationSupplyService, PopulationSupplyService>();
         builder.Services.AddScoped<ILoanService, LoanService>();
         builder.Services.AddScoped<ITestimonialService, TestimonialService>();
+        builder.Services.AddScoped<IPdfExportService, PdfService>();
+        builder.Services.AddScoped<IOAuthService, OAuthService>();
 
 
         builder.Services.AddScoped<ILayoutNavService, LayoutNavService>();
