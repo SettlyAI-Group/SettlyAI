@@ -24,6 +24,11 @@ public class UserService : IUserService
         return user;
     }
 
+    public async Task<User?> FindUserByEmailAsync(string email)
+    {
+        return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+    }
+
     public async Task<bool> UpdateUserByIdAsync(int userId, UserUpdateDto dto)
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);

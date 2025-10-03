@@ -30,6 +30,16 @@ namespace SettlyApi.Configuration
                         // get accessToken from HttpOnly Cookie
                         ctx.Token = ctx.Request.Cookies["accessToken"];
                         return Task.CompletedTask;
+                    },
+                    OnTokenValidated = ctx =>
+                    {
+                        // Validate that the token is an access token, not a refresh token
+                        var tokenType = ctx.Principal?.FindFirst("tokenType")?.Value;
+                        if (!string.Equals(tokenType, "accessToken", StringComparison.OrdinalIgnoreCase))
+                        {
+                            ctx.Fail("Invalid token type. Access token required.");
+                        }
+                        return Task.CompletedTask;
                     }
                 };
             });
