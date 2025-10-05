@@ -1,1 +1,1 @@
-export { default } from './MetricCards';
+export { default } from './MetricCard';
