@@ -46,6 +46,10 @@ public class Program
         //Register ISearchApi with SearchApiService
         builder.Services.AddScoped<ISettlyService.ISearchService, SettlyService.SearchService>();
 
+        // Super Estimate services
+        builder.Services.AddScoped<IProjectionService, ProjectionService>();
+        builder.Services.AddScoped<IFhssService, FhssService>();
+
         // Add your custom API behavior config
         builder.Services.AddCustomApiBehavior();
         builder.Services.AddHttpClient();
@@ -57,10 +61,12 @@ public class Program
         builder.Services.AddScoped<IPropertyService, PropertyService>();
         builder.Services.AddScoped<IFavouriteService, FavouriteService>();
         builder.Services.AddTransient<IPopulationSupplyService, PopulationSupplyService>();
+
         builder.Services.AddScoped<ILoanService, LoanService>();
         builder.Services.AddScoped<ITestimonialService, TestimonialService>();
         builder.Services.AddScoped<IPdfExportService, PdfService>();
         builder.Services.AddScoped<IOAuthService, OAuthService>();
+
 
         builder.Services.AddScoped<ILoanCalculatorFacade, LoanCalculatorFacade>();
         builder.Services.AddScoped<IPiecewiseAmortizer, PiecewiseAmortizer>();
