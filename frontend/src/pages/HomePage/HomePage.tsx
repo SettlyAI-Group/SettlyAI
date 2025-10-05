@@ -4,7 +4,14 @@ import type { ITestimonial } from "@/interfaces/Testimonial";
 import { getTestimonials } from "@/api/testimonialApi";
 import { useQuery } from "@tanstack/react-query";
 import { Typography, Button } from '@mui/material';
+import { Box, styled } from '@mui/material';
 import HeroSection from './components/HeroSection';
+import FeatureSection from './components/FeatureSection';
+
+const Container = styled(Box)(() => ({
+  display: 'flex',
+  flexDirection: 'column',
+}));
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -57,13 +64,15 @@ const HomePage = () => {
 
 
   return (
-    <>
+    <Container>
       <HeroSection />
-      <h1>Home</h1>
-      <button onClick={() => checkSuburb(sydney)}>Go to Sydney</button>
-      <button onClick={() => checkSuburb(melbourne)}>Go to Melbourne</button>
+      <FeatureSection />
       <TestimonialsSection testimonials={testimonials} />
-    </>
+      {/* <h1>Home</h1>
+      <button onClick={() => checkSuburb(sydney)}>Go to Sydney</button>
+      <button onClick={() => checkSuburb(melbourne)}>Go to Melbourne</button> */}
+    </Container>
+
   );
 };
 

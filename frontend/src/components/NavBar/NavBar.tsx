@@ -1,8 +1,10 @@
-import { Link as RouterLink } from 'react-router-dom';
-import { AppBar, Typography, styled, Box } from '@mui/material';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { AppBar, Typography, styled, Box, Avatar } from '@mui/material';
 import GlobalButton from '../GlobalButton';
 import HomeRounded from '@mui/icons-material/HomeRounded';
 import React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { selectUser, selectIsAuthenticated, clearUser } from '../../redux/authSlice';
 
 //Setting up the containers
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
@@ -105,6 +107,36 @@ const JoinButton = styled(WrappedGlobalButton)(({ theme }) => ({
   },
 }));
 
+const LogoutButton = styled(GlobalButton)(({ theme }) => ({
+  width: 90,
+  '&&': { borderRadius: 8 },
+  [theme.breakpoints.down(400)]: {
+    width: '100%',
+    paddingLeft: theme.spacing(0.25),
+    paddingRight: theme.spacing(0.25),
+  },
+  ...theme.typography.p1,
+  color: theme.palette.text.secondary,
+  backgroundColor: theme.palette.common.white,
+  boxShadow: theme.shadows[3],
+  whiteSpace: 'nowrap',
+}));
+
+const UserInfo = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  gap: theme.spacing(1.5),
+  color: theme.palette.text.primary,
+}));
+
+const UserName = styled(Typography)(({ theme }) => ({
+  ...theme.typography.p1,
+  whiteSpace: 'nowrap',
+  [theme.breakpoints.down(400)]: {
+    display: 'none',
+  },
+}));
+
 const BrandMark = styled(Box)(({ theme }) => ({
   width: 40,
   height: 40,
@@ -131,6 +163,16 @@ const BrandLink = styled(Typography)(({ theme }) => ({
 }));
 
 const Navbar = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const user = useSelector(selectUser);
+  const isAuthenticated = useSelector(selectIsAuthenticated);
+
+  const handleLogout = () => {
+    dispatch(clearUser());
+    navigate('/');
+  };
+
   return (
     <StyledAppBar position="static" color="transparent" elevation={0}>
       <LeftContainer>
@@ -159,12 +201,26 @@ const Navbar = () => {
       </MiddleContainer>
 
       <RightContainer>
-        <LoginButton component={RouterLink} to={'/login'}>
-          Login
-        </LoginButton>
-        <JoinButton component={RouterLink} to={'/registration'}>
-          Join
-        </JoinButton>
+        {isAuthenticated ? (
+          <>
+            <UserInfo>
+              <Avatar sx={{ width: 32, height: 32, bgcolor: 'primary.main' }}>
+                {user?.fullName?.charAt(0).toUpperCase()}
+              </Avatar>
+              <UserName>{user?.fullName}</UserName>
+            </UserInfo>
+            <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
+          </>
+        ) : (
+          <>
+            <LoginButton component={RouterLink} to={'/login'}>
+              Login
+            </LoginButton>
+            <JoinButton component={RouterLink} to={'/registration'}>
+              Join
+            </JoinButton>
+          </>
+        )}
       </RightContainer>
     </StyledAppBar>
   );

@@ -46,6 +46,7 @@ namespace SettlyService
 
         public async Task<PopulationSupplyDto?> GetDemandDevAsync(int id)
         {
+
             throw new NotImplementedException();
         }
 
@@ -54,15 +55,37 @@ namespace SettlyService
         {
             var lifeStyle = await context.Livabilities.AsNoTracking().Where(l => l.SuburbId == id).OrderByDescending(l => l.SnapshotDate)
                 .FirstOrDefaultAsync();
-            if(lifeStyle == null)
+            if (lifeStyle == null)
                 //TODO:Change to global error handling middleware once it's done
                 throw new KeyNotFoundException($"Livability not found.");
             return mapper.Map<LivabilityDto>(lifeStyle);
         }
 
-        public async Task<RiskDevelopmentDto?> GetSafetyAsync(int id)
+        public async Task<List<ScoreCardDto>> GetSafetyScoresAsync(int suburbId)
         {
-            throw new NotImplementedException();
+            var crimeRate = await context.RiskDevelopments
+        .AsNoTracking()
+        .Where(r => r.SuburbId == suburbId)
+        .OrderByDescending(r => r.SnapshotDate)
+        .FirstOrDefaultAsync();
+
+            var viability = await context.SettlyAIScores
+        .AsNoTracking()
+        .Where(s => s.SuburbId == suburbId)
+        .OrderByDescending(s => s.SnapshotDate)
+        .FirstOrDefaultAsync();
+
+            if (crimeRate == null || viability == null)
+                throw new KeyNotFoundException("Safety Scores not found");
+
+            var scores = new ScoresCardsAggregateDto
+            {
+                CrimeRate = crimeRate.CrimeRate,
+                AffordabilityScore = viability.AffordabilityScore,
+                GrowthPotentialScore = viability.GrowthPotentialScore
+            };
+
+            return mapper.Map<List<ScoreCardDto>>(scores);
         }
 
         public async Task<SuburbSnapshotDto> GetSnapshotAsync(int id)
