@@ -57,7 +57,7 @@ const StressScenario = ({ calc }: Props) => {
         }}
       >
         <Typography variant="body2" sx={{ opacity: 0.7, mb: 0.5 }}>
-          Monthly Repayment Under Stress
+          Simulated Repayment at Stress Rate
         </Typography>
         <Typography variant="h5">{stressResult ? toCurrencyCeil(stressResult.paymentPerPeriod) : '—'}</Typography>
       </Box>

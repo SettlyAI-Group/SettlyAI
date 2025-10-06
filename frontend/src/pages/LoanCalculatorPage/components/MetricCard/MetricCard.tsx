@@ -10,7 +10,7 @@ interface MetricCardProps {
 
 const MetricCard: React.FC<MetricCardProps> = ({ label, value, tooltip, secondary }) => (
   <Tooltip title={tooltip || ''} placement="top" arrow>
-    <Card sx={{ height: '100%', backgroundColor: 'grey.50' }}>
+    <Card sx={{ height: '100%', minHeight: 120, backgroundColor: 'grey.50' }}>
       <CardContent sx={{ textAlign: 'center' }}>
         <Typography variant="overline" color="text.secondary" sx={{ textTransform: 'none' }}>
           {label}
@@ -19,7 +19,7 @@ const MetricCard: React.FC<MetricCardProps> = ({ label, value, tooltip, secondar
           {value ?? '--'}
         </Typography>
         {secondary ? (
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+          <Typography variant="p2" color="text.secondary" sx={{ mt: 1 }}>
             {secondary}
           </Typography>
         ) : null}
