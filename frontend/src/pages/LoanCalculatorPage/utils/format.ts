@@ -100,10 +100,15 @@ const centsOr = (cents?: MoneyLike, dec?: MoneyLike): number =>
 
 // ---------------- adapter ----------------
 /**
- * 统一适配 LoanWrapperDtoResponse：
- * - /single：amortization.payment / paymentPerPeriod / totalInterest / totalCost / paymentToIncomeRatioPercent
- * - /piecewise：piecewise.firstSegmentPayment / totalInterest / totalCost / firstSegmentPaymentToIncomeRatioPercent
- * 同时兼容 camelCase 与 PascalCase、以及 *_Cents。
+ * A highly defensive adapter that normalizes the loan calculation response from the backend.
+ * The backend wrapper DTO can have inconsistent shapes, and this function handles:
+ * - Top-level keys for P&I (`amortization`) or IO (`piecewise`).
+ * - Both camelCase (`totalCost`) and PascalCase (`TotalCost`) property names.
+ * - Both decimal values (`totalInterest`) and integer cent values (`totalInterestCents`).
+ *
+ * It prioritizes piecewise results if available, then falls back to amortization results.
+ * @param wrapper The raw response object from the API.
+ * @returns A standardized `LoanCalcResult` object.
  */
 export const adaptWrapperResponse = (wrapper: LoanWrapperAny): LoanCalcResult => {
   const a: AmortizationAny | null =

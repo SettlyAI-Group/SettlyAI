@@ -1,14 +1,14 @@
 import { useMemo, useState } from 'react';
-import { Alert, Box, Button, CircularProgress, Container, Paper, Grid, Typography } from '@mui/material';
+import { Alert, Box, Button, CircularProgress, Container, Paper, Grid, Typography, Stack } from '@mui/material';
 import LoanDetailsForm from './components/LoanDetailsForm';
 import MetricCard from './components/MetricCard';
-import { toCurrency, toPercent } from './utils/format';
+import { toCurrency, toCurrencyCeil, toPercent } from './utils/format';
 import { annuityPaymentPerPeriod } from './utils/finance';
 import NavBar from '../../components/NavBar';
 import Footer from '../../components/Footer';
 import { useLoanCalculator } from './hooks/useLoanCalculator';
 import type { LoanFormValues } from './types/calculatorTypes';
-
+import StressScenario from './components/StressTestScenario/StressScenario';
 const initialValues: LoanFormValues = {
   loanAmount: 600000,
   annualInterestRatePercent: 6.5,
@@ -20,7 +20,21 @@ const initialValues: LoanFormValues = {
 
 const LoanCalculatorPage = () => {
   const [showErrors, setShowErrors] = useState(false);
-  const { values, onChange, simulate, result, loading, error } = useLoanCalculator(initialValues);
+  const {
+    values,
+    onChange,
+    simulate,
+    result,
+    loading,
+    error,
+    summaryResult, // <- use this in Summary
+    stressRate,
+    onStressRateChange,
+    stressResult,
+    stressLoading,
+    applyStressToSummary,
+    setApplyStressToSummary,
+  } = useLoanCalculator(initialValues);
 
   const isFormValid = useMemo(
     () => Number(values.loanAmount) > 0 && Number(values.annualInterestRatePercent) > 0 && Number(values.termYears) > 0,
@@ -88,12 +102,44 @@ const LoanCalculatorPage = () => {
 
           {/* --- Right: Summary --- */}
           <Grid size={{ xs: 12, md: 7 }}>
-            <Paper sx={{ p: 3, backgroundColor: 'background.paper' }}>
-              <Typography variant="subtitle2" sx={{ mb: 6 }}>
-                Loan Summary
-              </Typography>
+            <Paper
+              sx={{
+                p: 3,
+                transition: 'background-color 0.3s ease',
+                backgroundColor: applyStressToSummary
+                  ? theme => theme.palette.action.hover // Slightly change color when stress is applied
+                  : theme => theme.palette.background.paper,
+                border: theme =>
+                  applyStressToSummary
+                    ? `1px solid ${theme.palette.primary.light}`
+                    : `1px solid ${theme.palette.divider}`,
+              }}
+            >
+              <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 2 }}>
+                <Typography variant="subtitle2">Loan Summary</Typography>
 
-              {!result && !loading && (
+                {/* Add tag on top right corner */}
+                <Typography
+                  variant="caption"
+                  sx={{
+                    px: 1,
+                    py: 0.5,
+                    borderRadius: 1,
+                    bgcolor: applyStressToSummary
+                      ? theme => theme.palette.primary.light
+                      : theme => theme.palette.grey[300],
+                    color: applyStressToSummary
+                      ? theme => theme.palette.primary.contrastText
+                      : theme => theme.palette.text.secondary,
+                  }}
+                >
+                  {applyStressToSummary
+                    ? `Stress scenario (${stressRate.toFixed(1)}%)`
+                    : `Base scenario (${values.annualInterestRatePercent}%)`}
+                </Typography>
+              </Stack>
+
+              {!summaryResult && !loading && (
                 <Box
                   sx={{
                     display: 'flex',
@@ -113,40 +159,67 @@ const LoanCalculatorPage = () => {
                 </Box>
               )}
 
-              {result && (
+              {summaryResult && (
                 <>
                   <Grid container spacing={2}>
                     <Grid size={{ xs: 12, sm: 6 }}>
                       <MetricCard
                         label={`${values.frequency} Repayment`}
-                        value={toCurrency(result.paymentPerPeriod)}
-                        secondary={isIo ? `During ${ioYears}-year interest-only period` : undefined}
+                        // show stressed-or-base repayment, already ceiled by your formatter if needed
+                        value={toCurrencyCeil(summaryResult.paymentPerPeriod)}
+                        secondary={
+                          values.repaymentChoice.startsWith('InterestOnly_')
+                            ? `During ${Number(values.repaymentChoice.split('_')[1] ?? 0)}-year interest-only period`
+                            : undefined
+                        }
                       />
                     </Grid>
+
                     <Grid size={{ xs: 12, sm: 6 }}>
                       <MetricCard
                         label="Debt-to-Income Ratio"
-                        value={result.incomeRatioPercent > 0 ? toPercent(result.incomeRatioPercent, 1) : 'N/A'}
+                        value={
+                          summaryResult.incomeRatioPercent > 0 ? toPercent(summaryResult.incomeRatioPercent, 1) : 'N/A'
+                        }
                         tooltip="The percentage of your income used for loan repayments. Only calculated if income is provided."
                       />
                     </Grid>
+
                     <Grid size={{ xs: 12, sm: 6 }}>
-                      <MetricCard label="Total Interest Payable" value={toCurrency(result.totalInterest)} />
+                      <MetricCard label="Total Interest Payable" value={toCurrency(summaryResult.totalInterest)} />
                     </Grid>
+
                     <Grid size={{ xs: 12, sm: 6 }}>
-                      <MetricCard label="Total Loan Cost" value={toCurrency(result.totalCost)} />
+                      <MetricCard label="Total Loan Cost" value={toCurrency(summaryResult.totalCost)} />
                     </Grid>
                   </Grid>
 
-                  {isIo && estimatedNextPmt && (
+                  {/* FYI: The info banner below still uses your original estimatedNextPmt logic.
+            If you want it to follow stress too, switch `estimatedNextPmt` to use stressed inputs. */}
+                  {values.repaymentChoice.startsWith('InterestOnly_') && estimatedNextPmt && (
                     <Alert severity="info" sx={{ mt: 3 }}>
-                      After your {ioYears}-year interest-only period, your repayments will switch to Principal &
-                      Interest. The estimated {values.frequency.toLowerCase()} repayment will be approximately{' '}
-                      <strong>{toCurrency(estimatedNextPmt)}</strong> for the remaining term.
+                      After your {Number(values.repaymentChoice.split('_')[1] ?? 0)}-year interest-only period, your
+                      repayments will switch to Principal &amp; Interest. The estimated {values.frequency.toLowerCase()}{' '}
+                      repayment will be approximately <strong>{toCurrency(estimatedNextPmt)}</strong> for the remaining
+                      term.
                     </Alert>
                   )}
                 </>
               )}
+            </Paper>
+
+            {/* StressScenario placed under the Summary panel */}
+            <Paper sx={{ p: 3, mt: 3 }}>
+              <StressScenario
+                calc={{
+                  stressRate,
+                  onStressRateChange,
+                  stressResult,
+                  stressLoading,
+                  applyStressToSummary,
+                  setApplyStressToSummary,
+                }}
+              />
             </Paper>
           </Grid>
         </Grid>

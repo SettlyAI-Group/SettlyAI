@@ -153,11 +153,11 @@ const LoanDetailsForm: FC<LoanDetailsFormProps> = ({ values, onChange, showError
               onChange={e => onChange('repaymentChoice', e.target.value as RepaymentChoice)}
             >
               <MenuItem value="PrincipalAndInterest">Principal &amp; Interest</MenuItem>
-              <MenuItem value="InterestOnly_1">Interest Only â€?1 Year</MenuItem>
-              <MenuItem value="InterestOnly_2">Interest Only â€?2 Years</MenuItem>
-              <MenuItem value="InterestOnly_3">Interest Only â€?3 Years</MenuItem>
-              <MenuItem value="InterestOnly_4">Interest Only â€?4 Years</MenuItem>
-              <MenuItem value="InterestOnly_5">Interest Only â€?5 Years</MenuItem>
+              <MenuItem value="InterestOnly_1">Interest Only - 1 Year</MenuItem>
+              <MenuItem value="InterestOnly_2">Interest Only - 2 Years</MenuItem>
+              <MenuItem value="InterestOnly_3">Interest Only - 3 Years</MenuItem>
+              <MenuItem value="InterestOnly_4">Interest Only - 4 Years</MenuItem>
+              <MenuItem value="InterestOnly_5">Interest Only - 5 Years</MenuItem>
             </TextField>
             <FormHelperText>P&amp;I or an initial Interest Only period.</FormHelperText>
           </FormControl>
@@ -182,4 +182,3 @@ const LoanDetailsForm: FC<LoanDetailsFormProps> = ({ values, onChange, showError
 };
 
 export default LoanDetailsForm;
-

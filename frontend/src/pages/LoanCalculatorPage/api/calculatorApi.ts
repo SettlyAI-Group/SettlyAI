@@ -3,9 +3,11 @@ import type { LoanFormValues } from '../types/calculatorTypes';
 import { adaptWrapperResponse } from '../utils/format';
 import type { LoanCalcResult } from '../types/calculatorTypes';
 
+type WrapperResponse = Parameters<typeof adaptWrapperResponse>[0];
+
 const API_BASE = (import.meta.env.VITE_API_BASE ?? '').replace(/\/+$/, '');
 
-// 常见下拉 value 的显式映射（避免 label 格式差异）
+// Explicit map for common IO dropdown values to years
 const IO_LABEL_MAP: Record<string, number> = {
   InterestOnly_1: 1,
   InterestOnly_2: 2,
@@ -20,26 +22,34 @@ const IO_LABEL_MAP: Record<string, number> = {
   'Interest Only - 5 Years': 5,
   'Interest Only — 5 Years': 5,
 };
-
+/**
+ * Parses the number of interest-only years from various string formats.
+ * It uses a cascading strategy:
+ * 1. Checks a predefined map of common values (e.g., 'InterestOnly_1').
+ * 2. Tries to parse the format "InterestOnly_N".
+ * 3. Falls back to a loose regex to find a number followed by "year".
+ * @param choice The repayment choice string from the form.
+ * @returns The number of IO years, or 0 if none is found.
+ */
 const parseIoYears = (choice: LoanFormValues['repaymentChoice']): number => {
   if (!choice) return 0;
   const raw = String(choice).trim();
 
-  // 1) 先用显式映射（最稳）
+  // 1) Use explicit mapping first
   if (raw in IO_LABEL_MAP) return IO_LABEL_MAP[raw];
 
-  // 2) InterestOnly_N 这种规范值
+  // 2) Parse "InterestOnly_N"
   if (/^InterestOnly_\d+$/i.test(raw)) {
     const n = Number(raw.split('_')[1]);
     return Number.isFinite(n) ? n : 0;
   }
 
-  // 3) 宽松正则: "interest only ... 1 year"
+  // 3) Loose regex, e.g. "interest only ... 1 year"
   const m = raw.toLowerCase().match(/interest\s*only.*?(\d+)\s*year/);
   return m ? Number(m[1]) : 0;
 };
 
-// 仅在有净收入时携带该字段，避免发送 null
+// Helper: attach NetAnnualIncome only when provided
 const withOptionalIncome = <T extends Record<string, unknown>>(
   base: T,
   netAnnualIncome: LoanFormValues['netAnnualIncome']
@@ -48,27 +58,31 @@ const withOptionalIncome = <T extends Record<string, unknown>>(
   return { ...base, NetAnnualIncome: Number(netAnnualIncome) };
 };
 
-/** 单段 P&I 请求体 */
-const toAmortizationRequestDto = (v: LoanFormValues) => {
+/**
+ * Build single-segment (P&I) request body.
+ * `effectiveAnnualRatePercent` supports overriding the UI rate (used by stress slider).
+ */
+const toAmortizationRequestDto = (v: LoanFormValues, effectiveAnnualRatePercent: number) => {
   const loanAmount = Number(v.loanAmount);
-  const annualRatePercent = Number(v.annualInterestRatePercent); // 约定百分数，如 6.5
   const termYears = Number(v.termYears);
 
   const base = {
     LoanAmount: loanAmount,
-    AnnualInterestRate: annualRatePercent, // 若后端要小数：annualRatePercent / 100
+    AnnualInterestRate: effectiveAnnualRatePercent, // backend expects percent, e.g. 6.5
     LoanTermYears: termYears,
-    Frequency: v.frequency, // 已启用 JsonStringEnumConverter 可发 "Monthly"
+    Frequency: v.frequency, // relies on JsonStringEnumConverter
     RepaymentType: 'PrincipalAndInterest' as const,
     GenerateSchedule: false,
   };
   return withOptionalIncome(base, v.netAnnualIncome);
 };
 
-/** 分段（IO -> P&I）请求体 */
-const toPiecewiseRequestDto = (v: LoanFormValues, ioYears: number) => {
+/**
+ * Build piecewise (IO -> P&I) request body.
+ * `effectiveAnnualRatePercent` supports overriding the UI rate (used by stress slider).
+ */
+const toPiecewiseRequestDto = (v: LoanFormValues, ioYears: number, effectiveAnnualRatePercent: number) => {
   const loanAmount = Number(v.loanAmount);
-  const annualRatePercent = Number(v.annualInterestRatePercent);
   const termYears = Number(v.termYears);
   const pniYears = Math.max(0, termYears - ioYears);
 
@@ -81,14 +95,14 @@ const toPiecewiseRequestDto = (v: LoanFormValues, ioYears: number) => {
   if (ioYears > 0) {
     segments.push({
       RepaymentType: 'InterestOnly',
-      AnnualInterestRate: annualRatePercent,
+      AnnualInterestRate: effectiveAnnualRatePercent,
       LoanTermYears: ioYears,
     });
   }
   if (pniYears > 0) {
     segments.push({
       RepaymentType: 'PrincipalAndInterest',
-      AnnualInterestRate: annualRatePercent,
+      AnnualInterestRate: effectiveAnnualRatePercent,
       LoanTermYears: pniYears,
     });
   }
@@ -102,20 +116,28 @@ const toPiecewiseRequestDto = (v: LoanFormValues, ioYears: number) => {
   return withOptionalIncome(base, v.netAnnualIncome);
 };
 
-/** 调用后端并适配结果 */
-export const calculateLoan = async (values: LoanFormValues): Promise<LoanCalcResult> => {
+type CalcOptions = {
+  /** Optional stress override (percent, e.g. 8.5). If provided, it replaces the form rate. */
+  interestRateOverride?: number;
+};
+
+/**
+ * Call backend and adapt the wrapper response.
+ * Supports an optional stress interest rate override.
+ */
+export const calculateLoan = async (values: LoanFormValues, opts?: CalcOptions): Promise<LoanCalcResult> => {
   const ioYears = parseIoYears(values.repaymentChoice);
   const isPiecewise = ioYears > 0;
 
   const path = isPiecewise ? '/api/LoanCalculator/piecewise' : '/api/LoanCalculator/single';
   const url = API_BASE ? `${API_BASE}${path}` : path;
 
-  const body = isPiecewise ? toPiecewiseRequestDto(values, ioYears) : toAmortizationRequestDto(values);
+  // Use override when provided; fallback to form value
+  const effectiveAnnualRatePercent = Number(opts?.interestRateOverride ?? values.annualInterestRatePercent);
 
-  // 临时日志，确认走到哪条路径（需要时保留）
-  // console.log('[calc] repaymentChoice=', values.repaymentChoice);
-  // console.log('[calc] ioYears=', ioYears, 'isPiecewise=', isPiecewise);
-  // console.log('[calc] url=', url, 'body=', body);
+  const body = isPiecewise
+    ? toPiecewiseRequestDto(values, ioYears, effectiveAnnualRatePercent)
+    : toAmortizationRequestDto(values, effectiveAnnualRatePercent);
 
   const res = await fetch(url, {
     method: 'POST',
@@ -128,6 +150,6 @@ export const calculateLoan = async (values: LoanFormValues): Promise<LoanCalcRes
     throw new Error(text || `HTTP ${res.status}`);
   }
 
-  const data: unknown = await res.json();
+  const data = (await res.json()) as WrapperResponse;
   return adaptWrapperResponse(data);
 };

@@ -29,6 +29,3 @@ const MetricCard: React.FC<MetricCardProps> = ({ label, value, tooltip, secondar
 );
 
 export default MetricCard;
-
-
-
