@@ -62,15 +62,18 @@ namespace SettlyService
                     );
                 }).ToList();
 
+                // ★ 修复点：如果请求按年聚合，则内部强制生成逐期 schedule 以便聚合
+                bool needSchedulePiecewise = pwReq.GenerateSchedule || (pwReq.AggregateScheduleByYear == true);
+
                 var domainInput = new PiecewiseInput(
                     InitialLoanAmount: pwReq.InitialLoanAmount,
                     Segments: segments,
-                    GenerateSchedule: pwReq.GenerateSchedule
+                    GenerateSchedule: needSchedulePiecewise
                 );
 
                 var result = _facade.CalculateLoan(domainInput);
 
-                // 收支比：用请求频率换算每期收入，与 FirstSegmentPayment 的单位一致
+                // 收支比：用请求频率换算每期收入，与 FirstSegmentPayment 单位一致
                 string? ratioPercent = ComputePaymentToIncomeRatioPercent(
                     paymentPerPeriod: result.FirstSegmentPayment,
                     netAnnualIncome: pwReq.NetAnnualIncome,
@@ -89,7 +92,7 @@ namespace SettlyService
                     SegmentLabel: r.SegmentLabel
                 )).ToList();
 
-                // ★ 可选：仅当请求显式要求按年聚合时，才把逐期聚合为年度（不影响默认前端）
+                // ★ 仅当请求显式要求按年聚合时，才把逐期聚合为年度（不影响默认前端）
                 if (pwReq.AggregateScheduleByYear == true && scheduleDto is not null && scheduleDto.Count > 0)
                 {
                     scheduleDto = AggregateYearlyDto(scheduleDto, ppy).ToList();
@@ -124,10 +127,13 @@ namespace SettlyService
                     Label: MakeSegmentLabel(amReq.RepaymentType, amReq.LoanTermYears, NormalizeAnnualRate(amReq.AnnualInterestRate), amReq.Frequency)
                 );
 
+                // ★ 修复点：单段同样，如果只传了 aggregate=true 也要内部强制生成逐期
+                bool needScheduleSingle = amReq.GenerateSchedule || (amReq.AggregateScheduleByYear == true);
+
                 var pwForSingle = new PiecewiseInput(
                     InitialLoanAmount: amReq.LoanAmount,
                     Segments: new List<PiecewiseSegmentInput> { singleSegment },
-                    GenerateSchedule: amReq.GenerateSchedule
+                    GenerateSchedule: needScheduleSingle
                 );
 
                 var pwResult = _facade.CalculateLoan(pwForSingle);
@@ -141,7 +147,7 @@ namespace SettlyService
                     EndingBalance: row.EndingBalance
                 )).ToList();
 
-                // ★ 可选：单段也支持按年聚合
+                // ★ 单段也支持按年聚合
                 if (amReq.AggregateScheduleByYear == true && scheduleRows is not null && scheduleRows.Count > 0)
                 {
                     int ppy = GetPeriodsPerYear(amReq.Frequency);
