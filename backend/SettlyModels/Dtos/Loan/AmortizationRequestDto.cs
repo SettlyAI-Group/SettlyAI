@@ -15,6 +15,7 @@ namespace SettlyModels.DTOs.Loan
         [property: JsonConverter(typeof(JsonStringEnumConverter))]
         RepaymentType RepaymentType,
         bool GenerateSchedule = false,
-        decimal? NetAnnualIncome = null
+        decimal? NetAnnualIncome = null,
+        bool? AggregateScheduleByYear = null //optional for Yearly Schedule
     );
 } 

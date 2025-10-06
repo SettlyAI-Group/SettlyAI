@@ -7,6 +7,7 @@ using SettlyFinance.Interfaces;
 using SettlyFinance.Models;
 using SettlyModels.DTOs;
 using SettlyModels.DTOs.Loan;
+
 namespace SettlyService
 {
     /// <summary>
@@ -22,20 +23,26 @@ namespace SettlyService
         {
             _facade = facade ?? throw new ArgumentNullException(nameof(facade));
         }
+
         public LoanWrapperDtoResponse Calculate(LoanWrapperDtoRequest dto)
         {
             if (dto is null) throw new ArgumentNullException(nameof(dto));
+
             var hasAm = dto.Amortization is not null;
             var hasPw = dto.Piecewise is not null;
             if (hasAm == hasPw)
                 throw new ArgumentException("Request must contain exactly one of 'Amortization' or 'Piecewise'.", nameof(dto));
+
             AmortizationResponseDto? amortizationResponse = null;
             PiecewiseResponseDto? piecewiseResponse = null;
+
+            // -------------------- PIECEWISE --------------------
             if (hasPw)
             {
                 var pwReq = dto.Piecewise!;
                 if (pwReq.Segments is null || pwReq.Segments.Count == 0)
                     throw new ArgumentException("Piecewise.Segments must contain at least one segment.");
+
                 int ppy = GetPeriodsPerYear(pwReq.Frequency);
 
                 var segments = pwReq.Segments.Select((s, idx) =>
@@ -44,26 +51,53 @@ namespace SettlyService
                         throw new ArgumentException($"Segments[{idx}].LoanTermYears must be > 0.");
                     int termPeriods = checked(s.LoanTermYears * ppy);
                     var normalizedRate = NormalizeAnnualRate(s.AnnualInterestRate);
+
                     return new PiecewiseSegmentInput(
                         RepaymentType: s.RepaymentType,
                         AnnualInterestRate: normalizedRate,
                         TermPeriods: termPeriods,
-                        Frequency: pwReq.Frequency, 
-                        GenerateSchedule: true,    
+                        Frequency: pwReq.Frequency,                // 统一频率
+                        GenerateSchedule: true,                    // 领域层先生成逐期，必要时再在 Service 聚合
                         Label: MakeSegmentLabel(s.RepaymentType, s.LoanTermYears, normalizedRate, pwReq.Frequency)
                     );
                 }).ToList();
+
+                // ★ 修复点：如果请求按年聚合，则内部强制生成逐期 schedule 以便聚合
+                bool needSchedulePiecewise = pwReq.GenerateSchedule || (pwReq.AggregateScheduleByYear == true);
+
                 var domainInput = new PiecewiseInput(
                     InitialLoanAmount: pwReq.InitialLoanAmount,
                     Segments: segments,
-                    GenerateSchedule: pwReq.GenerateSchedule
+                    GenerateSchedule: needSchedulePiecewise
                 );
+
                 var result = _facade.CalculateLoan(domainInput);
+
+                // 收支比：用请求频率换算每期收入，与 FirstSegmentPayment 单位一致
                 string? ratioPercent = ComputePaymentToIncomeRatioPercent(
                     paymentPerPeriod: result.FirstSegmentPayment,
                     netAnnualIncome: pwReq.NetAnnualIncome,
                     frequency: pwReq.Frequency
                 );
+
+                // 逐期 -> DTO
+                var scheduleDto = result.Schedule?.Select(r => new PiecewiseScheduleRowDto(
+                    GlobalPeriod: r.GlobalPeriod,
+                    SegmentIndex: r.SegmentIndex,
+                    SegmentPeriod: r.SegmentPeriod,
+                    Payment: r.Payment,
+                    Interest: r.Interest,
+                    Principal: r.Principal,
+                    EndingBalance: r.EndingBalance,
+                    SegmentLabel: r.SegmentLabel
+                )).ToList();
+
+                // ★ 仅当请求显式要求按年聚合时，才把逐期聚合为年度（不影响默认前端）
+                if (pwReq.AggregateScheduleByYear == true && scheduleDto is not null && scheduleDto.Count > 0)
+                {
+                    scheduleDto = AggregateYearlyDto(scheduleDto, ppy).ToList();
+                }
+
                 piecewiseResponse = new PiecewiseResponseDto(
                     InitialLoanAmount: result.InitialLoanAmount,
                     TotalPrincipal: result.TotalPrincipal,
@@ -71,41 +105,40 @@ namespace SettlyService
                     TotalCost: result.TotalCost,
                     TotalPeriods: result.TotalPeriods,
                     FirstSegmentPayment: result.FirstSegmentPayment,
-                    Schedule: result.Schedule?.Select(r => new PiecewiseScheduleRowDto(
-                        GlobalPeriod: r.GlobalPeriod,
-                        SegmentIndex: r.SegmentIndex,
-                        SegmentPeriod: r.SegmentPeriod,
-                        Payment: r.Payment,
-                        Interest: r.Interest,
-                        Principal: r.Principal,
-                        EndingBalance: r.EndingBalance,
-                        SegmentLabel: r.SegmentLabel
-                    )).ToList(),
+                    Schedule: scheduleDto,
                     FirstSegmentPaymentToIncomeRatioPercent: ratioPercent
                 );
             }
+            // -------------------- SINGLE (Amortization) --------------------
             else
             {
                 var amReq = dto.Amortization!;
                 if (amReq.LoanTermYears <= 0)
                     throw new ArgumentException("Amortization.loanTermYears must be > 0.");
+
                 int resolvedTerm = checked(amReq.LoanTermYears * GetPeriodsPerYear(amReq.Frequency));
+
                 var singleSegment = new PiecewiseSegmentInput(
                     RepaymentType: amReq.RepaymentType,
                     AnnualInterestRate: NormalizeAnnualRate(amReq.AnnualInterestRate),
                     TermPeriods: resolvedTerm,
                     Frequency: amReq.Frequency,
-                    GenerateSchedule: true, 
+                    GenerateSchedule: true, // 领域层先逐期
                     Label: MakeSegmentLabel(amReq.RepaymentType, amReq.LoanTermYears, NormalizeAnnualRate(amReq.AnnualInterestRate), amReq.Frequency)
                 );
+
+                // ★ 修复点：单段同样，如果只传了 aggregate=true 也要内部强制生成逐期
+                bool needScheduleSingle = amReq.GenerateSchedule || (amReq.AggregateScheduleByYear == true);
+
                 var pwForSingle = new PiecewiseInput(
                     InitialLoanAmount: amReq.LoanAmount,
                     Segments: new List<PiecewiseSegmentInput> { singleSegment },
-                    GenerateSchedule: amReq.GenerateSchedule
+                    GenerateSchedule: needScheduleSingle
                 );
+
                 var pwResult = _facade.CalculateLoan(pwForSingle);
                 var firstPayment = pwResult.FirstSegmentPayment;
-                // var displayPayment = (int)Math.Ceiling(firstPayment);
+
                 var scheduleRows = pwResult.Schedule?.Select(row => new AmortizationScheduleRowDto(
                     Period: row.GlobalPeriod,
                     Payment: row.Payment,
@@ -113,18 +146,26 @@ namespace SettlyService
                     Principal: row.Principal,
                     EndingBalance: row.EndingBalance
                 )).ToList();
+
+                // ★ 单段也支持按年聚合
+                if (amReq.AggregateScheduleByYear == true && scheduleRows is not null && scheduleRows.Count > 0)
+                {
+                    int ppy = GetPeriodsPerYear(amReq.Frequency);
+                    scheduleRows = AggregateYearlyDto(scheduleRows, ppy).ToList();
+                }
+
                 string? ratioPercent = ComputePaymentToIncomeRatioPercent(
                     paymentPerPeriod: firstPayment,
                     netAnnualIncome: amReq.NetAnnualIncome,
                     frequency: amReq.Frequency
                 );
+
                 amortizationResponse = new AmortizationResponseDto(
                     LoanAmount: amReq.LoanAmount,
                     AnnualInterestRate: amReq.AnnualInterestRate,
                     Frequency: amReq.Frequency,
                     RepaymentType: amReq.RepaymentType,
                     Payment: firstPayment,
-                    //DisplayPayment: displayPayment,
                     TotalInterest: pwResult.TotalInterest,
                     TotalPrincipal: pwResult.TotalPrincipal,
                     TotalCost: pwResult.TotalCost,
@@ -133,20 +174,26 @@ namespace SettlyService
                     PaymentToIncomeRatioPercent: ratioPercent
                 );
             }
+
             return new LoanWrapperDtoResponse(amortizationResponse, piecewiseResponse);
         }
+
+        // -------------------- Helpers --------------------
+
         private static decimal NormalizeAnnualRate(decimal r)
         {
             if (r < 0) throw new ArgumentOutOfRangeException(nameof(r), "Annual interest rate cannot be negative");
             if (r <= 1m) return r;
             if (r <= 100m) return r / 100m;
-            throw new ArgumentOutOfRangeException(nameof(r),"Annual interest rate looks too large. Use decimal (e.g., 0.065) or percent (e.g., 6.5).");
+            throw new ArgumentOutOfRangeException(nameof(r), "Annual interest rate looks too large. Use decimal (e.g., 0.065) or percent (e.g., 6.5).");
         }
+
         private static string MakeSegmentLabel(RepaymentType type, int years, decimal annualRate, RepaymentFrequency freq)
         {
             var kind = type == RepaymentType.InterestOnly ? "IO" : "P&I";
             return $"{kind} {years}y @ {(annualRate * 100m):0.###}% ({freq})";
         }
+
         private static int GetPeriodsPerYear(RepaymentFrequency frequency) => frequency switch
         {
             RepaymentFrequency.Monthly => 12,
@@ -154,14 +201,52 @@ namespace SettlyService
             RepaymentFrequency.Weekly => 52,
             _ => throw new NotSupportedException($"Unsupported frequency: {frequency}")
         };
+
         private static string? ComputePaymentToIncomeRatioPercent(decimal paymentPerPeriod, decimal? netAnnualIncome, RepaymentFrequency frequency)
         {
             if (netAnnualIncome is null || netAnnualIncome <= 0m) return null;
             var ppy = GetPeriodsPerYear(frequency);
             var incomePerPeriod = netAnnualIncome.Value / ppy;
             if (incomePerPeriod <= 0m) return null;
-            var ratio = paymentPerPeriod / incomePerPeriod; 
-            return $"{(ratio * 100m):0.00}%"; 
+            var ratio = paymentPerPeriod / incomePerPeriod;
+            return $"{(ratio * 100m):0.00}%";
+        }
+
+        // ---- 年度聚合（单段 DTO）----
+        private static IEnumerable<AmortizationScheduleRowDto> AggregateYearlyDto(
+            List<AmortizationScheduleRowDto> rows, int periodsPerYear)
+        {
+            for (int start = 0, yearIdx = 1; start < rows.Count; start += periodsPerYear, yearIdx++)
+            {
+                var span = rows.Skip(start).Take(periodsPerYear).ToList();
+                yield return new AmortizationScheduleRowDto(
+                    Period: span.Last().Period, // 该年的最后一期
+                    Payment: span.Sum(r => r.Payment),
+                    Interest: span.Sum(r => r.Interest),
+                    Principal: span.Sum(r => r.Principal),
+                    EndingBalance: span.Last().EndingBalance
+                );
+            }
+        }
+
+        // ---- 年度聚合（分段 DTO）----
+        private static IEnumerable<PiecewiseScheduleRowDto> AggregateYearlyDto(
+            List<PiecewiseScheduleRowDto> rows, int periodsPerYear)
+        {
+            for (int start = 0, yearIdx = 1; start < rows.Count; start += periodsPerYear, yearIdx++)
+            {
+                var span = rows.Skip(start).Take(periodsPerYear).ToList();
+                yield return new PiecewiseScheduleRowDto(
+                    GlobalPeriod: span.Last().GlobalPeriod, // 该年的最后一期
+                    SegmentIndex: -1,                        // 年度汇总标识
+                    SegmentPeriod: yearIdx,                  // 年序号
+                    Payment: span.Sum(r => r.Payment),
+                    Interest: span.Sum(r => r.Interest),
+                    Principal: span.Sum(r => r.Principal),
+                    EndingBalance: span.Last().EndingBalance,
+                    SegmentLabel: $"Year {yearIdx} total"
+                );
+            }
         }
     }
 }

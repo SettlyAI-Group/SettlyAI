@@ -17,6 +17,7 @@ namespace SettlyModels.DTOs.Loan
         RepaymentFrequency Frequency,
         List<PiecewiseSegmentDto> Segments,
         bool GenerateSchedule = true,
-        decimal? NetAnnualIncome = null
+        decimal? NetAnnualIncome = null,
+        bool? AggregateScheduleByYear = null//optional for Yearly Schedule
     );
 }
