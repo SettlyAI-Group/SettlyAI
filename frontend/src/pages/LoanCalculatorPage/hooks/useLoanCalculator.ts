@@ -68,7 +68,8 @@ export const useLoanCalculator = (initial: LoanFormValues) => {
       const r = await calculateLoan(values);
       setResult(r);
       setIsFormStale(false); // summary is now fresh
-      setIsStressStale(true); // stress should be recomputed by user via slider
+      setIsStressStale(true);
+      setStressResult(null);
     } catch (err: unknown) {
       if (err instanceof Error) setError(err.message);
       else if (typeof err === 'string') setError(err);
@@ -121,13 +122,16 @@ export const useLoanCalculator = (initial: LoanFormValues) => {
 
   /** Decide which result to show in the summary panel. */
   const summaryResult = useMemo<LoanCalcResult | null>(() => {
-    return applyStressToSummary ? (stressResult ?? result) : result;
-  }, [applyStressToSummary, result, stressResult]);
+    if (applyStressToSummary && !isStressStale && stressResult) {
+      return stressResult;
+    }
+    return result;
+  }, [applyStressToSummary, isStressStale, stressResult, result]);
 
   /** When Apply is ON and we are showing stress, the form should be locked. */
   const isFormLocked = useMemo<boolean>(() => {
-    return applyStressToSummary && !!stressResult;
-  }, [applyStressToSummary, stressResult]);
+    return applyStressToSummary && !!stressResult && !isStressStale;
+  }, [applyStressToSummary, stressResult, isStressStale]);
 
   /** Handle slider change: update local rate and run debounced stress calculation. */
   const onStressRateChange = useCallback(
