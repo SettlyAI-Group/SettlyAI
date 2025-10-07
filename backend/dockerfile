@@ -1,0 +1,30 @@
+# Build stage
+FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS build
+WORKDIR /app
+
+# Copy project files
+COPY backend.sln ./
+COPY SettlyApi/SettlyApi.csproj SettlyApi/
+COPY SettlyModels/SettlyModels.csproj SettlyModels/
+COPY SettlyDbManager/SettlyDbManager.csproj SettlyDbManager/
+COPY ISettlyService/ISettlyService.csproj ISettlyService/
+COPY SettlyService/SettlyService.csproj SettlyService/
+
+# Copy source and publish
+COPY . .
+RUN dotnet publish SettlyApi/SettlyApi.csproj -c Release -o /app/publish \
+    && rm -rf /root/.nuget/packages \
+    && rm -rf /tmp/*
+
+# Runtime stage
+FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine
+WORKDIR /app
+
+COPY --from=build /app/publish .
+
+ENV ASPNETCORE_ENVIRONMENT=Production
+ENV ASPNETCORE_URLS=http://+:5100
+
+EXPOSE 5100
+
+ENTRYPOINT ["dotnet", "SettlyApi.dll"]

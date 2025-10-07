@@ -1,0 +1,71 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: settly
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d settly"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+
+  settly-app:
+    build: .
+    image: settly-backend:latest
+    environment:
+      - ApiConfigs__DBConnection=Host=postgres;Port=5432;Database=settly;User Id=postgres;Password=password;Include Error Detail=true
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  db-migrate:
+    image: settly-backend:latest
+    environment:
+      - ApiConfigs__DBConnection=Host=postgres;Port=5432;Database=settly;User Id=postgres;Password=password;Include Error Detail=true
+    depends_on:
+      settly-app:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
+    command: bash -c "sleep 5 && cd /app/SettlyModels && dotnet ef database update --startup-project ../SettlyApi"
+    restart: "no"
+
+  db-seed:
+    image: settly-backend:latest
+    environment:
+      - ApiConfigs__DBConnection=Host=postgres;Port=5432;Database=settly;User Id=postgres;Password=password;Include Error Detail=true
+    depends_on:
+      db-migrate:
+        condition: service_completed_successfully
+    command: bash -c "cd /app/SettlyDbManager && ASPNETCORE_ENVIRONMENT=Development dotnet run -- --seed"
+    restart: "no"
+
+  api:
+    image: settly-backend:latest
+    ports:
+      - "5100:5100"
+    environment:
+      - ApiConfigs__DBConnection=Host=postgres;Port=5432;Database=settly;User Id=postgres;Password=password;Include Error Detail=true
+      - ASPNETCORE_URLS=http://0.0.0.0:5100
+      - ASPNETCORE_HTTP_PORTS=5100
+      - DOTNET_URLS=http://0.0.0.0:5100
+    depends_on:
+      db-seed:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:5100/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+volumes:
+  postgres_data:

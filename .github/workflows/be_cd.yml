@@ -1,0 +1,266 @@
+name: BE_CD
+
+on:
+  push:
+    branches: [ main ]
+    paths: [ 'backend/**' ]
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: ap-southeast-2
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # 0) 配置 AWS OIDC
+      - name: Configure AWS (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      # 1) 查找目标 EC2（按 Name 标签，且需处于 running）
+      - name: Find EC2 instance
+        id: ec2
+        run: |
+          set -euo pipefail
+          echo "Looking for EC2 tagged Name=${{ secrets.AWS_EC2_NAME }}..."
+          INSTANCE_ID=$(aws ec2 describe-instances \
+            --filters "Name=tag:Name,Values=${{ secrets.AWS_EC2_NAME }}" "Name=instance-state-name,Values=running" \
+            --region $AWS_REGION \
+            --query "Reservations[].Instances[0].InstanceId" \
+            --output text)
+          if [ -z "$INSTANCE_ID" ] || [ "$INSTANCE_ID" = "None" ]; then
+            echo "❌ No running instance found by that Name tag."
+            exit 1
+          fi
+          echo "Found EC2 instance ID: $INSTANCE_ID"
+          echo "INSTANCE_ID=$INSTANCE_ID" >> $GITHUB_ENV
+
+      # 2) 等待实例在 SSM 中注册
+      - name: Wait for SSM registration
+        run: |
+          set -euo pipefail
+          echo "Waiting for EC2 to register with SSM..."
+          for i in {1..20}; do
+            MATCHED=$(aws ssm describe-instance-information \
+              --region $AWS_REGION \
+              --query "InstanceInformationList[?InstanceId=='$INSTANCE_ID']" \
+              --output text)
+            if [ -n "$MATCHED" ]; then
+              echo "✅ EC2 instance registered with SSM!"
+              exit 0
+            fi
+            echo "⏳ Not yet registered... retry in 5 seconds"
+            sleep 5
+          done
+          echo "❌ EC2 instance did not register with SSM in time."
+          exit 1
+
+      # 3) 生成将要在 EC2 上执行的部署脚本
+      - name: Build remote deploy script
+        id: build-script
+        env:
+          ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}   # 形如: 012345678901.dkr.ecr.ap-southeast-2.amazonaws.com/my-settly-ai-elliott
+          AWS_REGION: ${{ env.AWS_REGION }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        run: |
+          set -euo pipefail
+
+          cat > /tmp/deploy-backend.sh <<'EOF'
+          #!/usr/bin/env bash
+          set -euo pipefail
+          export DEBIAN_FRONTEND=noninteractive
+
+          echo "=== Detect/Install Docker ==="
+          if ! command -v docker >/dev/null 2>&1; then
+            if [ -f /etc/debian_version ]; then
+              apt-get update -y
+              apt-get install -y docker.io curl tar
+            elif [ -f /etc/system-release ] && grep -qi "Amazon Linux 2" /etc/system-release; then
+              amazon-linux-extras install docker -y
+              yum install -y curl tar || true
+            elif [ -f /etc/amazon-linux-release ] || [ -f /etc/redhat-release ]; then
+              (yum install -y docker || dnf install -y docker)
+              (yum install -y curl tar || dnf install -y curl tar) || true
+            else
+              echo "Unsupported Linux distro"; exit 1
+            fi
+          fi
+          systemctl enable --now docker || service docker start || true
+
+          echo "=== Install & configure ECR credential helper ==="
+          ECR_REGISTRY="__ECR_REGISTRY__"
+          AWS_REGION="__AWS_REGION__"
+          ECR_HOST="$(echo "$ECR_REGISTRY" | awk -F/ '{print $1}')"
+
+          if ! command -v docker-credential-ecr-login >/dev/null 2>&1; then
+            if [ -f /etc/debian_version ]; then
+              apt-get update -y
+              apt-get install -y amazon-ecr-credential-helper || {
+                echo "Package not available, using direct binary"
+                curl -fsSL https://github.com/awslabs/amazon-ecr-credential-helper/releases/download/v0.6.0/docker-credential-ecr-login-linux-amd64 -o /usr/local/bin/docker-credential-ecr-login
+                chmod +x /usr/local/bin/docker-credential-ecr-login
+              }
+            elif [ -f /etc/amazon-linux-release ] || [ -f /etc/redhat-release ]; then
+              (yum install -y amazon-ecr-credential-helper || dnf install -y amazon-ecr-credential-helper) || {
+                echo "Package not available, using direct binary"
+                curl -fsSL https://github.com/awslabs/amazon-ecr-credential-helper/releases/download/v0.6.0/docker-credential-ecr-login-linux-amd64 -o /usr/local/bin/docker-credential-ecr-login
+                chmod +x /usr/local/bin/docker-credential-ecr-login
+              }
+            else
+              curl -fsSL https://github.com/awslabs/amazon-ecr-credential-helper/releases/download/v0.6.0/docker-credential-ecr-login-linux-amd64 -o /usr/local/bin/docker-credential-ecr-login
+              chmod +x /usr/local/bin/docker-credential-ecr-login
+            fi
+          fi
+
+          mkdir -p /root/.docker
+          cat >/root/.docker/config.json <<JSON
+          {
+            "credHelpers": {
+              "${ECR_HOST}": "ecr-login"
+            }
+          }
+          JSON
+
+          echo "=== Pull & Run Container ==="
+          IMAGE="${ECR_REGISTRY}:latest"
+          echo "Pulling $IMAGE ..."
+          docker pull "$IMAGE"
+
+          echo "=== Stop & remove old container ==="
+          docker stop backend || true
+          docker rm -f backend || true
+          
+          echo "=== Clean up any dangling containers ==="
+          docker container prune -f || true
+
+          echo "=== Run new container (listen on 0.0.0.0:5100) ==="
+          docker run -d --name backend --restart unless-stopped -p 5100:5100 \
+            -e ASPNETCORE_ENVIRONMENT=Production \
+            -e ASPNETCORE_URLS="http://0.0.0.0:5100" \
+            -e ASPNETCORE_HTTP_PORTS="5100" \
+            -e DOTNET_URLS="http://0.0.0.0:5100" \
+            -e ApiConfigs__DBConnection="Host=__DB_HOST__;Port=__DB_PORT__;Database=__DB_NAME__;User Id=__DB_USER__;Password=__DB_PASSWORD__" \
+            -e JWTConfig__SecretKey="SettlyAISuperSecretKey!@#$%^&*()_+1234567890" \
+            -e JWTConfig__Issuer="SettlyAI" \
+            -e JWTConfig__Audience="SettlyAI" \
+            -e JWTConfig__ExpireSeconds="7200" \
+            "$IMAGE" bash -c "cd /app/SettlyApi && dotnet run --urls='http://0.0.0.0:5100'"
+
+          echo "=== Post-Checks ==="
+          docker ps
+          (ss -tulnp || netstat -tulnp) 2>/dev/null | grep ":5100" || true
+          docker logs --tail 100 backend || true
+
+          echo "=== Show (redacted) DB connection env ==="
+          # 仅显示 host/db/port，脱敏密码
+          RAW=$(docker exec backend /bin/sh -lc 'printenv ApiConfigs__DBConnection' || true)
+          if [ -n "$RAW" ]; then
+            HOST=$(echo "$RAW" | sed -n 's/.*Host=\([^;]*\).*/\1/p')
+            DB=$(echo "$RAW"   | sed -n 's/.*Database=\([^;]*\).*/\1/p')
+            PORT=$(echo "$RAW" | sed -n 's/.*Port=\([^;]*\).*/\1/p')
+            echo "ApiConfigs__DBConnection => Host=${HOST}; Port=${PORT}; Database=${DB}; User Id=***; Password=***"
+          else
+            echo "ApiConfigs__DBConnection not set (empty)"
+          fi
+
+          echo "=== Show all environment variables (filtered) ==="
+          docker exec backend printenv | grep -E "(ApiConfigs|ConnectionStrings|ASPNETCORE|DOTNET|JWT)" | sed 's/Password=[^;]*/Password=***/g' || true
+
+          echo "=== Test API health check ==="
+          sleep 5
+          docker exec backend curl -f http://localhost:5100/health || echo "Health check failed"
+          
+          echo "=== Test API endpoint ==="
+          docker exec backend curl -f http://localhost:5100/api/suburb/1 || echo "API endpoint test failed"
+          EOF
+
+          # 用实际值替换占位符（Runner 本地执行）
+          sed -i \
+            -e "s|__ECR_REGISTRY__|$ECR_REGISTRY|g" \
+            -e "s|__AWS_REGION__|$AWS_REGION|g" \
+            -e "s|__DB_HOST__|$DB_HOST|g" \
+            -e "s|__DB_PORT__|$DB_PORT|g" \
+            -e "s|__DB_NAME__|$DB_NAME|g" \
+            -e "s|__DB_USER__|$DB_USER|g" \
+            -e "s|__DB_PASSWORD__|$DB_PASSWORD|g" \
+            /tmp/deploy-backend.sh
+
+          chmod +x /tmp/deploy-backend.sh
+          echo "script_path=/tmp/deploy-backend.sh" >> "$GITHUB_OUTPUT"
+
+      # 4) Base64 封装脚本为 SSM 参数
+      - name: Build SSM parameters JSON (base64 payload)
+        id: build-params
+        run: |
+          set -euo pipefail
+          sudo apt-get update -y >/dev/null
+          sudo apt-get install -y jq coreutils >/dev/null
+          SCRIPT_B64=$(base64 -w0 /tmp/deploy-backend.sh 2>/dev/null || base64 /tmp/deploy-backend.sh | tr -d '\n')
+          REMOTE_CMD="bash -lc 'echo ${SCRIPT_B64} | base64 -d >/tmp/deploy.sh && chmod +x /tmp/deploy.sh && /bin/bash /tmp/deploy.sh'"
+          jq -n --arg c "$REMOTE_CMD" '{commands: [$c]}' > /tmp/ssm-params.json
+          echo "params_path=/tmp/ssm-params.json" >> "$GITHUB_OUTPUT"
+
+      # 5) 发送 SSM 命令
+      - name: Send SSM command
+        id: send
+        run: |
+          set -euo pipefail
+          CMD_ID=$(aws ssm send-command \
+            --document-name "AWS-RunShellScript" \
+            --region "$AWS_REGION" \
+            --instance-ids "$INSTANCE_ID" \
+            --comment "Install Docker + ECR helper + deploy backend" \
+            --parameters file://${{ steps.build-params.outputs.params_path }} \
+            --query "Command.CommandId" --output text)
+          echo "SSM CommandId: $CMD_ID"
+          echo "cmd_id=$CMD_ID" >> "$GITHUB_OUTPUT"
+
+      # 6) 等待并抓取执行结果/日志
+      - name: Wait & fetch output
+        run: |
+          set -euo pipefail
+          CMD_ID="${{ steps.send.outputs.cmd_id }}"
+          for i in {1..60}; do
+            STATUS=$(aws ssm get-command-invocation \
+              --command-id "$CMD_ID" \
+              --instance-id "$INSTANCE_ID" \
+              --region "$AWS_REGION" \
+              --query "Status" --output text || true)
+            echo "Invocation status: $STATUS"
+            case "$STATUS" in
+              Success|Cancelled|TimedOut|Failed) break ;;
+              *) sleep 5 ;;
+            esac
+          done
+
+          echo "===== STDOUT ====="
+          aws ssm get-command-invocation \
+            --command-id "$CMD_ID" \
+            --instance-id "$INSTANCE_ID" \
+            --region "$AWS_REGION" \
+            --query "StandardOutputContent" --output text || true
+
+          echo "===== STDERR ====="
+          aws ssm get-command-invocation \
+            --command-id "$CMD_ID" \
+            --instance-id "$INSTANCE_ID" \
+            --region "$AWS_REGION" \
+            --query "StandardErrorContent" --output text || true
+
+          if [ "$STATUS" != "Success" ]; then
+            echo "SSM command finished with status: $STATUS"
+            exit 1
+          fi
