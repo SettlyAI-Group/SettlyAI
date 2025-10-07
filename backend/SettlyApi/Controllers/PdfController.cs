@@ -6,7 +6,7 @@ using SettlyModels.Dtos.Export;
 namespace SettlyApi.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api")]
 public class PdfController : ControllerBase
 {
     private readonly IPdfExportService _pdfService;
@@ -18,7 +18,7 @@ public class PdfController : ControllerBase
         _suburbService = suburbService;
     }
 
-    [HttpPost("suburb/{suburbId}")]
+    [HttpPost("export/pdf/suburb/{suburbId}")]
     [SwaggerOperation(
         Summary = "Generate suburb report PDF from database",
         Description = "Fetches suburb data from database and creates a PDF report"
