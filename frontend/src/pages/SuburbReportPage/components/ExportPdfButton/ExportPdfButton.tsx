@@ -1,25 +1,47 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { CircularProgress } from '@mui/material';
 import { exportSuburbReport, downloadBlob, type SuburbReportExportPayload } from '@/api/exportApi';
 import { handleApiError } from '@/utils/handleApiError';
 import GlobalButton from '@/components/GlobalButton';
 
 export interface ExportPdfButtonProps {
-  exportType: 'suburb' | 'property' | 'loan';
-  payload: SuburbReportExportPayload;
+  suburbId: string;
+  formattedData: any;
+  results: any[];
   disabled?: boolean;
   onSuccess?: (filename: string) => void;
   onError?: (error: string) => void;
 }
 
 const ExportPdfButton = ({
-  exportType,
-  payload,
+  suburbId,
+  formattedData,
+  results,
   disabled = false,
   onSuccess,
   onError,
 }: ExportPdfButtonProps) => {
   const [isLoading, setIsLoading] = useState(false);
+
+  // Create export payload from raw data
+  const exportPayload: SuburbReportExportPayload = useMemo(() => ({
+    suburbId: parseInt(suburbId),
+    suburbName: formattedData.suburbBasicInfo?.name || '',
+    state: formattedData.suburbBasicInfo?.state || '',
+    postcode: formattedData.suburbBasicInfo?.postcode || '',
+    housingMarket: results[3]?.data || null,
+    livability: formattedData.livability || null,
+    incomeEmployment: formattedData.incomeEmployment || null,
+    safetyScores: formattedData.safetyScores || null,
+    generatedAtUtc: new Date().toISOString(),
+    summary: `Comprehensive suburb report for ${formattedData.suburbBasicInfo?.name}, ${formattedData.suburbBasicInfo?.state} ${formattedData.suburbBasicInfo?.postcode}`,
+    metrics: {},
+    charts: [],
+    options: {
+      includeCharts: true,
+      includeSummary: true
+    }
+  }), [suburbId, formattedData, results]);
 
   const handleExport = async () => {
     if (isLoading || disabled) return;
@@ -27,7 +49,7 @@ const ExportPdfButton = ({
     setIsLoading(true);
     
     try {
-      const { blob, filename } = await exportSuburbReport(payload);
+      const { blob, filename } = await exportSuburbReport(exportPayload);
       downloadBlob(blob, filename);
       onSuccess?.(filename);
     } catch (error) {
