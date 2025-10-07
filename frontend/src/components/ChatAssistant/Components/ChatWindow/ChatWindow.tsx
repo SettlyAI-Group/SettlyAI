@@ -191,6 +191,11 @@ const ChatWindow = () => {
               Creating thread...
             </Typography>
           )}
+          {userChatId && activeKey && (
+            <Typography variant="caption" color="text.secondary">
+              Thread ID: {activeKey}
+            </Typography>
+          )}
         </ChatHeader>
         <ChatBody>
           {errorMessage ? (
@@ -201,7 +206,7 @@ const ChatWindow = () => {
             <Typography variant="body2" color="text.secondary">
               {userChatId
                 ? activeKey
-                  ? `Thread ready: ${activeKey}. Message streaming coming soon.`
+                  ? 'Thread ready. Message streaming coming soon.'
                   : 'Select a conversation or create a new chat to begin.'
                 : 'Preparing chat session...'}
             </Typography>
