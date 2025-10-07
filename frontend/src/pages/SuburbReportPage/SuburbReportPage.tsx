@@ -106,6 +106,36 @@ const SuburbReportPage = () => {
     safetyScores: results[5].data ?? undefined,
   };
   const propertyMetrics = results[3]?.data ? mapPropertyCards(results[3].data as IHousingMarket) : [];
+
+  // Prepare export payload - simple approach using suburb ID
+  const exportPayload: SuburbReportExportPayload = {
+    suburbId: parseInt(suburbId),
+    suburbName: formattedData.suburbBasicInfo?.name || '',
+    state: formattedData.suburbBasicInfo?.state || '',
+    postcode: formattedData.suburbBasicInfo?.postcode || '',
+    housingMarket: results[3]?.data || null,
+    livability: formattedData.livability || null,
+    incomeEmployment: formattedData.incomeEmployment || null,
+    safetyScores: formattedData.safetyScores || null,
+    generatedAtUtc: new Date().toISOString(),
+    summary: `Comprehensive suburb report for ${formattedData.suburbBasicInfo?.name}, ${formattedData.suburbBasicInfo?.state} ${formattedData.suburbBasicInfo?.postcode}`,
+    metrics: {},
+    charts: [],
+    options: {
+      includeCharts: true,
+      includeSummary: true
+    }
+  };
+
+  const handleExportSuccess = (filename: string) => {
+    console.log(`PDF exported successfully: ${filename}`);
+  };
+
+  const handleExportError = (error: string) => {
+    console.error('PDF export failed:', error);
+    alert(`Export failed: ${error}`);
+  };
+
   return (
     <PageContainer>
       <Banner
@@ -135,10 +165,15 @@ const SuburbReportPage = () => {
               <SafetyScoresSection title={TITLES.safetyScore} CardProps={formattedData.safetyScores} />
             )}
 
-            {/* todo:  replace with real action buttons , feel free to modify*/}
             <ActionButtonWrapper>
               <Button>save this suburb</Button>
-              <Button>Export PDF</Button>
+              <ExportPdfButton
+                exportType="suburb"
+                payload={exportPayload}
+                disabled={allLoading}
+                onSuccess={handleExportSuccess}
+                onError={handleExportError}
+              />
             </ActionButtonWrapper>
           </>
         )}
