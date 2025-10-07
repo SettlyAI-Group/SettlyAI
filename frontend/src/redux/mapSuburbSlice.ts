@@ -1,36 +1,26 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from './store';
+import type { IApiSuburbData, IMapSuburbState } from '@/interfaces/map';
 
-interface MapSuburbState {
-  suburb: string | null;
-  state: string | null;
-  postcode: string | null;
-}
-
-const initialState: MapSuburbState = {
-  suburb: null,
-  state: null,
-  postcode: null,
+const initialState: IMapSuburbState = {
+  overview: null,
 };
 
 export const mapSuburbSlice = createSlice({
   name: 'mapSuburb',
   initialState,
   reducers: {
-    setSelectedSuburb(state, action: PayloadAction<{ suburb: string; state: string; postcode: string }>) {
-      state.suburb = action.payload.suburb;
-      state.state = action.payload.state;
-      state.postcode = action.payload.postcode;
+    setSelectedSuburb(state, action: PayloadAction<IApiSuburbData>) {
+      state.overview = action.payload;
     },
     clearSelectedSuburb(state) {
-      state.suburb = null;
-      state.state = null;
-      state.postcode = null;
+      state.overview = null;
     },
   },
 });
 
 export const { setSelectedSuburb, clearSelectedSuburb } = mapSuburbSlice.actions;
 export const selectMapSuburb = (state: RootState) => state.mapSuburb;
+export const selectSelectedOverview = (state: RootState): IApiSuburbData | null => state.mapSuburb.overview;
 export default mapSuburbSlice.reducer;

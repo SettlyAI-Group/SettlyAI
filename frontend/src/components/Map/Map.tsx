@@ -70,26 +70,21 @@ const Map = () => {
       try {
         const rawSuburbData = await fetchGeocodingApi(position.lat, position.lng);
 
-        //Stop the process when user click a new position before rawSuburbData is return
         if (callIsCancelled) return;
-        const suburbData = await getSuburbFromDb(rawSuburbData);
+        const suburbOverview = await getSuburbFromDb(rawSuburbData);
 
-        //Stop the process when user click a new position before backend is return
         if (callIsCancelled) return;
-        if (suburbData) {
-          const { suburb, state, postcode } = suburbData;
-          dispatch(setSelectedSuburb({ suburb, state, postcode }));
+        if (suburbOverview) {
+          dispatch(setSelectedSuburb(suburbOverview));
         } else {
           dispatch(clearSelectedSuburb());
         }
-      } catch (err) {
-        console.error(`Error: ${err}`);
+      } catch {
         dispatch(clearSelectedSuburb());
       }
     })();
 
     return () => {
-      //Act as a clean up function in case user click a new position
       callIsCancelled = true;
     };
   }, [position, dispatch]);
@@ -99,7 +94,7 @@ const Map = () => {
       <LeafletMapContainer center={melbourneGeoData} zoom={11}>
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution="© OpenStreetMap contributors"
+          attribution="Ac OpenStreetMap contributors"
         />
         <MapZoomHandler />
         <UserGeoData />
