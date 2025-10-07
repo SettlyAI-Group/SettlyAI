@@ -1,5 +1,6 @@
 import { useLocation, useParams } from 'react-router-dom';
 import Map from '@/components/Map';
+import SummaryCardSection from './components/SummaryCardSection';
 const ExplorePage = () => {
   const { state } = useLocation() as { state?: { suburbId?: number } };
   const { location } = useParams();
@@ -8,6 +9,7 @@ const ExplorePage = () => {
     <div>
       {/* <p>Selected Suggestion: {label}</p> */}
       <Map />
+      <SummaryCardSection />
     </div>
   );
 };
