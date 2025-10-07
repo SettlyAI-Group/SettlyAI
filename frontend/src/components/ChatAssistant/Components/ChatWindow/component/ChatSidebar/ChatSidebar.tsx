@@ -2,6 +2,8 @@ import { Box, Typography, IconButton } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { Conversations } from '@ant-design/x';
 import AddIcon from '@mui/icons-material/Add';
+import { DeleteOutlined, EditOutlined, StopOutlined } from '@ant-design/icons';
+import type { ConversationsProps } from '@ant-design/x';
 
 const SidebarContainer = styled(Box)(({ theme }) => ({
   width: 200,
@@ -41,6 +43,34 @@ interface ChatSidebarProps {
 }
 
 const ChatSidebar = ({ conversations, activeKey, onActiveChange, onNewChat }: ChatSidebarProps) => {
+  const menuConfig: ConversationsProps['menu'] = conversation => ({
+    items: [
+      {
+        label: 'Rename',
+        key: 'rename',
+        icon: <EditOutlined />,
+        disabled: true,
+      },
+      {
+        label: 'Disable',
+        key: 'disable',
+        icon: <StopOutlined />,
+        disabled: true,
+      },
+      {
+        label: 'Delete',
+        key: 'delete',
+        icon: <DeleteOutlined />,
+        danger: true,
+        disabled: true,
+      },
+    ],
+    onClick: menuInfo => {
+      menuInfo.domEvent.stopPropagation();
+      console.info(`Menu action ${menuInfo.key} on conversation ${conversation.key}`);
+    },
+  });
+
   return (
     <SidebarContainer>
       <SidebarHeader>
@@ -54,6 +84,7 @@ const ChatSidebar = ({ conversations, activeKey, onActiveChange, onNewChat }: Ch
           items={conversations}
           activeKey={activeKey}
           onActiveChange={onActiveChange}
+          menu={menuConfig}
         />
       </ConversationList>
     </SidebarContainer>

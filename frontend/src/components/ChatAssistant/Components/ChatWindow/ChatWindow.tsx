@@ -1,11 +1,11 @@
-import { useState, useRef, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Box, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { Bubble, Sender } from '@ant-design/x';
-import ChatIcon from '@mui/icons-material/Chat';
-import ChatSidebar from './component/ChatSidebar';
+import { Sender } from '@ant-design/x';
 import { Button } from 'antd';
-import { sendChatMessage, fetchConversations, fetchConversationMessages } from '@/api/chatApi';
+import ChatSidebar from './component/ChatSidebar';
+import { ensureUserChatId } from '../../utils/userChatId';
+import { createThread as createThreadApi, searchThreads } from '@/api/chatBotApi';
 
 const WindowContainer = styled(Box)(({ theme }) => ({
   position: 'absolute',
@@ -66,265 +66,154 @@ const StyledSendButton = styled(Button)(() => ({
   },
 }));
 
-interface Message {
-  id: string;
-  content: string;
-  role: 'user' | 'assistant';
-  createAt: number;
-}
-
 interface ConversationItem {
   key: string;
   label: string;
-  timestamp: number;
-  messages: Message[];
+  updatedAt: number;
 }
 
+const THREAD_TTL_SECONDS = 600; // 10 minutes
+
 const ChatWindow = () => {
+  const [userChatId, setUserChatId] = useState<string | null>(null);
   const [conversations, setConversations] = useState<ConversationItem[]>([]);
-  const [activeKey, setActiveKey] = useState<string>('');
-  const [loading, setLoading] = useState(false);
-  const [inputValue, setInputValue] = useState('');
-  const [isLoadingConversations, setIsLoadingConversations] = useState(true);
-  const abortControllerRef = useRef<AbortController | null>(null);
+  const [activeKey, setActiveKey] = useState('');
+  const [isCreatingThread, setIsCreatingThread] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const currentConversation = conversations.find((conv) => conv.key === activeKey);
-  const messages = currentConversation?.messages || [];
-
-  // 加载对话列表
   useEffect(() => {
-    const loadConversations = async () => {
-      try {
-        setIsLoadingConversations(true);
-        const data = await fetchConversations();
-
-        // 转换后端数据为前端格式
-        const convs: ConversationItem[] = data.map((conv) => ({
-          key: conv.id,
-          label: conv.title,
-          timestamp: new Date(conv.createdAt).getTime(),
-          messages: [],
-        }));
-
-        if (convs.length === 0) {
-          // 如果没有对话，创建一个新的
-          convs.push({
-            key: 'new-1',
-            label: 'New Chat',
-            timestamp: Date.now(),
-            messages: [],
-          });
-        }
-
-        setConversations(convs);
-        setActiveKey(convs[0].key);
-      } catch (error) {
-        console.error('Failed to load conversations:', error);
-        // 出错时创建默认对话
-        const newConv: ConversationItem = {
-          key: 'new-1',
-          label: 'New Chat',
-          timestamp: Date.now(),
-          messages: [],
-        };
-        setConversations([newConv]);
-        setActiveKey('new-1');
-      } finally {
-        setIsLoadingConversations(false);
-      }
-    };
-
-    loadConversations();
+    const id = ensureUserChatId();
+    setUserChatId(id);
   }, []);
 
-  // 当切换对话时加载消息历史
   useEffect(() => {
-    if (!activeKey || activeKey.startsWith('new-')) return;
+    if (!userChatId) return;
 
-    const loadMessages = async () => {
+    const fetchThreads = async () => {
       try {
-        const data = await fetchConversationMessages(activeKey);
-        const msgs: Message[] = data.map((msg) => ({
-          id: msg.id,
-          role: msg.role,
-          content: msg.content,
-          createAt: new Date(msg.createdAt).getTime(),
+        const threads = await searchThreads({
+          metadata: { user_id: userChatId },
+          limit: 20,
+          offset: 0,
+          sort_by: 'updated_at',
+          sort_order: 'desc',
+          select: ['thread_id', 'created_at', 'updated_at', 'status', 'metadata'],
+        });
+
+        const mapped: ConversationItem[] = threads.map(thread => ({
+          key: thread.thread_id,
+          label: 'New Chat',
+          updatedAt: new Date(thread.updated_at || thread.created_at || Date.now()).getTime(),
         }));
 
-        setConversations((prev) =>
-          prev.map((conv) =>
-            conv.key === activeKey ? { ...conv, messages: msgs } : conv
-          )
-        );
+        setConversations(mapped);
+        if (mapped.length > 0) {
+          setActiveKey(mapped[0].key);
+        }
       } catch (error) {
-        console.error('Failed to load messages:', error);
+        console.error('Failed to fetch threads:', error);
+        setErrorMessage('Failed to load your chat history.');
       }
     };
 
-    loadMessages();
-  }, [activeKey]);
+    fetchThreads();
+  }, [userChatId]);
 
-  const handleSend = async (message: string) => {
-    const newMessage: Message = {
-      id: Date.now().toString(),
-      content: message,
-      role: 'user',
-      createAt: Date.now(),
-    };
+  const createThread = useCallback(
+    (userId: string) =>
+      createThreadApi({
+        metadata: {
+          user_id: userId,
+          user_type: 'Guest',
+        },
+        ttl: {
+          strategy: 'delete',
+          ttl: THREAD_TTL_SECONDS,
+        },
+      }),
+    [createThreadApi],
+  );
 
-    // 更新当前会话的消息
-    setConversations((prev) =>
-      prev.map((conv) =>
-        conv.key === activeKey
-          ? { ...conv, messages: [...conv.messages, newMessage] }
-          : conv
-      )
-    );
+  const handleNewChat = useCallback(async () => {
+    if (!userChatId || isCreatingThread) {
+      return;
+    }
 
-    // 清空输入框
-    setInputValue('');
+    setIsCreatingThread(true);
+    setErrorMessage(null);
 
-    // 设置 loading 状态
-    setLoading(true);
+    try {
+      const thread = await createThread(userChatId);
+      const threadId: string = thread.thread_id;
 
-    // 创建 AI 消息占位符
-    const aiMessageId = (Date.now() + 1).toString();
-    const aiMessage: Message = {
-      id: aiMessageId,
-      content: '',
-      role: 'assistant',
-      createAt: Date.now(),
-    };
+      const newConversation: ConversationItem = {
+        key: threadId,
+        label: 'New Chat',
+        updatedAt: new Date(thread?.updated_at || thread?.created_at || Date.now()).getTime(),
+      };
 
-    setConversations((prev) =>
-      prev.map((conv) =>
-        conv.key === activeKey
-          ? { ...conv, messages: [...conv.messages, aiMessage] }
-          : conv
-      )
-    );
+      setConversations(prev => {
+        const next = [newConversation, ...prev.filter(item => item.key !== threadId)];
+        return next.sort((a, b) => b.updatedAt - a.updatedAt);
+      });
+      setActiveKey(threadId);
+    } catch (error) {
+      console.error(error);
+      setErrorMessage('Failed to create a new chat. Please try again.');
+    } finally {
+      setIsCreatingThread(false);
+    }
+  }, [createThread, isCreatingThread, userChatId]);
 
-    // 创建 AbortController 用于取消请求
-    abortControllerRef.current = new AbortController();
-
-    // 只发送最新的用户消息（后端自己维护对话历史）
-    const chatMessages = [{
-      role: newMessage.role,
-      content: newMessage.content,
-    }];
-
-    // 发送 SSE 请求
-    await sendChatMessage(chatMessages, {
-      signal: abortControllerRef.current.signal,
-      onMessage: (chunk) => {
-        // 流式更新 AI 消息内容
-        setConversations((prev) =>
-          prev.map((conv) => {
-            if (conv.key !== activeKey) return conv;
-            return {
-              ...conv,
-              messages: conv.messages.map((msg) =>
-                msg.id === aiMessageId
-                  ? { ...msg, content: msg.content + chunk }
-                  : msg
-              ),
-            };
-          })
-        );
-      },
-      onComplete: () => {
-        setLoading(false);
-        abortControllerRef.current = null;
-      },
-      onError: (error) => {
-        console.error('Chat error:', error);
-        setLoading(false);
-        abortControllerRef.current = null;
-        // 更新错误消息
-        setConversations((prev) =>
-          prev.map((conv) => {
-            if (conv.key !== activeKey) return conv;
-            return {
-              ...conv,
-              messages: conv.messages.map((msg) =>
-                msg.id === aiMessageId
-                  ? { ...msg, content: 'Error: Failed to get response from AI.' }
-                  : msg
-              ),
-            };
-          })
-        );
-      },
-    });
-  };
-
-  const handleNewChat = () => {
-    const newKey = Date.now().toString();
-    const newConversation: ConversationItem = {
-      key: newKey,
-      label: `Chat ${conversations.length + 1}`,
-      timestamp: Date.now(),
-      messages: [],
-    };
-    setConversations([...conversations, newConversation]);
-    setActiveKey(newKey);
-  };
-
-  if (isLoadingConversations) {
-    return (
-      <WindowContainer>
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            height: '100%',
-            width: '100%',
-          }}
-        >
-          <Typography>Loading conversations...</Typography>
-        </Box>
-      </WindowContainer>
-    );
-  }
+  const handleActiveChange = useCallback((key: string) => {
+    setActiveKey(key);
+    setErrorMessage(null);
+  }, []);
 
   return (
     <WindowContainer>
       <ChatSidebar
-        conversations={conversations}
+        conversations={conversations.map(item => ({
+          key: item.key,
+          label: item.label,
+          timestamp: item.updatedAt,
+        }))}
         activeKey={activeKey}
-        onActiveChange={setActiveKey}
+        onActiveChange={handleActiveChange}
         onNewChat={handleNewChat}
       />
 
       <ChatContainer>
         <ChatHeader>
-          <Typography variant="subtitle2">{currentConversation?.label || 'AI Assistant'}</Typography>
+          <Typography variant="subtitle2">AI Assistant</Typography>
+          {isCreatingThread && (
+            <Typography variant="caption" color="text.secondary">
+              Creating thread...
+            </Typography>
+          )}
         </ChatHeader>
         <ChatBody>
-          {messages.map((msg) => (
-            <Bubble
-              key={msg.id}
-              placement={msg.role === 'user' ? 'end' : 'start'}
-              content={msg.content}
-              avatar={msg.role === 'assistant' ? { icon: <ChatIcon /> } : undefined}
-            />
-          ))}
-          {loading && (
-            <Bubble
-              placement="start"
-              content="Thinking..."
-              avatar={{ icon: <ChatIcon /> }}
-              typing
-            />
+          {errorMessage ? (
+            <Typography variant="body2" color="error">
+              {errorMessage}
+            </Typography>
+          ) : (
+            <Typography variant="body2" color="text.secondary">
+              {userChatId
+                ? activeKey
+                  ? `Thread ready: ${activeKey}. Message streaming coming soon.`
+                  : 'Select a conversation or create a new chat to begin.'
+                : 'Preparing chat session...'}
+            </Typography>
           )}
         </ChatBody>
         <ChatFooter>
           <Sender
-            value={inputValue}
-            onChange={setInputValue}
-            onSubmit={handleSend}
+            value=""
+            onChange={() => {}}
+            onSubmit={() => {}}
             placeholder="Type your message..."
+            disabled={!userChatId || !activeKey}
             actions={(_, { components }) => {
               const { SendButton } = components;
               return <StyledSendButton as={SendButton} />;

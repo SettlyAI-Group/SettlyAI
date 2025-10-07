@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Fab, Tooltip } from '@mui/material';
 import ChatIcon from '@mui/icons-material/Chat';
 import CloseIcon from '@mui/icons-material/Close';
@@ -31,22 +31,19 @@ const DraggableWrapper = styled('div')(() => ({
 
 const ChatAssistant = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const nodeRef = useRef<HTMLDivElement | null>(null);
 
   const handleToggle = () => {
     setIsOpen(!isOpen);
   };
 
   return (
-    <Draggable bounds="parent">
-      <DraggableWrapper>
+    <Draggable bounds="parent" nodeRef={nodeRef}>
+      <DraggableWrapper ref={nodeRef}>
         {isOpen && <ChatWindow />}
 
         <Tooltip title={isOpen ? 'Close AI Assistant' : 'Open AI Assistant'} placement="left">
-          <FloatingButton
-            color="primary"
-            aria-label="chat assistant"
-            onClick={handleToggle}
-          >
+          <FloatingButton color="primary" aria-label="chat assistant" onClick={handleToggle}>
             {isOpen ? <CloseIcon /> : <ChatIcon />}
           </FloatingButton>
         </Tooltip>

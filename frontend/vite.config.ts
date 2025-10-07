@@ -30,6 +30,12 @@ export default defineConfig(({ mode }) => {
           target: env.VITE_API_URL,
           changeOrigin: true,
         },
+        // TODO: remove this when finish cros setup
+        '/langgraph': {
+          target: 'http://localhost:8123', // ← LangGraph API 地址
+          changeOrigin: true,
+          rewrite: path => path.replace(/^\/langgraph/, ''), // 去掉 /langgraph 前缀
+        },
       },
     },
   };
