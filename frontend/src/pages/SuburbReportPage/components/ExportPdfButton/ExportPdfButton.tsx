@@ -1,9 +1,10 @@
-import { Button, CircularProgress } from '@mui/material';
-import { useState } from 'react';
-import DownloadIcon from '@mui/icons-material/Download';
+import React, { useState } from 'react';
+import { CircularProgress } from '@mui/material';
 import { exportSuburbReport, downloadBlob, type SuburbReportExportPayload } from '@/api/exportApi';
+import { handleApiError } from '@/utils/handleApiError';
+import GlobalButton from '@/components/GlobalButton';
 
-interface ExportPdfButtonProps {
+export interface ExportPdfButtonProps {
   exportType: 'suburb' | 'property' | 'loan';
   payload: SuburbReportExportPayload;
   disabled?: boolean;
@@ -11,61 +12,48 @@ interface ExportPdfButtonProps {
   onError?: (error: string) => void;
 }
 
-const ExportPdfButton = ({ 
-  exportType, 
-  payload, 
-  disabled = false, 
-  onSuccess, 
-  onError 
+const ExportPdfButton = ({
+  exportType,
+  payload,
+  disabled = false,
+  onSuccess,
+  onError,
 }: ExportPdfButtonProps) => {
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleExport = async () => {
-    if (loading || disabled) return;
+    if (isLoading || disabled) return;
 
-    setLoading(true);
+    setIsLoading(true);
+    
     try {
-      let blob: Blob;
-      
-      switch (exportType) {
-        case 'suburb':
-          blob = await exportSuburbReport(payload);
-          break;
-        case 'property':
-          // TODO: Implement property export
-          throw new Error('Property export not implemented yet');
-        case 'loan':
-          // TODO: Implement loan export
-          throw new Error('Loan export not implemented yet');
-        default:
-          throw new Error(`Unknown export type: ${exportType}`);
-      }
-
-      // Extract filename from Content-Disposition header or generate default
-      const filename = `SettlyAI_${exportType}_report_${Date.now()}.pdf`;
+      const { blob, filename } = await exportSuburbReport(payload);
       downloadBlob(blob, filename);
-      
       onSuccess?.(filename);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Export failed';
+      const errorMessage = handleApiError(error);
+      console.error('PDF export failed:', errorMessage);
       onError?.(errorMessage);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
+  const getButtonText = () => {
+    if (isLoading) return 'Exporting...';
+    return 'Export PDF';
+  };
+
   return (
-    <Button
+    <GlobalButton
       variant="contained"
+      color="primary"
       onClick={handleExport}
-      disabled={disabled || loading}
-      startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <DownloadIcon />}
-      sx={{
-        minWidth: '140px',
-      }}
+      disabled={disabled || isLoading}
+      startIcon={isLoading ? <CircularProgress size="inherit" color="inherit" /> : undefined}
     >
-      {loading ? 'Generating...' : 'Export PDF'}
-    </Button>
+      {getButtonText()}
+    </GlobalButton>
   );
 };
 

@@ -30,8 +30,8 @@ export async function exportSuburbReport(payload: SuburbReportExportPayload): Pr
   console.log('Sending export request for suburb ID:', payload.suburbId);
   
   try {
-    // Use the original working endpoint that fetches data from database
-    const response = await httpClient.post(`/Pdf/suburb/${payload.suburbId}`, {}, {
+    // Use the new endpoint that fetches data from database
+    const response = await httpClient.post(`/export/pdf/suburb/${payload.suburbId}`, {}, {
       responseType: 'blob',
       timeout: 60000, // ✅ override default 10s timeout just for this call
     });

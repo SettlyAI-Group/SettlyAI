@@ -16,7 +16,7 @@ import type { IHousingMarket } from '@/interfaces/housingmarket';
 import SafetyScoresSection from './components/SafetyScoresSection';
 import { getSafetyScores } from '@/api/suburbApi';
 import type { IIncomeEmployment } from '@/interfaces/suburbReport';
-import ExportPdfButton from '@/components/ExportPdfButton';
+import ExportPdfButton from './components/ExportPdfButton';
 import type { SuburbReportExportPayload } from '@/api/exportApi';
 
 const PageContainer = styled(Box)(({ theme }) => ({
