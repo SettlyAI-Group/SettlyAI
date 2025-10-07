@@ -49,20 +49,20 @@ const ChatSidebar = ({ conversations, activeKey, onActiveChange, onNewChat }: Ch
         label: 'Rename',
         key: 'rename',
         icon: <EditOutlined />,
-        disabled: true,
+        disabled: false,
       },
       {
         label: 'Disable',
         key: 'disable',
         icon: <StopOutlined />,
-        disabled: true,
+        disabled: false,
       },
       {
         label: 'Delete',
         key: 'delete',
         icon: <DeleteOutlined />,
         danger: true,
-        disabled: true,
+        disabled: false,
       },
     ],
     onClick: menuInfo => {
