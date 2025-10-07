@@ -19,12 +19,6 @@ export interface SuburbReportExportPayload {
   };
 }
 
-// export const exportSuburbReport = async (payload: SuburbReportExportPayload): Promise<Blob> => {
-//   const response = await httpClient.post('/export/pdf/suburb', payload, {
-//     responseType: 'blob',
-//   });
-//   return response.data;
-// };
 
 export async function exportSuburbReport(payload: SuburbReportExportPayload): Promise<{ blob: Blob; filename: string }> {
   console.log('Sending export request for suburb ID:', payload.suburbId);
