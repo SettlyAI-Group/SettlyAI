@@ -22,8 +22,7 @@ const BUBBLE_ROLES: GetProp<typeof Bubble.List, 'roles'> = {
     placement: 'start',
     avatar: { icon: <UserOutlined />, style: BOT_AVATAR },
     typing: { step: 5, interval: 20 },
-    // 默认 loading（点点点）
-    loadingRender: () => <Spin size="small" />,
+    // 默认 loading 不自定义，使用 Bubble 自带的 typing 效果（点点点）
   },
   tool_call: {
     placement: 'start',
@@ -98,7 +97,7 @@ const ChatWindow = () => {
 
   const { agent, abort, setActiveThread } = useChatAgent();
 
-  const { parsedMessages, onRequest, setMessages, isRequesting } = useXChat<Msg, { role: Msg['role']; text: string; toolName?: string }>({
+  const xChatResult = useXChat<Msg, { role: Msg['role']; text: string; toolName?: string }>({
     agent: agent as any,
     defaultMessages: [],
     transformMessage: ({ originMessage, chunk }: { originMessage?: Msg; chunk?: any }) => {
@@ -115,8 +114,17 @@ const ChatWindow = () => {
         content: (originMessage?.content ?? '') + String(chunk),
       };
     },
-    parser: (m: Msg) => ({ role: m.role, text: m.content, toolName: m.toolName }),
+    parser: (m: Msg) => {
+      // 处理空消息的情况（useXChat 内部可能传入 undefined）
+      if (!m || (!m.role && !m.content)) {
+        return { role: 'assistant', text: '', toolName: undefined };
+      }
+      return { role: m.role, text: m.content, toolName: m.toolName };
+    },
   });
+
+  const { parsedMessages, onRequest, setMessages } = xChatResult;
+  const isRequesting = agent?.isRequesting?.() ?? false;
 
   const {
     conversations,
@@ -219,44 +227,41 @@ const ChatWindow = () => {
               ) : (
                 <Bubble.List
                   roles={BUBBLE_ROLES}
-                  items={[
-                    ...parsedMessages.map((it, idx) => {
-                      // tool_call 需要自定义显示
-                      if (it.message.role === 'tool_call') {
-                        return {
-                          key: idx,
-                          role: 'tool_call' as const,
-                          content: (
-                            <Space>
-                              <Spin size="small" />
-                              {it.message.text}
-                            </Space>
-                          ),
-                          loading: false, // 不使用默认 loading
-                        };
-                      }
-                      // 普通消息
+                  items={parsedMessages.map((it, idx) => {
+                    // tool_call 需要自定义显示（带 Spin + 文字）
+                    if (it.message.role === 'tool_call') {
                       return {
                         key: idx,
-                        role: it.message.role as 'user' | 'assistant' | 'tool_call',
-                        content: it.message.text,
+                        role: 'assistant' as const, // 使用 assistant 角色样式
+                        content: (
+                          <Space>
+                            <Spin size="small" />
+                            {it.message.text}
+                          </Space>
+                        ),
                         loading: false,
                       };
-                    }),
-                    // 如果正在请求且最后一条不是 assistant/tool_call，显示默认 loading
-                    ...(isRequesting &&
-                    parsedMessages.length > 0 &&
-                    parsedMessages[parsedMessages.length - 1]?.message.role === 'user'
-                      ? [
-                          {
-                            key: 'loading',
-                            role: 'assistant' as const,
-                            content: '',
-                            loading: true,
-                          },
-                        ]
-                      : []),
-                  ]}
+                    }
+                    // assistant 消息：如果内容为空且正在请求且没有工具调用，显示默认 loading
+                    if (it.message.role === 'assistant') {
+                      const isEmpty = !it.message.text || it.message.text.trim() === '';
+                      // 检查是否有工具调用消息
+                      const hasToolCall = parsedMessages.some(m => m.message.role === 'tool_call');
+                      return {
+                        key: idx,
+                        role: 'assistant' as const,
+                        content: it.message.text,
+                        loading: isEmpty && isRequesting && !hasToolCall, // 无工具调用时才显示默认 loading
+                      };
+                    }
+                    // 用户消息
+                    return {
+                      key: idx,
+                      role: it.message.role as 'user' | 'assistant' | 'tool_call',
+                      content: it.message.text,
+                      loading: false,
+                    };
+                  })}
                 />
               )}
             </>
