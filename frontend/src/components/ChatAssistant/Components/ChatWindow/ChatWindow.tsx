@@ -9,15 +9,9 @@ import { ensureUserChatId } from '../../utils/userChatId';
 import { createThread as createThreadApi, deleteThread as deleteThreadApi, searchThreads } from '@/api/chatBotApi';
 import { UserOutlined } from '@ant-design/icons';
 
-const fooAvatar: CSSProperties = {
-  color: '#f56a00',
-  backgroundColor: '#fde3cf',
-};
-
-const barAvatar: CSSProperties = {
-  color: '#fff',
-  backgroundColor: '#87d068',
-};
+const USER_AVATAR: CSSProperties = { color: '#fff', backgroundColor: '#87d068' };
+const BOT_AVATAR: CSSProperties = { color: '#f56a00', backgroundColor: '#fde3cf' };
+const THREAD_TTL_SECONDS = 600;
 
 const WindowContainer = styled(Box)(({ theme }) => ({
   position: 'absolute',
@@ -29,12 +23,8 @@ const WindowContainer = styled(Box)(({ theme }) => ({
   borderRadius: theme.spacing(2),
   boxShadow: theme.shadows[16],
   display: 'flex',
-  flexDirection: 'row',
   overflow: 'hidden',
-  [theme.breakpoints.down('sm')]: {
-    width: 320,
-    height: 500,
-  },
+  [theme.breakpoints.down('sm')]: { width: 320, height: 500 },
 }));
 
 const ChatContainer = styled(Box)(() => ({
@@ -46,7 +36,6 @@ const ChatContainer = styled(Box)(() => ({
 const ChatHeader = styled(Box)(({ theme }) => ({
   padding: theme.spacing(2),
   borderBottom: `1px solid ${theme.palette.divider}`,
-  backgroundColor: theme.palette.background.paper,
 }));
 
 const ChatBody = styled(Box)(() => ({
@@ -67,11 +56,7 @@ const StyledSendButton = styled(Button)(() => ({
   '&.ant-btn-primary': {
     backgroundColor: '#000000 !important',
     borderColor: '#000000 !important',
-    '&:hover': {
-      backgroundColor: '#333333 !important',
-      borderColor: '#333333 !important',
-    },
-    '&:active, &:focus': {
+    '&:hover, &:active, &:focus': {
       backgroundColor: '#333333 !important',
       borderColor: '#333333 !important',
     },
@@ -79,11 +64,7 @@ const StyledSendButton = styled(Button)(() => ({
 }));
 
 type MsgRole = 'user' | 'assistant';
-
-type Msg = {
-  role: MsgRole;
-  content: string;
-};
+type Msg = { role: MsgRole; content: string };
 
 interface ConversationItem {
   key: string;
@@ -92,7 +73,25 @@ interface ConversationItem {
   isDisabled?: boolean;
 }
 
-const THREAD_TTL_SECONDS = 600; // 10 minutes
+const extractColleagueName = (toolName = ''): string => {
+  const match = toolName.match(/(tina|tom|avi)/i);
+  if (!match) return '同事';
+  const name = match[1].toLowerCase();
+  return name.charAt(0).toUpperCase() + name.slice(1);
+};
+
+const normalizeMessages = (raw: any[] = []) => {
+  return raw.map((m: any, i: number) => {
+    const role = m.role ?? (m.type === 'human' || m.type === 'HumanMessage' ? 'user' : 'assistant');
+    const text =
+      typeof m.content === 'string'
+        ? m.content
+        : Array.isArray(m.content)
+          ? m.content.filter((c: any) => c?.type === 'text').map((c: any) => c.text).join('')
+          : (m.text ?? m.value ?? '');
+    return { id: m.id ?? String(i), role, text };
+  });
+};
 
 const ChatWindow = () => {
   const [userChatId, setUserChatId] = useState<string | null>(null);
@@ -101,110 +100,28 @@ const ChatWindow = () => {
   const [isCreatingThread, setIsCreatingThread] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [input, setInput] = useState('');
-  const [editingConversationKey, setEditingConversationKey] = useState<string | null>(null);
+  const [editingKey, setEditingKey] = useState<string | null>(null);
   const [renameDraft, setRenameDraft] = useState('');
   const abortControllerRef = useRef<AbortController | null>(null);
   const activeThreadRef = useRef('');
+  const bodyRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    const id = ensureUserChatId();
-    setUserChatId(id);
+    setUserChatId(ensureUserChatId());
   }, []);
 
   useEffect(() => {
-    activeThreadRef.current = activeKey || '';
+    activeThreadRef.current = activeKey;
   }, [activeKey]);
 
-  const normalizeMessages = useCallback((raw: any[] = []) => {
-    return raw.map((m: any, i: number) => {
-      const role = m.role ?? (m.type === 'human' || m.type === 'HumanMessage' ? 'user' : 'assistant');
-
-      const text =
-        typeof m.content === 'string'
-          ? m.content
-          : Array.isArray(m.content)
-            ? m.content
-                .filter((c: any) => c?.type === 'text')
-                .map((c: any) => c.text)
-                .join('')
-            : (m.text ?? m.value ?? '');
-
-      return { id: m.id ?? String(i), role, text };
-    });
-  }, []);
-
-  const handleRenameStart = useCallback(
-    (key: string) => {
-      const target = conversations.find(item => item.key === key);
-      setEditingConversationKey(key);
-      setRenameDraft(target?.label ?? '');
-    },
-    [conversations]
-  );
-
-  const handleRenameChange = useCallback((value: string) => {
-    setRenameDraft(value);
-  }, []);
-
-  const handleRenameSubmit = useCallback((key: string, value: string) => {
-    const nextLabel = value.trim();
-    setConversations(prev =>
-      prev.map(item => {
-        if (item.key !== key) {
-          return item;
-        }
-        if (!nextLabel || item.label === nextLabel) {
-          return item;
-        }
-        return {
-          ...item,
-          label: nextLabel,
-        };
-      })
-    );
-    setEditingConversationKey(null);
+  const cancelRename = useCallback(() => {
+    setEditingKey(null);
     setRenameDraft('');
   }, []);
 
-  const handleRenameCancel = useCallback(() => {
-    setEditingConversationKey(null);
-    setRenameDraft('');
+  const updateConversation = useCallback((key: string, updates: Partial<ConversationItem>) => {
+    setConversations(prev => prev.map(item => (item.key === key ? { ...item, ...updates } : item)));
   }, []);
-
-  const handleToggleDisable = useCallback(
-    (key: string) => {
-      const wasEditing = editingConversationKey === key;
-
-      setConversations(prev =>
-        prev.map(item =>
-          item.key === key
-            ? {
-                ...item,
-                isDisabled: !item.isDisabled,
-              }
-            : item
-        )
-      );
-
-      if (wasEditing) {
-        setEditingConversationKey(null);
-        setRenameDraft('');
-      }
-    },
-    [editingConversationKey]
-  );
-
-  // 简单把 tool 名字里的人名抠出来（按你的命名习惯改一下就行）
-  function pickColleagueName(toolName = ''): string | null {
-    // 常见命名：ask_tom_xxx / callAvi / query_tina / tom_search / avi_plan ...
-    const m = toolName.match(/(tina|tom|avi)/i);
-    if (!m) return null;
-    const name = m[1].toLowerCase();
-    if (name === 'tina') return 'Tina';
-    if (name === 'tom') return 'Tom';
-    if (name === 'avi') return 'Avi';
-    return name[0].toUpperCase() + name.slice(1);
-  }
 
   const [agent] = useXAgent<Msg>({
     request: async (info, { onUpdate, onSuccess, onError, onStream }) => {
@@ -212,7 +129,6 @@ const ChatWindow = () => {
       onStream?.(ac);
 
       try {
-        //从info中拿规定好的格式，发送message，然后后端发请求，得到steam的response
         const res = await fetch(`/langgraph/threads/${info.threadId}/runs/stream`, {
           method: 'POST',
           signal: ac.signal,
@@ -224,21 +140,19 @@ const ChatWindow = () => {
             stream_subgraphs: true,
           }),
         });
-        if (!res.ok || !res.body) throw new Error(`HTTP ${res.status}`);
 
+        if (!res.ok || !res.body) throw new Error(`HTTP ${res.status}`);
         abortControllerRef.current = ac;
 
-        //精筛需要的文本
-        const shownToolCalls = new Set<string>(); // 去重：同一次调用只提示一次
+        const shownToolCalls = new Set<string>();
         const collected: string[] = [];
-
         const reader = res.body.getReader();
         const decoder = new TextDecoder();
         let buffer = '';
 
         const flushBuffer = () => {
-          let searchIndex: number;
           let normalizedBuffer = buffer.replace(/\r\n/g, '\n');
+          let searchIndex: number;
 
           while ((searchIndex = normalizedBuffer.indexOf('\n\n')) !== -1) {
             const rawEvent = normalizedBuffer.slice(0, searchIndex);
@@ -248,57 +162,36 @@ const ChatWindow = () => {
             let eventName = '';
             const dataLines: string[] = [];
 
-            lines.forEach(line => {
-              if (!line) {
-                return;
-              }
+            for (const line of lines) {
+              if (!line) continue;
               const colonIndex = line.indexOf(':');
-              if (colonIndex === -1) {
-                return;
-              }
+              if (colonIndex === -1) continue;
 
               const field = line.slice(0, colonIndex).trim();
               const value = line.slice(colonIndex + 1).trimStart();
+              if (!field) continue;
 
-              if (!field) {
-                return;
-              }
-
-              if (field === 'event') {
-                eventName = value;
-              } else if (field === 'data') {
-                dataLines.push(value);
-              }
-            });
+              if (field === 'event') eventName = value;
+              else if (field === 'data') dataLines.push(value);
+            }
 
             const data = dataLines.join('\n');
-            if (!data || data === '[DONE]' || data.startsWith(':')) {
-              continue;
-            }
+            if (!data || data === '[DONE]' || data.startsWith(':')) continue;
+            if (activeThreadRef.current !== info.threadId) continue;
 
-            if (activeThreadRef.current !== info.threadId) {
-              continue;
-            }
-
-            let msg: any;
-            let meta: any;
+            let msg: any, meta: any;
             try {
               [msg, meta] = JSON.parse(data) ?? [];
             } catch {
               continue;
             }
 
-            if (eventName && !eventName.startsWith('messages|')) {
-              continue;
-            }
+            if (eventName && !eventName.startsWith('messages|')) continue;
 
             const node = meta?.langgraph_node;
             const eventTarget = eventName.split('|')[1] ?? '';
             const isTinaNode = node === 'tina' || node === 'tina_agent' || eventTarget.startsWith('tina_agent');
-
-            if (!isTinaNode) {
-              continue;
-            }
+            if (!isTinaNode) continue;
 
             const content = Array.isArray(msg?.content)
               ? msg.content
@@ -309,20 +202,15 @@ const ChatWindow = () => {
             for (const c of content) {
               if (c?.type === 'text') {
                 const piece = String(c.text ?? '');
-                if (!piece) {
-                  continue;
-                }
+                if (!piece) continue;
                 onUpdate(piece);
                 collected.push(piece);
               } else if (c?.type === 'tool_call') {
                 const toolId = c?.id ?? `${meta?.run_id}:${meta?.langgraph_step}`;
-                if (shownToolCalls.has(toolId)) {
-                  continue;
-                }
+                if (shownToolCalls.has(toolId)) continue;
                 shownToolCalls.add(toolId);
 
-                const colleague = pickColleagueName(c?.name) ?? '同事';
-                const hint = `（正在和${colleague}沟通…）`;
+                const hint = `（正在和${extractColleagueName(c?.name)}沟通…）`;
                 onUpdate(hint);
                 collected.push(hint);
               }
@@ -339,13 +227,12 @@ const ChatWindow = () => {
             flushBuffer();
             break;
           }
-
           buffer += decoder.decode(value, { stream: true });
           flushBuffer();
         }
 
         if (activeThreadRef.current === info.threadId) {
-          onSuccess(collected); // 收尾
+          onSuccess(collected);
         }
       } catch (e) {
         if (!(e instanceof DOMException && e.name === 'AbortError')) {
@@ -363,16 +250,14 @@ const ChatWindow = () => {
     agent,
     defaultMessages: [],
     transformMessage: ({ originMessage, chunk }) => {
-      if (typeof chunk === 'undefined' || chunk === null) {
+      if (chunk === undefined || chunk === null) {
         return originMessage ?? { role: 'assistant', content: '' };
       }
-
       return {
         role: 'assistant',
         content: (originMessage?.content ?? '') + String(chunk),
       };
     },
-    // 渲染映射
     parser: m => ({ role: m.role, text: m.content }),
   });
 
@@ -408,9 +293,8 @@ const ChatWindow = () => {
           });
         });
 
-        if (editingConversationKey && !threads.some(thread => thread.thread_id === editingConversationKey)) {
-          setEditingConversationKey(null);
-          setRenameDraft('');
+        if (editingKey && !threads.some(thread => thread.thread_id === editingKey)) {
+          cancelRename();
         }
 
         if (threads.length === 0) {
@@ -422,8 +306,7 @@ const ChatWindow = () => {
         const first = threads[0];
         setActiveKey(first.thread_id);
 
-        const rawMessages = first.values?.messages ?? [];
-        const uiMsgs = normalizeMessages(rawMessages);
+        const uiMsgs = normalizeMessages(first.values?.messages ?? []);
         const historyMessages = uiMsgs.map((m, index) => ({
           id: `history_${index}`,
           status: 'success' as const,
@@ -437,50 +320,34 @@ const ChatWindow = () => {
     };
 
     fetchThreads();
-  }, [normalizeMessages, setMessages, userChatId]);
-
-  const createThread = useCallback(
-    (userId: string) =>
-      createThreadApi({
-        metadata: {
-          user_id: userId,
-          user_type: 'Guest',
-        },
-        ttl: {
-          strategy: 'delete',
-          ttl: THREAD_TTL_SECONDS,
-        },
-      }),
-    [createThreadApi]
-  );
+  }, [userChatId, setMessages, editingKey, cancelRename]);
 
   const handleNewChat = useCallback(async () => {
-    if (!userChatId || isCreatingThread) {
-      return;
-    }
+    if (!userChatId || isCreatingThread) return;
 
     abortControllerRef.current?.abort();
     abortControllerRef.current = null;
-
     setIsCreatingThread(true);
     setErrorMessage(null);
 
     try {
-      const thread = await createThread(userChatId);
-      const threadId: string = thread.thread_id;
+      const thread = await createThreadApi({
+        metadata: { user_id: userChatId, user_type: 'Guest' },
+        ttl: { strategy: 'delete', ttl: THREAD_TTL_SECONDS },
+      });
 
       const newConversation: ConversationItem = {
-        key: threadId,
+        key: thread.thread_id,
         label: 'New Chat',
         updatedAt: new Date(thread?.updated_at || thread?.created_at || Date.now()).getTime(),
         isDisabled: false,
       };
 
       setConversations(prev => {
-        const next = [newConversation, ...prev.filter(item => item.key !== threadId)];
+        const next = [newConversation, ...prev.filter(item => item.key !== thread.thread_id)];
         return next.sort((a, b) => b.updatedAt - a.updatedAt);
       });
-      setActiveKey(threadId);
+      setActiveKey(thread.thread_id);
       setMessages(() => []);
     } catch (error) {
       console.error(error);
@@ -488,18 +355,14 @@ const ChatWindow = () => {
     } finally {
       setIsCreatingThread(false);
     }
-  }, [createThread, isCreatingThread, setMessages, userChatId]);
+  }, [userChatId, isCreatingThread, setMessages]);
 
   const handleActiveChange = useCallback(
     async (key: string) => {
-      if (!key || key === activeKey) {
-        return;
-      }
+      if (!key || key === activeKey) return;
 
       const targetConversation = conversations.find(item => item.key === key);
-      if (targetConversation?.isDisabled) {
-        return;
-      }
+      if (targetConversation?.isDisabled) return;
 
       abortControllerRef.current?.abort();
       abortControllerRef.current = null;
@@ -515,8 +378,7 @@ const ChatWindow = () => {
           select: ['values'],
         });
 
-        const raw = thread?.values?.messages ?? [];
-        const uiMsgs = normalizeMessages(raw);
+        const uiMsgs = normalizeMessages(thread?.values?.messages ?? []);
         const historyMessages = uiMsgs.map((m, index) => ({
           id: `history_${index}`,
           status: 'success' as const,
@@ -533,17 +395,15 @@ const ChatWindow = () => {
         }
       }
     },
-    [activeKey, conversations, normalizeMessages, setMessages, userChatId]
+    [activeKey, conversations, setMessages]
   );
 
   const handleDeleteConversation = useCallback(
     async (key: string) => {
-      if (!key) {
-        return;
-      }
+      if (!key) return;
 
       const isActive = activeKey === key;
-      const wasEditing = editingConversationKey === key;
+      const wasEditing = editingKey === key;
 
       if (isActive) {
         abortControllerRef.current?.abort();
@@ -555,10 +415,7 @@ const ChatWindow = () => {
       try {
         await deleteThreadApi(key);
 
-        if (wasEditing) {
-          setEditingConversationKey(null);
-          setRenameDraft('');
-        }
+        if (wasEditing) cancelRename();
 
         let nextActiveKey: string | null = null;
         setConversations(prev => {
@@ -580,11 +437,38 @@ const ChatWindow = () => {
         setErrorMessage('Failed to delete conversation.');
       }
     },
-    [activeKey, editingConversationKey, handleActiveChange]
+    [activeKey, editingKey, handleActiveChange, cancelRename, setMessages]
   );
 
-  // 自动滚到底下
-  const bodyRef = useRef<HTMLDivElement | null>(null);
+  const handleRenameStart = useCallback(
+    (key: string) => {
+      const target = conversations.find(item => item.key === key);
+      setEditingKey(key);
+      setRenameDraft(target?.label ?? '');
+    },
+    [conversations]
+  );
+
+  const handleRenameSubmit = useCallback(
+    (key: string, value: string) => {
+      const nextLabel = value.trim();
+      if (nextLabel) {
+        updateConversation(key, { label: nextLabel });
+      }
+      cancelRename();
+    },
+    [updateConversation, cancelRename]
+  );
+
+  const handleToggleDisable = useCallback(
+    (key: string) => {
+      const target = conversations.find(item => item.key === key);
+      updateConversation(key, { isDisabled: !target?.isDisabled });
+      if (editingKey === key) cancelRename();
+    },
+    [conversations, editingKey, updateConversation, cancelRename]
+  );
+
   useEffect(() => {
     if (!bodyRef.current) return;
     bodyRef.current.scrollTop = bodyRef.current.scrollHeight;
@@ -593,7 +477,6 @@ const ChatWindow = () => {
   useEffect(() => {
     return () => {
       abortControllerRef.current?.abort();
-      abortControllerRef.current = null;
     };
   }, []);
 
@@ -610,12 +493,12 @@ const ChatWindow = () => {
           isDisabled: item.isDisabled,
         }))}
         activeKey={activeKey}
-        editingKey={editingConversationKey}
+        editingKey={editingKey}
         renameDraft={renameDraft}
         onRenameStart={handleRenameStart}
-        onRenameChange={handleRenameChange}
+        onRenameChange={setRenameDraft}
         onRenameSubmit={handleRenameSubmit}
-        onRenameCancel={handleRenameCancel}
+        onRenameCancel={cancelRename}
         onToggleDisable={handleToggleDisable}
         onDelete={handleDeleteConversation}
         onActiveChange={handleActiveChange}
@@ -662,11 +545,10 @@ const ChatWindow = () => {
                     key={idx}
                     placement={it.message.role === 'user' ? 'end' : 'start'}
                     content={it.message.text}
-                    avatar={
-                      it.message.role === 'user'
-                        ? { icon: <UserOutlined />, style: barAvatar }
-                        : { icon: <UserOutlined />, style: fooAvatar }
-                    }
+                    avatar={{
+                      icon: <UserOutlined />,
+                      style: it.message.role === 'user' ? USER_AVATAR : BOT_AVATAR,
+                    }}
                   />
                 ))
               )}
@@ -676,7 +558,7 @@ const ChatWindow = () => {
         <ChatFooter>
           <Sender
             value={input}
-            onChange={v => setInput(v)}
+            onChange={setInput}
             onSubmit={() => {
               const text = input.trim();
               if (!text || !activeKey || isActiveConversationDisabled) return;
