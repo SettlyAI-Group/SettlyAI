@@ -42,7 +42,15 @@ const ChatAssistant = () => {
       <DraggableWrapper ref={nodeRef}>
         {isOpen && <ChatWindow />}
 
-        <Tooltip title={isOpen ? 'Close AI Assistant' : 'Open AI Assistant'} placement="left">
+        <Tooltip
+          title={
+            <span style={{ whiteSpace: 'nowrap' }}>
+              {isOpen ? 'Close AI Assistant' : 'Open AI Assistant'}
+            </span>
+          }
+          placement="left"
+          slotProps={{ popper: { disablePortal: true } }}
+        >
           <FloatingButton color="primary" aria-label="chat assistant" onClick={handleToggle}>
             {isOpen ? <CloseIcon /> : <ChatIcon />}
           </FloatingButton>
