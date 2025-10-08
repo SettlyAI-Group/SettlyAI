@@ -8,9 +8,10 @@ public static class CorsConfig
         {
             options.AddPolicy("AllowAll", policy =>
             {
-                policy.AllowAnyOrigin()
+                policy.WithOrigins("http://localhost:5173")  // should be changed in production environment 
                       .AllowAnyMethod()
-                      .AllowAnyHeader();
+                      .AllowAnyHeader()
+                      .AllowCredentials();  // request with cookies
             });
         });
 

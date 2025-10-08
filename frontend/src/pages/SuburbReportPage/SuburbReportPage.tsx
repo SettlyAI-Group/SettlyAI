@@ -1,5 +1,5 @@
 import ActionButtonWrapper from '@/pages/SuburbReportPage/components/ActionButtonGroup/ActionButtonWrapper';
-import { Box, Button, styled, Typography  } from '@mui/material';
+import { Box, Button, styled, Typography } from '@mui/material';
 import MetricCardsSection from './components/MetricCardsSection';
 import { useQueries } from '@tanstack/react-query';
 import { getSuburbBasicInfo, getSuburbLivability } from '@/api/suburbApi';
@@ -13,7 +13,10 @@ import { mapIncomeEmployment } from './components/IncomeEmploymentCardsSection/u
 import { mapPropertyCards } from '@/pages/SuburbReportPage/components/PropertyMarketInsightsSection';
 import PropertyMarketInsightsSection from '@/pages/SuburbReportPage/components/PropertyMarketInsightsSection';
 import type { IHousingMarket } from '@/interfaces/housingmarket';
-
+import SafetyScoresSection from './components/SafetyScoresSection';
+import { getSafetyScores } from '@/api/suburbApi';
+import type { IIncomeEmployment } from '@/interfaces/suburbReport';
+import ExportPdfButton from './components/ExportPdfButton';
 
 const PageContainer = styled(Box)(({ theme }) => ({
   maxWidth: '1440px',
@@ -37,7 +40,7 @@ const TITLES = {
   propertyMarketInsights: 'Property Market Insights',
   demandDevelopment: 'Demand & Development',
   lifeStyle: 'LifeStyle & Accessibility',
-  safetyScore: 'Safety & Score',
+  safetyScore: 'Safety & Scores',
 };
 const SuburbReportPage = () => {
   const { suburbId } = useParams<{ suburbId: string }>();
@@ -45,7 +48,7 @@ const SuburbReportPage = () => {
     return <Navigate to="/" replace />;
   }
   const results = useQueries({
-    queries: [  
+    queries: [
       {
         queryKey: ['SuburbBasicInfo', suburbId],
         queryFn: () => getSuburbBasicInfo(suburbId),
@@ -65,6 +68,10 @@ const SuburbReportPage = () => {
       {
         queryKey: ['incomeEmployment', suburbId],
         queryFn: () => getIncomeEmployment(parseInt(suburbId)),
+      },
+      {
+        queryKey: ['safetyScores', suburbId],
+        queryFn: () => getSafetyScores(parseInt(suburbId)),
       },
     ],
   });
@@ -97,11 +104,13 @@ const SuburbReportPage = () => {
     demand: results[1].data ? mapDevCardData(results[1].data) : undefined,
     livability: results[2].data ? mapLivability(results[2].data) : undefined,
     incomeEmployment,
+    safetyScores: results[5].data ?? undefined,
   };
   const propertyMetrics = results[3]?.data ? mapPropertyCards(results[3].data as IHousingMarket) : [];
+
+
   return (
     <PageContainer>
-
       <Banner
         suburb={formattedData.suburbBasicInfo?.name}
         postcode={formattedData.suburbBasicInfo?.postcode}
@@ -125,16 +134,22 @@ const SuburbReportPage = () => {
             <PropertyMarketInsightsSection title={TITLES.propertyMarketInsights} items={propertyMetrics} />
             <MetricCardsSection title={TITLES.demandDevelopment} data={formattedData.demand} />
             <MetricCardsSection title={TITLES.lifeStyle} data={formattedData.livability} />
+            {formattedData.safetyScores && (
+              <SafetyScoresSection title={TITLES.safetyScore} CardProps={formattedData.safetyScores} />
+            )}
 
-            {/* todo:  replace with real action buttons , feel free to modify*/}
             <ActionButtonWrapper>
               <Button>save this suburb</Button>
-              <Button>Export PDF</Button>
+              <ExportPdfButton
+                suburbId={suburbId}
+                formattedData={formattedData}
+                results={results}
+                disabled={allLoading}
+              />
             </ActionButtonWrapper>
           </>
         )}
       </ContentContainer>
-
     </PageContainer>
   );
 };

@@ -25,9 +25,6 @@ export const FormInput = ({ name, control, rules, helperText, trigger, hideError
               await trigger(name);
             }
           }}
-          onBlur={e => {
-            field.onBlur();
-          }}
           fullWidth
           size="small"
           margin="normal"
@@ -36,8 +33,8 @@ export const FormInput = ({ name, control, rules, helperText, trigger, hideError
           helperText={!hideError && error ? error.message : helperText}
           slotProps={{
             formHelperText: {
-              component: 'div'
-            }
+              component: 'div',
+            },
           }}
         />
       )}

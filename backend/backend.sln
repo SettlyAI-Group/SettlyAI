@@ -13,6 +13,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SettlyService", "SettlyServ
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SettlyDbManager", "SettlyDbManager\SettlyDbManager.csproj", "{03FA2DA9-4FF8-4043-ABBE-5DDA7E9FEDA6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SettlyApiTests", "SettlyApiTests\SettlyApiTests.csproj", "{2F3569DE-5832-4E39-BF1D-C91C9D2D0AE2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SettlyFinance", "SettlyFinance\SettlyFinance.csproj", "{5C382221-4448-4920-B67C-A99FCB7E2635}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SettlyFinanceTests", "SettlyFinanceTests\SettlyFinanceTests.csproj", "{14928811-14A8-4908-9C9F-CE307156AD75}"
+EndProject
 
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -40,6 +46,18 @@ Global
 		{03FA2DA9-4FF8-4043-ABBE-5DDA7E9FEDA6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{03FA2DA9-4FF8-4043-ABBE-5DDA7E9FEDA6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{03FA2DA9-4FF8-4043-ABBE-5DDA7E9FEDA6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F3569DE-5832-4E39-BF1D-C91C9D2D0AE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F3569DE-5832-4E39-BF1D-C91C9D2D0AE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F3569DE-5832-4E39-BF1D-C91C9D2D0AE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F3569DE-5832-4E39-BF1D-C91C9D2D0AE2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C382221-4448-4920-B67C-A99FCB7E2635}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C382221-4448-4920-B67C-A99FCB7E2635}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C382221-4448-4920-B67C-A99FCB7E2635}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C382221-4448-4920-B67C-A99FCB7E2635}.Release|Any CPU.Build.0 = Release|Any CPU
+		{14928811-14A8-4908-9C9F-CE307156AD75}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14928811-14A8-4908-9C9F-CE307156AD75}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14928811-14A8-4908-9C9F-CE307156AD75}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14928811-14A8-4908-9C9F-CE307156AD75}.Release|Any CPU.Build.0 = Release|Any CPU
 
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
