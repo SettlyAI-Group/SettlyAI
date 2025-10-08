@@ -16,6 +16,7 @@ import type { IHousingMarket } from '@/interfaces/housingmarket';
 import SafetyScoresSection from './components/SafetyScoresSection';
 import { getSafetyScores } from '@/api/suburbApi';
 import type { IIncomeEmployment } from '@/interfaces/suburbReport';
+import ExportPdfButton from './components/ExportPdfButton';
 
 const PageContainer = styled(Box)(({ theme }) => ({
   maxWidth: '1440px',
@@ -106,6 +107,8 @@ const SuburbReportPage = () => {
     safetyScores: results[5].data ?? undefined,
   };
   const propertyMetrics = results[3]?.data ? mapPropertyCards(results[3].data as IHousingMarket) : [];
+
+
   return (
     <PageContainer>
       <Banner
@@ -135,10 +138,14 @@ const SuburbReportPage = () => {
               <SafetyScoresSection title={TITLES.safetyScore} CardProps={formattedData.safetyScores} />
             )}
 
-            {/* todo:  replace with real action buttons , feel free to modify*/}
             <ActionButtonWrapper>
               <Button>save this suburb</Button>
-              <Button>Export PDF</Button>
+              <ExportPdfButton
+                suburbId={suburbId}
+                formattedData={formattedData}
+                results={results}
+                disabled={allLoading}
+              />
             </ActionButtonWrapper>
           </>
         )}
