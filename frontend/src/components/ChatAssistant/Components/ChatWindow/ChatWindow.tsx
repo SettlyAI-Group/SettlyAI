@@ -484,7 +484,7 @@ const ChatWindow = () => {
   const isActiveConversationDisabled = Boolean(activeConversation?.isDisabled);
 
   return (
-    <WindowContainer>
+    <WindowContainer id="chat-window-container">
       <ChatSidebar
         conversations={conversations.map(item => ({
           key: item.key,

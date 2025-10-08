@@ -37,6 +37,15 @@ const ConversationLabel = styled(Typography)(() => ({
   whiteSpace: 'nowrap',
 }));
 
+const modalStyles = {
+  mask: {
+    position: 'absolute' as const,
+  },
+  wrapper: {
+    position: 'absolute' as const,
+  },
+};
+
 interface ConversationItem {
   key: string;
   label: string;
@@ -133,7 +142,8 @@ const ChatSidebar = ({
       const actions: Record<string, () => void> = {
         rename: () => onRenameStart(item.key),
         'toggle-disable': () => onToggleDisable(item.key),
-        delete: () =>
+        delete: () => {
+          const container = document.getElementById('chat-window-container');
           Modal.confirm({
             title: 'Delete conversation?',
             content: `Are you sure you want to delete "${item.rawLabel ?? item.label}"? This action cannot be undone.`,
@@ -141,7 +151,10 @@ const ChatSidebar = ({
             okType: 'danger',
             cancelText: 'Cancel',
             onOk: () => onDelete(item.key),
-          }),
+            getContainer: () => container || document.body,
+            styles: modalStyles,
+          });
+        },
       };
 
       actions[menuInfo.key]?.();
