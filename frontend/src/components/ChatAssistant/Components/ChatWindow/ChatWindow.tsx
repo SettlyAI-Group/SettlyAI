@@ -6,11 +6,7 @@ import { Bubble, Sender, useXAgent, useXChat } from '@ant-design/x';
 import { Button } from 'antd';
 import ChatSidebar from './component/ChatSidebar';
 import { ensureUserChatId } from '../../utils/userChatId';
-import {
-  createThread as createThreadApi,
-  deleteThread as deleteThreadApi,
-  searchThreads,
-} from '@/api/chatBotApi';
+import { createThread as createThreadApi, deleteThread as deleteThreadApi, searchThreads } from '@/api/chatBotApi';
 import { UserOutlined } from '@ant-design/icons';
 
 const fooAvatar: CSSProperties = {
@@ -127,11 +123,11 @@ const ChatWindow = () => {
         typeof m.content === 'string'
           ? m.content
           : Array.isArray(m.content)
-              ? m.content
-                  .filter((c: any) => c?.type === 'text')
-                  .map((c: any) => c.text)
-                  .join('')
-              : (m.text ?? m.value ?? '');
+            ? m.content
+                .filter((c: any) => c?.type === 'text')
+                .map((c: any) => c.text)
+                .join('')
+            : (m.text ?? m.value ?? '');
 
       return { id: m.id ?? String(i), role, text };
     });
@@ -143,7 +139,7 @@ const ChatWindow = () => {
       setEditingConversationKey(key);
       setRenameDraft(target?.label ?? '');
     },
-    [conversations],
+    [conversations]
   );
 
   const handleRenameChange = useCallback((value: string) => {
@@ -164,7 +160,7 @@ const ChatWindow = () => {
           ...item,
           label: nextLabel,
         };
-      }),
+      })
     );
     setEditingConversationKey(null);
     setRenameDraft('');
@@ -186,8 +182,8 @@ const ChatWindow = () => {
                 ...item,
                 isDisabled: !item.isDisabled,
               }
-            : item,
-        ),
+            : item
+        )
       );
 
       if (wasEditing) {
@@ -195,9 +191,8 @@ const ChatWindow = () => {
         setRenameDraft('');
       }
     },
-    [editingConversationKey],
+    [editingConversationKey]
   );
-
 
   // 简单把 tool 名字里的人名抠出来（按你的命名习惯改一下就行）
   function pickColleagueName(toolName = ''): string | null {
@@ -231,10 +226,6 @@ const ChatWindow = () => {
         });
         if (!res.ok || !res.body) throw new Error(`HTTP ${res.status}`);
 
-        console.log('[ChatWindow][stream] request started', {
-          threadId: info.threadId,
-          userMessage: info.message?.content,
-        });
         abortControllerRef.current = ac;
 
         //精筛需要的文本
@@ -245,7 +236,7 @@ const ChatWindow = () => {
         const decoder = new TextDecoder();
         let buffer = '';
 
-        const flushBuffer = (isFinal = false) => {
+        const flushBuffer = () => {
           let searchIndex: number;
           let normalizedBuffer = buffer.replace(/\r\n/g, '\n');
 
@@ -281,21 +272,11 @@ const ChatWindow = () => {
             });
 
             const data = dataLines.join('\n');
-            console.log('[ChatWindow][stream] parsed chunk info', { eventName, data });
             if (!data || data === '[DONE]' || data.startsWith(':')) {
-              console.log('[ChatWindow][stream] skip chunk', {
-                reason: 'empty or heartbeat',
-                data,
-              });
               continue;
             }
 
             if (activeThreadRef.current !== info.threadId) {
-              console.log('[ChatWindow][stream] skip chunk', {
-                reason: 'thread switched',
-                activeThread: activeThreadRef.current,
-                streamThread: info.threadId,
-              });
               continue;
             }
 
@@ -304,29 +285,18 @@ const ChatWindow = () => {
             try {
               [msg, meta] = JSON.parse(data) ?? [];
             } catch {
-              console.log('[ChatWindow][stream] failed to JSON.parse payload', data);
               continue;
             }
 
             if (eventName && !eventName.startsWith('messages|')) {
-              console.log('[ChatWindow][stream] skip chunk', {
-                reason: 'event mismatch',
-                eventName,
-              });
               continue;
             }
 
             const node = meta?.langgraph_node;
             const eventTarget = eventName.split('|')[1] ?? '';
-            const isTinaNode =
-              node === 'tina' || node === 'tina_agent' || eventTarget.startsWith('tina_agent');
+            const isTinaNode = node === 'tina' || node === 'tina_agent' || eventTarget.startsWith('tina_agent');
 
             if (!isTinaNode) {
-              console.log('[ChatWindow][stream] skip chunk', {
-                reason: 'node mismatch',
-                node,
-                eventTarget,
-              });
               continue;
             }
 
@@ -342,7 +312,6 @@ const ChatWindow = () => {
                 if (!piece) {
                   continue;
                 }
-                console.log('[ChatWindow][stream] onUpdate text', piece);
                 onUpdate(piece);
                 collected.push(piece);
               } else if (c?.type === 'tool_call') {
@@ -354,7 +323,6 @@ const ChatWindow = () => {
 
                 const colleague = pickColleagueName(c?.name) ?? '同事';
                 const hint = `（正在和${colleague}沟通…）`;
-                console.log('[ChatWindow][stream] onUpdate tool hint', hint);
                 onUpdate(hint);
                 collected.push(hint);
               }
@@ -362,17 +330,13 @@ const ChatWindow = () => {
           }
 
           buffer = normalizedBuffer;
-
-          if (isFinal && buffer.trim().length > 0) {
-            console.log('[ChatWindow][stream] leftover buffer after final flush', buffer);
-          }
         };
 
         while (true) {
           const { value, done } = await reader.read();
           if (done) {
             buffer += decoder.decode();
-            flushBuffer(true);
+            flushBuffer();
             break;
           }
 
@@ -380,17 +344,11 @@ const ChatWindow = () => {
           flushBuffer();
         }
 
-        console.log('[ChatWindow][stream] onSuccess', collected);
         if (activeThreadRef.current === info.threadId) {
           onSuccess(collected); // 收尾
-        } else {
-          console.log('[ChatWindow][stream] skip onSuccess due to thread switch');
         }
       } catch (e) {
-        if (e instanceof DOMException && e.name === 'AbortError') {
-          console.log('[ChatWindow][stream] aborted', { threadId: info.threadId });
-        } else {
-          console.log('[ChatWindow][stream] onError', e);
+        if (!(e instanceof DOMException && e.name === 'AbortError')) {
           onError(e as Error);
         }
       } finally {
@@ -401,10 +359,7 @@ const ChatWindow = () => {
     },
   });
 
-  const { parsedMessages, onRequest, setMessages } = useXChat<
-    Msg,
-    { role: Msg['role']; text: string }
-  >({
+  const { parsedMessages, onRequest, setMessages } = useXChat<Msg, { role: Msg['role']; text: string }>({
     agent,
     defaultMessages: [],
     transformMessage: ({ originMessage, chunk }) => {
@@ -496,7 +451,7 @@ const ChatWindow = () => {
           ttl: THREAD_TTL_SECONDS,
         },
       }),
-    [createThreadApi],
+    [createThreadApi]
   );
 
   const handleNewChat = useCallback(async () => {
@@ -569,11 +524,6 @@ const ChatWindow = () => {
         }));
         if (activeThreadRef.current === key) {
           setMessages(() => historyMessages);
-        } else {
-          console.log('[ChatWindow] skip history update, thread switched', {
-            target: key,
-            current: activeThreadRef.current,
-          });
         }
       } catch (e) {
         console.error(e);
@@ -583,7 +533,7 @@ const ChatWindow = () => {
         }
       }
     },
-    [activeKey, conversations, normalizeMessages, setMessages, userChatId],
+    [activeKey, conversations, normalizeMessages, setMessages, userChatId]
   );
 
   const handleDeleteConversation = useCallback(
@@ -630,7 +580,7 @@ const ChatWindow = () => {
         setErrorMessage('Failed to delete conversation.');
       }
     },
-    [activeKey, editingConversationKey, handleActiveChange],
+    [activeKey, editingConversationKey, handleActiveChange]
   );
 
   // 自动滚到底下
@@ -638,10 +588,6 @@ const ChatWindow = () => {
   useEffect(() => {
     if (!bodyRef.current) return;
     bodyRef.current.scrollTop = bodyRef.current.scrollHeight;
-  }, [parsedMessages]);
-
-  useEffect(() => {
-    console.log('[ChatWindow] parsedMessages updated', parsedMessages);
   }, [parsedMessages]);
 
   useEffect(() => {
@@ -741,9 +687,7 @@ const ChatWindow = () => {
               setInput('');
             }}
             placeholder={
-              isActiveConversationDisabled
-                ? 'Enable this conversation to send messages.'
-                : 'Type your message...'
+              isActiveConversationDisabled ? 'Enable this conversation to send messages.' : 'Type your message...'
             }
             disabled={!userChatId || !activeKey || isActiveConversationDisabled}
             actions={(_, { components }) => {

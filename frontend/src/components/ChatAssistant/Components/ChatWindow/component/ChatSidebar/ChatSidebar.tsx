@@ -34,6 +34,13 @@ const ConversationList = styled(Box)(() => ({
   overflow: 'auto',
 }));
 
+const ConversationLabel = styled(Typography)(() => ({
+  fontSize: '0.75rem',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+}));
+
 interface ConversationItem {
   key: string;
   label: string;
@@ -107,14 +114,16 @@ const ChatSidebar = ({
     }
 
     return (
-      <Typography
+      <ConversationLabel
         variant="body2"
         color={conversation.isDisabled ? 'text.secondary' : 'text.primary'}
-        sx={{ fontStyle: conversation.isDisabled ? 'italic' : 'normal' }}
+        sx={{
+          fontStyle: conversation.isDisabled ? 'italic' : 'normal',
+        }}
       >
         {conversation.label}
         {conversation.isDisabled ? ' (disabled)' : ''}
-      </Typography>
+      </ConversationLabel>
     );
   };
 
