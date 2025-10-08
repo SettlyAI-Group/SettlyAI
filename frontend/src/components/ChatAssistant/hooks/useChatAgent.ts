@@ -1,8 +1,12 @@
 import { useXAgent } from '@ant-design/x';
 import { useCallback, useRef } from 'react';
 
-type MsgRole = 'user' | 'assistant';
-type Msg = { role: MsgRole; content: string };
+type MsgRole = 'user' | 'assistant' | 'tool_call';
+type Msg = {
+  role: MsgRole;
+  content: string;
+  toolName?: string; // 工具名称，仅当 role === 'tool_call' 时有值
+};
 
 const extractColleagueName = (toolName = ''): string => {
   const match = toolName.match(/(tina|tom|avi)/i);
@@ -41,7 +45,8 @@ export const useChatAgent = () => {
         abortControllerRef.current = ac;
 
         const shownToolCalls = new Set<string>();
-        const collected: string[] = [];
+        const collected: Msg[] = []; // 改为消息数组
+        let currentMsg: Msg | null = null; // 当前正在构建的消息
         const reader = res.body.getReader();
         const decoder = new TextDecoder();
         let buffer = '';
@@ -97,8 +102,9 @@ export const useChatAgent = () => {
             // 1. 过滤非 Tina 节点的消息（Tom、Avi、tools 等）
             if (node !== 'tina' && node !== 'tina_agent') continue;
 
-            // 2. 过滤子代理的内部消息（Tom/Avi 处理过程）
-            if (checkpointNs?.includes('|tom:') || checkpointNs?.includes('|avi:')) continue;
+            // 2. 过滤子代理的内部消息（Tom/Avi/Ivy/Levan 处理过程）
+            const subAgents = ['|tom:', '|avi:', '|ivy:', '|levan:'];
+            if (subAgents.some(agent => checkpointNs?.includes(agent))) continue;
 
             // ===== 内容处理逻辑 =====
             const content = Array.isArray(msg?.content)
@@ -108,22 +114,43 @@ export const useChatAgent = () => {
                 : [];
 
             for (const c of content) {
-              // 3a. Tina 的对话文本 - 直接显示
+              // 3a. Tina 的对话文本 - 流式追加到当前消息
               if (c?.type === 'text') {
                 const piece = String(c.text ?? '');
                 if (!piece) continue;
-                onUpdate(piece);
-                collected.push(piece);
+
+                // 如果当前没有消息或者是工具调用消息，创建新的助手消息
+                if (!currentMsg || currentMsg.role === 'tool_call') {
+                  if (currentMsg) {
+                    collected.push(currentMsg);
+                    onUpdate(currentMsg); // 完成工具调用消息
+                  }
+                  currentMsg = { role: 'assistant', content: piece };
+                } else {
+                  currentMsg.content += piece;
+                }
+                onUpdate(currentMsg);
               }
-              // 3b. Tina 调用工具 - 显示加载提示
+              // 3b. Tina 调用工具 - 创建独立的工具调用消息
               else if (c?.type === 'tool_use') {
                 const toolId = c?.id ?? `${meta?.run_id}:${meta?.langgraph_step}`;
                 if (shownToolCalls.has(toolId)) continue;
                 shownToolCalls.add(toolId);
 
-                const hint = `（正在和${extractColleagueName(c?.name)}沟通…）`;
-                onUpdate(hint);
-                collected.push(hint);
+                // 先完成当前的助手消息
+                if (currentMsg && currentMsg.role === 'assistant') {
+                  collected.push(currentMsg);
+                  onUpdate(currentMsg);
+                }
+
+                // 创建工具调用消息
+                const toolMsg: Msg = {
+                  role: 'tool_call',
+                  content: `正在和${extractColleagueName(c?.name)}沟通...`,
+                  toolName: c?.name,
+                };
+                currentMsg = toolMsg;
+                onUpdate(toolMsg);
               }
             }
           }
@@ -136,6 +163,10 @@ export const useChatAgent = () => {
           if (done) {
             buffer += decoder.decode();
             flushBuffer();
+            // 完成最后一条消息
+            if (currentMsg) {
+              collected.push(currentMsg);
+            }
             break;
           }
           buffer += decoder.decode(value, { stream: true });

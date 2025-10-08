@@ -6,7 +6,7 @@ import { Bubble, Sender, useXChat } from '@ant-design/x';
 import { Button } from 'antd';
 import ChatSidebar from './component/ChatSidebar';
 import { ensureUserChatId } from '../../utils/userChatId';
-import { UserOutlined } from '@ant-design/icons';
+import { UserOutlined, LoadingOutlined } from '@ant-design/icons';
 import { useChatAgent, useChatThread, useChatRename, useAutoScroll } from '../../hooks';
 
 const USER_AVATAR: CSSProperties = { color: '#fff', backgroundColor: '#87d068' };
@@ -62,8 +62,12 @@ const StyledSendButton = styled(Button)(() => ({
   },
 }));
 
-type MsgRole = 'user' | 'assistant';
-type Msg = { role: MsgRole; content: string };
+type MsgRole = 'user' | 'assistant' | 'tool_call';
+type Msg = {
+  role: MsgRole;
+  content: string;
+  toolName?: string;
+};
 
 const ChatWindow = () => {
   const [userChatId, setUserChatId] = useState<string | null>(null);
@@ -75,19 +79,24 @@ const ChatWindow = () => {
 
   const { agent, abort, setActiveThread } = useChatAgent();
 
-  const { parsedMessages, onRequest, setMessages } = useXChat<Msg, { role: Msg['role']; text: string }>({
+  const { parsedMessages, onRequest, setMessages } = useXChat<Msg, { role: Msg['role']; text: string; toolName?: string }>({
     agent: agent as any,
     defaultMessages: [],
     transformMessage: ({ originMessage, chunk }: { originMessage?: Msg; chunk?: any }) => {
       if (chunk === undefined || chunk === null) {
         return originMessage ?? { role: 'assistant' as MsgRole, content: '' };
       }
+      // chunk 现在是完整的 Msg 对象
+      if (typeof chunk === 'object' && 'role' in chunk) {
+        return chunk as Msg;
+      }
+      // 兼容旧的字符串格式
       return {
         role: 'assistant' as MsgRole,
         content: (originMessage?.content ?? '') + String(chunk),
       };
     },
-    parser: (m: Msg) => ({ role: m.role, text: m.content }),
+    parser: (m: Msg) => ({ role: m.role, text: m.content, toolName: m.toolName }),
   });
 
   const {
@@ -189,17 +198,35 @@ const ChatWindow = () => {
                     : 'Preparing chat session...'}
                 </Typography>
               ) : (
-                parsedMessages.map((it, idx) => (
-                  <Bubble
-                    key={idx}
-                    placement={it.message.role === 'user' ? 'end' : 'start'}
-                    content={it.message.text}
-                    avatar={{
-                      icon: <UserOutlined />,
-                      style: it.message.role === 'user' ? USER_AVATAR : BOT_AVATAR,
-                    }}
-                  />
-                ))
+                parsedMessages.map((it, idx) => {
+                  // 工具调用消息 - 显示 loading 动画
+                  if (it.message.role === 'tool_call') {
+                    return (
+                      <Bubble
+                        key={idx}
+                        placement="start"
+                        loading
+                        content={it.message.text}
+                        avatar={{
+                          icon: <LoadingOutlined />,
+                          style: BOT_AVATAR,
+                        }}
+                      />
+                    );
+                  }
+                  // 普通消息
+                  return (
+                    <Bubble
+                      key={idx}
+                      placement={it.message.role === 'user' ? 'end' : 'start'}
+                      content={it.message.text}
+                      avatar={{
+                        icon: <UserOutlined />,
+                        style: it.message.role === 'user' ? USER_AVATAR : BOT_AVATAR,
+                      }}
+                    />
+                  );
+                })
               )}
             </>
           )}
