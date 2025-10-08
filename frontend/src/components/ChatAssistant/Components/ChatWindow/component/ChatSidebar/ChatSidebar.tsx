@@ -13,12 +13,8 @@ const SidebarContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   backgroundColor: theme.palette.grey[50],
-  [theme.breakpoints.down('sm')]: {
-    display: 'none',
-  },
-  '& .chat-sidebar__item--disabled': {
-    opacity: 0.6,
-  },
+  [theme.breakpoints.down('sm')]: { display: 'none' },
+  '& .chat-sidebar__item--disabled': { opacity: 0.6 },
 }));
 
 const SidebarHeader = styled(Box)(({ theme }) => ({
@@ -45,7 +41,6 @@ interface ConversationItem {
   key: string;
   label: string;
   timestamp: number;
-  disabled?: boolean;
   isDisabled?: boolean;
   rawLabel?: string;
 }
@@ -65,6 +60,12 @@ interface ChatSidebarProps {
   onNewChat: () => void;
 }
 
+const MENU_ITEMS = [
+  { label: 'Rename', key: 'rename', icon: <EditOutlined /> },
+  { label: 'Toggle', key: 'toggle-disable', icon: <StopOutlined /> },
+  { label: 'Delete', key: 'delete', icon: <DeleteOutlined />, danger: true },
+];
+
 const ChatSidebar = ({
   conversations,
   activeKey,
@@ -79,34 +80,29 @@ const ChatSidebar = ({
   onActiveChange,
   onNewChat,
 }: ChatSidebarProps) => {
-  const handleRenameInputKeyDown = (event: KeyboardEvent<HTMLInputElement>, key: string) => {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      event.stopPropagation();
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>, key: string) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      e.stopPropagation();
       onRenameSubmit(key, renameDraft);
-    }
-    if (event.key === 'Escape') {
-      event.preventDefault();
-      event.stopPropagation();
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      e.stopPropagation();
       onRenameCancel();
     }
   };
 
-  const renderLabel = (conversation: ConversationItem) => {
-    if (editingKey === conversation.key) {
+  const renderLabel = (item: ConversationItem) => {
+    if (editingKey === item.key) {
       return (
         <Input
           autoFocus
           size="small"
           value={renameDraft}
-          onChange={(event: ChangeEvent<HTMLInputElement>) => onRenameChange(event.target.value)}
-          onKeyDown={event => handleRenameInputKeyDown(event, conversation.key)}
-          onBlur={() => {
-            if (editingKey === conversation.key) {
-              onRenameSubmit(conversation.key, renameDraft);
-            }
-          }}
-          onClick={event => event.stopPropagation()}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => onRenameChange(e.target.value)}
+          onKeyDown={e => handleKeyDown(e, item.key)}
+          onBlur={() => editingKey === item.key && onRenameSubmit(item.key, renameDraft)}
+          onClick={e => e.stopPropagation()}
           style={{ width: '100%' }}
           placeholder="Rename conversation"
         />
@@ -116,16 +112,41 @@ const ChatSidebar = ({
     return (
       <ConversationLabel
         variant="body2"
-        color={conversation.isDisabled ? 'text.secondary' : 'text.primary'}
-        sx={{
-          fontStyle: conversation.isDisabled ? 'italic' : 'normal',
-        }}
+        color={item.isDisabled ? 'text.secondary' : 'text.primary'}
+        sx={{ fontStyle: item.isDisabled ? 'italic' : 'normal' }}
       >
-        {conversation.label}
-        {conversation.isDisabled ? ' (disabled)' : ''}
+        {item.label}
+        {item.isDisabled && ' (disabled)'}
       </ConversationLabel>
     );
   };
+
+  const menuConfig: ConversationsProps['menu'] = item => ({
+    items: MENU_ITEMS.map(menuItem => ({
+      ...menuItem,
+      label: menuItem.key === 'toggle-disable' ? (item.isDisabled ? 'Enable' : 'Disable') : menuItem.label,
+      disabled: false,
+    })),
+    onClick: menuInfo => {
+      menuInfo.domEvent.stopPropagation();
+
+      const actions: Record<string, () => void> = {
+        rename: () => onRenameStart(item.key),
+        'toggle-disable': () => onToggleDisable(item.key),
+        delete: () =>
+          Modal.confirm({
+            title: 'Delete conversation?',
+            content: `Are you sure you want to delete "${item.rawLabel ?? item.label}"? This action cannot be undone.`,
+            okText: 'Delete',
+            okType: 'danger',
+            cancelText: 'Cancel',
+            onOk: () => onDelete(item.key),
+          }),
+      };
+
+      actions[menuInfo.key]?.();
+    },
+  });
 
   const displayItems = conversations.map(item => ({
     ...item,
@@ -134,54 +155,6 @@ const ChatSidebar = ({
     className: item.isDisabled ? 'chat-sidebar__item--disabled' : undefined,
     disabled: false,
   }));
-
-  const menuConfig: ConversationsProps['menu'] = conversation => {
-    const isDisabled = Boolean(conversation.isDisabled);
-    return {
-      items: [
-        {
-          label: 'Rename',
-          key: 'rename',
-          icon: <EditOutlined />,
-          disabled: false,
-        },
-        {
-          label: isDisabled ? 'Enable' : 'Disable',
-          key: 'toggle-disable',
-          icon: <StopOutlined />,
-          disabled: false,
-        },
-        {
-          label: 'Delete',
-          key: 'delete',
-          icon: <DeleteOutlined />,
-          danger: true,
-          disabled: false,
-        },
-      ],
-      onClick: menuInfo => {
-        menuInfo.domEvent.stopPropagation();
-        if (menuInfo.key === 'rename') {
-          onRenameStart(conversation.key);
-          return;
-        }
-        if (menuInfo.key === 'toggle-disable') {
-          onToggleDisable(conversation.key);
-          return;
-        }
-        if (menuInfo.key === 'delete') {
-          Modal.confirm({
-            title: 'Delete conversation?',
-            content: `Are you sure you want to delete "${conversation.rawLabel ?? conversation.label}"? This action cannot be undone.`,
-            okText: 'Delete',
-            okType: 'danger',
-            cancelText: 'Cancel',
-            onOk: () => onDelete(conversation.key),
-          });
-        }
-      },
-    };
-  };
 
   return (
     <SidebarContainer>
@@ -192,12 +165,7 @@ const ChatSidebar = ({
         </IconButton>
       </SidebarHeader>
       <ConversationList>
-        <Conversations
-          items={displayItems}
-          activeKey={activeKey}
-          onActiveChange={onActiveChange}
-          menu={menuConfig}
-        />
+        <Conversations items={displayItems} activeKey={activeKey} onActiveChange={onActiveChange} menu={menuConfig} />
       </ConversationList>
     </SidebarContainer>
   );
