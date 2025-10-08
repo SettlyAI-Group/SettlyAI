@@ -9,7 +9,7 @@ type Msg = {
 };
 
 const extractColleagueName = (toolName = ''): string => {
-  const match = toolName.match(/(tina|tom|avi)/i);
+  const match = toolName.match(/(tom|ivy|levan)/i);
   if (!match) return '同事';
   const name = match[1].toLowerCase();
   return name.charAt(0).toUpperCase() + name.slice(1);

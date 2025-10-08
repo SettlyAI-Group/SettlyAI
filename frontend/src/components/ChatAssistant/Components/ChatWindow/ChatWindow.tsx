@@ -22,19 +22,12 @@ const BUBBLE_ROLES: GetProp<typeof Bubble.List, 'roles'> = {
     placement: 'start',
     avatar: { icon: <UserOutlined />, style: BOT_AVATAR },
     typing: { step: 5, interval: 20 },
+    // 默认 loading（点点点）
+    loadingRender: () => <Spin size="small" />,
   },
   tool_call: {
     placement: 'start',
     avatar: { icon: <UserOutlined />, style: BOT_AVATAR },
-    loadingRender: (props: any) => {
-      const content = props?.content || '正在处理...';
-      return (
-        <Space>
-          <Spin size="small" />
-          {content}
-        </Space>
-      );
-    },
   },
 };
 
@@ -227,12 +220,29 @@ const ChatWindow = () => {
                 <Bubble.List
                   roles={BUBBLE_ROLES}
                   items={[
-                    ...parsedMessages.map((it, idx) => ({
-                      key: idx,
-                      role: it.message.role as 'user' | 'assistant' | 'tool_call',
-                      content: it.message.text,
-                      loading: it.message.role === 'tool_call',
-                    })),
+                    ...parsedMessages.map((it, idx) => {
+                      // tool_call 需要自定义显示
+                      if (it.message.role === 'tool_call') {
+                        return {
+                          key: idx,
+                          role: 'tool_call' as const,
+                          content: (
+                            <Space>
+                              <Spin size="small" />
+                              {it.message.text}
+                            </Space>
+                          ),
+                          loading: false, // 不使用默认 loading
+                        };
+                      }
+                      // 普通消息
+                      return {
+                        key: idx,
+                        role: it.message.role as 'user' | 'assistant' | 'tool_call',
+                        content: it.message.text,
+                        loading: false,
+                      };
+                    }),
                     // 如果正在请求且最后一条不是 assistant/tool_call，显示默认 loading
                     ...(isRequesting &&
                     parsedMessages.length > 0 &&
