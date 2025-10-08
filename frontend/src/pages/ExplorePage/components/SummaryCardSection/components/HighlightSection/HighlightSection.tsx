@@ -1,4 +1,7 @@
-import { styled, Typography, Box, alpha } from '@mui/material';
+import { styled, Typography, Box } from '@mui/material';
+import { useSelector } from 'react-redux';
+import { selectSelectedOverview } from '@/redux/mapSuburbSlice';
+import GlobalButton from '@/components/GlobalButton';
 
 const HighlightContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -27,18 +30,34 @@ const RightContainer = styled(Box)(({ theme }) => ({
   },
 }));
 
+const Highlight = styled(Typography)(({ theme }) => ({
+  ...theme.typography.subtitle2,
+}));
+
+const ReportButton = styled(GlobalButton)(({ theme }) => ({
+  height: 44,
+  width: 400,
+  fontSize: theme.typography.subtitle1.fontSize,
+  backgroundColor: theme.palette.primary.main,
+  color: theme.palette.background.default,
+  borderRadius: 8,
+}));
+
 const HighlightSection = () => {
+  const highlights = useSelector(selectSelectedOverview)?.highlights.filter(Boolean) ?? [];
   return (
     <HighlightContainer>
       <LeftContainer>
-        <Typography variant="subtitle2">Low Crime</Typography>
-        <Typography variant="subtitle2">Low Crime</Typography>
-        <Typography variant="subtitle2">Low Crime</Typography>
-        <Typography variant="subtitle2">Low Crime</Typography>
+        {highlights.length > 0 &&
+          highlights.map((highlight, index) => (
+            <Highlight key={highlight || index} variant="subtitle2">
+              {highlight}
+            </Highlight>
+          ))}
       </LeftContainer>
 
       <RightContainer>
-        <Typography variant="subtitle2">Low Crime</Typography>
+        <ReportButton>View Suburb Report</ReportButton>
       </RightContainer>
     </HighlightContainer>
   );

@@ -19,18 +19,27 @@ const SummaryCardContainer = styled(Box)(({ theme }) => ({
   flexDirection: 'column',
   alignItems: 'center',
   textAlign: 'center',
-  paddingInline: theme.spacing(4),
+  paddingInline: theme.spacing(6),
+  paddingBlock: theme.spacing(4),
   backgroundColor: alpha(theme.palette.primary.light, 0.05),
 }));
 
-const SummaryText = styled(Typography)(({ theme }) => ({
-  ...theme.typography.subtitle2,
+const TitleText = styled(Typography)(({ theme }) => ({
+  ...theme.typography.h1,
   alignSelf: 'flex-start',
+  paddingBottom: 4,
+}));
+
+const SummaryText = styled(Typography)(({ theme }) => ({
+  ...theme.typography.body2,
+  alignSelf: 'flex-start',
+  paddingBottom: 4,
 }));
 
 const SubtitleText = styled(Typography)(({ theme }) => ({
-  ...theme.typography.h5,
+  ...theme.typography.h4,
   alignSelf: 'flex-start',
+  paddingBottom: 8,
 }));
 
 const SummaryCardSection = () => {
@@ -38,15 +47,14 @@ const SummaryCardSection = () => {
   return (
     <SectionContainer>
       <SummaryCardContainer>
-        <Typography variant="h2">
-          Explore {overview?.suburb?.name}, {overview?.suburb?.stateCode} {overview?.suburb?.postcode}
-        </Typography>
+        <TitleText>
+          {overview?.suburb?.name
+            ? `${overview.suburb.name}, ${overview.suburb.stateCode} ${overview.suburb.postcode}`
+            : 'Please select a suburb from the map'}
+        </TitleText>
         <MetricSection />
-        <SummaryText>
-          Glen Waverley's median price is $1.25M, with 10.5% growth over the past 3 years. Safety is rated High, and
-          affordability is High.
-        </SummaryText>
-        <SubtitleText>What Makes This Suburb Stand Out</SubtitleText>
+        <SummaryText>{overview?.summary?.text}</SummaryText>
+        <SubtitleText>{overview?.highlights?.length > 0 ? `What Makes This Suburb Stand Out` : ''}</SubtitleText>
         <HighlightSection />
       </SummaryCardContainer>
     </SectionContainer>
