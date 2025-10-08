@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { string } from 'zod';
 
 // TODO: remove this when finish cros setup
 const chatBotApi = axios.create({
@@ -50,6 +49,10 @@ export const searchThreads = async (payload: SearchThreadsPayload): Promise<Thre
 export const createThread = async (payload: CreateThreadPayload): Promise<ThreadResponse> => {
   const { data } = await chatBotApi.post<ThreadResponse>('/threads', payload);
   return data;
+};
+
+export const deleteThread = async (threadId: string): Promise<void> => {
+  await chatBotApi.delete(`/threads/${threadId}`);
 };
 
 export default chatBotApi;

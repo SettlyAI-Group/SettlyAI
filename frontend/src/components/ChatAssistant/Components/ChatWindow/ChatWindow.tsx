@@ -6,7 +6,11 @@ import { Bubble, Sender, useXAgent, useXChat } from '@ant-design/x';
 import { Button } from 'antd';
 import ChatSidebar from './component/ChatSidebar';
 import { ensureUserChatId } from '../../utils/userChatId';
-import { createThread as createThreadApi, searchThreads } from '@/api/chatBotApi';
+import {
+  createThread as createThreadApi,
+  deleteThread as deleteThreadApi,
+  searchThreads,
+} from '@/api/chatBotApi';
 import { UserOutlined } from '@ant-design/icons';
 
 const fooAvatar: CSSProperties = {
@@ -89,6 +93,7 @@ interface ConversationItem {
   key: string;
   label: string;
   updatedAt: number;
+  isDisabled?: boolean;
 }
 
 const THREAD_TTL_SECONDS = 600; // 10 minutes
@@ -100,6 +105,8 @@ const ChatWindow = () => {
   const [isCreatingThread, setIsCreatingThread] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [input, setInput] = useState('');
+  const [editingConversationKey, setEditingConversationKey] = useState<string | null>(null);
+  const [renameDraft, setRenameDraft] = useState('');
   const abortControllerRef = useRef<AbortController | null>(null);
   const activeThreadRef = useRef('');
 
@@ -129,6 +136,67 @@ const ChatWindow = () => {
       return { id: m.id ?? String(i), role, text };
     });
   }, []);
+
+  const handleRenameStart = useCallback(
+    (key: string) => {
+      const target = conversations.find(item => item.key === key);
+      setEditingConversationKey(key);
+      setRenameDraft(target?.label ?? '');
+    },
+    [conversations],
+  );
+
+  const handleRenameChange = useCallback((value: string) => {
+    setRenameDraft(value);
+  }, []);
+
+  const handleRenameSubmit = useCallback((key: string, value: string) => {
+    const nextLabel = value.trim();
+    setConversations(prev =>
+      prev.map(item => {
+        if (item.key !== key) {
+          return item;
+        }
+        if (!nextLabel || item.label === nextLabel) {
+          return item;
+        }
+        return {
+          ...item,
+          label: nextLabel,
+        };
+      }),
+    );
+    setEditingConversationKey(null);
+    setRenameDraft('');
+  }, []);
+
+  const handleRenameCancel = useCallback(() => {
+    setEditingConversationKey(null);
+    setRenameDraft('');
+  }, []);
+
+  const handleToggleDisable = useCallback(
+    (key: string) => {
+      const wasEditing = editingConversationKey === key;
+
+      setConversations(prev =>
+        prev.map(item =>
+          item.key === key
+            ? {
+                ...item,
+                isDisabled: !item.isDisabled,
+              }
+            : item,
+        ),
+      );
+
+      if (wasEditing) {
+        setEditingConversationKey(null);
+        setRenameDraft('');
+      }
+    },
+    [editingConversationKey],
+  );
 
 
   // 简单把 tool 名字里的人名抠出来（按你的命名习惯改一下就行）
@@ -373,7 +441,22 @@ const ChatWindow = () => {
           updatedAt: new Date(thread.updated_at || thread.created_at || Date.now()).getTime(),
         }));
 
-        setConversations(mapped);
+        setConversations(prev => {
+          const previousMap = new Map(prev.map(item => [item.key, item]));
+          return mapped.map(item => {
+            const prevItem = previousMap.get(item.key);
+            return {
+              ...item,
+              label: prevItem?.label ?? item.label,
+              isDisabled: prevItem?.isDisabled ?? false,
+            };
+          });
+        });
+
+        if (editingConversationKey && !threads.some(thread => thread.thread_id === editingConversationKey)) {
+          setEditingConversationKey(null);
+          setRenameDraft('');
+        }
 
         if (threads.length === 0) {
           setActiveKey('');
@@ -435,6 +518,7 @@ const ChatWindow = () => {
         key: threadId,
         label: 'New Chat',
         updatedAt: new Date(thread?.updated_at || thread?.created_at || Date.now()).getTime(),
+        isDisabled: false,
       };
 
       setConversations(prev => {
@@ -454,6 +538,11 @@ const ChatWindow = () => {
   const handleActiveChange = useCallback(
     async (key: string) => {
       if (!key || key === activeKey) {
+        return;
+      }
+
+      const targetConversation = conversations.find(item => item.key === key);
+      if (targetConversation?.isDisabled) {
         return;
       }
 
@@ -494,7 +583,54 @@ const ChatWindow = () => {
         }
       }
     },
-    [activeKey, normalizeMessages, setMessages, userChatId],
+    [activeKey, conversations, normalizeMessages, setMessages, userChatId],
+  );
+
+  const handleDeleteConversation = useCallback(
+    async (key: string) => {
+      if (!key) {
+        return;
+      }
+
+      const isActive = activeKey === key;
+      const wasEditing = editingConversationKey === key;
+
+      if (isActive) {
+        abortControllerRef.current?.abort();
+        abortControllerRef.current = null;
+      }
+
+      setErrorMessage(null);
+
+      try {
+        await deleteThreadApi(key);
+
+        if (wasEditing) {
+          setEditingConversationKey(null);
+          setRenameDraft('');
+        }
+
+        let nextActiveKey: string | null = null;
+        setConversations(prev => {
+          const filtered = prev.filter(item => item.key !== key);
+          nextActiveKey = filtered.length > 0 ? filtered[0].key : null;
+          return filtered;
+        });
+
+        if (isActive) {
+          if (nextActiveKey) {
+            await handleActiveChange(nextActiveKey);
+          } else {
+            setActiveKey('');
+            setMessages(() => []);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to delete thread:', error);
+        setErrorMessage('Failed to delete conversation.');
+      }
+    },
+    [activeKey, editingConversationKey, handleActiveChange],
   );
 
   // 自动滚到底下
@@ -515,6 +651,9 @@ const ChatWindow = () => {
     };
   }, []);
 
+  const activeConversation = conversations.find(item => item.key === activeKey);
+  const isActiveConversationDisabled = Boolean(activeConversation?.isDisabled);
+
   return (
     <WindowContainer>
       <ChatSidebar
@@ -522,8 +661,17 @@ const ChatWindow = () => {
           key: item.key,
           label: item.label,
           timestamp: item.updatedAt,
+          isDisabled: item.isDisabled,
         }))}
         activeKey={activeKey}
+        editingKey={editingConversationKey}
+        renameDraft={renameDraft}
+        onRenameStart={handleRenameStart}
+        onRenameChange={handleRenameChange}
+        onRenameSubmit={handleRenameSubmit}
+        onRenameCancel={handleRenameCancel}
+        onToggleDisable={handleToggleDisable}
+        onDelete={handleDeleteConversation}
         onActiveChange={handleActiveChange}
         onNewChat={handleNewChat}
       />
@@ -547,27 +695,36 @@ const ChatWindow = () => {
             <Typography variant="body2" color="error">
               {errorMessage}
             </Typography>
-          ) : parsedMessages.length === 0 ? (
-            <Typography variant="body2" color="text.secondary">
-              {userChatId
-                ? activeKey
-                  ? 'This thread has no messages yet.'
-                  : 'Select a conversation or create a new chat to begin.'
-                : 'Preparing chat session...'}
-            </Typography>
           ) : (
-            parsedMessages.map((it, idx) => (
-              <Bubble
-                key={idx}
-                placement={it.message.role === 'user' ? 'end' : 'start'}
-                content={it.message.text}
-                avatar={
-                  it.message.role === 'user'
-                    ? { icon: <UserOutlined />, style: barAvatar }
-                    : { icon: <UserOutlined />, style: fooAvatar }
-                }
-              />
-            ))
+            <>
+              {isActiveConversationDisabled && (
+                <Typography variant="body2" color="text.secondary">
+                  This conversation is disabled. Enable it from the menu to continue.
+                </Typography>
+              )}
+              {parsedMessages.length === 0 ? (
+                <Typography variant="body2" color="text.secondary">
+                  {userChatId
+                    ? activeKey
+                      ? 'This thread has no messages yet.'
+                      : 'Select a conversation or create a new chat to begin.'
+                    : 'Preparing chat session...'}
+                </Typography>
+              ) : (
+                parsedMessages.map((it, idx) => (
+                  <Bubble
+                    key={idx}
+                    placement={it.message.role === 'user' ? 'end' : 'start'}
+                    content={it.message.text}
+                    avatar={
+                      it.message.role === 'user'
+                        ? { icon: <UserOutlined />, style: barAvatar }
+                        : { icon: <UserOutlined />, style: fooAvatar }
+                    }
+                  />
+                ))
+              )}
+            </>
           )}
         </ChatBody>
         <ChatFooter>
@@ -576,15 +733,19 @@ const ChatWindow = () => {
             onChange={v => setInput(v)}
             onSubmit={() => {
               const text = input.trim();
-              if (!text || !activeKey) return;
+              if (!text || !activeKey || isActiveConversationDisabled) return;
               onRequest({
                 threadId: activeKey,
                 message: { role: 'user', content: text },
               });
               setInput('');
             }}
-            placeholder="Type your message..."
-            disabled={!userChatId || !activeKey}
+            placeholder={
+              isActiveConversationDisabled
+                ? 'Enable this conversation to send messages.'
+                : 'Type your message...'
+            }
+            disabled={!userChatId || !activeKey || isActiveConversationDisabled}
             actions={(_, { components }) => {
               const { SendButton } = components;
               return <StyledSendButton as={SendButton} />;
