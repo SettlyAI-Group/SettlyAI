@@ -1,6 +1,8 @@
 import { styled, Typography, Box, alpha } from '@mui/material';
+import { useSelector } from 'react-redux';
 import MetricSection from './components/MetricSection';
 import HighlightSection from './components/HighlightSection';
+import { selectSelectedOverview } from '@/redux/mapSuburbSlice';
 
 const SectionContainer = styled('section')(({ theme }) => ({
   display: 'flex',
@@ -32,10 +34,13 @@ const SubtitleText = styled(Typography)(({ theme }) => ({
 }));
 
 const SummaryCardSection = () => {
+  const overview = useSelector(selectSelectedOverview);
   return (
     <SectionContainer>
       <SummaryCardContainer>
-        <Typography variant="h2">Explore Glen Waverley, VIC 3150</Typography>
+        <Typography variant="h2">
+          Explore {overview?.suburb?.name}, {overview?.suburb?.stateCode} {overview?.suburb?.postcode}
+        </Typography>
         <MetricSection />
         <SummaryText>
           Glen Waverley's median price is $1.25M, with 10.5% growth over the past 3 years. Safety is rated High, and
