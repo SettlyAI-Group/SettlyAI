@@ -90,11 +90,17 @@ export const useChatAgent = () => {
               continue;
             }
 
+            // ===== 消息过滤逻辑 =====
             const node = meta?.langgraph_node;
-            const eventTarget = eventName.split('|')[1] ?? '';
-            const isTinaNode = node === 'tina' || node === 'tina_agent' || eventTarget.startsWith('tina_agent');
-            if (!isTinaNode) continue;
+            const checkpointNs = meta?.langgraph_checkpoint_ns || meta?.checkpoint_ns;
 
+            // 1. 过滤非 Tina 节点的消息（Tom、Avi、tools 等）
+            if (node !== 'tina' && node !== 'tina_agent') continue;
+
+            // 2. 过滤子代理的内部消息（Tom/Avi 处理过程）
+            if (checkpointNs?.includes('|tom:') || checkpointNs?.includes('|avi:')) continue;
+
+            // ===== 内容处理逻辑 =====
             const content = Array.isArray(msg?.content)
               ? msg.content
               : typeof msg?.content === 'string'
@@ -102,12 +108,15 @@ export const useChatAgent = () => {
                 : [];
 
             for (const c of content) {
+              // 3a. Tina 的对话文本 - 直接显示
               if (c?.type === 'text') {
                 const piece = String(c.text ?? '');
                 if (!piece) continue;
                 onUpdate(piece);
                 collected.push(piece);
-              } else if (c?.type === 'tool_call') {
+              }
+              // 3b. Tina 调用工具 - 显示加载提示
+              else if (c?.type === 'tool_use') {
                 const toolId = c?.id ?? `${meta?.run_id}:${meta?.langgraph_step}`;
                 if (shownToolCalls.has(toolId)) continue;
                 shownToolCalls.add(toolId);
