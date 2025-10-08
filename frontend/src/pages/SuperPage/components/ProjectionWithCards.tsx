@@ -9,6 +9,7 @@ import {
   Legend,
 } from "chart.js";
 import { styled } from "@mui/material/styles";
+import { Button } from "@mui/material";
 import type { SuperEstimateResponseDto } from "../../../api/superEstimateApi";
 
 ChartJS.register(
@@ -24,18 +25,18 @@ interface Props {
   result: SuperEstimateResponseDto;
 }
 
-const Wrapper = styled("div")({
+const Wrapper = styled("div")(({ theme }) => ({
   backgroundColor: "#ffffff",
   borderRadius: 16,
-  padding: 24,
+  padding: theme.spacing(6),
   width: "100%",
-  maxWidth: 896,
+  maxWidth: theme.spacing(224),
   boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
   display: "flex",
   flexDirection: "column",
-  gap: 24,
+  gap: theme.spacing(6),
   margin: "0 auto",
-});
+}));
 
 const SectionTitle = styled("h3")({
   fontFamily: "Inter, sans-serif",
@@ -47,7 +48,7 @@ const SectionTitle = styled("h3")({
 
 const CardsWrapper = styled("div")(({ theme }) => ({
   display: "flex",
-  gap: 16,
+  gap: theme.spacing(4),
   flexWrap: "wrap",
   justifyContent: "center",
   [theme.breakpoints.down("sm")]: {
@@ -59,14 +60,14 @@ const Card = styled("div")<{
   borderColor: string;
   bgColor: string;
   textColor: string;
-}>(({ borderColor, bgColor, textColor }) => ({
+}>(({ borderColor, bgColor, textColor, theme }) => ({
   flex: 1,
   minWidth: 0,
   border: `1px solid ${borderColor}`,
   borderRadius: 12,
   backgroundColor: bgColor,
   color: textColor,
-  padding: 16,
+  padding: theme.spacing(4),
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
@@ -78,11 +79,89 @@ const CardLabel = styled("div")({
   textAlign: "center",
 });
 
-const CardAmount = styled("div")({
+const CardAmount = styled("div")(({ theme }) => ({
   fontWeight: 700,
   fontSize: 20,
-  marginBottom: 8,
+  marginBottom: theme.spacing(2),
   textAlign: "center",
+}));
+
+
+const InfoContainer = styled("div")(({ theme }) => ({
+  borderTop: "1px solid #E5E7EB",
+  paddingTop: theme.spacing(2),
+  marginTop: theme.spacing(2),
+}));
+
+const InfoSection = styled("div")(({ theme }) => ({
+  backgroundColor: "#FFFFFF",
+  borderRadius: 0,
+  padding: 0,
+  width: "100%",
+  maxWidth: theme.spacing(224),
+  minHeight: theme.spacing(47),
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "flex-start",
+  justifyContent: "center",
+  gap: theme.spacing(4),
+  boxSizing: "border-box",
+}));
+
+const InfoText = styled("p")({
+  fontFamily: "Inter, sans-serif",
+  fontSize: 16,
+  fontWeight: 400,
+  color: "#565D6D",
+  margin: 0,
+});
+
+const ButtonGroup = styled("div")(({ theme }) => ({
+  display: "flex",
+  gap: theme.spacing(4),
+  flexWrap: "wrap",
+  [theme.breakpoints.down("sm")]: {
+    justifyContent: "center",
+  },
+}));
+
+const PrimaryButton = styled(Button)(({ theme }) => ({
+  maxWidth: theme.spacing(48.75),
+  height: theme.spacing(10),
+  borderRadius: 3,
+  backgroundColor: "#4C4CDC",
+  color: "#FFFFFF",
+  fontFamily: "Inter, sans-serif",
+  fontSize: 14,
+  fontWeight: 500,
+  textTransform: "none",
+  "&:hover": {
+    backgroundColor: "#3B3BB8",
+  },
+}));
+
+const SecondaryButton = styled(Button)(({ theme }) => ({
+  maxWidth: theme.spacing(61),
+  height: theme.spacing(10),
+  borderRadius: 3,
+  backgroundColor: "#FFFFFF",
+  color: "#000000",
+  border: "1px solid #DEE1E6",
+  fontFamily: "Inter, sans-serif",
+  fontSize: 14,
+  fontWeight: 500,
+  textTransform: "none",
+  "&:hover": {
+    backgroundColor: "#F9FAFB",
+  },
+}));
+
+const DisclaimerText = styled("p")({
+  fontFamily: "Inter, sans-serif",
+  fontSize: 12,
+  fontWeight: 400,
+  color: "#565D6D",
+  margin: 0,
 });
 
 export default function ProjectionWithCards({ result }: Props) {
@@ -155,6 +234,34 @@ export default function ProjectionWithCards({ result }: Props) {
           </>
         )}
       </CardsWrapper>
+
+
+      <InfoContainer>
+        <InfoSection>
+          <InfoText>
+            Withdrawing part of your super now may reduce your retirement balance,
+            but owning a home earlier can improve long-term financial stability.
+          </InfoText>
+          <ButtonGroup>
+            <PrimaryButton
+              onClick={() =>
+                window.open(
+                  "https://www.ato.gov.au/individuals-and-families/super-for-individuals-and-families/super/withdrawing-and-using-your-super/early-access-to-super/first-home-super-saver-scheme",
+                  "_blank"
+                )
+              }
+            >
+              Learn about FHSS (ATO)
+            </PrimaryButton>
+            <SecondaryButton>
+              Discuss with a financial adviser
+            </SecondaryButton>
+          </ButtonGroup>
+          <DisclaimerText>
+            This tool provides general information only and does not constitute financial advice.
+          </DisclaimerText>
+        </InfoSection>
+      </InfoContainer>
     </Wrapper>
   );
 }

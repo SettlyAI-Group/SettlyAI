@@ -5,24 +5,26 @@ import type { SuperEstimateResponseDto } from "../../api/superEstimateApi";
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import NavBar from '../../components/NavBar';
+import Footer from '../../components/Footer';
 
-const PageWrapper = styled(Box)({
+const PageWrapper = styled(Box)(({ theme }) => ({
   minHeight: '100vh',
   backgroundColor: '#f3f4f6',
   display: 'flex',
   justifyContent: 'center',
   margin: '0 auto',
-  padding: 24,
-});
+  padding: theme.spacing(6),
+}));
 
-const Container = styled(Box)({
+const Container = styled(Box)(({ theme }) => ({
   maxWidth: '896px',
   width: '100%',
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  gap: 28,
-});
+  gap: theme.spacing(7),
+}));
 
 const Title = styled(Typography)({
   fontFamily: 'Inter, sans-serif',
@@ -43,17 +45,21 @@ export default function SuperPage() {
   const [result, setResult] = useState<SuperEstimateResponseDto | null>(null);
 
   return (
-    <PageWrapper>
-      <Container>
-        <Title>Plan Your Super & Explore Options</Title>
-        <Subtitle>
-          Estimate your super balance at retirement and explore different contribution or withdrawal scenarios.
-        </Subtitle>
+    <>
+      <NavBar />
+        <PageWrapper>
+          <Container>
+            <Title>Plan Your Super & Explore Options</Title>
+            <Subtitle>
+              Estimate your super balance at retirement and explore different contribution or withdrawal scenarios.
+            </Subtitle>
 
-        <SuperForm onResult={setResult} />
+            <SuperForm onResult={setResult} />
 
-        {result && <ProjectionWithCards result={result} />}
-      </Container>
-    </PageWrapper>
+            {result && <ProjectionWithCards result={result} />}
+          </Container>
+        </PageWrapper>
+      <Footer />
+    </>
   );
 }
