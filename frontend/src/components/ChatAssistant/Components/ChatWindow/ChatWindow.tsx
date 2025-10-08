@@ -3,14 +3,40 @@ import type { CSSProperties } from 'react';
 import { Box, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { Bubble, Sender, useXChat } from '@ant-design/x';
-import { Button } from 'antd';
+import type { GetProp } from 'antd';
+import { Button, Space, Spin } from 'antd';
 import ChatSidebar from './component/ChatSidebar';
 import { ensureUserChatId } from '../../utils/userChatId';
-import { UserOutlined, LoadingOutlined } from '@ant-design/icons';
+import { UserOutlined } from '@ant-design/icons';
 import { useChatAgent, useChatThread, useChatRename, useAutoScroll } from '../../hooks';
 
 const USER_AVATAR: CSSProperties = { color: '#fff', backgroundColor: '#87d068' };
 const BOT_AVATAR: CSSProperties = { color: '#f56a00', backgroundColor: '#fde3cf' };
+
+const BUBBLE_ROLES: GetProp<typeof Bubble.List, 'roles'> = {
+  user: {
+    placement: 'end',
+    avatar: { icon: <UserOutlined />, style: USER_AVATAR },
+  },
+  assistant: {
+    placement: 'start',
+    avatar: { icon: <UserOutlined />, style: BOT_AVATAR },
+    typing: { step: 5, interval: 20 },
+  },
+  tool_call: {
+    placement: 'start',
+    avatar: { icon: <UserOutlined />, style: BOT_AVATAR },
+    loadingRender: (props: any) => {
+      const content = props?.content || '正在处理...';
+      return (
+        <Space>
+          <Spin size="small" />
+          {content}
+        </Space>
+      );
+    },
+  },
+};
 
 const WindowContainer = styled(Box)(({ theme }) => ({
   position: 'absolute',
@@ -79,7 +105,7 @@ const ChatWindow = () => {
 
   const { agent, abort, setActiveThread } = useChatAgent();
 
-  const { parsedMessages, onRequest, setMessages } = useXChat<Msg, { role: Msg['role']; text: string; toolName?: string }>({
+  const { parsedMessages, onRequest, setMessages, isRequesting } = useXChat<Msg, { role: Msg['role']; text: string; toolName?: string }>({
     agent: agent as any,
     defaultMessages: [],
     transformMessage: ({ originMessage, chunk }: { originMessage?: Msg; chunk?: any }) => {
@@ -198,35 +224,30 @@ const ChatWindow = () => {
                     : 'Preparing chat session...'}
                 </Typography>
               ) : (
-                parsedMessages.map((it, idx) => {
-                  // 工具调用消息 - 显示 loading 动画
-                  if (it.message.role === 'tool_call') {
-                    return (
-                      <Bubble
-                        key={idx}
-                        placement="start"
-                        loading
-                        content={it.message.text}
-                        avatar={{
-                          icon: <LoadingOutlined />,
-                          style: BOT_AVATAR,
-                        }}
-                      />
-                    );
-                  }
-                  // 普通消息
-                  return (
-                    <Bubble
-                      key={idx}
-                      placement={it.message.role === 'user' ? 'end' : 'start'}
-                      content={it.message.text}
-                      avatar={{
-                        icon: <UserOutlined />,
-                        style: it.message.role === 'user' ? USER_AVATAR : BOT_AVATAR,
-                      }}
-                    />
-                  );
-                })
+                <Bubble.List
+                  roles={BUBBLE_ROLES}
+                  items={[
+                    ...parsedMessages.map((it, idx) => ({
+                      key: idx,
+                      role: it.message.role as 'user' | 'assistant' | 'tool_call',
+                      content: it.message.text,
+                      loading: it.message.role === 'tool_call',
+                    })),
+                    // 如果正在请求且最后一条不是 assistant/tool_call，显示默认 loading
+                    ...(isRequesting &&
+                    parsedMessages.length > 0 &&
+                    parsedMessages[parsedMessages.length - 1]?.message.role === 'user'
+                      ? [
+                          {
+                            key: 'loading',
+                            role: 'assistant' as const,
+                            content: '',
+                            loading: true,
+                          },
+                        ]
+                      : []),
+                  ]}
+                />
               )}
             </>
           )}
