@@ -4,29 +4,43 @@ import { Box, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { Bubble, Sender, useXChat } from '@ant-design/x';
 import type { GetProp } from 'antd';
-import { Button, Space, Spin } from 'antd';
+import type { BubbleProps } from '@ant-design/x';
+import { Button, Space, Spin, Typography as AntTypography } from 'antd';
 import ChatSidebar from './component/ChatSidebar';
 import { ensureUserChatId } from '../../utils/userChatId';
 import { UserOutlined } from '@ant-design/icons';
-import { useChatAgent, useChatThread, useChatRename, useAutoScroll } from '../../hooks';
+import { useChatAgent, useChatThread, useChatRename } from '../../hooks';
+import markdownit from 'markdown-it';
 
-const USER_AVATAR: CSSProperties = { color: '#fff', backgroundColor: '#87d068' };
-const BOT_AVATAR: CSSProperties = { color: '#f56a00', backgroundColor: '#fde3cf' };
+const md = markdownit({ html: true, breaks: true });
+
+const renderMarkdown: BubbleProps['messageRender'] = content => {
+  return (
+    <AntTypography>
+      <div dangerouslySetInnerHTML={{ __html: md.render(content) }} />
+    </AntTypography>
+  );
+};
 
 const BUBBLE_ROLES: GetProp<typeof Bubble.List, 'roles'> = {
   user: {
     placement: 'end',
-    avatar: { icon: <UserOutlined />, style: USER_AVATAR },
+    avatar: { icon: <UserOutlined />, style: { color: '#fff', backgroundColor: '#87d068' } },
   },
   assistant: {
     placement: 'start',
-    avatar: { icon: <UserOutlined />, style: BOT_AVATAR },
+    avatar: { icon: <UserOutlined />, style: { color: '#f56a00', backgroundColor: '#fde3cf' } },
     typing: { step: 5, interval: 20 },
-    // 默认 loading 不自定义，使用 Bubble 自带的 typing 效果（点点点）
+    messageRender: renderMarkdown,
   },
   tool_call: {
     placement: 'start',
-    avatar: { icon: <UserOutlined />, style: BOT_AVATAR },
+    avatar: { icon: <UserOutlined />, style: { color: '#f56a00', backgroundColor: '#fde3cf' } },
+    loadingRender: () => (
+      <Space>
+        <Spin size="small" />
+      </Space>
+    ),
   },
 };
 
@@ -55,19 +69,16 @@ const ChatHeader = styled(Box)(({ theme }) => ({
   borderBottom: `1px solid ${theme.palette.divider}`,
 }));
 
-const ChatBody = styled(Box)(() => ({
-  flex: 1,
-  overflow: 'auto',
-  padding: 16,
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 12,
-}));
-
 const ChatFooter = styled(Box)(({ theme }) => ({
   borderTop: `1px solid ${theme.palette.divider}`,
   padding: theme.spacing(2),
 }));
+
+const bubbleListStyles: CSSProperties = {
+  flex: 1,
+  overflow: 'auto',
+  padding: 16,
+};
 
 const StyledSendButton = styled(Button)(() => ({
   '&.ant-btn-primary': {
@@ -97,7 +108,10 @@ const ChatWindow = () => {
 
   const { agent, abort, setActiveThread } = useChatAgent();
 
-  const xChatResult = useXChat<Msg, { role: Msg['role']; text: string; toolName?: string }>({
+  const { parsedMessages, onRequest, setMessages } = useXChat<
+    Msg,
+    { role: Msg['role']; text: string; toolName?: string }
+  >({
     agent: agent as any,
     defaultMessages: [],
     transformMessage: ({ originMessage, chunk }: { originMessage?: Msg; chunk?: any }) => {
@@ -123,7 +137,6 @@ const ChatWindow = () => {
     },
   });
 
-  const { parsedMessages, onRequest, setMessages } = xChatResult;
   const isRequesting = agent?.isRequesting?.() ?? false;
 
   const {
@@ -142,16 +155,8 @@ const ChatWindow = () => {
     onAbort: abort,
   });
 
-  const {
-    editingKey,
-    renameDraft,
-    setRenameDraft,
-    cancelRename,
-    handleRenameStart,
-    handleRenameSubmit,
-  } = useChatRename(conversations, updateConversation);
-
-  const bodyRef = useAutoScroll(parsedMessages);
+  const { editingKey, renameDraft, setRenameDraft, cancelRename, handleRenameStart, handleRenameSubmit } =
+    useChatRename(conversations, updateConversation);
 
   // 同步 activeKey 到 agent
   useEffect(() => {
@@ -192,81 +197,33 @@ const ChatWindow = () => {
 
       <ChatContainer>
         <ChatHeader className="chat-drag-handle">
-          <Typography variant="subtitle2" sx={{ width: 'fit-content' }}>AI Assistant</Typography>
-          {isCreatingThread && (
-            <Typography variant="caption" color="text.secondary">
-              Creating thread...
-            </Typography>
-          )}
+          <Typography variant="subtitle2" sx={{ width: 'fit-content' }}>
+            AI Assistant
+          </Typography>
           {userChatId && activeKey && (
             <Typography variant="caption" color="text.secondary">
               Thread ID: {activeKey}
             </Typography>
           )}
         </ChatHeader>
-        <ChatBody className="chat-no-drag" ref={bodyRef}>
-          {errorMessage ? (
-            <Typography variant="body2" color="error">
-              {errorMessage}
-            </Typography>
-          ) : (
-            <>
-              {isActiveConversationDisabled && (
-                <Typography variant="body2" color="text.secondary">
-                  This conversation is disabled. Enable it from the menu to continue.
-                </Typography>
-              )}
-              {parsedMessages.length === 0 ? (
-                <Typography variant="body2" color="text.secondary">
-                  {userChatId
-                    ? activeKey
-                      ? 'This thread has no messages yet.'
-                      : 'Select a conversation or create a new chat to begin.'
-                    : 'Preparing chat session...'}
-                </Typography>
-              ) : (
-                <Bubble.List
-                  roles={BUBBLE_ROLES}
-                  items={parsedMessages.map((it, idx) => {
-                    // tool_call 需要自定义显示（带 Spin + 文字）
-                    if (it.message.role === 'tool_call') {
-                      return {
-                        key: idx,
-                        role: 'assistant' as const, // 使用 assistant 角色样式
-                        content: (
-                          <Space>
-                            <Spin size="small" />
-                            {it.message.text}
-                          </Space>
-                        ),
-                        loading: false,
-                      };
-                    }
-                    // assistant 消息：如果内容为空且正在请求且没有工具调用，显示默认 loading
-                    if (it.message.role === 'assistant') {
-                      const isEmpty = !it.message.text || it.message.text.trim() === '';
-                      // 检查是否有工具调用消息
-                      const hasToolCall = parsedMessages.some(m => m.message.role === 'tool_call');
-                      return {
-                        key: idx,
-                        role: 'assistant' as const,
-                        content: it.message.text,
-                        loading: isEmpty && isRequesting && !hasToolCall, // 无工具调用时才显示默认 loading
-                      };
-                    }
-                    // 用户消息
-                    return {
-                      key: idx,
-                      role: it.message.role as 'user' | 'assistant' | 'tool_call',
-                      content: it.message.text,
-                      loading: false,
-                    };
-                  })}
-                />
-              )}
-            </>
-          )}
-        </ChatBody>
+        <Bubble.List
+          className="chat-no-drag"
+          roles={BUBBLE_ROLES}
+          style={bubbleListStyles}
+          items={parsedMessages.map((it, idx) => {
+            const isEmpty = !it.message.text || it.message.text.trim() === '';
+            const hasToolCall = parsedMessages.some(m => m.message.role === 'tool_call');
+
+            // 统一返回格式,让 BUBBLE_ROLES 处理样式
+            return {
+              key: idx,
+              role: it.message.role,
+              content: it.message.text,
+              // 只有 assistant 且内容为空且无工具调用时才显示 loading
+              loading: it.message.role === 'assistant' && isEmpty && isRequesting && !hasToolCall,
+            };
+          })}
+        />
         <ChatFooter className="chat-no-drag">
           <Sender
             value={input}
