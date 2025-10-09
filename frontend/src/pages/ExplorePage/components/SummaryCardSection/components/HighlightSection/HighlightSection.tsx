@@ -2,6 +2,8 @@ import { styled, Typography, Box } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { selectSelectedOverview } from '@/redux/mapSuburbSlice';
 import GlobalButton from '@/components/GlobalButton';
+import { ShieldCheck, TrendingUp, BadgeDollarSign, Star } from 'lucide-react';
+import { useTheme } from '@mui/material/styles';
 
 const HighlightContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -34,6 +36,18 @@ const Highlight = styled(Typography)(({ theme }) => ({
   ...theme.typography.subtitle2,
 }));
 
+const ItemContainer = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  gap: 14,
+}));
+
+const HighlightTextColumn = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'flex-start',
+}));
+
 const ReportButton = styled(GlobalButton)(({ theme }) => ({
   height: 44,
   width: 400,
@@ -43,6 +57,20 @@ const ReportButton = styled(GlobalButton)(({ theme }) => ({
   borderRadius: 8,
 }));
 
+const HighlightIcon = (label: string) => {
+  const { palette } = useTheme();
+  switch (label.trim().toLowerCase()) {
+    case 'low crime':
+      return <ShieldCheck size={30} strokeWidth={1.75} color={palette.primary.main} />;
+    case 'strong growth':
+      return <TrendingUp size={30} strokeWidth={1.75} color={palette.primary.main} />;
+    case 'affordable choice':
+      return <BadgeDollarSign size={30} strokeWidth={1.75} color={palette.primary.main} />;
+    default:
+      return <Star size={30} strokeWidth={1.75} color={palette.primary.main} />;
+  }
+};
+
 const HighlightSection = () => {
   const highlights = useSelector(selectSelectedOverview)?.highlights.filter(Boolean) ?? [];
   return (
@@ -50,9 +78,12 @@ const HighlightSection = () => {
       <LeftContainer>
         {highlights.length > 0 &&
           highlights.map((highlight, index) => (
-            <Highlight key={highlight || index} variant="subtitle2">
-              {highlight}
-            </Highlight>
+            <ItemContainer key={highlight || index}>
+              {HighlightIcon(highlight)}
+              <HighlightTextColumn>
+                <Highlight variant="subtitle2">{highlight}</Highlight>
+              </HighlightTextColumn>
+            </ItemContainer>
           ))}
       </LeftContainer>
 
