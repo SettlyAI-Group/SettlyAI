@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import type { CSSProperties } from 'react';
 import { Box, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { Bubble, Sender, useXChat } from '@ant-design/x';
@@ -74,11 +73,38 @@ const ChatFooter = styled(Box)(({ theme }) => ({
   padding: theme.spacing(2),
 }));
 
-const bubbleListStyles: CSSProperties = {
+const StyledBubbleList = styled(Bubble.List)(() => ({
   flex: 1,
   overflow: 'auto',
   padding: 16,
-};
+  fontSize: '14px', // 基础字体大小
+
+  '& .ant-bubble-content': {
+    paddingTop: '10px',
+    paddingBottom: '10px',
+    '& h1': { fontSize: '1.5em', margin: '0.5em 0' }, // 默认 2em → 1.5em
+    '& h2': { fontSize: '1.3em', margin: '0.4em 0' }, // 默认 1.5em → 1.3em
+    '& h3': { fontSize: '1.15em', margin: '0.3em 0' }, // 默认 1.17em → 1.15em
+    '& h4': { fontSize: '1em', margin: '0.25em 0' },
+    '& h5': { fontSize: '0.9em', margin: '0.2em 0' },
+    '& h6': { fontSize: '0.85em', margin: '0.2em 0' },
+    '& p': { fontSize: '1em', margin: '0.5em 0' },
+    '& ul, & ol': { fontSize: '1em', margin: '0.5em 0', paddingLeft: '1.5em' },
+    '& li': { margin: '0.2em 0' },
+    '& code': { fontSize: '0.9em', padding: '0.2em 0.4em', backgroundColor: '#f5f5f5', borderRadius: '3px' },
+    '& pre': {
+      fontSize: '0.85em',
+      padding: '0.8em',
+      backgroundColor: '#f5f5f5',
+      borderRadius: '4px',
+      overflow: 'auto',
+    },
+    '& blockquote': { fontSize: '1em', margin: '0.5em 0', paddingLeft: '1em', borderLeft: '3px solid #ddd' },
+    '& a': { fontSize: 'inherit', color: '#1890ff' },
+    '& strong': { fontSize: 'inherit' },
+    '& em': { fontSize: 'inherit' },
+  },
+}));
 
 const StyledSendButton = styled(Button)(() => ({
   '&.ant-btn-primary': {
@@ -206,10 +232,9 @@ const ChatWindow = () => {
             </Typography>
           )}
         </ChatHeader>
-        <Bubble.List
+        <StyledBubbleList
           className="chat-no-drag"
           roles={BUBBLE_ROLES}
-          style={bubbleListStyles}
           items={parsedMessages.map((it, idx) => {
             const isEmpty = !it.message.text || it.message.text.trim() === '';
             const hasToolCall = parsedMessages.some(m => m.message.role === 'tool_call');
