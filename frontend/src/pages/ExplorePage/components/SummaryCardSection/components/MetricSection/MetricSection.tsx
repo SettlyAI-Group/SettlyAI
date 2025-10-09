@@ -7,9 +7,9 @@ import { useTheme } from '@mui/material/styles';
 const MetricContainer = styled(Box)(({ theme }) => ({
   display: 'grid',
   width: '100%',
-  gap: 12,
+  gap: 20,
   gridTemplateColumns: '1fr',
-  paddingBottom: 12,
+  paddingBottom: 30,
   [theme.breakpoints.up('sm')]: {
     gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
   },

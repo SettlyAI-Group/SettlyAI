@@ -19,27 +19,27 @@ const SummaryCardContainer = styled(Box)(({ theme }) => ({
   flexDirection: 'column',
   alignItems: 'center',
   textAlign: 'center',
-  paddingInline: theme.spacing(6),
-  paddingBlock: theme.spacing(4),
+  paddingInline: theme.spacing(8),
+  paddingBlock: theme.spacing(8),
   backgroundColor: alpha(theme.palette.primary.light, 0.05),
 }));
 
 const TitleText = styled(Typography)(({ theme }) => ({
   ...theme.typography.h1,
   alignSelf: 'flex-start',
-  paddingBottom: 4,
+  paddingBottom: 30,
 }));
 
 const SummaryText = styled(Typography)(({ theme }) => ({
   ...theme.typography.body2,
   alignSelf: 'flex-start',
-  paddingBottom: 4,
+  paddingBottom: 20,
 }));
 
 const SubtitleText = styled(Typography)(({ theme }) => ({
   ...theme.typography.h4,
   alignSelf: 'flex-start',
-  paddingBottom: 8,
+  paddingBottom: 20,
 }));
 
 const SummaryCardSection = () => {

@@ -90,10 +90,11 @@ const HighlightSection = () => {
             </ItemContainer>
           ))}
       </LeftContainer>
-
-      <ReportButton onClick={() => suburbId && navigate(`/suburb/${suburbId}`)} disabled={!suburbId}>
-        View Suburb Report
-      </ReportButton>
+      <RightContainer>
+        <ReportButton onClick={() => suburbId && navigate(`/suburb/${suburbId}`)} disabled={!suburbId}>
+          View Suburb Report
+        </ReportButton>
+      </RightContainer>
     </HighlightContainer>
   );
 };
