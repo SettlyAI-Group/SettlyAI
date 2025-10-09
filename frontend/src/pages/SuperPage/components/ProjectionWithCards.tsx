@@ -86,7 +86,6 @@ const CardAmount = styled("div")(({ theme }) => ({
   textAlign: "center",
 }));
 
-
 const InfoContainer = styled("div")(({ theme }) => ({
   borderTop: "1px solid #E5E7EB",
   paddingTop: theme.spacing(2),
@@ -228,13 +227,14 @@ export default function ProjectionWithCards({ result }: Props) {
               <CardLabel>With FHSS</CardLabel>
             </Card>
             <Card borderColor="#FED7AA" bgColor="#FFF7ED" textColor="#EA580C">
-              <CardAmount>${Math.round(result.netDifference ?? 0).toLocaleString()}</CardAmount>
+              <CardAmount>
+                ${Math.round(result.netDifference ?? 0).toLocaleString()}
+              </CardAmount>
               <CardLabel>Net Difference</CardLabel>
             </Card>
           </>
         )}
       </CardsWrapper>
-
 
       <InfoContainer>
         <InfoSection>
@@ -247,12 +247,14 @@ export default function ProjectionWithCards({ result }: Props) {
               onClick={() =>
                 window.open(
                   "https://www.ato.gov.au/individuals-and-families/super-for-individuals-and-families/super/withdrawing-and-using-your-super/early-access-to-super/first-home-super-saver-scheme",
-                  "_blank"
+                  "_blank",
+                  "noopener,noreferrer"
                 )
               }
             >
               Learn about FHSS (ATO)
             </PrimaryButton>
+
             <SecondaryButton>
               Discuss with a financial adviser
             </SecondaryButton>
