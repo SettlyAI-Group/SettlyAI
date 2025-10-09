@@ -33,9 +33,15 @@ const DraggableWrapper = styled('div')(() => ({
 const ChatAssistant = () => {
   const [isOpen, setIsOpen] = useState(false);
   const nodeRef = useRef<HTMLDivElement | null>(null);
+  const isDraggingRef = useRef(false);
 
   const handleToggle = () => {
-    setIsOpen(!isOpen);
+    // 只有在没有拖拽时才切换状态
+    if (!isDraggingRef.current) {
+      setIsOpen(!isOpen);
+    }
+    // 重置拖拽标记
+    isDraggingRef.current = false;
   };
 
   const handleDragStart = (e: DraggableEvent): false | void => {
@@ -47,6 +53,14 @@ const ChatAssistant = () => {
     if (isTextElement) {
       return false;
     }
+
+    // 重置拖拽标记
+    isDraggingRef.current = false;
+  };
+
+  const handleDrag = () => {
+    // 标记正在拖拽
+    isDraggingRef.current = true;
   };
 
   return (
@@ -56,6 +70,7 @@ const ChatAssistant = () => {
       handle=".chat-drag-handle"
       cancel=".chat-no-drag"
       onStart={handleDragStart}
+      onDrag={handleDrag}
     >
       <DraggableWrapper ref={nodeRef}>
         {isOpen && <ChatWindow />}
