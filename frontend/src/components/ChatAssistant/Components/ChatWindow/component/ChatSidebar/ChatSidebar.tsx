@@ -170,14 +170,14 @@ const ChatSidebar = ({
   }));
 
   return (
-    <SidebarContainer>
+    <SidebarContainer className="chat-drag-handle">
       <SidebarHeader>
         <Typography variant="subtitle2">Recents</Typography>
         <IconButton size="small" onClick={onNewChat}>
           <AddIcon fontSize="small" />
         </IconButton>
       </SidebarHeader>
-      <ConversationList>
+      <ConversationList className="chat-no-drag">
         <Conversations items={displayItems} activeKey={activeKey} onActiveChange={onActiveChange} menu={menuConfig} />
       </ConversationList>
     </SidebarContainer>

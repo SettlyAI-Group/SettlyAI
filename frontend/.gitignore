@@ -33,3 +33,5 @@ storybook-static
 .env.test
 .env.production
 .env.staging
+
+src/assets/response.json

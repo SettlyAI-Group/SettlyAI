@@ -38,7 +38,7 @@ const ChatAssistant = () => {
   };
 
   return (
-    <Draggable bounds="parent" nodeRef={nodeRef}>
+    <Draggable bounds="parent" nodeRef={nodeRef} handle=".chat-drag-handle" cancel=".chat-no-drag">
       <DraggableWrapper ref={nodeRef}>
         {isOpen && <ChatWindow />}
 
@@ -51,7 +51,7 @@ const ChatAssistant = () => {
           placement="left"
           slotProps={{ popper: { disablePortal: true } }}
         >
-          <FloatingButton color="primary" aria-label="chat assistant" onClick={handleToggle}>
+          <FloatingButton className="chat-drag-handle" color="primary" aria-label="chat assistant" onClick={handleToggle}>
             {isOpen ? <CloseIcon /> : <ChatIcon />}
           </FloatingButton>
         </Tooltip>

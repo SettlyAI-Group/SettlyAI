@@ -191,7 +191,7 @@ const ChatWindow = () => {
       />
 
       <ChatContainer>
-        <ChatHeader>
+        <ChatHeader className="chat-drag-handle">
           <Typography variant="subtitle2">AI Assistant</Typography>
           {isCreatingThread && (
             <Typography variant="caption" color="text.secondary">
@@ -204,7 +204,7 @@ const ChatWindow = () => {
             </Typography>
           )}
         </ChatHeader>
-        <ChatBody ref={bodyRef}>
+        <ChatBody className="chat-no-drag" ref={bodyRef}>
           {errorMessage ? (
             <Typography variant="body2" color="error">
               {errorMessage}
@@ -267,7 +267,7 @@ const ChatWindow = () => {
             </>
           )}
         </ChatBody>
-        <ChatFooter>
+        <ChatFooter className="chat-no-drag">
           <Sender
             value={input}
             onChange={setInput}
