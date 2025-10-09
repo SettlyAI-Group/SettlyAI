@@ -192,7 +192,7 @@ const ChatWindow = () => {
 
       <ChatContainer>
         <ChatHeader className="chat-drag-handle">
-          <Typography variant="subtitle2">AI Assistant</Typography>
+          <Typography variant="subtitle2" sx={{ width: 'fit-content' }}>AI Assistant</Typography>
           {isCreatingThread && (
             <Typography variant="caption" color="text.secondary">
               Creating thread...
