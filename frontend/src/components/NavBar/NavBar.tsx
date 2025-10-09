@@ -185,7 +185,7 @@ const Navbar = () => {
       </LeftContainer>
 
       <MiddleContainer>
-        <LinkButton component={RouterLink} to={'/about'}>
+        <LinkButton component={RouterLink} to={'/'}>
           About
         </LinkButton>
         <LinkButton component={RouterLink} to={'/features'}>
