@@ -4,6 +4,7 @@ import { selectSelectedOverview } from '@/redux/mapSuburbSlice';
 import GlobalButton from '@/components/GlobalButton';
 import { ShieldCheck, TrendingUp, BadgeDollarSign, Star } from 'lucide-react';
 import { useTheme } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom';
 
 const HighlightContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -72,6 +73,9 @@ const HighlightIcon = (label: string) => {
 };
 
 const HighlightSection = () => {
+  const navigate = useNavigate();
+  const overview = useSelector(selectSelectedOverview);
+  const suburbId = overview?.suburb?.id;
   const highlights = useSelector(selectSelectedOverview)?.highlights.filter(Boolean) ?? [];
   return (
     <HighlightContainer>
@@ -87,9 +91,9 @@ const HighlightSection = () => {
           ))}
       </LeftContainer>
 
-      <RightContainer>
-        <ReportButton>View Suburb Report</ReportButton>
-      </RightContainer>
+      <ReportButton onClick={() => suburbId && navigate(`/suburb/${suburbId}`)} disabled={!suburbId}>
+        View Suburb Report
+      </ReportButton>
     </HighlightContainer>
   );
 };
