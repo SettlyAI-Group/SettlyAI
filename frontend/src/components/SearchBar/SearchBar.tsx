@@ -31,10 +31,14 @@ export const useDebouncedValue = <T,>(value: T, delay = 300): T => {
 type Option = SuggestionOutputDto;
 
 // Styling for the Autocomplete & ReportButton Wrap
-const StyledAutocomplete = styled(Autocomplete<Option, false, false, true>)(() => ({
+const StyledAutocomplete = styled(Autocomplete<Option, false, false, true>)(({ theme }) => ({
   // Allow the input to share a row with the button
   flex: 1,
   minWidth: 0,
+  [theme.breakpoints.down(600)]: {
+    // Ensure full width on narrow screens when stacking
+    flexBasis: '100%',
+  },
 }));
 
 const SearchBarContainer = styled(Box)(({ theme }) => ({
@@ -57,9 +61,11 @@ const ReportButton = styled(GlobalButton)<{ $breakpoint: number }>(({ theme, $br
   borderRadius: 14,
   // Sit inline with the input on wide screens
   flex: '0 0 auto',
-  // On smaller screens, let it wrap to full width below the input
+  // On smaller screens, make it full-width on its own row
   [theme.breakpoints.down($breakpoint)]: {
     width: '100%',
+    maxWidth: 'none',
+    flexBasis: '100%',
   },
 }));
 
@@ -68,7 +74,8 @@ type ISearchBarProps = {
   breakpoint?: number;
 };
 
-const SearchBar = ({ onSuburbSelected, breakpoint = 1200 }: ISearchBarProps) => {
+// Default to stack only on small screens (<600px)
+const SearchBar = ({ onSuburbSelected, breakpoint = 600 }: ISearchBarProps) => {
   const [query, setQuery] = useState('');
   const [focused, setFocused] = useState(false);
   const [selected, setSelected] = useState<Option | null>(null);
