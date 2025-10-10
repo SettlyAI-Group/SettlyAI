@@ -12,6 +12,12 @@ export const HistorySidebarHeader = styled('div')(() => ({
   fontWeight: 500,
   gap: '8px',
   flexShrink: 0,
+
+  '@media (max-width: 375px)': {
+    padding: '0 10px',
+    fontSize: '13px',
+    gap: '6px',
+  },
 }));
 
 export const NewChatButton = styled('button')(() => ({
@@ -33,6 +39,13 @@ export const NewChatButton = styled('button')(() => ({
     borderColor: '#7B61FF',
     color: '#7B61FF',
     background: '#F5F3FF',
+  },
+
+  '@media (max-width: 375px)': {
+    padding: '5px 10px',
+    margin: '8px',
+    fontSize: '11px',
+    gap: '4px',
   },
 }));
 
@@ -56,6 +69,10 @@ export const HistoryList = styled('div')(() => ({
 
   '&::-webkit-scrollbar-thumb:hover': {
     background: '#BFBFBF',
+  },
+
+  '@media (max-width: 375px)': {
+    padding: '0 6px 6px 6px',
   },
 }));
 
@@ -84,6 +101,12 @@ export const HistoryItem = styled('div')<{ $active: boolean; $disabled: boolean 
   ...$disabled && {
     opacity: 0.6,
   },
+
+  '@media (max-width: 375px)': {
+    padding: '5px 6px',
+    marginBottom: '1px',
+    gap: '1px',
+  },
 }));
 
 export const HistoryItemHeader = styled('div')(() => ({
@@ -102,6 +125,10 @@ export const HistoryItemTitle = styled('div')<{ $disabled: boolean }>(({ $disabl
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
   fontStyle: $disabled ? 'italic' : 'normal',
+
+  '@media (max-width: 375px)': {
+    fontSize: '12px',
+  },
 }));
 
 export const HistoryItemActions = styled('div')(() => ({
@@ -143,6 +170,10 @@ export const HistoryItemPreview = styled('div')(() => ({
   whiteSpace: 'nowrap',
   maxWidth: '100%',
   lineHeight: 1.4,
+
+  '@media (max-width: 375px)': {
+    fontSize: '9px',
+  },
 }));
 
 export const RenameInput = styled('input')(() => ({

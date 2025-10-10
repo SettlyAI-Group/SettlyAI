@@ -61,18 +61,53 @@ export const ChatWindowContainer = styled('div')<{ $isClosing: boolean; $style: 
 );
 
 export const HistorySidebar = styled('div')<{ $hidden: boolean }>(({ $hidden }) => ({
-  width: '200px',
+  width: '260px',
   background: '#FAFAFA',
   borderRight: '1px solid #F0F0F0',
   display: 'flex',
   flexDirection: 'column',
-  transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+  transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
   flexShrink: 0,
+  zIndex: 10,
 
-  ...$hidden && {
-    width: 0,
-    opacity: 0,
-    overflow: 'hidden',
+  // 桌面端：正常显示在左侧
+  '@media (min-width: 769px)': {
+    position: 'relative',
+    ...$hidden && {
+      width: 0,
+      opacity: 0,
+      overflow: 'hidden',
+    },
+  },
+
+  // 移动端和平板：悬浮抽屉模式
+  '@media (max-width: 768px)': {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    height: '100%',
+    boxShadow: '2px 0 12px rgba(0, 0, 0, 0.15)',
+    transform: $hidden ? 'translateX(-100%)' : 'translateX(0)',
+    opacity: 1,
+  },
+}));
+
+// ============ Overlay (遮罩层) ============
+export const Overlay = styled('div')<{ $visible: boolean }>(({ $visible }) => ({
+  display: 'none',
+
+  '@media (max-width: 768px)': {
+    display: $visible ? 'block' : 'none',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    background: 'rgba(0, 0, 0, 0.5)',
+    zIndex: 9,
+    transition: 'opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+    opacity: $visible ? 1 : 0,
   },
 }));
 
@@ -81,6 +116,7 @@ export const ChatMain = styled('div')(() => ({
   display: 'flex',
   flexDirection: 'column',
   minWidth: 0,
+  position: 'relative',
 }));
 
 // ============ Header Styles ============
@@ -225,12 +261,13 @@ export const GuideContainer = styled('div')(() => ({
   background: 'linear-gradient(135deg, #F5F3FF 0%, #EDE9FE 100%)',
   border: '1px solid #C4B5FD',
   borderRadius: '10px',
-  padding: '12px',
-  margin: '0 20px 16px 20px',
+  padding: '16px',
+  margin: '20px 20px 16px 20px',
   animation: `${slideDown} 0.3s ease`,
 
   '@media (max-width: 480px)': {
-    margin: '0 12px 12px 12px',
+    padding: '14px',
+    margin: '16px 12px 12px 12px',
   },
 }));
 
@@ -247,38 +284,65 @@ export const GuideTitle = styled('div')(() => ({
 export const GuideActions = styled('div')(() => ({
   display: 'grid',
   gridTemplateColumns: 'repeat(2, 1fr)',
-  gap: '6px',
+  gap: '8px',
 
-  '@media (max-width: 768px)': {
+  '@media (max-width: 900px)': {
     gridTemplateColumns: '1fr',
+    gap: '8px',
+  },
+
+  '@media (max-width: 480px)': {
+    gap: '6px',
   },
 }));
 
 export const GuideAction = styled('div')(() => ({
   background: 'white',
   border: '1px solid #D9D9D9',
-  borderRadius: '6px',
-  padding: '8px 10px',
+  borderRadius: '8px',
+  padding: '12px 14px',
   cursor: 'pointer',
   transition: 'all 0.2s',
   display: 'flex',
   alignItems: 'center',
-  gap: '6px',
+  gap: '10px',
+  minHeight: '48px',
 
   '&:hover': {
     borderColor: '#7B61FF',
-    boxShadow: '0 2px 6px rgba(123, 97, 255, 0.15)',
+    boxShadow: '0 2px 8px rgba(123, 97, 255, 0.2)',
     transform: 'translateY(-1px)',
+  },
+
+  '@media (max-width: 480px)': {
+    padding: '10px 12px',
+    gap: '8px',
+    minHeight: '44px',
+    borderRadius: '6px',
   },
 }));
 
 export const GuideActionIcon = styled('span')(() => ({
-  fontSize: '16px',
+  fontSize: '18px',
+  flexShrink: 0,
+
+  '@media (max-width: 480px)': {
+    fontSize: '16px',
+  },
 }));
 
 export const GuideActionText = styled('span')(() => ({
-  fontSize: '11px',
+  fontSize: '13px',
   color: '#262626',
+  lineHeight: 1.5,
+  flex: 1,
+  wordBreak: 'keep-all',
+  whiteSpace: 'normal',
+
+  '@media (max-width: 480px)': {
+    fontSize: '13px',
+    lineHeight: 1.4,
+  },
 }));
 
 // ============ Input Container ============

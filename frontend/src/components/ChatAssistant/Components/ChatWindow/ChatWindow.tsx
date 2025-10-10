@@ -20,6 +20,7 @@ import ChatSidebar from './components/ChatSidebar';
 import {
   ChatWindowContainer,
   HistorySidebar,
+  Overlay,
   ChatMain,
   ChatHeader,
   ChatHeaderLeft,
@@ -44,10 +45,10 @@ import {
 
 // ============ 快捷操作配置 ============
 const quickActions = [
-  { icon: <BulbOutlined />, text: 'Get ideas', color: '#FAAD14' },
-  { icon: <ThunderboltOutlined />, text: 'Quick fix', color: '#52C41A' },
-  { icon: <RocketOutlined />, text: 'Start project', color: '#1890FF' },
-  { icon: <QuestionCircleOutlined />, text: 'Ask anything', color: '#722ED1' },
+  { icon: <BulbOutlined />, text: '查询 Point Cook 的房价中位数', color: '#FAAD14' },
+  { icon: <ThunderboltOutlined />, text: '分析区域的租金回报率', color: '#52C41A' },
+  { icon: <RocketOutlined />, text: '首次购房补贴政策解读', color: '#1890FF' },
+  { icon: <QuestionCircleOutlined />, text: '查看交通和学校评分', color: '#722ED1' },
 ];
 
 // ============ 类型定义 ============
@@ -64,7 +65,7 @@ const ChatWindow = ({ onClose, isClosing = false }: ChatWindowProps = {}) => {
   const [userChatId, setUserChatId] = useState<string | null>(null);
   const [input, setInput] = useState('');
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [showHistory, setShowHistory] = useState(true);
+  const [showHistory, setShowHistory] = useState(window.innerWidth > 768);
   const [showGuide, setShowGuide] = useState(true);
   const bubbleListRef = useRef<GetRef<typeof Bubble.List>>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -72,6 +73,20 @@ const ChatWindow = ({ onClose, isClosing = false }: ChatWindowProps = {}) => {
   // 初始化用户 ID
   useEffect(() => {
     setUserChatId(ensureUserChatId());
+  }, []);
+
+  // 监听窗口大小变化，自动收起/展开 history
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 768) {
+        setShowHistory(false);
+      } else {
+        setShowHistory(true);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   // 线程管理
@@ -172,15 +187,30 @@ const ChatWindow = ({ onClose, isClosing = false }: ChatWindowProps = {}) => {
       };
     }
 
-    const baseWidth = window.innerWidth <= 480 ? '100vw' : '640px';
-    const collapsedWidth = window.innerWidth <= 480 ? '100vw' : '440px';
+    // 小屏幕（≤768px）：使用悬浮抽屉，宽度不变
+    // 大屏幕（>768px）：根据 showHistory 调整宽度
+    const isMobile = window.innerWidth <= 768;
+
+    if (isMobile) {
+      return {
+        width: '100vw',
+        height: '100vh',
+        bottom: 0,
+        right: 0,
+        borderRadius: 0,
+      };
+    }
+
+    // 桌面端：根据 history 状态调整宽度
+    const baseWidth = '680px';
+    const collapsedWidth = '480px';
 
     return {
       width: showHistory ? baseWidth : collapsedWidth,
-      height: window.innerWidth <= 480 ? '100vh' : '680px',
-      bottom: window.innerWidth <= 480 ? 0 : '20px',
-      right: window.innerWidth <= 480 ? 0 : '20px',
-      borderRadius: window.innerWidth <= 480 ? 0 : '16px',
+      height: '680px',
+      bottom: '20px',
+      right: '20px',
+      borderRadius: '16px',
     };
   };
 
@@ -244,6 +274,8 @@ const ChatWindow = ({ onClose, isClosing = false }: ChatWindowProps = {}) => {
 
       {/* Main chat area */}
       <ChatMain>
+        {/* Overlay for mobile drawer */}
+        <Overlay $visible={showHistory} onClick={() => setShowHistory(false)} />
         {/* Header */}
         <ChatHeader>
           <ChatHeaderLeft>
