@@ -101,63 +101,44 @@ async function processSSEStream(
           const piece = String(c.text ?? '');
           if (!piece) continue;
 
-          console.log('💬 [processSSE] 收到文本 chunk:', {
-            piece,
-            currentAssistantId,
-            typingPlaceholderUsed,
-          });
-
           setMessages(prev => {
             const lastMsg = prev[prev.length - 1];
 
-            console.log('🔍 [processSSE] 检查累加条件:', {
-              'lastMsg.id': lastMsg?.id,
-              currentAssistantId,
-              '是否匹配': lastMsg?.id === currentAssistantId,
-            });
-
             // 累加到当前 assistant 消息
             if (lastMsg?.id === currentAssistantId) {
-              console.log('✅ [processSSE] 累加到现有消息');
               return prev.map(m =>
                 m.id === currentAssistantId ? { ...m, content: m.content + piece, status: 'streaming' as const } : m
               );
             } else {
+              // 🔑 新的 assistant 消息开始，删除所有 tool_call loader
+              if (toolCallIds.length > 0) {
+                console.log('🗑️ [text] 删除 tool_call loader（新消息开始）');
+                prev = prev.filter(m => !toolCallIds.includes(m.id));
+                toolCallIds.length = 0; // 清空数组
+              }
+
               // 检查是否有未使用的 typing 占位符
               const typingPlaceholder = !typingPlaceholderUsed
                 ? prev.find(m => m.id.startsWith('typing_'))
-                : null;  // 🔑 如果已使用，不再查找
-
-              console.log('🔍 [processSSE] 查找 typing 占位符:', {
-                typingPlaceholderUsed,
-                'found': typingPlaceholder?.id,
-                '所有消息': prev.map(m => ({ id: m.id, role: m.role, status: m.status })),
-              });
+                : null;
 
               if (typingPlaceholder) {
                 // ✅ 复用 typing 占位符，改变 ID 防止下次被找到
-                console.log('🔄 [processSSE] 复用 typing 占位符:', typingPlaceholder.id);
+                console.log('🔄 [text] 复用 typing:', typingPlaceholder.id);
                 const newId = `assistant_${Date.now()}_${Math.random()}`;
                 currentAssistantId = newId;
-                typingPlaceholderUsed = true;  // 🔑 标记为已使用
-                const result = prev.map(m =>
+                typingPlaceholderUsed = true;
+                return prev.map(m =>
                   m.id === typingPlaceholder.id
-                    ? { ...m, id: newId, content: piece, status: 'streaming' as const }  // 🔑 改变 ID
+                    ? { ...m, id: newId, content: piece, status: 'streaming' as const }
                     : m
                 );
-                console.log('📝 [processSSE] 更新后的消息列表:', result.map(m => ({
-                  id: m.id,
-                  role: m.role,
-                  content: m.content.substring(0, 20),
-                  status: m.status,
-                })));
-                return result;
               } else {
                 // 没有 typing 占位符或已使用，创建新消息
                 const newId = `assistant_${Date.now()}_${Math.random()}`;
-                console.log('🆕 [processSSE] 创建新 assistant 消息:', newId);
+                console.log('🆕 [text] 创建新消息:', newId);
                 currentAssistantId = newId;
-                const result = [
+                return [
                   ...prev,
                   {
                     id: newId,
@@ -167,13 +148,6 @@ async function processSSEStream(
                     timestamp: Date.now(),
                   },
                 ];
-                console.log('📝 [processSSE] 更新后的消息列表:', result.map(m => ({
-                  id: m.id,
-                  role: m.role,
-                  content: m.content.substring(0, 20),
-                  status: m.status,
-                })));
-                return result;
               }
             }
           });
@@ -181,14 +155,11 @@ async function processSSEStream(
 
         // 处理工具调用
         else if (c?.type === 'tool_use') {
-          console.log('🔧 [processSSE] 收到 tool_use:', {
-            toolName: c?.name,
-            currentAssistantId,
-          });
+          const toolName = c?.name || 'unknown';
+          console.log(`🔧 [tool_use] 收到: ${toolName}`);
 
           // 完成当前 assistant 消息
           if (currentAssistantId) {
-            console.log('✅ [processSSE] 完成当前 assistant 消息:', currentAssistantId);
             setMessages(prev =>
               prev.map(m => (m.id === currentAssistantId ? { ...m, status: 'success' as const } : m))
             );
@@ -199,27 +170,18 @@ async function processSSEStream(
           const toolId = `tool_${Date.now()}_${Math.random()}`;
           toolCallIds.push(toolId);
 
-          console.log('🔧 [processSSE] 添加 tool_call 占位符:', toolId);
-          setMessages(prev => {
-            const result = [
-              ...prev,
-              {
-                id: toolId,
-                role: 'tool_call' as const,
-                content: `正在和${extractColleagueName(c?.name)}沟通...`,
-                toolName: c?.name,
-                status: 'loading' as const,
-                timestamp: Date.now(),
-              },
-            ];
-            console.log('📝 [processSSE] 添加 tool_call 后的消息列表:', result.map(m => ({
-              id: m.id,
-              role: m.role,
-              content: m.content.substring(0, 20),
-              status: m.status,
-            })));
-            return result;
-          });
+          console.log(`🔧 [tool_call] 添加 loader: ${extractColleagueName(toolName)}`);
+          setMessages(prev => [
+            ...prev,
+            {
+              id: toolId,
+              role: 'tool_call' as const,
+              content: `正在和${extractColleagueName(toolName)}沟通...`,
+              toolName: toolName,
+              status: 'loading' as const,
+              timestamp: Date.now(),
+            },
+          ]);
         }
       }
     }
@@ -236,35 +198,17 @@ async function processSSEStream(
 
       // 完成最后一条 assistant 消息
       if (currentAssistantId) {
-        console.log('✅ [processSSE] 完成最后一条 assistant 消息:', currentAssistantId);
-        setMessages(prev => {
-          const result = prev.map(m => (m.id === currentAssistantId ? { ...m, status: 'success' as const } : m));
-          console.log('📝 [processSSE] 完成后的消息列表:', result.map(m => ({
-            id: m.id,
-            role: m.role,
-            content: m.content.substring(0, 20),
-            status: m.status,
-          })));
-          return result;
-        });
+        setMessages(prev =>
+          prev.map(m => (m.id === currentAssistantId ? { ...m, status: 'success' as const } : m))
+        );
       }
 
       // 删除所有 tool_call 占位符
       if (toolCallIds.length > 0) {
-        console.log('🗑️ [processSSE] 删除 tool_call 占位符:', toolCallIds);
-        setMessages(prev => {
-          const result = prev.filter(m => !toolCallIds.includes(m.id));
-          console.log('📝 [processSSE] 删除后的消息列表:', result.map(m => ({
-            id: m.id,
-            role: m.role,
-            content: m.content.substring(0, 20),
-            status: m.status,
-          })));
-          return result;
-        });
+        console.log('🗑️ [完成] 删除 tool_call loader');
+        setMessages(prev => prev.filter(m => !toolCallIds.includes(m.id)));
       }
 
-      console.log('✅ [processSSE] 流处理完成');
       break;
     }
     buffer += decoder.decode(value, { stream: true });
@@ -307,21 +251,7 @@ export const useStreamChat = (threadId: string) => {
         timestamp: Date.now(),
       };
 
-      console.log('🚀 [sendMessage] 创建消息:', {
-        userMsg,
-        typingPlaceholder,
-      });
-
-      setMessages(prev => {
-        const newMessages = [...prev, userMsg, typingPlaceholder];
-        console.log('📝 [sendMessage] 更新后的消息列表:', newMessages.map(m => ({
-          id: m.id,
-          role: m.role,
-          content: m.content.substring(0, 20),
-          status: m.status,
-        })));
-        return newMessages;
-      });
+      setMessages(prev => [...prev, userMsg, typingPlaceholder]);
       setIsStreaming(true);
 
       const ac = new AbortController();

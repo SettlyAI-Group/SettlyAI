@@ -161,9 +161,6 @@ const ChatWindow = () => {
 
   // 转换消息格式为 Bubble.List 需要的格式
   const bubbleItems = messages.map(m => {
-    // 检查是否有 assistant 消息正在 streaming
-    const hasStreamingAssistant = messages.some(msg => msg.role === 'assistant' && msg.status === 'streaming');
-
     // 判断是否为 typing 占位符（空内容 + loading 状态）
     const isTypingPlaceholder = m.role === 'assistant' && m.status === 'loading' && m.content.trim() === '';
 
@@ -171,12 +168,11 @@ const ChatWindow = () => {
       key: m.id,
       role: m.role,
       content: m.content,
-      // loading：tool_call 或 typing 占位符
-      loading:
-        (m.role === 'tool_call' && m.status === 'loading' && !hasStreamingAssistant) ||
-        isTypingPlaceholder,
+      // loading：只用于 typing 占位符（显示默认点点点）
+      loading: isTypingPlaceholder,
       // assistant 的 typing：只有 streaming 状态才显示
       typing: m.role === 'assistant' && m.status === 'streaming' ? { step: 5, interval: 20 } : false,
+      // tool_call 不使用 loading，直接用 messageRender 显示自定义内容
     };
   });
 
