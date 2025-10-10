@@ -131,7 +131,7 @@ const ChatWindow = () => {
     setUserChatId(ensureUserChatId());
   }, []);
 
-  const { agent, abort, setActiveThread } = useChatAgent();
+  const { agent, abort, setActiveThread, initSetMessages } = useChatAgent();
 
   const { parsedMessages, onRequest, setMessages } = useXChat<
     Msg,
@@ -162,7 +162,10 @@ const ChatWindow = () => {
     },
   });
 
-  const isRequesting = agent?.isRequesting?.() ?? false;
+  // 将 setMessages 传递给 useChatAgent
+  useEffect(() => {
+    initSetMessages(setMessages);
+  }, [initSetMessages, setMessages]);
 
   const {
     conversations,
@@ -234,26 +237,29 @@ const ChatWindow = () => {
         <StyledBubbleList
           className="chat-no-drag"
           roles={BUBBLE_ROLES}
-          items={parsedMessages.map((it, idx) => {
-            const isEmpty = !it.message.text || it.message.text.trim() === '';
-            const hasToolCall = parsedMessages.some(m => m.message.role === 'tool_call');
+          items={parsedMessages
+            .filter(it => {
+              // 过滤掉空消息（useXChat 自动创建的占位符）
+              const isEmpty = !it.message.text || it.message.text.trim() === '';
+              // 保留有内容的消息，或者是 loading 状态的 tool_call
+              return !isEmpty || (it.message.role === 'tool_call' && it.status === 'loading');
+            })
+            .map((it, idx, filteredArray) => {
+              // 检查是否是正在更新的消息（最后一条 + status 为 updating）
+              const isLastMessage = idx === filteredArray.length - 1;
+              const isUpdating = it.status === 'updating';
+              const shouldShowTyping = it.message.role === 'assistant' && isLastMessage && isUpdating;
 
-            // 检查是否是正在更新的消息（最后一条 + status 为 updating）
-            const isLastMessage = idx === parsedMessages.length - 1;
-            const isUpdating = it.status === 'updating';
-            const shouldShowTyping = it.message.role === 'assistant' && isLastMessage && isUpdating;
-
-            // 统一返回格式,让 BUBBLE_ROLES 处理样式
-            return {
-              key: idx,
-              role: it.message.role,
-              content: it.message.text,
-              // 只有正在更新的消息才显示打字效果
-              typing: shouldShowTyping ? { step: 5, interval: 20 } : false,
-              // 只有 assistant 且内容为空且无工具调用时才显示 loading
-              loading: it.message.role === 'assistant' && isEmpty && isRequesting && !hasToolCall,
-            };
-          })}
+              // 统一返回格式,让 BUBBLE_ROLES 处理样式
+              return {
+                key: idx,
+                role: it.message.role,
+                content: it.message.text,
+                // 只有正在更新的消息才显示打字效果
+                typing: shouldShowTyping ? { step: 5, interval: 20 } : false,
+                loading: false, // 不再使用 loading 状态（我们已经用 setMessages 手动管理了）
+              };
+            })}
         />
         <ChatFooter className="chat-no-drag">
           <Sender

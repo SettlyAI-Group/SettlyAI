@@ -8,6 +8,12 @@ type Msg = {
   toolName?: string; // 工具名称，仅当 role === 'tool_call' 时有值
 };
 
+type MessageWithId = {
+  id: string | number;
+  message: Msg;
+  status: 'local' | 'loading' | 'updating' | 'success' | 'error';
+};
+
 const extractColleagueName = (toolName = ''): string => {
   const match = toolName.match(/(tom|ivy|levan)/i);
   if (!match) return '同事';
@@ -18,6 +24,7 @@ const extractColleagueName = (toolName = ''): string => {
 export const useChatAgent = () => {
   const abortControllerRef = useRef<AbortController | null>(null);
   const activeThreadRef = useRef('');
+  const setMessagesRef = useRef<((updater: (prev: MessageWithId[]) => MessageWithId[]) => void) | null>(null);
 
   const [agent] = useXAgent<Msg>({
     request: async (info: any, { onUpdate, onSuccess, onError, onStream }: any) => {
@@ -44,9 +51,10 @@ export const useChatAgent = () => {
         if (!res.ok || !res.body) throw new Error(`HTTP ${res.status}`);
         abortControllerRef.current = ac;
 
+        const setMessages = setMessagesRef.current;
         const shownToolCalls = new Set<string>();
-        const collected: Msg[] = []; // 改为消息数组
-        let currentMsg: Msg | null = null; // 当前正在构建的消息
+        let currentAssistantMsgId: string | null = null; // 当前正在构建的 assistant 消息的 ID
+        let messageIdCounter = 0; // 消息 ID 计数器
         const reader = res.body.getReader();
         const decoder = new TextDecoder();
         let buffer = '';
@@ -129,22 +137,44 @@ export const useChatAgent = () => {
                 : [];
 
             for (const c of content) {
-              // 3a. Tina 的对话文本 - 流式追加到当前消息
+              // 3a. Tina 的对话文本 - 使用 setMessages 实现流式追加
               if (c?.type === 'text') {
                 const piece = String(c.text ?? '');
                 if (!piece) continue;
 
-                // 如果当前没有消息或者是工具调用消息，创建新的助手消息
-                if (!currentMsg || currentMsg.role === 'tool_call') {
-                  if (currentMsg) {
-                    collected.push(currentMsg);
-                    onUpdate(currentMsg); // 完成工具调用消息
-                  }
-                  currentMsg = { role: 'assistant', content: piece };
-                } else {
-                  currentMsg.content += piece;
+                if (setMessages) {
+                  setMessages(prev => {
+                    const lastMsg = prev[prev.length - 1];
+
+                    // 如果最后一条是当前正在构建的 assistant 消息，追加内容
+                    if (lastMsg?.id === currentAssistantMsgId) {
+                      return prev.map((msg, i) =>
+                        i === prev.length - 1
+                          ? {
+                              ...msg,
+                              message: {
+                                ...msg.message,
+                                content: msg.message.content + piece,
+                              },
+                              status: 'updating' as const,
+                            }
+                          : msg
+                      );
+                    } else {
+                      // 创建新的 assistant 消息
+                      const newMsgId = `assistant_${++messageIdCounter}_${Date.now()}`;
+                      currentAssistantMsgId = newMsgId;
+                      return [
+                        ...prev,
+                        {
+                          id: newMsgId,
+                          message: { role: 'assistant' as const, content: piece },
+                          status: 'updating' as const,
+                        },
+                      ];
+                    }
+                  });
                 }
-                onUpdate(currentMsg);
               }
               // 3b. Tina 调用工具 - 创建独立的工具调用消息
               else if (c?.type === 'tool_use') {
@@ -152,20 +182,31 @@ export const useChatAgent = () => {
                 if (shownToolCalls.has(toolId)) continue;
                 shownToolCalls.add(toolId);
 
-                // 先完成当前的助手消息
-                if (currentMsg && currentMsg.role === 'assistant') {
-                  collected.push(currentMsg);
-                  onUpdate(currentMsg);
-                }
+                if (setMessages) {
+                  // 先完成当前的 assistant 消息
+                  if (currentAssistantMsgId) {
+                    setMessages(prev =>
+                      prev.map(msg =>
+                        msg.id === currentAssistantMsgId ? { ...msg, status: 'success' as const } : msg
+                      )
+                    );
+                    currentAssistantMsgId = null;
+                  }
 
-                // 创建工具调用消息
-                const toolMsg: Msg = {
-                  role: 'tool_call',
-                  content: `正在和${extractColleagueName(c?.name)}沟通...`,
-                  toolName: c?.name,
-                };
-                currentMsg = toolMsg;
-                onUpdate(toolMsg);
+                  // 添加工具调用消息（独立显示）
+                  setMessages(prev => [
+                    ...prev,
+                    {
+                      id: `tool_${++messageIdCounter}_${Date.now()}`,
+                      message: {
+                        role: 'tool_call' as const,
+                        content: `正在和${extractColleagueName(c?.name)}沟通...`,
+                        toolName: c?.name,
+                      },
+                      status: 'loading' as const, // 🔑 保持 loading 状态
+                    },
+                  ]);
+                }
               }
             }
           }
@@ -178,9 +219,14 @@ export const useChatAgent = () => {
           if (done) {
             buffer += decoder.decode();
             flushBuffer();
-            // 完成最后一条消息
-            if (currentMsg) {
-              collected.push(currentMsg);
+
+            // 完成最后一条 assistant 消息
+            if (currentAssistantMsgId && setMessages) {
+              setMessages(prev =>
+                prev.map(msg =>
+                  msg.id === currentAssistantMsgId ? { ...msg, status: 'success' as const } : msg
+                )
+              );
             }
             break;
           }
@@ -189,7 +235,7 @@ export const useChatAgent = () => {
         }
 
         if (activeThreadRef.current === requestThreadId) {
-          onSuccess(collected);
+          onSuccess([]); // 不需要传递消息，因为已经通过 setMessages 处理了
         }
       } catch (e) {
         if (!(e instanceof DOMException && e.name === 'AbortError')) {
@@ -212,5 +258,9 @@ export const useChatAgent = () => {
     activeThreadRef.current = threadId;
   }, []);
 
-  return { agent, abort, setActiveThread };
+  const initSetMessages = useCallback((fn: (updater: (prev: MessageWithId[]) => MessageWithId[]) => void) => {
+    setMessagesRef.current = fn;
+  }, []);
+
+  return { agent, abort, setActiveThread, initSetMessages };
 };
