@@ -256,6 +256,7 @@ export const MessagesContainer = styled('div')(() => ({
 
 export const StyledBubbleList = styled(Bubble.List)(() => ({
   padding: '12px 16px',
+  animation: `${slideDown} 0.3s ease`,
 
   '@media (max-width: 480px)': {
     padding: '12px',
@@ -270,6 +271,7 @@ export const GuideContainer = styled('div')(() => ({
   padding: '16px',
   margin: '20px 20px 16px 20px',
   animation: `${slideDown} 0.3s ease`,
+  flexShrink: 0,
 
   '@media (max-width: 480px)': {
     padding: '14px',

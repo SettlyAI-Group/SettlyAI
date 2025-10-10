@@ -45,10 +45,10 @@ import {
 
 // ============ 快捷操作配置 ============
 const quickActions = [
-  { icon: <BulbOutlined />, text: '查询 Point Cook 的房价中位数', color: '#FAAD14' },
-  { icon: <ThunderboltOutlined />, text: '分析区域的租金回报率', color: '#52C41A' },
-  { icon: <RocketOutlined />, text: '首次购房补贴政策解读', color: '#1890FF' },
-  { icon: <QuestionCircleOutlined />, text: '查看交通和学校评分', color: '#722ED1' },
+  { icon: <BulbOutlined />, text: 'Check Point Cook median house price', color: '#FAAD14' },
+  { icon: <ThunderboltOutlined />, text: 'Analyze rental yield in the area', color: '#52C41A' },
+  { icon: <RocketOutlined />, text: 'First home buyer grant explained', color: '#1890FF' },
+  { icon: <QuestionCircleOutlined />, text: 'View transport & school ratings', color: '#722ED1' },
 ];
 
 // ============ 类型定义 ============
@@ -317,7 +317,7 @@ const ChatWindow = ({ onClose, isClosing = false }: ChatWindowProps = {}) => {
         <MessagesContainer>
           {/* User guide - Compact design */}
           {showGuide && messages.length === 0 && (
-            <GuideContainer>
+            <GuideContainer key={`guide-${activeKey}`}>
               <GuideTitle>
                 <BulbOutlined />
                 Quick Start
@@ -333,7 +333,7 @@ const ChatWindow = ({ onClose, isClosing = false }: ChatWindowProps = {}) => {
             </GuideContainer>
           )}
 
-          <StyledBubbleList ref={bubbleListRef} roles={BUBBLE_ROLES} items={bubbleItems} />
+          <StyledBubbleList key={`bubble-${activeKey}`} ref={bubbleListRef} roles={BUBBLE_ROLES} items={bubbleItems} />
         </MessagesContainer>
 
         {/* Sender style input area */}
