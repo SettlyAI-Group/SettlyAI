@@ -15,11 +15,12 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
   alignItems: 'center',
   gap: theme.spacing(2),
   [theme.breakpoints.down(400)]: {
-    flexDirection: 'column',
+    flexDirection: 'row',
     alignItems: 'center',
-    gap: theme.spacing(2),
-    paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(2),
+    justifyContent: 'space-between',
+    gap: theme.spacing(1.5),
+    paddingLeft: theme.spacing(1.5),
+    paddingRight: theme.spacing(1.5),
   },
 }));
 
@@ -29,7 +30,12 @@ const LeftContainer = styled('div')(({ theme }) => ({
   flex: '1 1 0',
   paddingLeft: theme.spacing(6),
   [theme.breakpoints.down(400)]: {
-    paddingTop: '8px',
+    paddingTop: 0,
+    paddingLeft: 0,
+    paddingRight: 0,
+    justifyContent: 'flex-start',
+    flex: '1 1 auto',
+    minWidth: 0,
   },
 }));
 
@@ -53,10 +59,13 @@ const RightContainer = styled('div')(({ theme }) => ({
   marginLeft: theme.spacing(3),
   paddingRight: theme.spacing(6),
   [theme.breakpoints.down(400)]: {
-    flexDirection: 'column',
-    alignItems: 'stretch',
-    width: '100%',
-    gap: theme.spacing(3),
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: 'auto',
+    gap: theme.spacing(4),
+    paddingRight: 0,
+    marginLeft: 0,
+    flexWrap: 'nowrap',
   },
 }));
 
@@ -81,9 +90,9 @@ const LoginButton = styled(WrappedGlobalButton)(({ theme }) => ({
   width: 90,
   '&&': { borderRadius: 8 },
   [theme.breakpoints.down(400)]: {
-    width: '100%',
-    paddingLeft: theme.spacing(0.25),
-    paddingRight: theme.spacing(0.25),
+    width: 'auto',
+    paddingLeft: theme.spacing(0.5),
+    paddingRight: theme.spacing(0.5),
   },
   ...theme.typography.p1,
   color: theme.palette.text.secondary,
@@ -101,9 +110,9 @@ const JoinButton = styled(WrappedGlobalButton)(({ theme }) => ({
   backgroundColor: theme.palette.primary.main,
   color: theme.palette.background.paper,
   [theme.breakpoints.down(400)]: {
-    width: '100%',
-    paddingLeft: theme.spacing(0.25),
-    paddingRight: theme.spacing(0.25),
+    width: 'auto',
+    paddingLeft: theme.spacing(0.5),
+    paddingRight: theme.spacing(0.5),
   },
 }));
 
@@ -111,9 +120,9 @@ const LogoutButton = styled(GlobalButton)(({ theme }) => ({
   width: 90,
   '&&': { borderRadius: 8 },
   [theme.breakpoints.down(400)]: {
-    width: '100%',
-    paddingLeft: theme.spacing(0.25),
-    paddingRight: theme.spacing(0.25),
+    width: 'auto',
+    paddingLeft: theme.spacing(0.5),
+    paddingRight: theme.spacing(0.5),
   },
   ...theme.typography.p1,
   color: theme.palette.text.secondary,
@@ -160,6 +169,14 @@ const BrandLink = styled(Typography)(({ theme }) => ({
   textDecoration: 'none',
   whiteSpace: 'nowrap',
   color: 'inherit',
+  [theme.breakpoints.down(400)]: {
+    width: 'auto',
+    maxWidth: '100%',
+    justifyContent: 'flex-start',
+    gap: theme.spacing(1),
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+  },
 }));
 
 const Navbar = () => {
