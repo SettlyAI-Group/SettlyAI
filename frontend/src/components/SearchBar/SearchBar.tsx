@@ -51,7 +51,7 @@ const SearchBarContainer = styled(Box)(({ theme }) => ({
 }));
 
 const ReportButton = styled(GlobalButton)<{ $breakpoint: number }>(({ theme, $breakpoint }) => ({
-  width: 160,
+  maxWidth: 160,
   height: 56,
   fontSize: theme.typography.subtitle1.fontSize,
   borderRadius: 14,
