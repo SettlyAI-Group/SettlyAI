@@ -25,22 +25,14 @@ const normalizeMessages = (raw: any[] = []) => {
 
 interface UseChatThreadOptions {
   userChatId: string | null;
-  onMessagesLoaded?: (messages: any[]) => void;
-  onAbort?: () => void;
 }
 
-export const useChatThread = ({ userChatId, onMessagesLoaded, onAbort }: UseChatThreadOptions) => {
+export const useChatThread = ({ userChatId }: UseChatThreadOptions) => {
   const [conversations, setConversations] = useState<ConversationItem[]>([]);
   const [activeKey, setActiveKey] = useState('');
   const [isCreatingThread, setIsCreatingThread] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const activeThreadRef = useRef('');
-  const onMessagesLoadedRef = useRef(onMessagesLoaded);
-
-  // 更新 ref
-  useEffect(() => {
-    onMessagesLoadedRef.current = onMessagesLoaded;
-  }, [onMessagesLoaded]);
 
   useEffect(() => {
     activeThreadRef.current = activeKey;
@@ -85,20 +77,11 @@ export const useChatThread = ({ userChatId, onMessagesLoaded, onAbort }: UseChat
 
         if (threads.length === 0) {
           setActiveKey('');
-          onMessagesLoadedRef.current?.([]);
           return;
         }
 
         const first = threads[0];
         setActiveKey(first.thread_id);
-
-        const uiMsgs = normalizeMessages(first.values?.messages ?? []);
-        const historyMessages = uiMsgs.map((m, index) => ({
-          id: `history_${index}`,
-          status: 'success' as const,
-          message: { role: m.role as 'user' | 'assistant', content: m.text },
-        }));
-        onMessagesLoadedRef.current?.(historyMessages);
       } catch (error) {
         console.error('Failed to fetch threads:', error);
         setErrorMessage('Failed to load your chat history.');
@@ -112,7 +95,6 @@ export const useChatThread = ({ userChatId, onMessagesLoaded, onAbort }: UseChat
   const handleNewChat = useCallback(async () => {
     if (!userChatId || isCreatingThread) return;
 
-    onAbort?.();
     setIsCreatingThread(true);
     setErrorMessage(null);
 
@@ -134,14 +116,13 @@ export const useChatThread = ({ userChatId, onMessagesLoaded, onAbort }: UseChat
         return next.sort((a, b) => b.updatedAt - a.updatedAt);
       });
       setActiveKey(thread.thread_id);
-      onMessagesLoadedRef.current?.([]);
     } catch (error) {
       console.error(error);
       setErrorMessage('Failed to create a new chat. Please try again.');
     } finally {
       setIsCreatingThread(false);
     }
-  }, [userChatId, isCreatingThread, onAbort]);
+  }, [userChatId, isCreatingThread]);
 
   // 切换会话
   const handleActiveChange = useCallback(
@@ -151,38 +132,10 @@ export const useChatThread = ({ userChatId, onMessagesLoaded, onAbort }: UseChat
       const targetConversation = conversations.find(item => item.key === key);
       if (targetConversation?.isDisabled) return;
 
-      onAbort?.();
       setActiveKey(key);
       setErrorMessage(null);
-      onMessagesLoadedRef.current?.([]);
-
-      try {
-        const [thread] = await searchThreads({
-          ids: [key],
-          limit: 1,
-          select: ['values'],
-        });
-
-        const uiMsgs = normalizeMessages(thread?.values?.messages ?? []);
-        const historyMessages = uiMsgs.map((m, index) => ({
-          id: `history_${index}`,
-          status: 'success' as const,
-          message: { role: m.role as 'user' | 'assistant', content: m.text },
-        }));
-
-        // 只有在仍然是当前活动线程时才加载消息
-        if (activeThreadRef.current === key) {
-          onMessagesLoadedRef.current?.(historyMessages);
-        }
-      } catch (e) {
-        console.error(e);
-        setErrorMessage('Failed to load this conversation.');
-        if (activeThreadRef.current === key) {
-          onMessagesLoadedRef.current?.([]);
-        }
-      }
     },
-    [activeKey, conversations, onAbort]
+    [activeKey, conversations]
   );
 
   // 删除会话
@@ -208,7 +161,6 @@ export const useChatThread = ({ userChatId, onMessagesLoaded, onAbort }: UseChat
             await handleActiveChange(nextActiveKey);
           } else {
             setActiveKey('');
-            onMessagesLoadedRef.current?.([]);
           }
         }
       } catch (error) {

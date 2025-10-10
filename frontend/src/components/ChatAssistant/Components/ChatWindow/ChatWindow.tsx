@@ -1,18 +1,21 @@
 import { useEffect, useState } from 'react';
 import { Box, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { Bubble, Sender, useXChat } from '@ant-design/x';
+import { Bubble, Sender } from '@ant-design/x';
 import type { GetProp } from 'antd';
 import type { BubbleProps } from '@ant-design/x';
 import { Button, Space, Spin, Typography as AntTypography } from 'antd';
 import ChatSidebar from './component/ChatSidebar';
 import { ensureUserChatId } from '../../utils/userChatId';
 import { UserOutlined } from '@ant-design/icons';
-import { useChatAgent, useChatThread, useChatRename } from '../../hooks';
+import { useChatThread, useChatRename } from '../../hooks';
+import { useStreamChat } from '../../hooks/useStreamChat';
+import type { Message } from '../../hooks/useStreamChat';
 import markdownit from 'markdown-it';
 
 const md = markdownit({ html: true, breaks: true });
 
+// ============ Markdown 渲染 ============
 const renderMarkdown: BubbleProps['messageRender'] = content => {
   return (
     <AntTypography>
@@ -21,6 +24,7 @@ const renderMarkdown: BubbleProps['messageRender'] = content => {
   );
 };
 
+// ============ Bubble 角色配置 ============
 const BUBBLE_ROLES: GetProp<typeof Bubble.List, 'roles'> = {
   user: {
     placement: 'end',
@@ -30,18 +34,21 @@ const BUBBLE_ROLES: GetProp<typeof Bubble.List, 'roles'> = {
     placement: 'start',
     avatar: { icon: <UserOutlined />, style: { color: '#f56a00', backgroundColor: '#fde3cf' } },
     messageRender: renderMarkdown,
+    typing: { step: 5, interval: 20 },
   },
   tool_call: {
     placement: 'start',
     avatar: { icon: <UserOutlined />, style: { color: '#f56a00', backgroundColor: '#fde3cf' } },
-    loadingRender: () => (
+    messageRender: content => (
       <Space>
         <Spin size="small" />
+        <span style={{ color: '#666' }}>{content}</span>
       </Space>
     ),
   },
 };
 
+// ============ 样式组件 ============
 const WindowContainer = styled(Box)(({ theme }) => ({
   position: 'absolute',
   bottom: 68,
@@ -76,14 +83,14 @@ const StyledBubbleList = styled(Bubble.List)(() => ({
   flex: 1,
   overflow: 'auto',
   padding: 16,
-  fontSize: '14px', // 基础字体大小
+  fontSize: '14px',
 
   '& .ant-bubble-content': {
     paddingTop: '10px',
     paddingBottom: '10px',
-    '& h1': { fontSize: '1.5em', margin: '0.5em 0' }, // 默认 2em → 1.5em
-    '& h2': { fontSize: '1.3em', margin: '0.4em 0' }, // 默认 1.5em → 1.3em
-    '& h3': { fontSize: '1.15em', margin: '0.3em 0' }, // 默认 1.17em → 1.15em
+    '& h1': { fontSize: '1.5em', margin: '0.5em 0' },
+    '& h2': { fontSize: '1.3em', margin: '0.4em 0' },
+    '& h3': { fontSize: '1.15em', margin: '0.3em 0' },
     '& h4': { fontSize: '1em', margin: '0.25em 0' },
     '& h5': { fontSize: '0.9em', margin: '0.2em 0' },
     '& h6': { fontSize: '0.85em', margin: '0.2em 0' },
@@ -116,13 +123,7 @@ const StyledSendButton = styled(Button)(() => ({
   },
 }));
 
-type MsgRole = 'user' | 'assistant' | 'tool_call';
-type Msg = {
-  role: MsgRole;
-  content: string;
-  toolName?: string;
-};
-
+// ============ 主组件 ============
 const ChatWindow = () => {
   const [userChatId, setUserChatId] = useState<string | null>(null);
   const [input, setInput] = useState('');
@@ -131,42 +132,7 @@ const ChatWindow = () => {
     setUserChatId(ensureUserChatId());
   }, []);
 
-  const { agent, abort, setActiveThread, initSetMessages } = useChatAgent();
-
-  const { parsedMessages, onRequest, setMessages } = useXChat<
-    Msg,
-    { role: Msg['role']; text: string; toolName?: string }
-  >({
-    agent: agent as any,
-    defaultMessages: [],
-    transformMessage: ({ originMessage, chunk }: { originMessage?: Msg; chunk?: any }) => {
-      if (chunk === undefined || chunk === null) {
-        return originMessage ?? { role: 'assistant' as MsgRole, content: '' };
-      }
-      // chunk 现在是完整的 Msg 对象
-      if (typeof chunk === 'object' && 'role' in chunk) {
-        return chunk as Msg;
-      }
-      // 兼容旧的字符串格式
-      return {
-        role: 'assistant' as MsgRole,
-        content: (originMessage?.content ?? '') + String(chunk),
-      };
-    },
-    parser: (m: Msg) => {
-      // 处理空消息的情况（useXChat 内部可能传入 undefined）
-      if (!m || (!m.role && !m.content)) {
-        return { role: 'assistant', text: '', toolName: undefined };
-      }
-      return { role: m.role, text: m.content, toolName: m.toolName };
-    },
-  });
-
-  // 将 setMessages 传递给 useChatAgent
-  useEffect(() => {
-    initSetMessages(setMessages);
-  }, [initSetMessages, setMessages]);
-
+  // 线程管理
   const {
     conversations,
     activeKey,
@@ -177,19 +143,14 @@ const ChatWindow = () => {
     handleActiveChange,
     handleDeleteConversation,
     handleToggleDisable,
-  } = useChatThread({
-    userChatId,
-    onMessagesLoaded: setMessages,
-    onAbort: abort,
-  });
+  } = useChatThread({ userChatId });
 
+  // 聊天功能
+  const { messages, isStreaming, sendMessage, abort, setMessages } = useStreamChat(activeKey);
+
+  // 重命名功能
   const { editingKey, renameDraft, setRenameDraft, cancelRename, handleRenameStart, handleRenameSubmit } =
     useChatRename(conversations, updateConversation);
-
-  // 同步 activeKey 到 agent
-  useEffect(() => {
-    setActiveThread(activeKey);
-  }, [activeKey, setActiveThread]);
 
   // 组件卸载时中止请求
   useEffect(() => {
@@ -197,6 +158,20 @@ const ChatWindow = () => {
       abort();
     };
   }, [abort]);
+
+  // 转换消息格式为 Bubble.List 需要的格式
+  const bubbleItems = messages.map((m, idx) => {
+    const isLastMessage = idx === messages.length - 1;
+    const isStreaming = m.status === 'streaming' && isLastMessage;
+
+    return {
+      key: m.id,
+      role: m.role,
+      content: m.content,
+      loading: m.role === 'tool_call' && m.status === 'loading',
+      typing: m.role === 'assistant' && isStreaming ? { step: 5, interval: 20 } : false,
+    };
+  });
 
   const activeConversation = conversations.find(item => item.key === activeKey);
   const isActiveConversationDisabled = Boolean(activeConversation?.isDisabled);
@@ -234,50 +209,23 @@ const ChatWindow = () => {
             </Typography>
           )}
         </ChatHeader>
-        <StyledBubbleList
-          className="chat-no-drag"
-          roles={BUBBLE_ROLES}
-          items={parsedMessages
-            .filter(it => {
-              // 过滤掉空消息（useXChat 自动创建的占位符）
-              const isEmpty = !it.message.text || it.message.text.trim() === '';
-              // 保留有内容的消息，或者是 loading 状态的 tool_call
-              return !isEmpty || (it.message.role === 'tool_call' && it.status === 'loading');
-            })
-            .map((it, idx, filteredArray) => {
-              // 检查是否是正在更新的消息（最后一条 + status 为 updating）
-              const isLastMessage = idx === filteredArray.length - 1;
-              const isUpdating = it.status === 'updating';
-              const shouldShowTyping = it.message.role === 'assistant' && isLastMessage && isUpdating;
 
-              // 统一返回格式,让 BUBBLE_ROLES 处理样式
-              return {
-                key: idx,
-                role: it.message.role,
-                content: it.message.text,
-                // 只有正在更新的消息才显示打字效果
-                typing: shouldShowTyping ? { step: 5, interval: 20 } : false,
-                loading: false, // 不再使用 loading 状态（我们已经用 setMessages 手动管理了）
-              };
-            })}
-        />
+        <StyledBubbleList className="chat-no-drag" roles={BUBBLE_ROLES} items={bubbleItems} />
+
         <ChatFooter className="chat-no-drag">
           <Sender
             value={input}
             onChange={setInput}
             onSubmit={() => {
               const text = input.trim();
-              if (!text || !activeKey || isActiveConversationDisabled) return;
-              onRequest({
-                threadId: activeKey,
-                message: { role: 'user', content: text },
-              });
+              if (!text || !activeKey || isActiveConversationDisabled || isStreaming) return;
+              sendMessage(text);
               setInput('');
             }}
             placeholder={
               isActiveConversationDisabled ? 'Enable this conversation to send messages.' : 'Type your message...'
             }
-            disabled={!userChatId || !activeKey || isActiveConversationDisabled}
+            disabled={!userChatId || !activeKey || isActiveConversationDisabled || isStreaming}
             actions={(_, { components }) => {
               const { SendButton } = components;
               return <StyledSendButton as={SendButton} />;
