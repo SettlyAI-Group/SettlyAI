@@ -56,7 +56,7 @@ const PropertyTypeChip = styled(Chip)(({ theme }) => ({
 
 const OverlayContent = styled(Box)(({ theme }) => ({
   position: 'absolute',
-  bottom: theme.spacing(5),
+  bottom: theme.spacing(6),
   left: theme.spacing(12),
   right: theme.spacing(3),
   display: 'flex',
@@ -70,13 +70,21 @@ const OverlayContent = styled(Box)(({ theme }) => ({
   },
 }));
 
-
+const TopInfo = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: theme.spacing(0.25),
+  marginBottom: theme.spacing(12), 
+  [theme.breakpoints.down('sm')]: {
+    marginBottom: theme.spacing(5),
+  },
+}));
 
 const AddressText = styled(Typography)(({ theme }) => ({
   fontWeight: theme.typography.h5.fontWeight,
-  fontSize: `calc(${theme.typography.h4.fontSize} * 1.4)`,
-  lineHeight: theme.typography.h4.lineHeight,
-  marginBottom: theme.spacing(2),
+  fontSize: `calc(${theme.typography.h5.fontSize} * 1.4)`,
+  lineHeight: theme.typography.h5.lineHeight,
+  marginBottom: theme.spacing(1),
   marginTop: theme.spacing(2),
   [theme.breakpoints.down('sm')]: {
     fontSize: theme.typography.h5.fontSize,
@@ -88,7 +96,7 @@ const PriceText = styled(Typography)(({ theme }) => ({
   fontWeight: theme.typography.h5.fontWeight,
   fontSize: theme.typography.h3.fontSize,
   lineHeight: theme.typography.h3.lineHeight,
-  marginTop: theme.spacing(2),
+  marginTop: theme.spacing(1),
   marginBottom: theme.spacing(2),
   [theme.breakpoints.down('sm')]: {
     fontSize: theme.typography.h4.fontSize,
@@ -143,9 +151,11 @@ const HeroSection = ({ property }: HeroSectionProps) => {
           <GradientOverlay />
 
           <OverlayContent>
-  <PropertyTypeChip label={property.propertyType} />
-  <AddressText variant="h4">{property.address}</AddressText>
-  <PriceText variant="h3">{property.formattedPrice}</PriceText>
+  <TopInfo>
+    <PropertyTypeChip label={property.propertyType} />
+    <AddressText variant="h4">{property.address}</AddressText>
+    <PriceText variant="h3">{property.formattedPrice}</PriceText>
+  </TopInfo>
   <SaveButton
     variant="contained"
     startIcon={<FavoriteBorderIcon />}
