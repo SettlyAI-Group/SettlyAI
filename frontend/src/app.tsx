@@ -14,11 +14,11 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import ExplorePage from './pages/ExplorePage';
 import LoanCalculatorPage from './pages/LoanCalculatorPage';
 import SuperPage from './pages/SuperPage';
-import FavouritesPage from './pages/FavouritesPage';
 import FeaturesPage from './pages/FeaturesPage';
-import ChatBotPage from './pages/ChatBotPage';
 import AboutPage from './pages/AboutPage';
 import ChatAssistant from './components/ChatAssistant';
+import ChatBotPage from './pages/ChatBotPage';
+import FavouritesPage from './pages/FavouritesPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
