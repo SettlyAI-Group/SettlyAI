@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom';
 import TestimonialsSection from "./components/TestimonialsSection";
 import type { ITestimonial } from "@/interfaces/Testimonial";
 import { getTestimonials } from "@/api/testimonialApi";
@@ -11,30 +10,11 @@ import FeatureSection from './components/FeatureSection';
 const Container = styled(Box)(() => ({
   display: 'flex',
   flexDirection: 'column',
+  width: '100%',
+  overflowX: 'hidden',
 }));
 
 const HomePage = () => {
-  const navigate = useNavigate();
-
-  type Suburb = {
-    suburbName: string;
-    state: string;
-    suburbId: number;
-  };
-  //todo: change to fetch suburb id by suburb name and state
-  //check database to match for testing
-  const melbourne = { suburbName: 'Melbourn', state: 'VIC', suburbId: 1 };
-  const sydney = { suburbName: 'Sydney', state: 'NSW', suburbId: 2 };
-
-  const checkSuburb = (suburb: Suburb) => {
-    const { suburbId } = suburb;
-
-    localStorage.setItem('suburbId', suburbId.toString());
-
-    navigate(`/suburb/${suburbId}`);
-  };
-
-
   const {
     data: testimonials,
     isLoading,
