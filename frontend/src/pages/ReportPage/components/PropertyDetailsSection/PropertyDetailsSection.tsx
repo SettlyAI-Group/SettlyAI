@@ -13,7 +13,9 @@ const MainContainer = styled(Box)(({ theme }) => {
     position: 'relative',
     width: '100%',
     maxWidth: 1120,
-    height: 'clamp(280px, 40vw, 450px)',
+    minHeight: 'clamp(280px, 40vw, 450px)',
+    height: 'auto',
+    alignItems: 'start',
     backgroundColor: theme.palette.background.paper,
     borderRadius: theme.spacing(1),
     marginInline: 'auto',
@@ -79,17 +81,23 @@ const AISummaryContainer = styled(Box)(({ theme }) => ({
   borderRadius: theme.spacing(1),
   padding: theme.spacing(3),
   marginTop: theme.spacing(0.5),
+  minHeight: theme.spacing(22),
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'space-between',
 }));
 
 const AISummaryTitle = styled(Typography)(({ theme }) => ({
   ...theme.typography.body1,
   color: theme.palette.text.primary,
   marginBottom: theme.spacing(1),
+  paddingLeft: theme.spacing(5.5),
 }));
 
 const AISummaryText = styled(Typography)(({ theme }) => ({
   ...theme.typography.p1,
-  color: theme.palette.text.disabled,
+  color: theme.palette.text.secondary,
+  paddingLeft: theme.spacing(5.5),
 }));
 
 /* ==============================
@@ -125,9 +133,10 @@ const FeatureText = styled(Typography)(({ theme }) => ({
 const GovernmentAssistanceContainer = styled(Box)(({ theme }) => ({
   position: 'absolute',
   right: theme.spacing(8),
-  bottom: theme.spacing(5),
+  bottom: theme.spacing(4),
   width: 500,
-  height: 200,
+  height: 'auto',
+  minHeight: theme.spacing(24),
   backgroundColor: alpha(theme.palette.secondary.main, 0.45),
   borderRadius: theme.spacing(1.25),
   padding: theme.spacing(3, 10),
@@ -173,7 +182,7 @@ const SourceText = styled(Typography)(({ theme }) => ({
 const CheckEligibilityButton = styled(GlobalButton)(({ theme }) => ({
   position: 'absolute',
   right: theme.spacing(10),
-  bottom: theme.spacing(7),
+  bottom: theme.spacing(3),
   backgroundColor: theme.palette.background.paper,
   color: theme.palette.text.primary,
   '&:hover': {

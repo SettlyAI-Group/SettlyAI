@@ -18,6 +18,7 @@ import FavouritesPage from './pages/FavouritesPage';
 import FeaturesPage from './pages/FeaturesPage';
 import ChatBotPage from './pages/ChatBotPage';
 import AboutPage from './pages/AboutPage';
+import ReportPage from './pages/ReportPage';
 import ChatAssistant from './components/ChatAssistant';
 
 const queryClient = new QueryClient({
@@ -49,6 +50,7 @@ const App = () => {
           <Route path="/features" element={<FeaturesPage />} />
           <Route path="/chat" element={<ChatBotPage />} />
           <Route path="/about" element={<AboutPage />} />
+          <Route path="/property/:propertyId" element={<ReportPage />} />
         </Routes>
         <ChatAssistant />
       </ThemeProvider>

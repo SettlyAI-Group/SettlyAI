@@ -1,10 +1,10 @@
-import React from 'react';
 import { useParams, Navigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Box, Typography, styled, Button } from '@mui/material';
 import { getPropertyDetail } from '@/api/propertyApi';
 import type { TransformedPropertyData } from '@/interfaces/property';
 import HeroSection from './components/HeroSection';
+import PropertyDetailsSection from './components/PropertyDetailsSection';
 
 const Container = styled(Box)({
   display: 'flex',
@@ -37,7 +37,7 @@ const ReportPage = () => {
   return (
     <Container>
       <HeroSection property={data} />
-      {/* Future detail components here */}
+      <PropertyDetailsSection property={data} />
     </Container>
   );
 };

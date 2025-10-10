@@ -6,18 +6,13 @@ import type { TransformedPropertyData } from '@/interfaces/property';
 const HeroContainer = styled('section')(({ theme }) => ({
   position: 'relative',
   width: '100%',
-  maxWidth: 1120,
-  height: 450,
+  maxWidth: 'min(1120px, 100%)', // keeps 1120px cap but flexible
+  height: 'clamp(280px, 40vw, 450px)', // responsive height
   borderRadius: theme.spacing(1),
   overflow: 'hidden',
-  marginInline: 'auto', // centers horizontally
-  [theme.breakpoints.down('md')]: {
-    height: 360,
-    maxWidth: '90%',
-  },
+  marginInline: 'auto',
   [theme.breakpoints.down('sm')]: {
-    height: 280,
-    maxWidth: '95%',
+    height: 'clamp(220px, 45vw, 300px)',
   },
 }));
 
@@ -46,17 +41,18 @@ const GradientOverlay = styled(Box)(({ theme }) => ({
 
 const PropertyTypeChip = styled(Chip)(({ theme }) => ({
   position: 'absolute',
-  top: theme.spacing(50), 
+  top: theme.spacing(50),
   left: theme.spacing(12),
   backgroundColor: theme.palette.primary.main,
   color: theme.palette.common.white,
   fontFamily: theme.typography.fontFamily,
   fontWeight: 600,
-  fontSize: theme.typography.body1.fontSize, 
+  fontSize: theme.typography.body1.fontSize,
   lineHeight: theme.typography.body1.lineHeight,
-  height: theme.spacing(8), 
+  minHeight: theme.spacing(8),
+  maxWidth: 'fit-content', 
   '& .MuiChip-label': {
-    paddingInline: theme.spacing(2), // horizontal padding
+    paddingInline: theme.spacing(3),
   },
   borderRadius: theme.spacing(2),
   [theme.breakpoints.down('sm')]: {
@@ -64,6 +60,7 @@ const PropertyTypeChip = styled(Chip)(({ theme }) => ({
     left: theme.spacing(2),
   },
 }));
+
 
 const OverlayContent = styled(Box)(({ theme }) => ({
   position: 'absolute',
@@ -145,7 +142,7 @@ const HeroSection = ({ property }: HeroSectionProps) => {
 
       <GradientOverlay />
 
-      <PropertyTypeChip label="House" />
+      <PropertyTypeChip label={property.propertyType} />
 
       <OverlayContent>
   <TextGroup>
