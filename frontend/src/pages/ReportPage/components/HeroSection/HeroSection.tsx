@@ -122,7 +122,7 @@ const OuterContainer = styled(Box)(({ theme }) => ({
 }));
 
 const InnerContainer = styled(Box)(() => ({
-  maxWidth: 1280,
+  maxWidth: 1120,
   width: '100%',
 }));
 
