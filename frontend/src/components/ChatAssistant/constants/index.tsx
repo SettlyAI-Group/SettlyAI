@@ -72,6 +72,21 @@ export const BUBBLE_ROLES: GetProp<typeof Bubble.List, 'roles'> = {
       </Space>
     ),
   },
+  error: {
+    placement: 'start',
+    variant: 'filled',
+    avatar: {
+      icon: <UserOutlined />,
+      style: { color: '#FF4D4F', backgroundColor: '#FFF1F0' }
+    },
+    styles: {
+      content: {
+        background: '#FFF1F0',
+        border: '1px solid #FFCCC7',
+        color: '#CF1322',
+      }
+    },
+  },
 };
 
 // Thread TTL (生存时间)

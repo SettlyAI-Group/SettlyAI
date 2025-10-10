@@ -258,6 +258,11 @@ export const StyledBubbleList = styled(Bubble.List)(() => ({
   padding: '12px 16px',
   animation: `${slideDown} 0.3s ease`,
 
+  // 为每个 bubble 添加下滑动画
+  '& .ant-bubble': {
+    animation: `${slideDown} 0.3s ease`,
+  },
+
   '@media (max-width: 480px)': {
     padding: '12px',
   },

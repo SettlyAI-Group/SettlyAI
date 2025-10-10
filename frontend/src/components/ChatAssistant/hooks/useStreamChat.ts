@@ -7,6 +7,7 @@ import {
   createTypingPlaceholder,
   createErrorMessage,
 } from '../utils/messageHelper';
+import { streamChat, cancelRun } from '@/api/chatBotApi';
 
 /**
  * 流式聊天 Hook
@@ -16,6 +17,7 @@ export const useStreamChat = (threadId: string) => {
   const [isStreaming, setIsStreaming] = useState(false);
   const abortControllerRef = useRef<AbortController | null>(null);
   const activeThreadRef = useRef(threadId);
+  const currentRunIdRef = useRef<string | null>(null);
 
   // 更新活动线程并清空消息
   const prevThreadIdRef = useRef(threadId);
@@ -46,47 +48,71 @@ export const useStreamChat = (threadId: string) => {
 
       const ac = new AbortController();
       abortControllerRef.current = ac;
+      let wasAborted = false;
 
       try {
-        const res = await fetch(`/langgraph/threads/${threadId}/runs/stream`, {
-          method: 'POST',
-          signal: ac.signal,
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
+        const res = await streamChat(
+          threadId,
+          {
             assistant_id: 'graph',
             input: { messages: [{ role: 'user', content }] },
             stream_mode: 'messages-tuple',
             stream_subgraphs: true,
-          }),
-        });
+          },
+          ac.signal
+        );
 
-        if (!res.ok || !res.body) {
-          throw new Error(`HTTP ${res.status}`);
+        if (!res.body) {
+          throw new Error('No response body');
         }
 
-        await processSSEStream(res.body, setMessages, threadId, activeThreadRef);
+        await processSSEStream(res.body, setMessages, threadId, activeThreadRef, currentRunIdRef);
       } catch (e) {
-        // 忽略中止错误
-        if (!(e instanceof DOMException && e.name === 'AbortError')) {
-          console.error('Stream error:', e);
-          setMessages(prev => [...prev, createErrorMessage()]);
+        // 检查是否是中止错误
+        if (e instanceof DOMException && e.name === 'AbortError') {
+          wasAborted = true;
+          // 中止错误：abort() 函数已经处理了消息清理
+          return;
         }
+        // 其他错误：显示错误消息
+        console.error('Stream error:', e);
+        setMessages(prev => [...prev, createErrorMessage()]);
       } finally {
-        setIsStreaming(false);
-        abortControllerRef.current = null;
+        // 只有在正常完成（非中止）的情况下才重置状态
+        if (!wasAborted) {
+          setIsStreaming(false);
+          abortControllerRef.current = null;
+        }
       }
     },
     [threadId]
   );
 
   /**
-   * 中止请求
+   * 中止请求并添加 error message
    */
   const abort = useCallback(() => {
-    abortControllerRef.current?.abort();
-    abortControllerRef.current = null;
-    setIsStreaming(false);
-  }, []);
+    if (abortControllerRef.current) {
+      // 1. 取消前端 fetch 请求
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+      setIsStreaming(false);
+
+      // 2. 通知后端中止运行（如果有 run_id）
+      if (currentRunIdRef.current) {
+        cancelRun(threadId, currentRunIdRef.current);
+        currentRunIdRef.current = null;
+      }
+
+      // 3. 删除所有 loading/streaming/tool_call 消息，添加 error message
+      setMessages(prev => {
+        const filtered = prev.filter(
+          m => m.status !== 'loading' && m.status !== 'streaming' && m.role !== 'tool_call'
+        );
+        return [...filtered, createErrorMessage('Response cancelled.')];
+      });
+    }
+  }, [threadId]);
 
   return {
     messages,

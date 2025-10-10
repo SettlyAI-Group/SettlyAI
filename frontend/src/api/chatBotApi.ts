@@ -65,4 +65,53 @@ export const updateThread = async (threadId: string, payload: UpdateThreadPayloa
   return data;
 };
 
+/**
+ * 流式聊天 API
+ */
+export interface StreamChatPayload {
+  assistant_id: string;
+  input: {
+    messages: Array<{
+      role: 'user' | 'assistant';
+      content: string;
+    }>;
+  };
+  stream_mode: 'messages-tuple' | 'messages' | 'events';
+  stream_subgraphs?: boolean;
+}
+
+export const streamChat = async (
+  threadId: string,
+  payload: StreamChatPayload,
+  signal?: AbortSignal
+): Promise<Response> => {
+  // 使用原生 fetch 因为需要处理 SSE 流
+  const response = await fetch(`/langgraph/threads/${threadId}/runs/stream`, {
+    method: 'POST',
+    signal,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+  }
+
+  return response;
+};
+
+/**
+ * 取消运行 API
+ */
+export const cancelRun = async (threadId: string, runId: string): Promise<void> => {
+  try {
+    await chatBotApi.post(`/threads/${threadId}/runs/${runId}/cancel`);
+  } catch (error) {
+    // 忽略错误：即使取消失败，前端也已经停止接收
+    console.warn('Failed to cancel run:', error);
+  }
+};
+
 export default chatBotApi;

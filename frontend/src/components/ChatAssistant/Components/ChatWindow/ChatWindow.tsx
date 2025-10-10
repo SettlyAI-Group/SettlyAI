@@ -115,6 +115,12 @@ const ChatWindow = ({ onClose, isClosing = false }: ChatWindowProps = {}) => {
   const prevActiveKeyRef = useRef<string>('');
   useEffect(() => {
     if (prevActiveKeyRef.current === activeKey) return;
+
+    // 如果正在流式输出，先中止
+    if (isStreaming && prevActiveKeyRef.current) {
+      abort();
+    }
+
     prevActiveKeyRef.current = activeKey;
 
     if (!activeKey) {
@@ -132,7 +138,7 @@ const ChatWindow = ({ onClose, isClosing = false }: ChatWindowProps = {}) => {
       setMessages([]);
       setShowGuide(true);
     }
-  }, [activeKey, conversations, loadHistory, setMessages]);
+  }, [activeKey, conversations, loadHistory, setMessages, isStreaming, abort]);
 
   /**
    * 组件卸载时中止请求

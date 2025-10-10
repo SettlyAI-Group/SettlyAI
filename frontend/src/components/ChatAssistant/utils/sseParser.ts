@@ -65,7 +65,8 @@ export async function processSSEStream(
   body: ReadableStream<Uint8Array>,
   setMessages: React.Dispatch<React.SetStateAction<Message[]>>,
   threadId: string,
-  activeThreadRef: React.MutableRefObject<string>
+  activeThreadRef: React.MutableRefObject<string>,
+  runIdRef?: React.MutableRefObject<string | null>
 ) {
   const reader = body.getReader();
   const decoder = new TextDecoder();
@@ -89,6 +90,18 @@ export async function processSSEStream(
 
       // 检查线程是否切换
       if (activeThreadRef.current !== threadId) continue;
+
+      // 捕获 run_id（从 metadata 事件）
+      if (eventName === 'metadata' && runIdRef) {
+        try {
+          const metadata = JSON.parse(data);
+          if (metadata.run_id) {
+            runIdRef.current = metadata.run_id;
+          }
+        } catch {
+          // 忽略解析错误
+        }
+      }
 
       // 跳过非 messages 事件
       if (eventName && !eventName.startsWith('messages|')) {
