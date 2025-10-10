@@ -160,16 +160,18 @@ const ChatWindow = () => {
   }, [abort]);
 
   // 转换消息格式为 Bubble.List 需要的格式
-  const bubbleItems = messages.map((m, idx) => {
-    const isLastMessage = idx === messages.length - 1;
-    const isStreaming = m.status === 'streaming' && isLastMessage;
+  const bubbleItems = messages.map(m => {
+    // 检查是否有 assistant 消息正在 streaming
+    const hasStreamingAssistant = messages.some(msg => msg.role === 'assistant' && msg.status === 'streaming');
 
     return {
       key: m.id,
       role: m.role,
       content: m.content,
-      loading: m.role === 'tool_call' && m.status === 'loading',
-      typing: m.role === 'assistant' && isStreaming ? { step: 5, interval: 20 } : false,
+      // tool_call 的 loading：只在没有 assistant streaming 时显示
+      loading: m.role === 'tool_call' && m.status === 'loading' && !hasStreamingAssistant,
+      // assistant 的 typing：只要是 streaming 状态就显示（不限制是否为最后一条）
+      typing: m.role === 'assistant' && m.status === 'streaming' ? { step: 5, interval: 20 } : false,
     };
   });
 

@@ -115,12 +115,10 @@ async function processSSEStream(
               const newId = `assistant_${Date.now()}_${Math.random()}`;
               currentAssistantId = newId;
 
-              // 删除所有 tool_call 占位符
-              const filtered = prev.filter(m => !toolCallIds.includes(m.id));
-              toolCallIds.length = 0;
-
+              // ✅ 保留 tool_call 占位符，不立即删除
+              // tool_call 会在流结束时统一删除（见 done 分支）
               return [
-                ...filtered,
+                ...prev,
                 {
                   id: newId,
                   role: 'assistant' as const,
