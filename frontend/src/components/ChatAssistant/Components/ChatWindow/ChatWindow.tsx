@@ -2,53 +2,11 @@ import { useEffect, useRef, useState } from 'react';
 import { Box, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { Bubble, Sender } from '@ant-design/x';
-import type { GetProp, GetRef } from 'antd';
-import type { BubbleProps } from '@ant-design/x';
-import { Space, Spin, Typography as AntTypography } from 'antd';
-import ChatSidebar from './component/ChatSidebar';
+import type { GetRef } from 'antd';
+import ChatSidebar from './components/ChatSidebar';
 import { ensureUserChatId } from '../../utils/userChatId';
-import { UserOutlined } from '@ant-design/icons';
-import { useChatThread, useChatRename } from '../../hooks';
-import { useStreamChat } from '../../hooks/useStreamChat';
-import markdownit from 'markdown-it';
-
-const md = markdownit({ html: true, breaks: true });
-
-// ============ Markdown 渲染 ============
-const renderMarkdown: BubbleProps['messageRender'] = content => {
-  return (
-    <AntTypography>
-      <div dangerouslySetInnerHTML={{ __html: md.render(content) }} />
-    </AntTypography>
-  );
-};
-
-// ============ Bubble 角色配置 ============
-const BUBBLE_ROLES: GetProp<typeof Bubble.List, 'roles'> = {
-  user: {
-    placement: 'end',
-    variant: 'shadow',
-    avatar: { icon: <UserOutlined />, style: { color: '#fff', backgroundColor: '#87d068' } },
-  },
-  assistant: {
-    placement: 'start',
-    variant: 'filled',
-    avatar: { icon: <UserOutlined />, style: { color: '#f56a00', backgroundColor: '#fde3cf' } },
-    messageRender: renderMarkdown,
-    typing: { step: 5, interval: 20 },
-  },
-  tool_call: {
-    placement: 'start',
-    variant: 'outlined',
-    avatar: { icon: <UserOutlined />, style: { color: '#f56a00', backgroundColor: '#fde3cf' } },
-    messageRender: content => (
-      <Space>
-        <Spin size="small" />
-        <span style={{ color: '#666' }}>{content}</span>
-      </Space>
-    ),
-  },
-};
+import { useChatThread, useChatRename, useStreamChat } from '../../hooks';
+import { BUBBLE_ROLES } from '../../constants';
 
 // ============ 样式组件 ============
 const WindowContainer = styled(Box)(({ theme }) => ({
@@ -62,7 +20,10 @@ const WindowContainer = styled(Box)(({ theme }) => ({
   boxShadow: theme.shadows[16],
   display: 'flex',
   overflow: 'hidden',
-  [theme.breakpoints.down('sm')]: { width: 320, height: 500 },
+  [theme.breakpoints.down('sm')]: {
+    width: 320,
+    height: 500,
+  },
 }));
 
 const ChatContainer = styled(Box)(() => ({
@@ -94,7 +55,12 @@ const StyledBubbleList = styled(Bubble.List)(() => ({
     '& p': { fontSize: '1em', margin: '0.5em 0' },
     '& ul, & ol': { fontSize: '1em', margin: '0.5em 0', paddingLeft: '1.5em' },
     '& li': { margin: '0.2em 0' },
-    '& code': { fontSize: '0.9em', padding: '0.2em 0.4em', backgroundColor: '#f5f5f5', borderRadius: '3px' },
+    '& code': {
+      fontSize: '0.9em',
+      padding: '0.2em 0.4em',
+      backgroundColor: '#f5f5f5',
+      borderRadius: '3px',
+    },
     '& pre': {
       fontSize: '0.85em',
       padding: '0.8em',
@@ -102,7 +68,12 @@ const StyledBubbleList = styled(Bubble.List)(() => ({
       borderRadius: '4px',
       overflow: 'auto',
     },
-    '& blockquote': { fontSize: '1em', margin: '0.5em 0', paddingLeft: '1em', borderLeft: '3px solid #ddd' },
+    '& blockquote': {
+      fontSize: '1em',
+      margin: '0.5em 0',
+      paddingLeft: '1em',
+      borderLeft: '3px solid #ddd',
+    },
     '& a': { fontSize: 'inherit', color: '#1890ff' },
     '& strong': { fontSize: 'inherit' },
     '& em': { fontSize: 'inherit' },
@@ -115,11 +86,15 @@ const ChatFooter = styled(Box)(({ theme }) => ({
 }));
 
 // ============ 主组件 ============
+/**
+ * 聊天窗口主组件
+ */
 const ChatWindow = () => {
   const [userChatId, setUserChatId] = useState<string | null>(null);
   const [input, setInput] = useState('');
   const bubbleListRef = useRef<GetRef<typeof Bubble.List>>(null);
 
+  // 初始化用户 ID
   useEffect(() => {
     setUserChatId(ensureUserChatId());
   }, []);
@@ -128,8 +103,6 @@ const ChatWindow = () => {
   const {
     conversations,
     activeKey,
-    isCreatingThread,
-    errorMessage,
     updateConversation,
     handleNewChat,
     handleActiveChange,
@@ -144,10 +117,11 @@ const ChatWindow = () => {
   const { editingKey, renameDraft, setRenameDraft, cancelRename, handleRenameStart, handleRenameSubmit } =
     useChatRename(conversations, updateConversation);
 
-  // 当 activeKey 改变时，加载该 thread 的历史消息
+  /**
+   * 当 activeKey 改变时，加载历史消息
+   */
   const prevActiveKeyRef = useRef<string>('');
   useEffect(() => {
-    // 只在 activeKey 改变时加载历史，不依赖 conversations 变化
     if (prevActiveKeyRef.current === activeKey) return;
     prevActiveKeyRef.current = activeKey;
 
@@ -164,21 +138,23 @@ const ChatWindow = () => {
     }
   }, [activeKey, conversations, loadHistory, setMessages]);
 
-  // 组件卸载时中止请求
+  /**
+   * 组件卸载时中止请求
+   */
   useEffect(() => {
     return () => {
       abort();
     };
   }, [abort]);
 
-  // 自动滚动到最新消息（当 streaming 完成时）
+  /**
+   * 自动滚动到最新消息（streaming 完成时）
+   */
   const prevIsStreamingRef = useRef(isStreaming);
   useEffect(() => {
-    // 当 isStreaming 从 true 变为 false（streaming 完成）时，滚动到最新消息
     if (prevIsStreamingRef.current && !isStreaming && messages.length > 0) {
       const lastMessageKey = messages[messages.length - 1]?.id;
       if (lastMessageKey && bubbleListRef.current) {
-        // 延迟一下确保 DOM 更新完成
         setTimeout(() => {
           bubbleListRef.current?.scrollTo({ key: lastMessageKey, block: 'end' });
         }, 100);
@@ -187,22 +163,30 @@ const ChatWindow = () => {
     prevIsStreamingRef.current = isStreaming;
   }, [isStreaming, messages]);
 
-  // 转换消息格式为 Bubble.List 需要的格式
+  /**
+   * 转换消息格式为 Bubble.List 需要的格式
+   */
   const bubbleItems = messages.map(m => {
-    // 判断是否为 typing 占位符（空内容 + loading 状态）
     const isTypingPlaceholder = m.role === 'assistant' && m.status === 'loading' && m.content.trim() === '';
 
     return {
       key: m.id,
       role: m.role,
       content: m.content,
-      // loading：只用于 typing 占位符（显示默认点点点）
       loading: isTypingPlaceholder,
-      // assistant 的 typing：只有 streaming 状态才显示
       typing: m.role === 'assistant' && m.status === 'streaming' ? { step: 5, interval: 20 } : false,
-      // tool_call 不使用 loading，直接用 messageRender 显示自定义内容
     };
   });
+
+  /**
+   * 处理消息发送
+   */
+  const handleSubmit = () => {
+    const text = input.trim();
+    if (!text || !activeKey || isActiveConversationDisabled || isStreaming) return;
+    sendMessage(text);
+    setInput('');
+  };
 
   const activeConversation = conversations.find(item => item.key === activeKey);
   const isActiveConversationDisabled = Boolean(activeConversation?.isDisabled);
@@ -248,15 +232,8 @@ const ChatWindow = () => {
             loading={isStreaming}
             value={input}
             onChange={setInput}
-            onSubmit={() => {
-              const text = input.trim();
-              if (!text || !activeKey || isActiveConversationDisabled || isStreaming) return;
-              sendMessage(text);
-              setInput('');
-            }}
-            onCancel={() => {
-              abort();
-            }}
+            onSubmit={handleSubmit}
+            onCancel={abort}
             placeholder={
               isActiveConversationDisabled ? 'Enable this conversation to send messages.' : 'Type your message...'
             }

@@ -7,6 +7,7 @@ import type { ConversationsProps } from '@ant-design/x';
 import { Input, Modal } from 'antd';
 import type { ChangeEvent, KeyboardEvent } from 'react';
 
+// ============ 样式组件 ============
 const SidebarContainer = styled(Box)(({ theme }) => ({
   width: 200,
   borderRight: `1px solid ${theme.palette.divider}`,
@@ -37,15 +38,12 @@ const ConversationLabel = styled(Typography)(() => ({
   whiteSpace: 'nowrap',
 }));
 
-const modalStyles = {
-  mask: {
-    position: 'absolute' as const,
-  },
-  wrapper: {
-    position: 'absolute' as const,
-  },
+const MODAL_STYLES = {
+  mask: { position: 'absolute' as const },
+  wrapper: { position: 'absolute' as const },
 };
 
+// ============ 类型定义 ============
 interface ConversationItem {
   key: string;
   label: string;
@@ -69,12 +67,14 @@ interface ChatSidebarProps {
   onNewChat: () => void;
 }
 
+// ============ 常量 ============
 const MENU_ITEMS = [
   { label: 'Rename', key: 'rename', icon: <EditOutlined /> },
   { label: 'Toggle', key: 'toggle-disable', icon: <StopOutlined /> },
   { label: 'Delete', key: 'delete', icon: <DeleteOutlined />, danger: true },
-];
+] as const;
 
+// ============ 主组件 ============
 const ChatSidebar = ({
   conversations,
   activeKey,
@@ -89,6 +89,9 @@ const ChatSidebar = ({
   onActiveChange,
   onNewChat,
 }: ChatSidebarProps) => {
+  /**
+   * 处理键盘事件
+   */
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>, key: string) => {
     if (e.key === 'Enter') {
       e.preventDefault();
@@ -101,6 +104,9 @@ const ChatSidebar = ({
     }
   };
 
+  /**
+   * 渲染会话标签
+   */
   const renderLabel = (item: ConversationItem) => {
     if (editingKey === item.key) {
       return (
@@ -130,6 +136,9 @@ const ChatSidebar = ({
     );
   };
 
+  /**
+   * 菜单配置
+   */
   const menuConfig: ConversationsProps['menu'] = item => ({
     items: MENU_ITEMS.map(menuItem => ({
       ...menuItem,
@@ -152,7 +161,7 @@ const ChatSidebar = ({
             cancelText: 'Cancel',
             onOk: () => onDelete(item.key),
             getContainer: () => container || document.body,
-            styles: modalStyles,
+            styles: MODAL_STYLES,
           });
         },
       };
@@ -161,6 +170,9 @@ const ChatSidebar = ({
     },
   });
 
+  /**
+   * 转换显示项
+   */
   const displayItems = conversations.map(item => ({
     ...item,
     rawLabel: item.label,

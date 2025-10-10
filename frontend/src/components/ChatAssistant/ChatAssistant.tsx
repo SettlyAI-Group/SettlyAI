@@ -5,7 +5,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { styled } from '@mui/material/styles';
 import Draggable from 'react-draggable';
 import type { DraggableEvent } from 'react-draggable';
-import ChatWindow from './Components/ChatWindow';
+import ChatWindow from './components/ChatWindow';
 
 const FloatingButton = styled(Fab)(({ theme }) => ({
   zIndex: 1000,

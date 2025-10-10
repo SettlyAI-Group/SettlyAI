@@ -1,33 +1,15 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { createThread as createThreadApi, deleteThread as deleteThreadApi, searchThreads } from '@/api/chatBotApi';
-
-export interface ConversationItem {
-  key: string;
-  label: string;
-  updatedAt: number;
-  isDisabled?: boolean;
-  values?: Record<string, unknown>; // thread 的历史消息数据
-}
-
-const THREAD_TTL_SECONDS = 600;
-
-const normalizeMessages = (raw: any[] = []) => {
-  return raw.map((m: any, i: number) => {
-    const role = m.role ?? (m.type === 'human' || m.type === 'HumanMessage' ? 'user' : 'assistant');
-    const text =
-      typeof m.content === 'string'
-        ? m.content
-        : Array.isArray(m.content)
-          ? m.content.filter((c: any) => c?.type === 'text').map((c: any) => c.text).join('')
-          : (m.text ?? m.value ?? '');
-    return { id: m.id ?? String(i), role, text };
-  });
-};
+import type { ConversationItem } from '../types';
+import { THREAD_TTL_SECONDS } from '../constants';
 
 interface UseChatThreadOptions {
   userChatId: string | null;
 }
 
+/**
+ * 聊天线程管理 Hook
+ */
 export const useChatThread = ({ userChatId }: UseChatThreadOptions) => {
   const [conversations, setConversations] = useState<ConversationItem[]>([]);
   const [activeKey, setActiveKey] = useState('');
@@ -39,11 +21,16 @@ export const useChatThread = ({ userChatId }: UseChatThreadOptions) => {
     activeThreadRef.current = activeKey;
   }, [activeKey]);
 
+  /**
+   * 更新会话信息
+   */
   const updateConversation = useCallback((key: string, updates: Partial<ConversationItem>) => {
     setConversations(prev => prev.map(item => (item.key === key ? { ...item, ...updates } : item)));
   }, []);
 
-  // 加载会话列表
+  /**
+   * 加载会话列表
+   */
   useEffect(() => {
     if (!userChatId) return;
 
@@ -62,7 +49,7 @@ export const useChatThread = ({ userChatId }: UseChatThreadOptions) => {
           key: thread.thread_id,
           label: 'New Chat',
           updatedAt: new Date(thread.updated_at || thread.created_at || Date.now()).getTime(),
-          values: thread.values, // 保存 thread 的历史消息
+          values: thread.values,
         }));
 
         setConversations(prev => {
@@ -73,7 +60,7 @@ export const useChatThread = ({ userChatId }: UseChatThreadOptions) => {
               ...item,
               label: prevItem?.label ?? item.label,
               isDisabled: prevItem?.isDisabled ?? false,
-              values: item.values, // 保留最新的 values
+              values: item.values,
             };
           });
         });
@@ -83,8 +70,7 @@ export const useChatThread = ({ userChatId }: UseChatThreadOptions) => {
           return;
         }
 
-        const first = threads[0];
-        setActiveKey(first.thread_id);
+        setActiveKey(threads[0].thread_id);
       } catch (error) {
         console.error('Failed to fetch threads:', error);
         setErrorMessage('Failed to load your chat history.');
@@ -94,7 +80,9 @@ export const useChatThread = ({ userChatId }: UseChatThreadOptions) => {
     fetchThreads();
   }, [userChatId]);
 
-  // 创建新会话
+  /**
+   * 创建新会话
+   */
   const handleNewChat = useCallback(async () => {
     if (!userChatId || isCreatingThread) return;
 
@@ -120,52 +108,40 @@ export const useChatThread = ({ userChatId }: UseChatThreadOptions) => {
       });
       setActiveKey(thread.thread_id);
     } catch (error) {
-      console.error(error);
+      console.error('Failed to create thread:', error);
       setErrorMessage('Failed to create a new chat. Please try again.');
     } finally {
       setIsCreatingThread(false);
     }
   }, [userChatId, isCreatingThread]);
 
-  // 切换会话
+  /**
+   * 切换会话（先获取最新数据，再切换）
+   */
   const handleActiveChange = useCallback(
     async (key: string) => {
-      console.log(`🔄 [handleActiveChange] 切换到: ${key}, 当前: ${activeKey}`);
-
-      if (!key || key === activeKey) {
-        console.log(`⚠️ [handleActiveChange] 跳过（已经是当前 thread）`);
-        return;
-      }
+      if (!key || key === activeKey) return;
 
       const targetConversation = conversations.find(item => item.key === key);
       if (targetConversation?.isDisabled) return;
 
       setErrorMessage(null);
 
-      // 🔑 先获取最新数据，再切换 activeKey
       try {
-        console.log(`📡 [handleActiveChange] 获取 thread values...`);
+        // 先获取最新 values
         const threads = await searchThreads({
           ids: [key],
           select: ['thread_id', 'values'],
         });
 
-        console.log(`📦 [handleActiveChange] 收到 values:`, threads[0]?.values);
-
         if (threads.length > 0) {
-          // 先更新 conversation 的 values
+          // 更新 conversation 的 values
           setConversations(prev =>
-            prev.map(item =>
-              item.key === key
-                ? { ...item, values: threads[0].values }
-                : item
-            )
+            prev.map(item => (item.key === key ? { ...item, values: threads[0].values } : item))
           );
-          console.log(`✅ [handleActiveChange] 已更新 conversations`);
         }
 
-        // 最后再切换 activeKey，确保 values 已经准备好
-        console.log(`✅ [handleActiveChange] 设置 activeKey: ${key}`);
+        // 最后切换 activeKey
         setActiveKey(key);
       } catch (error) {
         console.error('Failed to fetch thread values:', error);
@@ -176,7 +152,9 @@ export const useChatThread = ({ userChatId }: UseChatThreadOptions) => {
     [activeKey, conversations]
   );
 
-  // 删除会话
+  /**
+   * 删除会话
+   */
   const handleDeleteConversation = useCallback(
     async (key: string) => {
       if (!key) return;
@@ -209,7 +187,9 @@ export const useChatThread = ({ userChatId }: UseChatThreadOptions) => {
     [activeKey, handleActiveChange]
   );
 
-  // 切换禁用状态
+  /**
+   * 切换禁用状态
+   */
   const handleToggleDisable = useCallback(
     (key: string) => {
       const target = conversations.find(item => item.key === key);
