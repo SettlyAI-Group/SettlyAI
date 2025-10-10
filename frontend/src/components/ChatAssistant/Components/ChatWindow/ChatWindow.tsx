@@ -17,6 +17,30 @@ import { ensureUserChatId } from '../../utils/userChatId';
 import { useChatThread, useChatRename, useStreamChat } from '../../hooks';
 import { BUBBLE_ROLES } from '../../constants';
 import ChatSidebar from './components/ChatSidebar';
+import {
+  ChatWindowContainer,
+  HistorySidebar,
+  ChatMain,
+  ChatHeader,
+  ChatHeaderLeft,
+  MenuToggle,
+  ChatAvatar,
+  ChatInfo,
+  ChatTitle,
+  ChatStatus,
+  StatusDot,
+  ChatHeaderActions,
+  HeaderAction,
+  MessagesContainer,
+  StyledBubbleList,
+  GuideContainer,
+  GuideTitle,
+  GuideActions,
+  GuideAction,
+  GuideActionIcon,
+  GuideActionText,
+  InputContainer,
+} from './ChatWindow.styles';
 
 // ============ 快捷操作配置 ============
 const quickActions = [
@@ -193,461 +217,104 @@ const ChatWindow = ({ onClose, isClosing = false }: ChatWindowProps = {}) => {
   };
 
   return (
-    <>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+    <ChatWindowContainer $isClosing={isClosing} $style={getChatWindowStyle()}>
+      {/* History sidebar */}
+      <HistorySidebar $hidden={!showHistory}>
+        <ChatSidebar
+          conversations={conversations.map(item => ({
+            key: item.key,
+            label: item.label,
+            timestamp: item.updatedAt,
+            isDisabled: item.isDisabled,
+            preview: extractPreview(item.values),
+          }))}
+          activeKey={activeKey}
+          editingKey={editingKey}
+          renameDraft={renameDraft}
+          onRenameStart={handleRenameStart}
+          onRenameChange={setRenameDraft}
+          onRenameSubmit={handleRenameSubmit}
+          onRenameCancel={cancelRename}
+          onToggleDisable={handleToggleDisable}
+          onDelete={handleDeleteConversation}
+          onActiveChange={handleActiveChange}
+          onNewChat={handleNewChat}
+        />
+      </HistorySidebar>
 
-        * {
-          box-sizing: border-box;
-        }
-
-        .chat-window {
-          position: fixed;
-          background: white;
-          box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-          display: flex;
-          transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-                      height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          z-index: 1001;
-          overflow: hidden;
-          font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-          animation: chatWindowOpen 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .chat-window.closing {
-          animation: chatWindowClose 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        @keyframes chatWindowOpen {
-          from {
-            opacity: 0;
-            transform: scale(0.9) translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: scale(1) translateY(0);
-          }
-        }
-
-        @keyframes chatWindowClose {
-          from {
-            opacity: 1;
-            transform: scale(1) translateY(0);
-          }
-          to {
-            opacity: 0;
-            transform: scale(0.9) translateY(20px);
-          }
-        }
-
-        /* History sidebar */
-        .history-sidebar {
-          width: 200px;
-          background: #FAFAFA;
-          border-right: 1px solid #F0F0F0;
-          display: flex;
-          flex-direction: column;
-          transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-                      opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          flex-shrink: 0;
-        }
-
-        .history-sidebar.hidden {
-          width: 0;
-          opacity: 0;
-          overflow: hidden;
-        }
-
-        /* Main chat area */
-        .chat-main {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          min-width: 0;
-        }
-
-        /* Header */
-        .chat-header {
-          height: 56px;
-          background: linear-gradient(135deg, #1890FF 0%, #0050B3 100%);
-          padding: 0 16px;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          color: white;
-          flex-shrink: 0;
-        }
-
-        .chat-header-left {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-        }
-
-        .menu-toggle {
-          width: 32px;
-          height: 32px;
-          background: rgba(255, 255, 255, 0.1);
-          border: 1px solid rgba(255, 255, 255, 0.2);
-          border-radius: 6px;
-          color: white;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          transition: all 0.2s;
-        }
-
-        .menu-toggle:hover {
-          background: rgba(255, 255, 255, 0.2);
-        }
-
-        .chat-avatar {
-          width: 32px;
-          height: 32px;
-          background: rgba(255, 255, 255, 0.2);
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 18px;
-        }
-
-        .chat-info {
-          display: flex;
-          flex-direction: column;
-        }
-
-        .chat-title {
-          font-size: 14px;
-          font-weight: 600;
-          margin-bottom: 1px;
-        }
-
-        .chat-status {
-          display: flex;
-          align-items: center;
-          gap: 5px;
-          font-size: 11px;
-          opacity: 0.9;
-        }
-
-        .status-dot {
-          width: 5px;
-          height: 5px;
-          background: #52C41A;
-          border-radius: 50%;
-          animation: blink 2s infinite;
-        }
-
-        @keyframes blink {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.5; }
-        }
-
-        .chat-header-actions {
-          display: flex;
-          gap: 6px;
-        }
-
-        .header-action {
-          width: 30px;
-          height: 30px;
-          background: rgba(255, 255, 255, 0.15);
-          border: none;
-          border-radius: 6px;
-          color: white;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          transition: all 0.2s;
-          font-size: 14px;
-        }
-
-        .header-action:hover {
-          background: rgba(255, 255, 255, 0.25);
-          transform: translateY(-1px);
-        }
-
-        /* Messages area with Ant Design X styling */
-        .messages-container {
-          flex: 1;
-          overflow-y: auto;
-          background: linear-gradient(to bottom, #F5F7FA 0%, #FFFFFF 100%);
-          display: flex;
-          flex-direction: column;
-        }
-
-        /* Override Ant Design X Bubble styles */
-        .messages-container .ant-bubble-list {
-          padding: 12px 16px;
-        }
-
-        /* User guide - Compact design */
-        .guide-container {
-          background: linear-gradient(135deg, #E6F7FF 0%, #F0F5FF 100%);
-          border: 1px solid #91D5FF;
-          border-radius: 10px;
-          padding: 12px;
-          margin: 0 20px 16px 20px;
-          animation: slideDown 0.3s ease;
-        }
-
-        @keyframes slideDown {
-          from {
-            opacity: 0;
-            transform: translateY(-10px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        .guide-title {
-          font-size: 12px;
-          color: #0050B3;
-          font-weight: 500;
-          margin-bottom: 10px;
-          display: flex;
-          align-items: center;
-          gap: 6px;
-        }
-
-        .guide-actions {
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: 6px;
-        }
-
-        .guide-action {
-          background: white;
-          border: 1px solid #D9D9D9;
-          border-radius: 6px;
-          padding: 8px 10px;
-          cursor: pointer;
-          transition: all 0.2s;
-          display: flex;
-          align-items: center;
-          gap: 6px;
-        }
-
-        .guide-action:hover {
-          border-color: #40A9FF;
-          box-shadow: 0 2px 6px rgba(24, 144, 255, 0.15);
-          transform: translateY(-1px);
-        }
-
-        .guide-action-icon {
-          font-size: 16px;
-        }
-
-        .guide-action-text {
-          font-size: 11px;
-          color: #262626;
-        }
-
-        /* Sender style customization */
-        .input-container {
-          padding: 10px 16px;
-          background: white;
-          border-top: 1px solid #F0F0F0;
-          flex-shrink: 0;
-        }
-
-        /* Fix Sender height consistency and make it more compact */
-        .input-container .ant-sender {
-          min-height: 36px;
-        }
-
-        .input-container .ant-input {
-          min-height: 28px !important;
-          padding: 6px 12px !important;
-          font-size: 14px !important;
-        }
-
-        .input-container .ant-input-textarea {
-          min-height: 28px !important;
-        }
-
-        /* Override Sender button styles */
-        .input-container .ant-btn-primary {
-          background: linear-gradient(135deg, #1890FF 0%, #0050B3 100%) !important;
-          border-color: transparent !important;
-          border-radius: 50% !important;
-          width: 32px !important;
-          height: 32px !important;
-          transition: all 0.2s !important;
-        }
-
-        .input-container .ant-btn-primary:hover,
-        .input-container .ant-btn-primary:active,
-        .input-container .ant-btn-primary:focus {
-          background: linear-gradient(135deg, #40A9FF 0%, #1890FF 100%) !important;
-          transform: scale(1.1) !important;
-          box-shadow: 0 4px 12px rgba(24, 144, 255, 0.35) !important;
-        }
-
-        .input-container .ant-btn-primary:active {
-          transform: scale(0.95) !important;
-        }
-
-        /* Responsive design */
-        @media (max-width: 768px) {
-          .history-sidebar {
-            position: absolute;
-            left: 0;
-            top: 0;
-            height: 100%;
-            z-index: 10;
-            box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
-          }
-
-          .guide-actions {
-            grid-template-columns: 1fr;
-          }
-        }
-
-        @media (max-width: 480px) {
-          .chat-header {
-            padding: 0 12px;
-          }
-
-          .messages-container .ant-bubble-list {
-            padding: 12px;
-          }
-
-          .input-container {
-            padding: 10px 12px;
-          }
-
-          .guide-container {
-            margin: 0 12px 12px 12px;
-          }
-        }
-
-        /* Scrollbar styling */
-        .messages-container::-webkit-scrollbar {
-          width: 6px;
-        }
-
-        .messages-container::-webkit-scrollbar-track {
-          background: transparent;
-        }
-
-        .messages-container::-webkit-scrollbar-thumb {
-          background: #D9D9D9;
-          border-radius: 3px;
-        }
-
-        .messages-container::-webkit-scrollbar-thumb:hover {
-          background: #BFBFBF;
-        }
-      `}</style>
-
-      <div className={`chat-window ${isClosing ? 'closing' : ''}`} style={getChatWindowStyle()}>
-        {/* History sidebar */}
-        <div className={`history-sidebar ${!showHistory ? 'hidden' : ''}`}>
-          <ChatSidebar
-            conversations={conversations.map(item => ({
-              key: item.key,
-              label: item.label,
-              timestamp: item.updatedAt,
-              isDisabled: item.isDisabled,
-              preview: extractPreview(item.values),
-            }))}
-            activeKey={activeKey}
-            editingKey={editingKey}
-            renameDraft={renameDraft}
-            onRenameStart={handleRenameStart}
-            onRenameChange={setRenameDraft}
-            onRenameSubmit={handleRenameSubmit}
-            onRenameCancel={cancelRename}
-            onToggleDisable={handleToggleDisable}
-            onDelete={handleDeleteConversation}
-            onActiveChange={handleActiveChange}
-            onNewChat={handleNewChat}
-          />
-        </div>
-
-        {/* Main chat area */}
-        <div className="chat-main">
-          {/* Header */}
-          <div className="chat-header">
-            <div className="chat-header-left">
-              <button className="menu-toggle" onClick={() => setShowHistory(!showHistory)} title="History">
-                {showHistory ? <MenuFoldOutlined /> : <MenuUnfoldOutlined />}
-              </button>
-              <div className="chat-avatar">
-                <RobotOutlined />
-              </div>
-              <div className="chat-info">
-                <div className="chat-title">AI Assistant</div>
-                <div className="chat-status">
-                  <span className="status-dot"></span>
-                  <span>Online</span>
-                </div>
-              </div>
-            </div>
-            <div className="chat-header-actions">
-              <button
-                className="header-action"
-                onClick={() => setIsFullscreen(!isFullscreen)}
-                title={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
-              >
-                {isFullscreen ? <CompressOutlined /> : <ExpandOutlined />}
-              </button>
-              {onClose && (
-                <button className="header-action" onClick={onClose} title="Close">
-                  <CloseOutlined />
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* Messages area */}
-          <div className="messages-container">
-            {/* User guide - Compact design */}
-            {showGuide && messages.length === 0 && (
-              <div className="guide-container">
-                <div className="guide-title">
-                  <BulbOutlined />
-                  Quick Start
-                </div>
-                <div className="guide-actions">
-                  {quickActions.map((action, index) => (
-                    <div key={index} className="guide-action" onClick={() => handleQuickAction(action.text)}>
-                      <span className="guide-action-icon" style={{ color: action.color }}>
-                        {action.icon}
-                      </span>
-                      <span className="guide-action-text">{action.text}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
+      {/* Main chat area */}
+      <ChatMain>
+        {/* Header */}
+        <ChatHeader>
+          <ChatHeaderLeft>
+            <MenuToggle onClick={() => setShowHistory(!showHistory)} title="History">
+              {showHistory ? <MenuFoldOutlined /> : <MenuUnfoldOutlined />}
+            </MenuToggle>
+            <ChatAvatar>
+              <RobotOutlined />
+            </ChatAvatar>
+            <ChatInfo>
+              <ChatTitle>AI Assistant</ChatTitle>
+              <ChatStatus>
+                <StatusDot />
+                <span>Online</span>
+              </ChatStatus>
+            </ChatInfo>
+          </ChatHeaderLeft>
+          <ChatHeaderActions>
+            <HeaderAction
+              onClick={() => setIsFullscreen(!isFullscreen)}
+              title={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
+            >
+              {isFullscreen ? <CompressOutlined /> : <ExpandOutlined />}
+            </HeaderAction>
+            {onClose && (
+              <HeaderAction onClick={onClose} title="Close">
+                <CloseOutlined />
+              </HeaderAction>
             )}
+          </ChatHeaderActions>
+        </ChatHeader>
 
-            <Bubble.List ref={bubbleListRef} roles={BUBBLE_ROLES} items={bubbleItems} />
-          </div>
+        {/* Messages area */}
+        <MessagesContainer>
+          {/* User guide - Compact design */}
+          {showGuide && messages.length === 0 && (
+            <GuideContainer>
+              <GuideTitle>
+                <BulbOutlined />
+                Quick Start
+              </GuideTitle>
+              <GuideActions>
+                {quickActions.map((action, index) => (
+                  <GuideAction key={index} onClick={() => handleQuickAction(action.text)}>
+                    <GuideActionIcon style={{ color: action.color }}>{action.icon}</GuideActionIcon>
+                    <GuideActionText>{action.text}</GuideActionText>
+                  </GuideAction>
+                ))}
+              </GuideActions>
+            </GuideContainer>
+          )}
 
-          {/* Sender style input area */}
-          <div className="input-container">
-            <Sender
-              loading={isStreaming}
-              value={input}
-              onChange={setInput}
-              onSubmit={handleSubmit}
-              onCancel={abort}
-              placeholder={
-                isActiveConversationDisabled ? 'Enable this conversation to send messages.' : 'Type a message...'
-              }
-              disabled={!userChatId || !activeKey || isActiveConversationDisabled}
-            />
-          </div>
-        </div>
-      </div>
-    </>
+          <StyledBubbleList ref={bubbleListRef} roles={BUBBLE_ROLES} items={bubbleItems} />
+        </MessagesContainer>
+
+        {/* Sender style input area */}
+        <InputContainer>
+          <Sender
+            loading={isStreaming}
+            value={input}
+            onChange={setInput}
+            onSubmit={handleSubmit}
+            onCancel={abort}
+            placeholder={
+              isActiveConversationDisabled ? 'Enable this conversation to send messages.' : 'Type a message...'
+            }
+            disabled={!userChatId || !activeKey || isActiveConversationDisabled}
+          />
+        </InputContainer>
+      </ChatMain>
+    </ChatWindowContainer>
   );
 };
 
