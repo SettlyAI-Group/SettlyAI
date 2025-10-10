@@ -1,15 +1,18 @@
 import { useParams, Navigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Box, Typography, styled, Button } from '@mui/material';
+import { Box, Typography, Button, styled } from '@mui/material';
 import { getPropertyDetail } from '@/api/propertyApi';
 import type { TransformedPropertyData } from '@/interfaces/property';
 import HeroSection from './components/HeroSection';
 import PropertyDetailsSection from './components/PropertyDetailsSection';
 
-const Container = styled(Box)({
+const PageContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
-});
+  gap: theme.spacing(3),
+  paddingTop: theme.spacing(4),
+  paddingBottom: theme.spacing(4),
+}));
 
 const ReportPage = () => {
   const { propertyId } = useParams<{ propertyId: string }>();
@@ -35,10 +38,10 @@ const ReportPage = () => {
   if (!data) return <Typography>Property not found</Typography>;
 
   return (
-    <Container>
+    <PageContainer>
       <HeroSection property={data} />
       <PropertyDetailsSection property={data} />
-    </Container>
+    </PageContainer>
   );
 };
 

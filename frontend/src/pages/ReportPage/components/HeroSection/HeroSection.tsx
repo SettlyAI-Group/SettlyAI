@@ -1,16 +1,14 @@
-import { Box, Typography, Chip, styled, useTheme } from '@mui/material';
+import { Box, Typography, Chip, styled } from '@mui/material';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import GlobalButton from '@/components/GlobalButton';
 import type { TransformedPropertyData } from '@/interfaces/property';
 
-const HeroContainer = styled('section')(({ theme }) => ({
+const HeroContainer = styled(Box)(({ theme }) => ({
   position: 'relative',
   width: '100%',
-  maxWidth: 'min(1120px, 100%)', // keeps 1120px cap but flexible
-  height: 'clamp(280px, 40vw, 450px)', // responsive height
+  height: 'clamp(280px, 40vw, 450px)',
   borderRadius: theme.spacing(1),
   overflow: 'hidden',
-  marginInline: 'auto',
   [theme.breakpoints.down('sm')]: {
     height: 'clamp(220px, 45vw, 300px)',
   },
@@ -40,9 +38,6 @@ const GradientOverlay = styled(Box)(({ theme }) => ({
 }));
 
 const PropertyTypeChip = styled(Chip)(({ theme }) => ({
-  position: 'absolute',
-  top: theme.spacing(50),
-  left: theme.spacing(12),
   backgroundColor: theme.palette.primary.main,
   color: theme.palette.common.white,
   fontFamily: theme.typography.fontFamily,
@@ -50,15 +45,12 @@ const PropertyTypeChip = styled(Chip)(({ theme }) => ({
   fontSize: theme.typography.body1.fontSize,
   lineHeight: theme.typography.body1.lineHeight,
   minHeight: theme.spacing(8),
-  maxWidth: 'fit-content', 
+  maxWidth: 'fit-content',
+  marginBottom: theme.spacing(2),
   '& .MuiChip-label': {
     paddingInline: theme.spacing(3),
   },
   borderRadius: theme.spacing(2),
-  [theme.breakpoints.down('sm')]: {
-    top: theme.spacing(3.5),
-    left: theme.spacing(2),
-  },
 }));
 
 
@@ -78,9 +70,6 @@ const OverlayContent = styled(Box)(({ theme }) => ({
   },
 }));
 
-const TextGroup = styled(Box)(({ theme }) => ({
-  marginBottom: theme.spacing(15), // lifts the two text lines upward
-}));
 
 
 const AddressText = styled(Typography)(({ theme }) => ({
@@ -118,38 +107,45 @@ const SaveButton = styled(GlobalButton)(({ theme }) => ({
   },
 }));
 
+const OuterContainer = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  justifyContent: 'center',
+  padding: theme.spacing(3, 16),
+}));
+
+const InnerContainer = styled(Box)(() => ({
+  maxWidth: 1280,
+  width: '100%',
+}));
+
 
 interface HeroSectionProps {
   property: TransformedPropertyData;
 }
 
 const HeroSection = ({ property }: HeroSectionProps) => {
-  const theme = useTheme();
-
   const handleSaveToFavorites = () => {
     console.log('Save to favorites clicked for property:', property.id);
   };
 
   return (
-    <HeroContainer>
-      {property.hasImage ? (
-        <HeroImage src={property.imageUrl} alt={property.address} />
-      ) : (
-        <ImagePlaceholder>
-          <Typography variant="h6">Image coming soon</Typography>
-        </ImagePlaceholder>
-      )}
+    <OuterContainer>
+      <InnerContainer>
+        <HeroContainer>
+          {property.hasImage ? (
+            <HeroImage src={property.imageUrl} alt={property.address} />
+          ) : (
+            <ImagePlaceholder>
+              <Typography variant="h6">Image coming soon</Typography>
+            </ImagePlaceholder>
+          )}
 
-      <GradientOverlay />
+          <GradientOverlay />
 
-      <PropertyTypeChip label={property.propertyType} />
-
-      <OverlayContent>
-  <TextGroup>
-    <AddressText variant="h4">{property.address}</AddressText>
-    <PriceText variant="h3">{property.formattedPrice}</PriceText>
-  </TextGroup>
-
+          <OverlayContent>
+  <PropertyTypeChip label={property.propertyType} />
+  <AddressText variant="h4">{property.address}</AddressText>
+  <PriceText variant="h3">{property.formattedPrice}</PriceText>
   <SaveButton
     variant="contained"
     startIcon={<FavoriteBorderIcon />}
@@ -158,8 +154,9 @@ const HeroSection = ({ property }: HeroSectionProps) => {
     Save to Favourites
   </SaveButton>
 </OverlayContent>
-
-    </HeroContainer>
+        </HeroContainer>
+      </InnerContainer>
+    </OuterContainer>
   );
 };
 

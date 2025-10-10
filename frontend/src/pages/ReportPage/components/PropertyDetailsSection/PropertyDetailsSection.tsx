@@ -1,4 +1,4 @@
-import { Box, Typography, styled, Button } from '@mui/material';
+import { Box, Typography, styled } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined';
 import { alpha } from '@mui/material/styles';
@@ -8,30 +8,24 @@ import type { TransformedPropertyData } from '@/interfaces/property';
 /* ==============================
    Layout Containers
 ============================== */
-const MainContainer = styled(Box)(({ theme }) => {
-  return {
-    position: 'relative',
-    width: '100%',
-    maxWidth: 1120,
-    minHeight: 'clamp(280px, 40vw, 450px)',
-    height: 'auto',
-    alignItems: 'start',
-    backgroundColor: theme.palette.background.paper,
-    borderRadius: theme.spacing(1),
-    marginInline: 'auto',
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-    alignItems: 'start',
-    justifyItems: 'stretch',
-    columnGap: theme.spacing(6),
-    padding: theme.spacing(5, 6, 4, 8),
-    overflow: 'hidden',
-
-    '& *': {
-      fontWeight: theme.typography.fontWeightMedium,
-    },
-  };
-});
+const MainContainer = styled(Box)(({ theme }) => ({
+  position: 'relative',
+  width: '100%',
+  backgroundColor: theme.palette.background.paper,
+  borderRadius: theme.spacing(1),
+  padding: theme.spacing(5, 6, 4, 8),
+  display: 'grid',
+  gridTemplateColumns: '1fr 1fr',
+  columnGap: theme.spacing(6),
+  alignItems: 'start',
+  '& *': {
+    fontWeight: theme.typography.fontWeightMedium,
+  },
+  [theme.breakpoints.down('md')]: {
+    gridTemplateColumns: '1fr',
+    padding: theme.spacing(4, 3),
+  },
+}));
 
 const SectionTitle = styled(Typography)(({ theme }) => ({
   ...theme.typography.h5,
@@ -103,15 +97,15 @@ const AISummaryText = styled(Typography)(({ theme }) => ({
 /* ==============================
    Features
 ============================== */
-const FeaturesContainer = styled(Box)(({ theme }) => ({
+const FeaturesContainer = styled(Box)(() => ({
   display: 'grid',
   gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
-  columnGap: theme.spacing(6),
-  rowGap: theme.spacing(2),
-  marginTop: theme.spacing(7.5),
+  columnGap: 48,
+  rowGap: 16,
+  marginTop: 60,
 }));
 
-const FeatureItem = styled(Box)(({ theme }) => ({
+const FeatureItem = styled(Box)(() => ({
   display: 'flex',
   alignItems: 'center',
 }));
@@ -143,6 +137,12 @@ const GovernmentAssistanceContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
+  [theme.breakpoints.down('md')]: {
+    position: 'static',
+    width: '100%',
+    marginTop: theme.spacing(4),
+    padding: theme.spacing(3),
+  },
 }));
 
 const AssistanceItem = styled(Box)(({ theme }) => ({
@@ -188,6 +188,22 @@ const CheckEligibilityButton = styled(GlobalButton)(({ theme }) => ({
   '&:hover': {
     backgroundColor: theme.palette.grey[100],
   },
+  [theme.breakpoints.down('md')]: {
+    position: 'static',
+    alignSelf: 'flex-end',
+    marginTop: theme.spacing(2),
+  },
+}));
+
+const OuterContainer = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  justifyContent: 'center',
+  padding: theme.spacing(3, 16),
+}));
+
+const InnerContainer = styled(Box)(() => ({
+  maxWidth: 1280,
+  width: '100%',
 }));
 
 /* ==============================
@@ -208,92 +224,100 @@ const PropertyDetailsSection = ({ property }: PropertyDetailsSectionProps) => {
   ];
 
   return (
-    <MainContainer>
-      {/* Property Details Column */}
-      <DetailsColumn>
-        <SectionTitle>Property Details</SectionTitle>
-        <DetailsList>
-          {propertyDetails.map((d, i) => (
-            <DetailItem key={i}>
-              <DetailText>{d.label}</DetailText>
-              <DetailText>{d.value}</DetailText>
-            </DetailItem>
-          ))}
-        </DetailsList>
+    <OuterContainer>
+      <InnerContainer>
+        <MainContainer>
+        {/* Property Details Column */}
+        <DetailsColumn>
+          <SectionTitle>Property Details</SectionTitle>
+          <DetailsList>
+            {propertyDetails.map((d, i) => (
+              <DetailItem key={i}>
+                <DetailText>{d.label}</DetailText>
+                <DetailText>{d.value}</DetailText>
+              </DetailItem>
+            ))}
+          </DetailsList>
 
-        <AISummaryContainer>
-          <AISummaryTitle>AI Summary</AISummaryTitle>
-          <AISummaryText>{property.summary}</AISummaryText>
-        </AISummaryContainer>
-      </DetailsColumn>
+          <AISummaryContainer>
+            <AISummaryTitle>AI Summary</AISummaryTitle>
+            <AISummaryText>{property.summary}</AISummaryText>
+          </AISummaryContainer>
+        </DetailsColumn>
 
-      {/* Features Column */}
-      <Box sx={{ marginLeft: (t) => t.spacing(6) }}>
-        <SectionTitle>Features</SectionTitle>
-        <FeaturesContainer>
-          {property.features.map((f, i) => (
-            <FeatureItem key={i}>
-              <FeatureIcon />
-              <FeatureText>{f}</FeatureText>
-            </FeatureItem>
-          ))}
-        </FeaturesContainer>
-      </Box>
-
-      {/* Government Assistance */}
-      <GovernmentAssistanceContainer>
-        <AssistanceItem>
-          <AssistanceIcon />
-          <AssistanceSectionTitle>
-            Government Assistance for First-Home Buyers
-          </AssistanceSectionTitle>
-        </AssistanceItem>
-
-        <AssistanceItem>
-          <AssistanceIcon />
-          <AssistanceText>First Home Owner Grant</AssistanceText>
-        </AssistanceItem>
-
-        <AssistanceItem>
-          <AssistanceIcon />
-          <AssistanceText>Stamp Duty Concession</AssistanceText>
-        </AssistanceItem>
-
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'flex-start',
-            gap: (t) => t.spacing(1.5),
-            marginTop: (t) => t.spacing(1),
-          }}
-        >
-          <AutoAwesomeOutlinedIcon
-            sx={{
-              fontSize: 16,
-              color: (t) => t.palette.secondary.dark,
-              flexShrink: 0,
-              alignSelf: 'flex-start',
-              marginTop: (t) => t.spacing(0.25),
-            }}
-          />
-          <Box>
-            <Typography
-              sx={(theme) => ({
-                fontWeight: theme.typography.fontWeightMedium,
-                color: theme.palette.text.primary,
-                lineHeight: 1.2,
-              })}
-            >
-              Estimated saving:
-            </Typography>
-            <SavingsText>≈$12,750</SavingsText>
-            <SourceText>source: VIC</SourceText>
-          </Box>
+        {/* Features Column */}
+        <Box>
+          <SectionTitle 
+          sx={{ marginLeft: (t) => t.spacing(8) }}>
+            Features
+            </SectionTitle>
+          <FeaturesContainer sx={{ marginLeft: (t) => t.spacing(8), 
+            marginTop: (t) => t.spacing(8) }}>
+            {property.features.map((f, i) => (
+              <FeatureItem key={i}>
+                <FeatureIcon />
+                <FeatureText>{f}</FeatureText>
+              </FeatureItem>
+            ))}
+          </FeaturesContainer>
         </Box>
 
-        <CheckEligibilityButton>Check Eligibility</CheckEligibilityButton>
-      </GovernmentAssistanceContainer>
-    </MainContainer>
+        {/* Government Assistance */}
+        <GovernmentAssistanceContainer>
+          <AssistanceItem>
+            <AssistanceIcon />
+            <AssistanceSectionTitle>
+              Government Assistance for First-Home Buyers
+            </AssistanceSectionTitle>
+          </AssistanceItem>
+
+          <AssistanceItem>
+            <AssistanceIcon />
+            <AssistanceText>First Home Owner Grant</AssistanceText>
+          </AssistanceItem>
+
+          <AssistanceItem>
+            <AssistanceIcon />
+            <AssistanceText>Stamp Duty Concession</AssistanceText>
+          </AssistanceItem>
+
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: (t) => t.spacing(1.5),
+              marginTop: (t) => t.spacing(1),
+            }}
+          >
+            <AutoAwesomeOutlinedIcon
+              sx={{
+                fontSize: 16,
+                color: (t) => t.palette.secondary.dark,
+                flexShrink: 0,
+                alignSelf: 'flex-start',
+                marginTop: (t) => t.spacing(0.25),
+              }}
+            />
+            <Box>
+              <Typography
+                sx={(theme) => ({
+                  fontWeight: theme.typography.fontWeightMedium,
+                  color: theme.palette.text.primary,
+                  lineHeight: 1.2,
+                })}
+              >
+                Estimated saving:
+              </Typography>
+              <SavingsText>≈$12,750</SavingsText>
+              <SourceText>source: VIC</SourceText>
+            </Box>
+          </Box>
+
+          <CheckEligibilityButton>Check Eligibility</CheckEligibilityButton>
+        </GovernmentAssistanceContainer>
+        </MainContainer>
+      </InnerContainer>
+    </OuterContainer>
   );
 };
 
