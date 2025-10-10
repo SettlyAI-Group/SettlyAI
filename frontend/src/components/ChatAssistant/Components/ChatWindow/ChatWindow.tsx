@@ -29,13 +29,14 @@ const quickActions = [
 // ============ 类型定义 ============
 interface ChatWindowProps {
   onClose?: () => void;
+  isClosing?: boolean;
 }
 
 // ============ 主组件 ============
 /**
  * 聊天窗口主组件
  */
-const ChatWindow = ({ onClose }: ChatWindowProps = {}) => {
+const ChatWindow = ({ onClose, isClosing = false }: ChatWindowProps = {}) => {
   const [userChatId, setUserChatId] = useState<string | null>(null);
   const [input, setInput] = useState('');
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -177,6 +178,20 @@ const ChatWindow = ({ onClose }: ChatWindowProps = {}) => {
   const activeConversation = conversations.find(item => item.key === activeKey);
   const isActiveConversationDisabled = Boolean(activeConversation?.isDisabled);
 
+  /**
+   * 从 thread values 中提取第一条消息的文本作为预览
+   */
+  const extractPreview = (values: Record<string, unknown> | undefined): string => {
+    if (!values || !values.messages) return '';
+    const messages = values.messages as Array<{ type: string; content: Array<{ text?: string; type: string }> }>;
+    const firstMessage = messages.find(msg => msg.type === 'human');
+    if (firstMessage && firstMessage.content && firstMessage.content.length > 0) {
+      const textContent = firstMessage.content.find(c => c.type === 'text');
+      return textContent?.text?.slice(0, 30) || '';
+    }
+    return '';
+  };
+
   return (
     <>
       <style>{`
@@ -196,6 +211,33 @@ const ChatWindow = ({ onClose }: ChatWindowProps = {}) => {
           z-index: 1001;
           overflow: hidden;
           font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          animation: chatWindowOpen 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .chat-window.closing {
+          animation: chatWindowClose 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes chatWindowOpen {
+          from {
+            opacity: 0;
+            transform: scale(0.9) translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+          }
+        }
+
+        @keyframes chatWindowClose {
+          from {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+          }
+          to {
+            opacity: 0;
+            transform: scale(0.9) translateY(20px);
+          }
         }
 
         /* History sidebar */
@@ -339,7 +381,7 @@ const ChatWindow = ({ onClose }: ChatWindowProps = {}) => {
 
         /* Override Ant Design X Bubble styles */
         .messages-container .ant-bubble-list {
-          padding: 20px;
+          padding: 12px 16px;
         }
 
         /* User guide - Compact design */
@@ -408,10 +450,25 @@ const ChatWindow = ({ onClose }: ChatWindowProps = {}) => {
 
         /* Sender style customization */
         .input-container {
-          padding: 16px 20px;
+          padding: 10px 16px;
           background: white;
           border-top: 1px solid #F0F0F0;
           flex-shrink: 0;
+        }
+
+        /* Fix Sender height consistency and make it more compact */
+        .input-container .ant-sender {
+          min-height: 36px;
+        }
+
+        .input-container .ant-input {
+          min-height: 28px !important;
+          padding: 6px 12px !important;
+          font-size: 14px !important;
+        }
+
+        .input-container .ant-input-textarea {
+          min-height: 28px !important;
         }
 
         /* Override Sender button styles */
@@ -419,8 +476,8 @@ const ChatWindow = ({ onClose }: ChatWindowProps = {}) => {
           background: linear-gradient(135deg, #1890FF 0%, #0050B3 100%) !important;
           border-color: transparent !important;
           border-radius: 50% !important;
-          width: 36px !important;
-          height: 36px !important;
+          width: 32px !important;
+          height: 32px !important;
           transition: all 0.2s !important;
         }
 
@@ -458,15 +515,15 @@ const ChatWindow = ({ onClose }: ChatWindowProps = {}) => {
           }
 
           .messages-container .ant-bubble-list {
-            padding: 16px;
+            padding: 12px;
           }
 
           .input-container {
-            padding: 12px 16px;
+            padding: 10px 12px;
           }
 
           .guide-container {
-            margin: 0 16px 12px 16px;
+            margin: 0 12px 12px 12px;
           }
         }
 
@@ -489,7 +546,7 @@ const ChatWindow = ({ onClose }: ChatWindowProps = {}) => {
         }
       `}</style>
 
-      <div className="chat-window" style={getChatWindowStyle()}>
+      <div className={`chat-window ${isClosing ? 'closing' : ''}`} style={getChatWindowStyle()}>
         {/* History sidebar */}
         <div className={`history-sidebar ${!showHistory ? 'hidden' : ''}`}>
           <ChatSidebar
@@ -498,6 +555,7 @@ const ChatWindow = ({ onClose }: ChatWindowProps = {}) => {
               label: item.label,
               timestamp: item.updatedAt,
               isDisabled: item.isDisabled,
+              preview: extractPreview(item.values),
             }))}
             activeKey={activeKey}
             editingKey={editingKey}
@@ -582,9 +640,7 @@ const ChatWindow = ({ onClose }: ChatWindowProps = {}) => {
               onSubmit={handleSubmit}
               onCancel={abort}
               placeholder={
-                isActiveConversationDisabled
-                  ? 'Enable this conversation to send messages.'
-                  : 'Type a message...'
+                isActiveConversationDisabled ? 'Enable this conversation to send messages.' : 'Type a message...'
               }
               disabled={!userChatId || !activeKey || isActiveConversationDisabled}
             />

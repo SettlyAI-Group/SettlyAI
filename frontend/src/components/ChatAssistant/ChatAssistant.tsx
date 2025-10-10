@@ -5,6 +5,15 @@ import { divIcon } from 'leaflet';
 
 const ChatAssistant = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
+
+  const handleClose = () => {
+    setIsClosing(true);
+    setTimeout(() => {
+      setIsOpen(false);
+      setIsClosing(false);
+    }, 300); // 与动画时长一致
+  };
 
   return (
     <>
@@ -20,8 +29,8 @@ const ChatAssistant = () => {
           position: fixed;
           bottom: 30px;
           right: 30px;
-          width: 56px;
-          height: 56px;
+          width: 48px;
+          height: 48px;
           background: linear-gradient(135deg, #1890FF 0%, #0050B3 100%);
           border-radius: 50%;
           border: none;
@@ -90,7 +99,7 @@ const ChatAssistant = () => {
         </button>
 
         {/* Chat window */}
-        {isOpen && <ChatWindow onClose={() => setIsOpen(false)} />}
+        {isOpen && <ChatWindow onClose={handleClose} isClosing={isClosing} />}
       </div>
     </>
   );

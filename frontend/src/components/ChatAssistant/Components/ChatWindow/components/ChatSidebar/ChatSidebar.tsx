@@ -8,6 +8,7 @@ interface ConversationItem {
   label: string;
   timestamp: number;
   isDisabled?: boolean;
+  preview?: string;
 }
 
 interface ChatSidebarProps {
@@ -113,7 +114,7 @@ const ChatSidebar = ({
         }
 
         .history-item {
-          padding: 8px 10px;
+          padding: 6px 8px;
           margin-bottom: 2px;
           background: white;
           border-radius: 6px;
@@ -198,12 +199,13 @@ const ChatSidebar = ({
         }
 
         .history-item-preview {
-          font-size: 11px;
+          font-size: 10px;
           color: #8C8C8C;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
           max-width: 100%;
+          line-height: 1.4;
         }
 
         .rename-input {
@@ -313,7 +315,7 @@ const ChatSidebar = ({
             </div>
             {editingKey !== item.key && (
               <div className="history-item-preview">
-                {new Date(item.timestamp).toLocaleDateString('en-AU', {
+                {item.preview || new Date(item.timestamp).toLocaleDateString('en-AU', {
                   month: 'short',
                   day: 'numeric',
                   hour: '2-digit',
