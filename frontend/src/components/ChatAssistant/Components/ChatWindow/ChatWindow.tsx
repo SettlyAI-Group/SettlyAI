@@ -164,13 +164,18 @@ const ChatWindow = () => {
     // 检查是否有 assistant 消息正在 streaming
     const hasStreamingAssistant = messages.some(msg => msg.role === 'assistant' && msg.status === 'streaming');
 
+    // 判断是否为 typing 占位符（空内容 + loading 状态）
+    const isTypingPlaceholder = m.role === 'assistant' && m.status === 'loading' && m.content.trim() === '';
+
     return {
       key: m.id,
       role: m.role,
       content: m.content,
-      // tool_call 的 loading：只在没有 assistant streaming 时显示
-      loading: m.role === 'tool_call' && m.status === 'loading' && !hasStreamingAssistant,
-      // assistant 的 typing：只要是 streaming 状态就显示（不限制是否为最后一条）
+      // loading：tool_call 或 typing 占位符
+      loading:
+        (m.role === 'tool_call' && m.status === 'loading' && !hasStreamingAssistant) ||
+        isTypingPlaceholder,
+      // assistant 的 typing：只有 streaming 状态才显示
       typing: m.role === 'assistant' && m.status === 'streaming' ? { step: 5, interval: 20 } : false,
     };
   });

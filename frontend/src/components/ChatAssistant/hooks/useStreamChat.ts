@@ -53,6 +53,7 @@ async function processSSEStream(
   // 跟踪当前正在构建的消息
   let currentAssistantId: string | null = null;
   const toolCallIds: string[] = [];
+  let typingPlaceholderUsed = false;  // 🔑 标记 typing 占位符是否已被使用
 
   const flushBuffer = () => {
     let normalized = buffer.replace(/\r\n/g, '\n');
@@ -106,27 +107,38 @@ async function processSSEStream(
             // 累加到当前 assistant 消息
             if (lastMsg?.id === currentAssistantId) {
               return prev.map(m =>
-                m.id === currentAssistantId
-                  ? { ...m, content: m.content + piece, status: 'streaming' as const }
-                  : m
+                m.id === currentAssistantId ? { ...m, content: m.content + piece, status: 'streaming' as const } : m
               );
             } else {
-              // 创建新的 assistant 消息
-              const newId = `assistant_${Date.now()}_${Math.random()}`;
-              currentAssistantId = newId;
+              // 检查是否有未使用的 typing 占位符
+              const typingPlaceholder = !typingPlaceholderUsed
+                ? prev.find(m => m.id.startsWith('typing_'))
+                : null;  // 🔑 如果已使用，不再查找
 
-              // ✅ 保留 tool_call 占位符，不立即删除
-              // tool_call 会在流结束时统一删除（见 done 分支）
-              return [
-                ...prev,
-                {
-                  id: newId,
-                  role: 'assistant' as const,
-                  content: piece,
-                  status: 'streaming' as const,
-                  timestamp: Date.now(),
-                },
-              ];
+              if (typingPlaceholder) {
+                // ✅ 复用 typing 占位符，直接更新它
+                currentAssistantId = typingPlaceholder.id;
+                typingPlaceholderUsed = true;  // 🔑 标记为已使用
+                return prev.map(m =>
+                  m.id === typingPlaceholder.id
+                    ? { ...m, content: piece, status: 'streaming' as const }
+                    : m
+                );
+              } else {
+                // 没有 typing 占位符或已使用，创建新消息
+                const newId = `assistant_${Date.now()}_${Math.random()}`;
+                currentAssistantId = newId;
+                return [
+                  ...prev,
+                  {
+                    id: newId,
+                    role: 'assistant' as const,
+                    content: piece,
+                    status: 'streaming' as const,
+                    timestamp: Date.now(),
+                  },
+                ];
+              }
             }
           });
         }
@@ -171,9 +183,7 @@ async function processSSEStream(
 
       // 完成最后一条 assistant 消息
       if (currentAssistantId) {
-        setMessages(prev =>
-          prev.map(m => (m.id === currentAssistantId ? { ...m, status: 'success' as const } : m))
-        );
+        setMessages(prev => prev.map(m => (m.id === currentAssistantId ? { ...m, status: 'success' as const } : m)));
       }
 
       // 删除所有 tool_call 占位符
@@ -214,7 +224,16 @@ export const useStreamChat = (threadId: string) => {
         timestamp: Date.now(),
       };
 
-      setMessages(prev => [...prev, userMsg]);
+      // 创建 typing 占位符
+      const typingPlaceholder: Message = {
+        id: `typing_${Date.now()}`,
+        role: 'assistant',
+        content: '', // 使用空格而不是空字符串，触发 typing 动画
+        status: 'loading', // 使用 loading 状态触发 typing 动画
+        timestamp: Date.now(),
+      };
+
+      setMessages(prev => [...prev, userMsg, typingPlaceholder]);
       setIsStreaming(true);
 
       const ac = new AbortController();
