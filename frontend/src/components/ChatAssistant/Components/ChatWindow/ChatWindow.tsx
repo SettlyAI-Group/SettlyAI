@@ -295,6 +295,7 @@ const ChatWindow = ({ onClose, isClosing = false }: ChatWindowProps = {}) => {
           </ChatHeaderLeft>
           <ChatHeaderActions>
             <HeaderAction
+              $hideOnMobile
               onClick={() => setIsFullscreen(!isFullscreen)}
               title={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
             >

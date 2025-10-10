@@ -9,14 +9,20 @@ import type { Bubble } from '@ant-design/x';
 import type { BubbleProps } from '@ant-design/x';
 import markdownit from 'markdown-it';
 
-const md = markdownit({ html: true, breaks: true });
+const md = markdownit({
+  html: true,
+  breaks: true,
+  linkify: true,
+  typographer: true,
+});
 
 // Markdown 渲染器
 export const renderMarkdown: BubbleProps['messageRender'] = content => {
   return (
-    <Typography>
-      <div dangerouslySetInnerHTML={{ __html: md.render(content) }} />
-    </Typography>
+    <div
+      className="markdown-content"
+      dangerouslySetInnerHTML={{ __html: md.render(content) }}
+    />
   );
 };
 
@@ -24,28 +30,40 @@ export const renderMarkdown: BubbleProps['messageRender'] = content => {
 export const BUBBLE_ROLES: GetProp<typeof Bubble.List, 'roles'> = {
   user: {
     placement: 'end',
-    variant: 'shadow',
+    variant: 'filled',
     avatar: {
       icon: <UserOutlined />,
-      style: { color: '#fff', backgroundColor: '#87d068' }
+      style: { color: '#fff', backgroundColor: '#52C41A' }
     },
+    styles: {
+      content: {
+        background: 'linear-gradient(135deg, #7B61FF 0%, #9B81FF 100%)',
+        color: '#fff',
+      }
+    }
   },
   assistant: {
     placement: 'start',
     variant: 'filled',
     avatar: {
       icon: <UserOutlined />,
-      style: { color: '#f56a00', backgroundColor: '#fde3cf' }
+      style: { color: '#7B61FF', backgroundColor: '#F5F3FF' }
     },
     messageRender: renderMarkdown,
     typing: { step: 5, interval: 20 },
+    styles: {
+      content: {
+        background: '#FFFFFF',
+        border: '1px solid #F0F0F0',
+      }
+    }
   },
   tool_call: {
     placement: 'start',
     variant: 'outlined',
     avatar: {
       icon: <UserOutlined />,
-      style: { color: '#f56a00', backgroundColor: '#fde3cf' }
+      style: { color: '#1890FF', backgroundColor: '#E6F7FF' }
     },
     messageRender: content => (
       <Space>

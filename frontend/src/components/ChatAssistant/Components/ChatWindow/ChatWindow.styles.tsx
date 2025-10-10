@@ -202,7 +202,7 @@ export const ChatHeaderActions = styled('div')(() => ({
   gap: '6px',
 }));
 
-export const HeaderAction = styled('button')(() => ({
+export const HeaderAction = styled('button')<{ $hideOnMobile?: boolean }>(({ $hideOnMobile }) => ({
   width: '30px',
   height: '30px',
   background: 'rgba(255, 255, 255, 0.15)',
@@ -220,6 +220,12 @@ export const HeaderAction = styled('button')(() => ({
     background: 'rgba(255, 255, 255, 0.25)',
     transform: 'translateY(-1px)',
   },
+
+  ...($hideOnMobile && {
+    '@media (max-width: 768px)': {
+      display: 'none',
+    },
+  }),
 }));
 
 // ============ Messages Area ============
