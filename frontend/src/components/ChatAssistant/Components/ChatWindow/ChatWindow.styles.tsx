@@ -307,13 +307,12 @@ export const GuideAction = styled('div')(() => ({
   background: 'white',
   border: '1px solid #D9D9D9',
   borderRadius: '8px',
-  padding: '12px 14px',
+  padding: '10px 12px',
   cursor: 'pointer',
   transition: 'all 0.2s',
   display: 'flex',
   alignItems: 'center',
-  gap: '10px',
-  minHeight: '48px',
+  gap: '8px',
 
   '&:hover': {
     borderColor: '#7B61FF',
@@ -322,33 +321,36 @@ export const GuideAction = styled('div')(() => ({
   },
 
   '@media (max-width: 480px)': {
-    padding: '10px 12px',
-    gap: '8px',
-    minHeight: '44px',
+    padding: '8px 10px',
+    gap: '6px',
     borderRadius: '6px',
   },
 }));
 
 export const GuideActionIcon = styled('span')(() => ({
-  fontSize: '18px',
+  fontSize: '16px',
   flexShrink: 0,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
 
   '@media (max-width: 480px)': {
-    fontSize: '16px',
+    fontSize: '14px',
   },
 }));
 
 export const GuideActionText = styled('span')(() => ({
-  fontSize: '13px',
+  fontSize: '12px',
   color: '#262626',
-  lineHeight: 1.5,
+  lineHeight: 1.4,
   flex: 1,
-  wordBreak: 'keep-all',
+  wordBreak: 'break-word',
   whiteSpace: 'normal',
+  fontWeight: 400,
 
   '@media (max-width: 480px)': {
-    fontSize: '13px',
-    lineHeight: 1.4,
+    fontSize: '11px',
+    lineHeight: 1.3,
   },
 }));
 

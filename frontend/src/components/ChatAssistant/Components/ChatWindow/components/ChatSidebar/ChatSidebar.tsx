@@ -20,12 +20,14 @@ interface ConversationItem {
   label: string;
   timestamp: number;
   isDisabled?: boolean;
+  isTyping?: boolean;
   preview?: string;
 }
 
 interface ChatSidebarProps {
   conversations: ConversationItem[];
   activeKey: string;
+  movingThreadId: string | null;
   editingKey: string | null;
   renameDraft: string;
   onRenameStart: (key: string) => void;
@@ -42,6 +44,7 @@ interface ChatSidebarProps {
 const ChatSidebar = ({
   conversations,
   activeKey,
+  movingThreadId,
   editingKey,
   renameDraft,
   onRenameStart,
@@ -53,7 +56,6 @@ const ChatSidebar = ({
   onActiveChange,
   onNewChat,
 }: ChatSidebarProps) => {
-  const [hoveredKey, setHoveredKey] = useState<string | null>(null);
   const [menuOpenKey, setMenuOpenKey] = useState<string | null>(null);
 
   /**
@@ -100,13 +102,12 @@ const ChatSidebar = ({
             className="history-item"
             $active={item.key === activeKey}
             $disabled={item.isDisabled || false}
+            $isMoving={item.key === movingThreadId}
             onClick={() => {
               if (editingKey !== item.key && menuOpenKey !== item.key) {
                 onActiveChange(item.key);
               }
             }}
-            onMouseEnter={() => setHoveredKey(item.key)}
-            onMouseLeave={() => setHoveredKey(null)}
           >
             <HistoryItemHeader>
               {editingKey === item.key ? (
@@ -122,7 +123,8 @@ const ChatSidebar = ({
               ) : (
                 <>
                   <HistoryItemTitle $disabled={item.isDisabled || false}>
-                    {item.label}
+                    {item.label || 'New Chat'}
+                    {item.isTyping && <span className="typing-cursor">|</span>}
                     {item.isDisabled && ' (disabled)'}
                   </HistoryItemTitle>
                   <HistoryItemActions>

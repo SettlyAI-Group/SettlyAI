@@ -55,4 +55,14 @@ export const deleteThread = async (threadId: string): Promise<void> => {
   await chatBotApi.delete(`/threads/${threadId}`);
 };
 
+export interface UpdateThreadPayload {
+  metadata?: Record<string, unknown>;
+  values?: Record<string, unknown>;
+}
+
+export const updateThread = async (threadId: string, payload: UpdateThreadPayload): Promise<ThreadResponse> => {
+  const { data } = await chatBotApi.patch<ThreadResponse>(`/threads/${threadId}`, payload);
+  return data;
+};
+
 export default chatBotApi;

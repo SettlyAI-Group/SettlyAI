@@ -1,4 +1,23 @@
-import { styled } from '@mui/material/styles';
+import { styled, keyframes } from '@mui/material/styles';
+
+// ============ Keyframes ============
+export const slideToTop = keyframes`
+  from {
+    opacity: 0.5;
+  }
+  to {
+    opacity: 1;
+  }
+`;
+
+export const cursorBlink = keyframes`
+  0%, 50% {
+    opacity: 1;
+  }
+  51%, 100% {
+    opacity: 0;
+  }
+`;
 
 // ============ Styled Components ============
 export const HistorySidebarHeader = styled('div')(() => ({
@@ -76,38 +95,46 @@ export const HistoryList = styled('div')(() => ({
   },
 }));
 
-export const HistoryItem = styled('div')<{ $active: boolean; $disabled: boolean }>(({ $active, $disabled }) => ({
-  padding: '6px 8px',
-  marginBottom: '2px',
-  background: 'white',
-  borderRadius: '6px',
-  cursor: 'pointer',
-  transition: 'all 0.2s',
-  position: 'relative',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '2px',
+export const HistoryItem = styled('div')<{ $active: boolean; $disabled: boolean; $isMoving?: boolean }>(
+  ({ $active, $disabled, $isMoving }) => ({
+    padding: '6px 8px',
+    marginBottom: '2px',
+    background: 'white',
+    borderRadius: '6px',
+    cursor: 'pointer',
+    transition: 'all 0.2s',
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '2px',
 
-  '&:hover': {
-    background: '#F5F5F5',
-    transform: 'translateX(2px)',
-  },
+    '&:hover': {
+      background: '#F5F5F5',
+      transform: 'translateX(2px)',
+    },
 
-  ...$active && {
-    background: '#F5F3FF',
-    borderLeft: '2px solid #7B61FF',
-  },
+    ...$active && {
+      background: '#F5F3FF',
+      borderLeft: '2px solid #7B61FF',
+    },
 
-  ...$disabled && {
-    opacity: 0.6,
-  },
+    ...$disabled && {
+      opacity: 0.6,
+    },
 
-  '@media (max-width: 375px)': {
-    padding: '5px 6px',
-    marginBottom: '1px',
-    gap: '1px',
-  },
-}));
+    ...$isMoving && {
+      animation: `${slideToTop} 0.8s ease-out`,
+      background: 'linear-gradient(135deg, #F5F3FF 0%, #EDE9FE 100%)',
+      transition: 'background 0.8s ease-out',
+    },
+
+    '@media (max-width: 375px)': {
+      padding: '5px 6px',
+      marginBottom: '1px',
+      gap: '1px',
+    },
+  })
+);
 
 export const HistoryItemHeader = styled('div')(() => ({
   display: 'flex',
@@ -125,6 +152,12 @@ export const HistoryItemTitle = styled('div')<{ $disabled: boolean }>(({ $disabl
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
   fontStyle: $disabled ? 'italic' : 'normal',
+
+  '& .typing-cursor': {
+    marginLeft: '2px',
+    color: '#7B61FF',
+    animation: `${cursorBlink} 1s step-end infinite`,
+  },
 
   '@media (max-width: 375px)': {
     fontSize: '12px',

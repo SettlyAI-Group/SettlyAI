@@ -93,11 +93,13 @@ const ChatWindow = ({ onClose, isClosing = false }: ChatWindowProps = {}) => {
   const {
     conversations,
     activeKey,
+    movingThreadId,
     updateConversation,
     handleNewChat,
     handleActiveChange,
     handleDeleteConversation,
     handleToggleDisable,
+    handleChatComplete,
   } = useChatThread({ userChatId });
 
   // 聊天功能
@@ -154,6 +156,7 @@ const ChatWindow = ({ onClose, isClosing = false }: ChatWindowProps = {}) => {
         }, 100);
       }
     }
+
     prevIsStreamingRef.current = isStreaming;
   }, [isStreaming, messages]);
 
@@ -163,6 +166,32 @@ const ChatWindow = ({ onClose, isClosing = false }: ChatWindowProps = {}) => {
   const handleSubmit = () => {
     const text = input.trim();
     if (!text || !activeKey || isActiveConversationDisabled || isStreaming) return;
+
+    // 立即更新对话标题（如果还是 "New Chat"）
+    const activeConv = conversations.find(c => c.key === activeKey);
+    if (activeConv && activeConv.label === 'New Chat') {
+      const targetLabel = text.length > 30 ? `${text.slice(0, 30)}...` : text;
+
+      // 设置 typing 状态
+      updateConversation(activeKey, { isTyping: true, label: '' });
+
+      // 逐字打字效果
+      let currentIndex = 0;
+      const typingInterval = setInterval(() => {
+        currentIndex++;
+        const partialLabel = targetLabel.slice(0, currentIndex);
+        updateConversation(activeKey, { label: partialLabel });
+
+        if (currentIndex >= targetLabel.length) {
+          clearInterval(typingInterval);
+          updateConversation(activeKey, { isTyping: false });
+        }
+      }, 50); // 每 50ms 显示一个字符
+    }
+
+    // 立即调用 handleChatComplete 更新 updatedAt 并移动到顶部
+    handleChatComplete(activeKey, text);
+
     sendMessage(text);
     setInput('');
     setShowGuide(false);
@@ -221,17 +250,34 @@ const ChatWindow = ({ onClose, isClosing = false }: ChatWindowProps = {}) => {
   /**
    * 转换消息格式为 Bubble.List 需要的格式
    */
-  const bubbleItems = messages.map(m => {
-    const isTypingPlaceholder = m.role === 'assistant' && m.status === 'loading' && m.content.trim() === '';
+  const bubbleItems = messages
+    .filter(m => {
+      // 过滤掉空内容的 loading 占位符（如果已经有实际回复了）
+      if (m.role === 'assistant' && m.status === 'loading' && m.content.trim() === '') {
+        // 检查是否已经有其他 assistant 消息
+        const hasOtherAssistantMsg = messages.some(
+          msg => msg.role === 'assistant' && msg.id !== m.id && msg.content.trim() !== ''
+        );
+        if (hasOtherAssistantMsg) {
+          return false; // 过滤掉这个 placeholder
+        }
+      }
+      return true;
+    })
+    .map(m => {
+      // 只有当是 assistant 且状态为 loading 且内容为空时，才显示 loading
+      const isTypingPlaceholder = m.role === 'assistant' && m.status === 'loading' && m.content.trim() === '';
+      // 只有当状态为 streaming 时，才显示 typing 效果
+      const isTyping = m.role === 'assistant' && m.status === 'streaming';
 
-    return {
-      key: m.id,
-      role: m.role,
-      content: m.content,
-      loading: isTypingPlaceholder,
-      typing: m.role === 'assistant' && m.status === 'streaming' ? { step: 5, interval: 20 } : false,
-    };
-  });
+      return {
+        key: m.id,
+        role: m.role,
+        content: m.content,
+        loading: isTypingPlaceholder,
+        typing: isTyping ? { step: 5, interval: 20 } : false,
+      };
+    });
 
   const activeConversation = conversations.find(item => item.key === activeKey);
   const isActiveConversationDisabled = Boolean(activeConversation?.isDisabled);
@@ -260,9 +306,11 @@ const ChatWindow = ({ onClose, isClosing = false }: ChatWindowProps = {}) => {
             label: item.label,
             timestamp: item.updatedAt,
             isDisabled: item.isDisabled,
+            isTyping: item.isTyping,
             preview: extractPreview(item.values),
           }))}
           activeKey={activeKey}
+          movingThreadId={movingThreadId}
           editingKey={editingKey}
           renameDraft={renameDraft}
           onRenameStart={handleRenameStart}

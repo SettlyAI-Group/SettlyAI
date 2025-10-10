@@ -19,6 +19,7 @@ export interface ConversationItem {
   label: string;
   updatedAt: number;
   isDisabled?: boolean;
+  isTyping?: boolean;
   values?: Record<string, unknown>;
 }
 

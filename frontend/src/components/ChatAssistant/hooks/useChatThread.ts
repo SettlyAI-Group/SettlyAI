@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { createThread as createThreadApi, deleteThread as deleteThreadApi, searchThreads } from '@/api/chatBotApi';
+import { createThread as createThreadApi, deleteThread as deleteThreadApi, searchThreads, updateThread } from '@/api/chatBotApi';
 import type { ConversationItem } from '../types';
 import { THREAD_TTL_SECONDS } from '../constants';
 
@@ -15,6 +15,7 @@ export const useChatThread = ({ userChatId }: UseChatThreadOptions) => {
   const [activeKey, setActiveKey] = useState('');
   const [isCreatingThread, setIsCreatingThread] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [movingThreadId, setMovingThreadId] = useState<string | null>(null);
   const activeThreadRef = useRef('');
 
   useEffect(() => {
@@ -198,16 +199,71 @@ export const useChatThread = ({ userChatId }: UseChatThreadOptions) => {
     [conversations, updateConversation]
   );
 
+  /**
+   * 聊天完成后更新 thread 并重新排序到顶部（带动画）
+   */
+  const handleChatComplete = useCallback(async (threadId: string, firstUserMessage?: string) => {
+    if (!threadId) return;
+
+    try {
+      // 调用后端 API 更新 thread（触发 updated_at 更新）
+      await updateThread(threadId, {
+        metadata: { last_message_preview: firstUserMessage?.slice(0, 30) || '' },
+      });
+
+      // 获取最新的 thread 数据
+      const threads = await searchThreads({
+        ids: [threadId],
+        select: ['thread_id', 'updated_at', 'values'],
+      });
+
+      if (threads.length > 0) {
+        const updatedThread = threads[0];
+        const newUpdatedAt = new Date(updatedThread.updated_at || Date.now()).getTime();
+
+        // 先重新排序，再标记为移动中
+        setConversations(prev => {
+          const updated = prev.map(item => {
+            if (item.key === threadId) {
+              return {
+                ...item,
+                updatedAt: newUpdatedAt,
+                values: updatedThread.values,
+              };
+            }
+            return item;
+          });
+          // 重新排序（按 updatedAt 降序）
+          return updated.sort((a, b) => b.updatedAt - a.updatedAt);
+        });
+
+        // 稍微延迟后标记为移动中（触发动画）
+        setTimeout(() => {
+          setMovingThreadId(threadId);
+
+          // 动画结束后移除标记
+          setTimeout(() => {
+            setMovingThreadId(null);
+          }, 800);
+        }, 50);
+      }
+    } catch (error) {
+      console.error('Failed to update thread after chat:', error);
+    }
+  }, []);
+
   return {
     conversations,
     activeKey,
     isCreatingThread,
     errorMessage,
+    movingThreadId,
     updateConversation,
     handleNewChat,
     handleActiveChange,
     handleDeleteConversation,
     handleToggleDisable,
+    handleChatComplete,
     setActiveKey,
   };
 };
