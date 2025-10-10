@@ -71,7 +71,6 @@ async function processSSEStream(
 
       // 跳过非 messages 事件
       if (eventName && !eventName.startsWith('messages|')) {
-        console.log(`⏭️ [processSSE] 跳过非 messages 事件: ${eventName}`);
         continue;
       }
 
@@ -90,7 +89,6 @@ async function processSSEStream(
       // 过滤非 Tina 消息
       const node = meta?.langgraph_node;
       if (node !== 'tina' && node !== 'tina_agent') {
-        console.log(`⏭️ [processSSE] 跳过非 Tina 消息, node: ${node}`);
         continue;
       }
 
@@ -98,11 +96,8 @@ async function processSSEStream(
       const checkpointNs = meta?.langgraph_checkpoint_ns || meta?.checkpoint_ns;
       const subAgents = ['|tom:', '|avi:', '|ivy:', '|levan:'];
       if (subAgents.some(agent => checkpointNs?.includes(agent))) {
-        console.log(`⏭️ [processSSE] 跳过子 agent 消息, checkpoint_ns: ${checkpointNs}`);
         continue;
       }
-
-      console.log(`✅ [processSSE] 收到有效消息, node: ${node}, type: ${msg?.type}`);
 
 
       const content = Array.isArray(msg?.content) ? msg.content : [];
@@ -124,7 +119,6 @@ async function processSSEStream(
             } else {
               // 🔑 新的 assistant 消息开始，删除所有 tool_call loader
               if (toolCallIds.length > 0) {
-                console.log('🗑️ [text] 删除 tool_call loader（新消息开始）');
                 prev = prev.filter(m => !toolCallIds.includes(m.id));
                 toolCallIds.length = 0; // 清空数组
               }
@@ -136,7 +130,6 @@ async function processSSEStream(
 
               if (typingPlaceholder) {
                 // ✅ 复用 typing 占位符，改变 ID 防止下次被找到
-                console.log('🔄 [text] 复用 typing:', typingPlaceholder.id);
                 const newId = `assistant_${Date.now()}_${Math.random()}`;
                 currentAssistantId = newId;
                 typingPlaceholderUsed = true;
@@ -148,7 +141,6 @@ async function processSSEStream(
               } else {
                 // 没有 typing 占位符或已使用，创建新消息
                 const newId = `assistant_${Date.now()}_${Math.random()}`;
-                console.log('🆕 [text] 创建新消息:', newId);
                 currentAssistantId = newId;
                 return [
                   ...prev,
@@ -168,7 +160,6 @@ async function processSSEStream(
         // 处理工具调用
         else if (c?.type === 'tool_use') {
           const toolName = c?.name || 'unknown';
-          console.log(`🔧 [tool_use] 收到: ${toolName}`);
 
           // 完成当前 assistant 消息
           if (currentAssistantId) {
@@ -182,7 +173,6 @@ async function processSSEStream(
           const toolId = `tool_${Date.now()}_${Math.random()}`;
           toolCallIds.push(toolId);
 
-          console.log(`🔧 [tool_call] 添加 loader: ${extractColleagueName(toolName)}`);
           setMessages(prev => [
             ...prev,
             {
@@ -204,7 +194,6 @@ async function processSSEStream(
   while (true) {
     const { value, done } = await reader.read();
     if (done) {
-      console.log('🏁 [processSSE] SSE 流结束');
       buffer += decoder.decode();
       flushBuffer();
 
@@ -217,7 +206,6 @@ async function processSSEStream(
 
       // 删除所有 tool_call 占位符
       if (toolCallIds.length > 0) {
-        console.log('🗑️ [完成] 删除 tool_call loader');
         setMessages(prev => prev.filter(m => !toolCallIds.includes(m.id)));
       }
 
@@ -253,8 +241,6 @@ export const useStreamChat = (threadId: string) => {
     const rawMessages = Array.isArray(threadValues.messages) ? threadValues.messages : [];
     const historyMessages: Message[] = [];
 
-    console.log(`📜 [loadHistory] 开始解析 ${rawMessages.length} 条原始消息`);
-
     for (const msg of rawMessages) {
       // 跳过系统消息
       if (msg.type === 'system' || msg.role === 'system') continue;
@@ -272,7 +258,6 @@ export const useStreamChat = (threadId: string) => {
       }
 
       if (!content.trim()) {
-        console.log(`⚠️ [loadHistory] 跳过空消息:`, msg);
         continue;
       }
 
@@ -299,15 +284,12 @@ export const useStreamChat = (threadId: string) => {
       }
     }
 
-    console.log(`📜 [loadHistory] 成功加载 ${historyMessages.length} 条有效消息`);
     setMessages(historyMessages);
   }, []);
 
   // 发送消息
   const sendMessage = useCallback(
     async (content: string) => {
-      console.log(`🚀 [sendMessage] 发送消息: "${content}", threadId: ${threadId}`);
-
       const userMsg: Message = {
         id: `user_${Date.now()}`,
         role: 'user',
@@ -325,7 +307,6 @@ export const useStreamChat = (threadId: string) => {
         timestamp: Date.now(),
       };
 
-      console.log(`📝 [sendMessage] 添加消息:`, { userMsg, typingPlaceholder });
       setMessages(prev => [...prev, userMsg, typingPlaceholder]);
       setIsStreaming(true);
 
@@ -333,7 +314,6 @@ export const useStreamChat = (threadId: string) => {
       abortControllerRef.current = ac;
 
       try {
-        console.log(`🌐 [sendMessage] 开始请求 API...`);
         const res = await fetch(`/langgraph/threads/${threadId}/runs/stream`, {
           method: 'POST',
           signal: ac.signal,
@@ -346,7 +326,6 @@ export const useStreamChat = (threadId: string) => {
           }),
         });
 
-        console.log(`📡 [sendMessage] API 响应: ${res.status} ${res.statusText}`);
         if (!res.ok || !res.body) throw new Error(`HTTP ${res.status}`);
 
         await processSSEStream(res.body, setMessages, threadId, activeThreadRef);

@@ -2,9 +2,9 @@ import { useEffect, useRef, useState } from 'react';
 import { Box, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { Bubble, Sender } from '@ant-design/x';
-import type { GetProp } from 'antd';
+import type { GetProp, GetRef } from 'antd';
 import type { BubbleProps } from '@ant-design/x';
-import { Button, Space, Spin, Typography as AntTypography } from 'antd';
+import { Space, Spin, Typography as AntTypography } from 'antd';
 import ChatSidebar from './component/ChatSidebar';
 import { ensureUserChatId } from '../../utils/userChatId';
 import { UserOutlined } from '@ant-design/icons';
@@ -27,16 +27,19 @@ const renderMarkdown: BubbleProps['messageRender'] = content => {
 const BUBBLE_ROLES: GetProp<typeof Bubble.List, 'roles'> = {
   user: {
     placement: 'end',
+    variant: 'shadow',
     avatar: { icon: <UserOutlined />, style: { color: '#fff', backgroundColor: '#87d068' } },
   },
   assistant: {
     placement: 'start',
+    variant: 'filled',
     avatar: { icon: <UserOutlined />, style: { color: '#f56a00', backgroundColor: '#fde3cf' } },
     messageRender: renderMarkdown,
     typing: { step: 5, interval: 20 },
   },
   tool_call: {
     placement: 'start',
+    variant: 'outlined',
     avatar: { icon: <UserOutlined />, style: { color: '#f56a00', backgroundColor: '#fde3cf' } },
     messageRender: content => (
       <Space>
@@ -73,11 +76,6 @@ const ChatHeader = styled(Box)(({ theme }) => ({
   borderBottom: `1px solid ${theme.palette.divider}`,
 }));
 
-const ChatFooter = styled(Box)(({ theme }) => ({
-  borderTop: `1px solid ${theme.palette.divider}`,
-  padding: theme.spacing(2),
-}));
-
 const StyledBubbleList = styled(Bubble.List)(() => ({
   flex: 1,
   overflow: 'auto',
@@ -111,21 +109,16 @@ const StyledBubbleList = styled(Bubble.List)(() => ({
   },
 }));
 
-const StyledSendButton = styled(Button)(() => ({
-  '&.ant-btn-primary': {
-    backgroundColor: '#000000 !important',
-    borderColor: '#000000 !important',
-    '&:hover, &:active, &:focus': {
-      backgroundColor: '#333333 !important',
-      borderColor: '#333333 !important',
-    },
-  },
+const ChatFooter = styled(Box)(({ theme }) => ({
+  borderTop: `1px solid ${theme.palette.divider}`,
+  padding: theme.spacing(2),
 }));
 
 // ============ 主组件 ============
 const ChatWindow = () => {
   const [userChatId, setUserChatId] = useState<string | null>(null);
   const [input, setInput] = useState('');
+  const bubbleListRef = useRef<GetRef<typeof Bubble.List>>(null);
 
   useEffect(() => {
     setUserChatId(ensureUserChatId());
@@ -165,10 +158,8 @@ const ChatWindow = () => {
 
     const activeConv = conversations.find(c => c.key === activeKey);
     if (activeConv?.values) {
-      console.log(`🔄 [ChatWindow] 切换到 thread: ${activeKey}, 历史消息:`, activeConv.values);
       loadHistory(activeConv.values);
     } else {
-      console.log(`🔄 [ChatWindow] 切换到新 thread: ${activeKey}, 无历史消息`);
       setMessages([]);
     }
   }, [activeKey, conversations, loadHistory, setMessages]);
@@ -179,6 +170,22 @@ const ChatWindow = () => {
       abort();
     };
   }, [abort]);
+
+  // 自动滚动到最新消息（当 streaming 完成时）
+  const prevIsStreamingRef = useRef(isStreaming);
+  useEffect(() => {
+    // 当 isStreaming 从 true 变为 false（streaming 完成）时，滚动到最新消息
+    if (prevIsStreamingRef.current && !isStreaming && messages.length > 0) {
+      const lastMessageKey = messages[messages.length - 1]?.id;
+      if (lastMessageKey && bubbleListRef.current) {
+        // 延迟一下确保 DOM 更新完成
+        setTimeout(() => {
+          bubbleListRef.current?.scrollTo({ key: lastMessageKey, block: 'end' });
+        }, 100);
+      }
+    }
+    prevIsStreamingRef.current = isStreaming;
+  }, [isStreaming, messages]);
 
   // 转换消息格式为 Bubble.List 需要的格式
   const bubbleItems = messages.map(m => {
@@ -234,10 +241,11 @@ const ChatWindow = () => {
           )}
         </ChatHeader>
 
-        <StyledBubbleList className="chat-no-drag" roles={BUBBLE_ROLES} items={bubbleItems} />
+        <StyledBubbleList ref={bubbleListRef} className="chat-no-drag" roles={BUBBLE_ROLES} items={bubbleItems} />
 
         <ChatFooter className="chat-no-drag">
           <Sender
+            loading={isStreaming}
             value={input}
             onChange={setInput}
             onSubmit={() => {
@@ -246,14 +254,13 @@ const ChatWindow = () => {
               sendMessage(text);
               setInput('');
             }}
+            onCancel={() => {
+              abort();
+            }}
             placeholder={
               isActiveConversationDisabled ? 'Enable this conversation to send messages.' : 'Type your message...'
             }
-            disabled={!userChatId || !activeKey || isActiveConversationDisabled || isStreaming}
-            actions={(_, { components }) => {
-              const { SendButton } = components;
-              return <StyledSendButton as={SendButton} />;
-            }}
+            disabled={!userChatId || !activeKey || isActiveConversationDisabled}
           />
         </ChatFooter>
       </ChatContainer>
