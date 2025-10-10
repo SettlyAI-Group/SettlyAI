@@ -34,4 +34,5 @@ storybook-static
 .env.production
 .env.staging
 
-src/assets/response.json
+src/assets/chatBoxTestFiles
+claude.md

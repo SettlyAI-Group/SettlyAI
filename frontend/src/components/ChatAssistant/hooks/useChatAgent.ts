@@ -99,12 +99,27 @@ export const useChatAgent = () => {
             const node = meta?.langgraph_node;
             const checkpointNs = meta?.langgraph_checkpoint_ns || meta?.checkpoint_ns;
 
+            // Debug logging
+            console.log('[DEBUG] Message chunk:', {
+              node,
+              checkpointNs,
+              msgType: msg?.type,
+              contentLength: Array.isArray(msg?.content) ? msg.content.length : 'not-array',
+              content: msg?.content,
+            });
+
             // 1. 过滤非 Tina 节点的消息（Tom、Avi、tools 等）
-            if (node !== 'tina' && node !== 'tina_agent') continue;
+            if (node !== 'tina' && node !== 'tina_agent') {
+              console.log('[DEBUG] Filtered: not tina node');
+              continue;
+            }
 
             // 2. 过滤子代理的内部消息（Tom/Avi/Ivy/Levan 处理过程）
             const subAgents = ['|tom:', '|avi:', '|ivy:', '|levan:'];
-            if (subAgents.some(agent => checkpointNs?.includes(agent))) continue;
+            if (subAgents.some(agent => checkpointNs?.includes(agent))) {
+              console.log('[DEBUG] Filtered: sub-agent message');
+              continue;
+            }
 
             // ===== 内容处理逻辑 =====
             const content = Array.isArray(msg?.content)

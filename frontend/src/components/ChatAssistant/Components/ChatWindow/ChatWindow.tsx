@@ -29,7 +29,6 @@ const BUBBLE_ROLES: GetProp<typeof Bubble.List, 'roles'> = {
   assistant: {
     placement: 'start',
     avatar: { icon: <UserOutlined />, style: { color: '#f56a00', backgroundColor: '#fde3cf' } },
-    typing: { step: 5, interval: 20 },
     messageRender: renderMarkdown,
   },
   tool_call: {
@@ -239,11 +238,18 @@ const ChatWindow = () => {
             const isEmpty = !it.message.text || it.message.text.trim() === '';
             const hasToolCall = parsedMessages.some(m => m.message.role === 'tool_call');
 
+            // 检查是否是正在更新的消息（最后一条 + status 为 updating）
+            const isLastMessage = idx === parsedMessages.length - 1;
+            const isUpdating = it.status === 'updating';
+            const shouldShowTyping = it.message.role === 'assistant' && isLastMessage && isUpdating;
+
             // 统一返回格式,让 BUBBLE_ROLES 处理样式
             return {
               key: idx,
               role: it.message.role,
               content: it.message.text,
+              // 只有正在更新的消息才显示打字效果
+              typing: shouldShowTyping ? { step: 5, interval: 20 } : false,
               // 只有 assistant 且内容为空且无工具调用时才显示 loading
               loading: it.message.role === 'assistant' && isEmpty && isRequesting && !hasToolCall,
             };
