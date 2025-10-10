@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Box, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { Bubble, Sender } from '@ant-design/x';
@@ -10,7 +10,6 @@ import { ensureUserChatId } from '../../utils/userChatId';
 import { UserOutlined } from '@ant-design/icons';
 import { useChatThread, useChatRename } from '../../hooks';
 import { useStreamChat } from '../../hooks/useStreamChat';
-import type { Message } from '../../hooks/useStreamChat';
 import markdownit from 'markdown-it';
 
 const md = markdownit({ html: true, breaks: true });
@@ -146,11 +145,33 @@ const ChatWindow = () => {
   } = useChatThread({ userChatId });
 
   // 聊天功能
-  const { messages, isStreaming, sendMessage, abort, setMessages } = useStreamChat(activeKey);
+  const { messages, isStreaming, sendMessage, abort, setMessages, loadHistory } = useStreamChat(activeKey);
 
   // 重命名功能
   const { editingKey, renameDraft, setRenameDraft, cancelRename, handleRenameStart, handleRenameSubmit } =
     useChatRename(conversations, updateConversation);
+
+  // 当 activeKey 改变时，加载该 thread 的历史消息
+  const prevActiveKeyRef = useRef<string>('');
+  useEffect(() => {
+    // 只在 activeKey 改变时加载历史，不依赖 conversations 变化
+    if (prevActiveKeyRef.current === activeKey) return;
+    prevActiveKeyRef.current = activeKey;
+
+    if (!activeKey) {
+      setMessages([]);
+      return;
+    }
+
+    const activeConv = conversations.find(c => c.key === activeKey);
+    if (activeConv?.values) {
+      console.log(`🔄 [ChatWindow] 切换到 thread: ${activeKey}, 历史消息:`, activeConv.values);
+      loadHistory(activeConv.values);
+    } else {
+      console.log(`🔄 [ChatWindow] 切换到新 thread: ${activeKey}, 无历史消息`);
+      setMessages([]);
+    }
+  }, [activeKey, conversations, loadHistory, setMessages]);
 
   // 组件卸载时中止请求
   useEffect(() => {

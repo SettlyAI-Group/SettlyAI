@@ -6,6 +6,7 @@ export interface ConversationItem {
   label: string;
   updatedAt: number;
   isDisabled?: boolean;
+  values?: Record<string, unknown>; // thread 的历史消息数据
 }
 
 const THREAD_TTL_SECONDS = 600;
@@ -61,6 +62,7 @@ export const useChatThread = ({ userChatId }: UseChatThreadOptions) => {
           key: thread.thread_id,
           label: 'New Chat',
           updatedAt: new Date(thread.updated_at || thread.created_at || Date.now()).getTime(),
+          values: thread.values, // 保存 thread 的历史消息
         }));
 
         setConversations(prev => {
@@ -71,6 +73,7 @@ export const useChatThread = ({ userChatId }: UseChatThreadOptions) => {
               ...item,
               label: prevItem?.label ?? item.label,
               isDisabled: prevItem?.isDisabled ?? false,
+              values: item.values, // 保留最新的 values
             };
           });
         });
@@ -127,13 +130,48 @@ export const useChatThread = ({ userChatId }: UseChatThreadOptions) => {
   // 切换会话
   const handleActiveChange = useCallback(
     async (key: string) => {
-      if (!key || key === activeKey) return;
+      console.log(`🔄 [handleActiveChange] 切换到: ${key}, 当前: ${activeKey}`);
+
+      if (!key || key === activeKey) {
+        console.log(`⚠️ [handleActiveChange] 跳过（已经是当前 thread）`);
+        return;
+      }
 
       const targetConversation = conversations.find(item => item.key === key);
       if (targetConversation?.isDisabled) return;
 
-      setActiveKey(key);
       setErrorMessage(null);
+
+      // 🔑 先获取最新数据，再切换 activeKey
+      try {
+        console.log(`📡 [handleActiveChange] 获取 thread values...`);
+        const threads = await searchThreads({
+          ids: [key],
+          select: ['thread_id', 'values'],
+        });
+
+        console.log(`📦 [handleActiveChange] 收到 values:`, threads[0]?.values);
+
+        if (threads.length > 0) {
+          // 先更新 conversation 的 values
+          setConversations(prev =>
+            prev.map(item =>
+              item.key === key
+                ? { ...item, values: threads[0].values }
+                : item
+            )
+          );
+          console.log(`✅ [handleActiveChange] 已更新 conversations`);
+        }
+
+        // 最后再切换 activeKey，确保 values 已经准备好
+        console.log(`✅ [handleActiveChange] 设置 activeKey: ${key}`);
+        setActiveKey(key);
+      } catch (error) {
+        console.error('Failed to fetch thread values:', error);
+        // 即使出错也切换（显示空历史）
+        setActiveKey(key);
+      }
     },
     [activeKey, conversations]
   );
