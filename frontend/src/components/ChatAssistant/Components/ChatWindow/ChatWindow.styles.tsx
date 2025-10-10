@@ -289,12 +289,11 @@ export const GuideTitle = styled('div')(() => ({
 
 export const GuideActions = styled('div')(() => ({
   display: 'grid',
-  gridTemplateColumns: 'repeat(2, 1fr)',
+  gridTemplateColumns: '1fr',
   gap: '8px',
 
-  '@media (max-width: 900px)': {
-    gridTemplateColumns: '1fr',
-    gap: '8px',
+  '@media (min-width: 1200px)': {
+    gridTemplateColumns: 'repeat(2, 1fr)',
   },
 
   '@media (max-width: 480px)': {

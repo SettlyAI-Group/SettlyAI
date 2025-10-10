@@ -117,14 +117,18 @@ const ChatWindow = ({ onClose, isClosing = false }: ChatWindowProps = {}) => {
 
     if (!activeKey) {
       setMessages([]);
+      setShowGuide(false);
       return;
     }
 
     const activeConv = conversations.find(c => c.key === activeKey);
     if (activeConv?.values) {
       loadHistory(activeConv.values);
+      setShowGuide(false);
     } else {
+      // 新建的空对话，显示 Quick Start
       setMessages([]);
+      setShowGuide(true);
     }
   }, [activeKey, conversations, loadHistory, setMessages]);
 
