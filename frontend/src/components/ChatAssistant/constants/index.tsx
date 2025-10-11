@@ -2,13 +2,13 @@
  * 共享常量定义
  */
 
-import { UserOutlined } from '@ant-design/icons';
-import { Space, Spin } from 'antd';
+import { UserOutlined, TeamOutlined } from '@ant-design/icons';
 import type { GetProp } from 'antd';
 import type { Bubble } from '@ant-design/x';
 import type { BubbleProps } from '@ant-design/x';
 import markdownit from 'markdown-it';
 import tinaImage from '../../../assets/image.png';
+import { RotatingMessage } from '../components/RotatingMessage';
 
 // Tina 的头像图标（使用真实图片）
 export const TinaAvatar = () => (
@@ -79,15 +79,14 @@ export const BUBBLE_ROLES: GetProp<typeof Bubble.List, 'roles'> = {
     placement: 'start',
     variant: 'outlined',
     avatar: {
-      icon: <UserOutlined />,
-      style: { color: '#1890FF', backgroundColor: '#E6F7FF' },
+      icon: <TeamOutlined />,
+      style: {
+        color: '#7B61FF',
+        backgroundColor: '#F5F3FF',
+        fontSize: '18px',
+      },
     },
-    messageRender: content => (
-      <Space>
-        <Spin size="small" />
-        <span style={{ color: '#666' }}>{content}</span>
-      </Space>
-    ),
+    // messageRender 现在不需要了，我们会传递 RotatingMessage 组件作为 content
   },
   error: {
     placement: 'start',

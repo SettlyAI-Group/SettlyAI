@@ -12,6 +12,8 @@ export interface Message {
   status: MessageStatus;
   toolName?: string;
   timestamp: number;
+  // 轮播消息列表（用于 tool_call）
+  rotatingMessages?: string[];
 }
 
 export interface ConversationItem {

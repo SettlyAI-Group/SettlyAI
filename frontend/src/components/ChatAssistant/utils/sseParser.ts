@@ -4,12 +4,13 @@
 
 import type { Message, SSEMetadata, MessageChunk } from '../types';
 import { SUB_AGENTS, TINA_NODES } from '../constants';
+import { ROTATING_MESSAGES, extractAgentName } from '../constants/rotatingMessages';
 
 /**
- * 提取工具名称中的同事名称
+ * 提取工具名称中的同事名称（保留用于向后兼容）
  */
 export const extractColleagueName = (toolName = ''): string => {
-  const match = toolName.match(/(tom|ivy|levan|avi)/i);
+  const match = toolName.match(/(tom|ivy|levan|levin|avi)/i);
   if (!match) return '同事';
   const name = match[1].toLowerCase();
   return name.charAt(0).toUpperCase() + name.slice(1);
@@ -208,14 +209,21 @@ export async function processSSEStream(
 
             const toolCallId = `tool_${Date.now()}_${Math.random()}`;
 
-            // 添加 tool_call 占位符
+            // 获取 Agent 名称和轮播消息列表
+            const agentName = extractAgentName(toolName);
+            const rotatingMessages = agentName && ROTATING_MESSAGES[agentName]
+              ? ROTATING_MESSAGES[agentName]
+              : [`Connecting to ${extractColleagueName(toolName)}...`];
+
+            // 添加 tool_call 占位符（content 现在只是占位，真实内容由 rotatingMessages 提供）
             return [
               ...updated,
               {
                 id: toolCallId,
                 role: 'tool_call' as const,
-                content: `正在和${extractColleagueName(toolName)}沟通...`,
+                content: '', // 占位符，实际内容由 RotatingMessage 组件渲染
                 toolName: toolName,
+                rotatingMessages: rotatingMessages, // 传递消息列表
                 status: 'loading' as const,
                 timestamp: Date.now(),
               },

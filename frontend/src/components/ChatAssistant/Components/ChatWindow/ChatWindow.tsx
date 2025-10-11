@@ -15,6 +15,7 @@ import type { GetRef } from 'antd';
 import { ensureUserChatId } from '../../utils/userChatId';
 import { useChatThread, useChatRename, useStreamChat } from '../../hooks';
 import { BUBBLE_ROLES, TinaAvatar } from '../../constants';
+import { RotatingMessage } from '../../components/RotatingMessage';
 import ChatSidebar from './components/ChatSidebar';
 import {
   ChatWindowContainer,
@@ -293,6 +294,17 @@ const ChatWindow = ({ onClose, isClosing = false }: ChatWindowProps = {}) => {
       const isTypingPlaceholder = m.id.startsWith('typing_');
       // streaming: 正在接收内容的消息
       const isTyping = m.role === 'assistant' && m.status === 'streaming';
+
+      // tool_call: 使用 RotatingMessage 组件
+      if (m.role === 'tool_call' && m.rotatingMessages) {
+        return {
+          key: m.id,
+          role: m.role,
+          content: <RotatingMessage messages={m.rotatingMessages} intervalMs={3000} typingSpeed={30} />,
+          loading: false,
+          typing: false,
+        };
+      }
 
       return {
         key: m.id,
