@@ -137,29 +137,24 @@ export async function processSSEStream(
           if (!piece) continue;
 
           setMessages(prev => {
-            console.log('📝 收到文本:', piece.slice(0, 20));
-
             // 检查是否已经有 streaming 状态的 assistant 消息（从最后往前找，找最新的）
             const streamingAssistants = prev.filter(m => m.role === 'assistant' && m.status === 'streaming');
             const streamingAssistant = streamingAssistants[streamingAssistants.length - 1];
 
             // 累加到当前 assistant 消息
             if (streamingAssistant) {
-              console.log('➕ 累加到:', streamingAssistant.id);
               return prev.map(m =>
                 m.id === streamingAssistant.id
                   ? { ...m, content: m.content + piece, status: 'streaming' as const }
                   : m
               );
             } else {
-              console.log('🆕 新消息开始');
               // 新的 assistant 消息开始
               let updated = prev;
 
               // 删除所有 tool_call loader
               const toolCallMessages = updated.filter(m => m.role === 'tool_call');
               if (toolCallMessages.length > 0) {
-                console.log('🗑️ 删除 tool_call:', toolCallMessages.length);
                 updated = updated.filter(m => m.role !== 'tool_call');
               }
 
@@ -167,16 +162,12 @@ export async function processSSEStream(
               const typingPlaceholders = updated.filter(m => m.id.startsWith('typing_'));
               const typingPlaceholder = typingPlaceholders[typingPlaceholders.length - 1];
 
-              console.log('🔍 typing 数量:', typingPlaceholders.length, '找到:', !!typingPlaceholder);
-
               if (typingPlaceholder) {
                 // 复用 typing 占位符
                 const newId = `assistant_${Date.now()}_${Math.random()}`;
                 // 更新外部变量（注意：Strict Mode 会调用两次，但这是幂等的）
                 currentAssistantId = newId;
                 typingPlaceholderUsed = true;
-
-                console.log('♻️ 复用 typing');
 
                 return updated.map(m =>
                   m.id === typingPlaceholder.id
@@ -187,8 +178,6 @@ export async function processSSEStream(
                 // 创建新消息
                 const newId = `assistant_${Date.now()}_${Math.random()}`;
                 currentAssistantId = newId;
-
-                console.log('✨ 创建新消息');
 
                 return [
                   ...updated,
@@ -208,8 +197,6 @@ export async function processSSEStream(
         // 处理工具调用
         else if (c?.type === 'tool_use') {
           const toolName = c?.name || 'unknown';
-
-          console.log('🔧 工具调用:', toolName);
 
           setMessages(prev => {
             // 完成当前 streaming 的 assistant 消息
@@ -238,7 +225,6 @@ export async function processSSEStream(
           // 重置标志，以便下次可以复用新的 placeholder
           currentAssistantId = null;
           typingPlaceholderUsed = false;
-          console.log('🔄 重置标志');
         }
       }
     }
@@ -250,7 +236,6 @@ export async function processSSEStream(
   while (true) {
     const { value, done } = await reader.read();
     if (done) {
-      console.log('🏁 流结束');
       buffer += decoder.decode();
       flushBuffer();
 
@@ -262,10 +247,6 @@ export async function processSSEStream(
             : m
         );
         // 删除所有 tool_call 占位符
-        const toolCallCount = updated.filter(m => m.role === 'tool_call').length;
-        if (toolCallCount > 0) {
-          console.log('🗑️ 删除 tool_call:', toolCallCount);
-        }
         updated = updated.filter(m => m.role !== 'tool_call');
 
         return updated;
