@@ -65,18 +65,9 @@ const FloatingButtonContent = styled('div')(() => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  fontSize: '24px',
-  fontWeight: 700,
-  fontFamily: "'Poppins', sans-serif",
-  background: 'linear-gradient(135deg, #7B61FF 0%, #9B81FF 100%)',
-  WebkitBackgroundClip: 'text',
-  WebkitTextFillColor: 'transparent',
-  backgroundClip: 'text',
+  borderRadius: '50%',
+  overflow: 'hidden',
   animation: `${bounce} 1.5s infinite`,
-
-  '@media (max-width: 480px)': {
-    fontSize: '26px',
-  },
 }));
 
 // ============ Component ============
@@ -101,7 +92,9 @@ const ChatAssistant = () => {
         aria-label="Chat with Tina"
         title="Chat with Tina"
       >
-        <FloatingButtonContent>T</FloatingButtonContent>
+        <FloatingButtonContent>
+          <TinaAvatar />
+        </FloatingButtonContent>
       </FloatingButton>
 
       {/* Chat window */}

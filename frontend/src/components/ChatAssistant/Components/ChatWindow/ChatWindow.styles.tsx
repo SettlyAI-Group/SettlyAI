@@ -40,6 +40,24 @@ export const slideDown = keyframes`
   }
 `;
 
+export const avatarGlow = keyframes`
+  0%, 100% {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1), 0 0 15px rgba(123, 97, 255, 0.3);
+  }
+  50% {
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15), 0 0 25px rgba(123, 97, 255, 0.6);
+  }
+`;
+
+export const avatarFloat = keyframes`
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+`;
+
 // ============ Main Styled Components ============
 export const ChatWindowContainer = styled('div')<{ $isClosing: boolean; $style: React.CSSProperties }>(
   ({ $isClosing, $style }) => ({
@@ -138,6 +156,7 @@ export const ChatHeader = styled('div')(() => ({
 }));
 
 export const ChatHeaderLeft = styled('div')(() => ({
+  padding: '2px',
   display: 'flex',
   alignItems: 'center',
   gap: '12px',
@@ -177,6 +196,13 @@ export const ChatAvatar = styled('div')(() => ({
   border: '2px solid rgba(255, 255, 255, 0.3)',
   boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
   flexShrink: 0, // 不允许缩小
+  overflow: 'hidden',
+  animation: `${avatarGlow} 3s ease-in-out infinite, ${avatarFloat} 3s ease-in-out infinite`,
+  transition: 'transform 0.2s',
+
+  '&:hover': {
+    transform: 'scale(1.1)',
+  },
 }));
 
 export const ChatInfo = styled('div')(() => ({

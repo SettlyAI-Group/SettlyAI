@@ -2,33 +2,27 @@
  * 共享常量定义
  */
 
-import { UserOutlined, SmileOutlined } from '@ant-design/icons';
-import { Space, Spin, Typography } from 'antd';
+import { UserOutlined } from '@ant-design/icons';
+import { Space, Spin } from 'antd';
 import type { GetProp } from 'antd';
 import type { Bubble } from '@ant-design/x';
 import type { BubbleProps } from '@ant-design/x';
 import markdownit from 'markdown-it';
+import tinaImage from '../../../assets/image.png';
 
-// Tina 的头像图标（优雅、现代、女性化）
+// Tina 的头像图标（使用真实图片）
 export const TinaAvatar = () => (
-  <div
+  <img
+    src={tinaImage}
+    alt="Tina"
     style={{
-      width: '100%',
-      height: '100%',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      fontSize: '18px',
-      fontWeight: 600,
-      fontFamily: "'Poppins', sans-serif",
-      background: 'linear-gradient(135deg, #7B61FF 0%, #9B81FF 100%)',
-      WebkitBackgroundClip: 'text',
-      WebkitTextFillColor: 'transparent',
-      backgroundClip: 'text',
+      width: '110%',
+      height: '110%',
+      objectFit: 'cover',
+      objectPosition: 'center 25%',
+      display: 'block',
     }}
-  >
-    T
-  </div>
+  />
 );
 
 const md = markdownit({
@@ -40,12 +34,7 @@ const md = markdownit({
 
 // Markdown 渲染器
 export const renderMarkdown: BubbleProps['messageRender'] = content => {
-  return (
-    <div
-      className="markdown-content"
-      dangerouslySetInnerHTML={{ __html: md.render(content) }}
-    />
-  );
+  return <div className="markdown-content" dangerouslySetInnerHTML={{ __html: md.render(content) }} />;
 };
 
 // Bubble 角色配置
@@ -55,14 +44,14 @@ export const BUBBLE_ROLES: GetProp<typeof Bubble.List, 'roles'> = {
     variant: 'filled',
     avatar: {
       icon: <UserOutlined />,
-      style: { color: '#fff', backgroundColor: '#52C41A' }
+      style: { color: '#fff', backgroundColor: '#52C41A' },
     },
     styles: {
       content: {
         background: 'linear-gradient(135deg, #7B61FF 0%, #9B81FF 100%)',
         color: '#fff',
-      }
-    }
+      },
+    },
   },
   assistant: {
     placement: 'start',
@@ -72,7 +61,10 @@ export const BUBBLE_ROLES: GetProp<typeof Bubble.List, 'roles'> = {
       style: {
         backgroundColor: '#F5F3FF',
         border: '2px solid #7B61FF20',
-      }
+        overflow: 'hidden',
+        transition: 'transform 0.2s, box-shadow 0.3s',
+        boxShadow: '0 2px 8px rgba(123, 97, 255, 0.2)',
+      },
     },
     messageRender: renderMarkdown,
     typing: { step: 5, interval: 20 },
@@ -80,15 +72,15 @@ export const BUBBLE_ROLES: GetProp<typeof Bubble.List, 'roles'> = {
       content: {
         background: '#FFFFFF',
         border: '1px solid #F0F0F0',
-      }
-    }
+      },
+    },
   },
   tool_call: {
     placement: 'start',
     variant: 'outlined',
     avatar: {
       icon: <UserOutlined />,
-      style: { color: '#1890FF', backgroundColor: '#E6F7FF' }
+      style: { color: '#1890FF', backgroundColor: '#E6F7FF' },
     },
     messageRender: content => (
       <Space>
@@ -102,14 +94,14 @@ export const BUBBLE_ROLES: GetProp<typeof Bubble.List, 'roles'> = {
     variant: 'filled',
     avatar: {
       icon: <UserOutlined />,
-      style: { color: '#FF4D4F', backgroundColor: '#FFF1F0' }
+      style: { color: '#FF4D4F', backgroundColor: '#FFF1F0' },
     },
     styles: {
       content: {
         background: '#FFF1F0',
         border: '1px solid #FFCCC7',
         color: '#CF1322',
-      }
+      },
     },
   },
 };
