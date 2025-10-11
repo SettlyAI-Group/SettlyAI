@@ -78,7 +78,6 @@ export const useStreamChat = (threadId: string) => {
           return;
         }
         // 其他错误：显示错误消息
-        console.error('[sendMessage] ❌ 错误:', e);
         setMessages(prev => [...prev, createErrorMessage()]);
       } finally {
         // 只有在正常完成（非中止）的情况下才重置状态

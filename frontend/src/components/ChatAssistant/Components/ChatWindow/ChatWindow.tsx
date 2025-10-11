@@ -197,8 +197,8 @@ const ChatWindow = ({ onClose, isClosing = false }: ChatWindowProps = {}) => {
           import('@/api/chatBotApi').then(({ updateThread }) => {
             updateThread(activeKey, {
               metadata: { label: targetLabel },
-            }).catch(error => {
-              console.error('Failed to save auto-generated label to backend:', error);
+            }).catch(() => {
+              // 静默失败：本地状态已更新
             });
           });
         }

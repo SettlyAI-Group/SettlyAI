@@ -76,8 +76,7 @@ export const useChatThread = ({ userChatId }: UseChatThreadOptions) => {
         }
 
         setActiveKey(threads[0].thread_id);
-      } catch (error) {
-        console.error('Failed to fetch threads:', error);
+      } catch {
         setErrorMessage('Failed to load your chat history.');
       }
     };
@@ -112,8 +111,7 @@ export const useChatThread = ({ userChatId }: UseChatThreadOptions) => {
         return next.sort((a, b) => b.updatedAt - a.updatedAt);
       });
       setActiveKey(thread.thread_id);
-    } catch (error) {
-      console.error('Failed to create thread:', error);
+    } catch {
       setErrorMessage('Failed to create a new chat. Please try again.');
     } finally {
       setIsCreatingThread(false);
@@ -155,8 +153,7 @@ export const useChatThread = ({ userChatId }: UseChatThreadOptions) => {
 
         // 最后切换 activeKey
         setActiveKey(key);
-      } catch (error) {
-        console.error('Failed to fetch thread values:', error);
+      } catch {
         // 即使出错也切换（显示空历史）
         setActiveKey(key);
       }
@@ -191,8 +188,7 @@ export const useChatThread = ({ userChatId }: UseChatThreadOptions) => {
             setActiveKey('');
           }
         }
-      } catch (error) {
-        console.error('Failed to delete thread:', error);
+      } catch {
         setErrorMessage('Failed to delete conversation.');
       }
     },
@@ -258,8 +254,8 @@ export const useChatThread = ({ userChatId }: UseChatThreadOptions) => {
           }, 800);
         }, 50);
       }
-    } catch (error) {
-      console.error('Failed to update thread after chat:', error);
+    } catch {
+      // 静默失败：不影响用户使用
     }
   }, []);
 
