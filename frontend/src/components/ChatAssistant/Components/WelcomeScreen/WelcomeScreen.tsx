@@ -63,14 +63,15 @@ const WelcomeContainer = styled('div')(() => ({
   boxSizing: 'border-box',
   overflowX: 'hidden',
   overflowY: 'visible',
+  border: '1px solid black',
 
   // 背景装饰（修复：不影响容器高度）
   '&::before': {
     position: 'fixed', // ✅ 改为 fixed，不影响容器布局
   },
 
-  '@media (max-width: 480px)': {
-    padding: '12px 16px 12px',
+  '@media (max-width: 1000px)': {
+    border: '1px solid red',
   },
 }));
 

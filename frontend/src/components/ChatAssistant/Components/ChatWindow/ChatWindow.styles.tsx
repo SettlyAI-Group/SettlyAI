@@ -307,7 +307,9 @@ export const MessagesContainer = styled('div')(() => ({
 export const StyledBubbleList = styled(Bubble.List)(() => ({
   padding: '12px 16px',
   animation: `${slideDown} 0.3s ease`,
-  maxWidth: '1000px',
+  maxWidth: '1200px',
+  width: '100%', // 占满容器宽度
+  justifyContent: 'space-between',
 
   // 为每个 bubble 添加下滑动画
   '& .ant-bubble': {
@@ -346,16 +348,13 @@ export const GuideTitle = styled('div')(() => ({
 }));
 
 export const GuideActions = styled('div')(() => ({
+  width: '100%',
   display: 'grid',
   gridTemplateColumns: '1fr', // ✅ 默认纵向排列（1列4行）
   gap: '8px',
 
-  '@media (min-width: 1200px)': {
+  '@media (min-width: 1000px)': {
     gridTemplateColumns: 'repeat(2, 1fr)', // ✅ 最大屏幕：2×2
-  },
-
-  '@media (max-width: 480px)': {
-    gap: '6px',
   },
 }));
 
@@ -376,7 +375,7 @@ export const GuideAction = styled('div')(() => ({
     transform: 'translateY(-1px)',
   },
 
-  '@media (max-width: 480px)': {
+  '@media (max-width: 1000px)': {
     padding: '8px 10px',
     gap: '6px',
     borderRadius: '6px',
