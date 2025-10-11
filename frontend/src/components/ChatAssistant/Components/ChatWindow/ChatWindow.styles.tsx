@@ -160,14 +160,16 @@ export const MenuToggle = styled('button')(() => ({
 }));
 
 export const ChatAvatar = styled('div')(() => ({
-  width: '32px',
-  height: '32px',
-  background: 'rgba(255, 255, 255, 0.2)',
+  width: '36px',
+  height: '36px',
+  background: '#FFFFFF',
   borderRadius: '50%',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
   fontSize: '18px',
+  border: '2px solid rgba(255, 255, 255, 0.3)',
+  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
 }));
 
 export const ChatInfo = styled('div')(() => ({

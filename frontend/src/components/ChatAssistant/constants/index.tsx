@@ -2,12 +2,34 @@
  * 共享常量定义
  */
 
-import { UserOutlined } from '@ant-design/icons';
+import { UserOutlined, SmileOutlined } from '@ant-design/icons';
 import { Space, Spin, Typography } from 'antd';
 import type { GetProp } from 'antd';
 import type { Bubble } from '@ant-design/x';
 import type { BubbleProps } from '@ant-design/x';
 import markdownit from 'markdown-it';
+
+// Tina 的头像图标（优雅、现代、女性化）
+export const TinaAvatar = () => (
+  <div
+    style={{
+      width: '100%',
+      height: '100%',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      fontSize: '18px',
+      fontWeight: 600,
+      fontFamily: "'Poppins', sans-serif",
+      background: 'linear-gradient(135deg, #7B61FF 0%, #9B81FF 100%)',
+      WebkitBackgroundClip: 'text',
+      WebkitTextFillColor: 'transparent',
+      backgroundClip: 'text',
+    }}
+  >
+    T
+  </div>
+);
 
 const md = markdownit({
   html: true,
@@ -46,8 +68,11 @@ export const BUBBLE_ROLES: GetProp<typeof Bubble.List, 'roles'> = {
     placement: 'start',
     variant: 'filled',
     avatar: {
-      icon: <UserOutlined />,
-      style: { color: '#7B61FF', backgroundColor: '#F5F3FF' }
+      icon: <TinaAvatar />,
+      style: {
+        backgroundColor: '#F5F3FF',
+        border: '2px solid #7B61FF20',
+      }
     },
     messageRender: renderMarkdown,
     typing: { step: 5, interval: 20 },

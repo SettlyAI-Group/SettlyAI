@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import {
-  RobotOutlined,
   ExpandOutlined,
   CompressOutlined,
   MenuFoldOutlined,
@@ -15,7 +14,7 @@ import { Bubble, Sender } from '@ant-design/x';
 import type { GetRef } from 'antd';
 import { ensureUserChatId } from '../../utils/userChatId';
 import { useChatThread, useChatRename, useStreamChat } from '../../hooks';
-import { BUBBLE_ROLES } from '../../constants';
+import { BUBBLE_ROLES, TinaAvatar } from '../../constants';
 import ChatSidebar from './components/ChatSidebar';
 import {
   ChatWindowContainer,
@@ -342,13 +341,13 @@ const ChatWindow = ({ onClose, isClosing = false }: ChatWindowProps = {}) => {
               {showHistory ? <MenuFoldOutlined /> : <MenuUnfoldOutlined />}
             </MenuToggle>
             <ChatAvatar>
-              <RobotOutlined />
+              <TinaAvatar />
             </ChatAvatar>
             <ChatInfo>
-              <ChatTitle>AI Assistant</ChatTitle>
+              <ChatTitle>Tina</ChatTitle>
               <ChatStatus>
                 <StatusDot />
-                <span>Online</span>
+                <span>{activeKey ? `Thread: ${activeKey.slice(0, 8)}...` : 'No conversation'}</span>
               </ChatStatus>
             </ChatInfo>
           </ChatHeaderLeft>

@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { MessageOutlined } from '@ant-design/icons';
 import { styled, keyframes } from '@mui/material/styles';
 import ChatWindow from './components/ChatWindow';
+import { TinaAvatar } from './constants';
 
 // ============ Keyframes ============
 const pulse = keyframes`
@@ -25,11 +25,11 @@ const FloatingButton = styled('button')<{ $isOpen: boolean }>(({ $isOpen }) => (
   position: 'fixed',
   bottom: '30px',
   right: '30px',
-  width: '48px',
-  height: '48px',
-  background: 'linear-gradient(135deg, #7B61FF 0%, #5B47CC 100%)',
+  width: '56px',
+  height: '56px',
+  background: '#FFFFFF',
   borderRadius: '50%',
-  border: 'none',
+  border: '3px solid #7B61FF',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -40,8 +40,9 @@ const FloatingButton = styled('button')<{ $isOpen: boolean }>(({ $isOpen }) => (
   animation: `${pulse} 2s infinite`,
 
   '&:hover': {
-    transform: 'scale(1.1) rotate(5deg)',
-    boxShadow: '0 6px 25px rgba(123, 97, 255, 0.45)',
+    transform: 'scale(1.15) rotate(5deg)',
+    boxShadow: '0 6px 30px rgba(123, 97, 255, 0.5)',
+    borderColor: '#9B81FF',
   },
 
   ...$isOpen && {
@@ -53,18 +54,28 @@ const FloatingButton = styled('button')<{ $isOpen: boolean }>(({ $isOpen }) => (
   '@media (max-width: 480px)': {
     bottom: '20px',
     right: '20px',
-    width: '52px',
-    height: '52px',
+    width: '60px',
+    height: '60px',
   },
 }));
 
-const FloatingButtonIcon = styled(MessageOutlined)(() => ({
-  color: 'white',
-  fontSize: '20px',
+const FloatingButtonContent = styled('div')(() => ({
+  width: '100%',
+  height: '100%',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  fontSize: '24px',
+  fontWeight: 700,
+  fontFamily: "'Poppins', sans-serif",
+  background: 'linear-gradient(135deg, #7B61FF 0%, #9B81FF 100%)',
+  WebkitBackgroundClip: 'text',
+  WebkitTextFillColor: 'transparent',
+  backgroundClip: 'text',
   animation: `${bounce} 1.5s infinite`,
 
   '@media (max-width: 480px)': {
-    fontSize: '22px',
+    fontSize: '26px',
   },
 }));
 
@@ -87,9 +98,10 @@ const ChatAssistant = () => {
       <FloatingButton
         $isOpen={isOpen}
         onClick={() => setIsOpen(true)}
-        aria-label="Open AI Assistant"
+        aria-label="Chat with Tina"
+        title="Chat with Tina"
       >
-        <FloatingButtonIcon />
+        <FloatingButtonContent>T</FloatingButtonContent>
       </FloatingButton>
 
       {/* Chat window */}
