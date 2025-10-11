@@ -161,12 +161,30 @@ const ChatSidebar = ({
             </HistoryItemHeader>
             {editingKey !== item.key && (
               <HistoryItemPreview>
-                {new Date(item.timestamp).toLocaleDateString('en-AU', {
-                  month: 'short',
-                  day: 'numeric',
-                  hour: '2-digit',
-                  minute: '2-digit',
-                })}
+                {(() => {
+                  const msgDate = new Date(item.timestamp);
+                  const today = new Date();
+                  const isToday =
+                    msgDate.getDate() === today.getDate() &&
+                    msgDate.getMonth() === today.getMonth() &&
+                    msgDate.getFullYear() === today.getFullYear();
+
+                  if (isToday) {
+                    // 今天：只显示时间
+                    return msgDate.toLocaleTimeString('en-AU', {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    });
+                  } else {
+                    // 其他日期：显示日期 + 时间
+                    return msgDate.toLocaleDateString('en-AU', {
+                      month: 'short',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    });
+                  }
+                })()}
               </HistoryItemPreview>
             )}
           </HistoryItem>

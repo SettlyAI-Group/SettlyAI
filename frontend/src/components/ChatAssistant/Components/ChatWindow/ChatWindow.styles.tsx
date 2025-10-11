@@ -54,9 +54,9 @@ export const ChatWindowContainer = styled('div')<{ $isClosing: boolean; $style: 
     animation: `${chatWindowOpen} 0.3s cubic-bezier(0.4, 0, 0.2, 1)`,
     ...$style,
 
-    ...$isClosing && {
+    ...($isClosing && {
       animation: `${chatWindowClose} 0.3s cubic-bezier(0.4, 0, 0.2, 1)`,
-    },
+    }),
   })
 );
 
@@ -73,11 +73,11 @@ export const HistorySidebar = styled('div')<{ $hidden: boolean }>(({ $hidden }) 
   // 桌面端：正常显示在左侧
   '@media (min-width: 769px)': {
     position: 'relative',
-    ...$hidden && {
+    ...($hidden && {
       width: 0,
       opacity: 0,
       overflow: 'hidden',
-    },
+    }),
   },
 
   // 移动端和平板：悬浮抽屉模式
@@ -128,7 +128,9 @@ export const ChatHeader = styled('div')(() => ({
   alignItems: 'center',
   justifyContent: 'space-between',
   color: 'white',
-  flexShrink: 0,
+  gap: '10px',
+  minWidth: 0, // 允许整个 header 缩小
+  overflow: 'hidden', // 防止子元素溢出
 
   '@media (max-width: 480px)': {
     padding: '0 12px',
@@ -139,6 +141,9 @@ export const ChatHeaderLeft = styled('div')(() => ({
   display: 'flex',
   alignItems: 'center',
   gap: '12px',
+  flex: '1 1 auto', // 允许缩小，被右边按钮挤压
+  minWidth: 0, // 关键！允许缩小到比内容更小
+  overflow: 'hidden', // 防止溢出
 }));
 
 export const MenuToggle = styled('button')(() => ({
@@ -153,6 +158,7 @@ export const MenuToggle = styled('button')(() => ({
   alignItems: 'center',
   justifyContent: 'center',
   transition: 'all 0.2s',
+  flexShrink: 0, // 不允许缩小
 
   '&:hover': {
     background: 'rgba(255, 255, 255, 0.2)',
@@ -170,16 +176,21 @@ export const ChatAvatar = styled('div')(() => ({
   fontSize: '18px',
   border: '2px solid rgba(255, 255, 255, 0.3)',
   boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+  flexShrink: 0, // 不允许缩小
 }));
 
 export const ChatInfo = styled('div')(() => ({
   display: 'flex',
   flexDirection: 'column',
+  flex: '1 1 auto', // 允许缩小
+  minWidth: 0, // 关键！允许缩小
+  overflow: 'hidden', // 防止溢出
 }));
 
 export const ChatTitle = styled('div')(() => ({
   fontSize: '14px',
   fontWeight: 600,
+  lineHeight: 1,
   marginBottom: '1px',
 }));
 
@@ -187,22 +198,27 @@ export const ChatStatus = styled('div')(() => ({
   display: 'flex',
   alignItems: 'center',
   gap: '5px',
+  paddingTop: '2px',
   fontSize: '11px',
   opacity: 0.9,
-  maxWidth: '200px',
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-  whiteSpace: 'nowrap',
+  minWidth: 0, // 允许缩小
+  overflow: 'hidden', // 防止溢出
+  lineHeight: 1,
 
-  '@media (min-width: 1200px)': {
-    maxWidth: 'none',
-    overflow: 'visible',
+  // 内部 span 的样式（包含 Thread ID 文本）
+  '& > span': {
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+    minWidth: 0,
+    flex: '1 1 auto',
   },
 }));
 
-export const StatusDot = styled('span')(() => ({
+export const StatusDot = styled('div')(() => ({
   width: '5px',
   height: '5px',
+  minWidth: '5px', // 最小宽度
   background: '#10B981',
   borderRadius: '50%',
   animation: `${blink} 2s infinite`,
@@ -211,6 +227,7 @@ export const StatusDot = styled('span')(() => ({
 export const ChatHeaderActions = styled('div')(() => ({
   display: 'flex',
   gap: '6px',
+  flexShrink: 0,
 }));
 
 export const HeaderAction = styled('button')<{ $hideOnMobile?: boolean }>(({ $hideOnMobile }) => ({
@@ -226,6 +243,7 @@ export const HeaderAction = styled('button')<{ $hideOnMobile?: boolean }>(({ $hi
   justifyContent: 'center',
   transition: 'all 0.2s',
   fontSize: '14px',
+  flexShrink: 0, // 不允许缩小
 
   '&:hover': {
     background: 'rgba(255, 255, 255, 0.25)',

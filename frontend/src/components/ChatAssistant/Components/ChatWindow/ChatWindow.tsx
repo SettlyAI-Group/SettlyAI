@@ -297,7 +297,6 @@ const ChatWindow = ({ onClose, isClosing = false }: ChatWindowProps = {}) => {
   const activeConversation = conversations.find(item => item.key === activeKey);
   const isActiveConversationDisabled = Boolean(activeConversation?.isDisabled);
 
-
   return (
     <ChatWindowContainer $isClosing={isClosing} $style={getChatWindowStyle()}>
       {/* History sidebar */}
