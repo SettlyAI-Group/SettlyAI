@@ -284,6 +284,7 @@ export const MessagesContainer = styled('div')(() => ({
   background: 'linear-gradient(to bottom, #F8F9FB 0%, #FFFFFF 100%)',
   display: 'flex',
   flexDirection: 'column',
+  alignItems: 'center', // 水平居中子元素
 
   '&::-webkit-scrollbar': {
     width: '6px',
