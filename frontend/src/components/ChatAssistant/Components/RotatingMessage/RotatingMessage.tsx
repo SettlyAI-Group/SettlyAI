@@ -3,7 +3,7 @@
  */
 
 import { useEffect, useState, useRef } from 'react';
-import { Space, Spin } from 'antd';
+import { Space, Spin, ConfigProvider } from 'antd';
 import { styled } from '@mui/material/styles';
 
 const MessageContainer = styled('div')(() => ({
@@ -12,6 +12,13 @@ const MessageContainer = styled('div')(() => ({
   fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
   fontSize: '14px',
   minHeight: '21px', // 防止高度跳动
+}));
+
+// 自定义 Spin 容器，应用主题色
+const StyledSpinWrapper = styled('div')(() => ({
+  '& .ant-spin-dot-item': {
+    backgroundColor: '#7B61FF', // 主题紫色
+  },
 }));
 
 interface RotatingMessageProps {
@@ -83,7 +90,17 @@ export const RotatingMessage = ({
 
   return (
     <Space>
-      <Spin size="small" />
+      <ConfigProvider
+        theme={{
+          token: {
+            colorPrimary: '#7B61FF',
+          },
+        }}
+      >
+        <StyledSpinWrapper>
+          <Spin size="small" />
+        </StyledSpinWrapper>
+      </ConfigProvider>
       <MessageContainer>
         {displayedText}
         {isTyping && <span style={{ opacity: 0.5 }}>▋</span>}
