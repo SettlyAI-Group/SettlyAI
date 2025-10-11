@@ -306,6 +306,7 @@ export const MessagesContainer = styled('div')(() => ({
 export const StyledBubbleList = styled(Bubble.List)(() => ({
   padding: '12px 16px',
   animation: `${slideDown} 0.3s ease`,
+  maxWidth: '1000px',
 
   // 为每个 bubble 添加下滑动画
   '& .ant-bubble': {
@@ -345,11 +346,11 @@ export const GuideTitle = styled('div')(() => ({
 
 export const GuideActions = styled('div')(() => ({
   display: 'grid',
-  gridTemplateColumns: '1fr',
+  gridTemplateColumns: '1fr', // ✅ 默认纵向排列（1列4行）
   gap: '8px',
 
   '@media (min-width: 1200px)': {
-    gridTemplateColumns: 'repeat(2, 1fr)',
+    gridTemplateColumns: 'repeat(2, 1fr)', // ✅ 最大屏幕：2×2
   },
 
   '@media (max-width: 480px)': {

@@ -16,6 +16,7 @@ import { ensureUserChatId } from '../../utils/userChatId';
 import { useChatThread, useChatRename, useStreamChat } from '../../hooks';
 import { BUBBLE_ROLES, TinaAvatar } from '../../constants';
 import { RotatingMessage } from '../../components/RotatingMessage';
+import { WelcomeScreen } from '../WelcomeScreen';
 import ChatSidebar from './components/ChatSidebar';
 import {
   ChatWindowContainer,
@@ -116,11 +117,9 @@ const ChatWindow = ({ onClose, isClosing = false }: ChatWindowProps = {}) => {
   useEffect(() => {
     // 只有 activeKey 改变时才加载历史消息
     if (prevActiveKeyRef.current === activeKey) {
-      console.log(`⏭️ [ChatWindow] activeKey 未改变，跳过加载，thread: ${activeKey}`);
       return;
     }
 
-    console.log(`🔀 [ChatWindow] 线程切换: ${prevActiveKeyRef.current} → ${activeKey}, isStreaming: ${isStreaming}`);
     prevActiveKeyRef.current = activeKey;
 
     if (!activeKey) {
@@ -131,12 +130,10 @@ const ChatWindow = ({ onClose, isClosing = false }: ChatWindowProps = {}) => {
 
     const activeConv = conversations.find(c => c.key === activeKey);
     if (activeConv?.values) {
-      console.log(`📜 [ChatWindow] 加载历史消息，thread: ${activeKey}`);
       loadHistory(activeConv.values);
       setShowGuide(false);
     } else {
       // 新建的空对话，显示 Quick Start
-      console.log(`✨ [ChatWindow] 新建空对话，显示 Quick Start，thread: ${activeKey}`);
       setMessages([]);
       setShowGuide(true);
     }
@@ -149,7 +146,6 @@ const ChatWindow = ({ onClose, isClosing = false }: ChatWindowProps = {}) => {
    */
   useEffect(() => {
     return () => {
-      console.log('🔚 [ChatWindow] 组件卸载，调用 abort()');
       abort();
     };
   }, []); // 空依赖数组：只在组件真正卸载时执行
@@ -384,25 +380,32 @@ const ChatWindow = ({ onClose, isClosing = false }: ChatWindowProps = {}) => {
 
         {/* Messages area */}
         <MessagesContainer>
-          {/* User guide - Compact design */}
-          {showGuide && messages.length === 0 && (
-            <GuideContainer key={`guide-${activeKey}`}>
-              <GuideTitle>
-                <BulbOutlined />
-                Quick Start
-              </GuideTitle>
-              <GuideActions>
-                {quickActions.map((action, index) => (
-                  <GuideAction key={index} onClick={() => handleQuickAction(action.text)}>
-                    <GuideActionIcon style={{ color: action.color }}>{action.icon}</GuideActionIcon>
-                    <GuideActionText>{action.text}</GuideActionText>
-                  </GuideAction>
-                ))}
-              </GuideActions>
-            </GuideContainer>
-          )}
+          {/* 欢迎界面 - 当没有任何线程时显示 */}
+          {!activeKey ? (
+            <WelcomeScreen onStartChat={handleNewChat} />
+          ) : (
+            <>
+              {/* User guide - Compact design */}
+              {showGuide && messages.length === 0 && (
+                <GuideContainer key={`guide-${activeKey}`}>
+                  <GuideTitle>
+                    <BulbOutlined />
+                    Quick Start
+                  </GuideTitle>
+                  <GuideActions>
+                    {quickActions.map((action, index) => (
+                      <GuideAction key={index} onClick={() => handleQuickAction(action.text)}>
+                        <GuideActionIcon style={{ color: action.color }}>{action.icon}</GuideActionIcon>
+                        <GuideActionText>{action.text}</GuideActionText>
+                      </GuideAction>
+                    ))}
+                  </GuideActions>
+                </GuideContainer>
+              )}
 
-          <StyledBubbleList key={`bubble-${activeKey}`} ref={bubbleListRef} roles={BUBBLE_ROLES} items={bubbleItems} />
+              <StyledBubbleList key={`bubble-${activeKey}`} ref={bubbleListRef} roles={BUBBLE_ROLES} items={bubbleItems} />
+            </>
+          )}
         </MessagesContainer>
 
         {/* Sender style input area */}
