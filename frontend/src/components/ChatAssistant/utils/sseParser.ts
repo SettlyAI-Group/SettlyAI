@@ -74,7 +74,6 @@ export async function processSSEStream(
 
   // 跟踪当前正在构建的消息
   let currentAssistantId: string | null = null;
-  const toolCallIds: string[] = [];
   let typingPlaceholderUsed = false;
 
   const flushBuffer = () => {
@@ -90,7 +89,6 @@ export async function processSSEStream(
 
       // 检查线程是否切换
       if (activeThreadRef.current !== threadId) {
-        console.log(`🔄 [processSSEStream] 检测到线程切换，停止处理 SSE。当前线程: ${activeThreadRef.current}, SSE线程: ${threadId}`);
         continue;
       }
 
@@ -131,6 +129,7 @@ export async function processSSEStream(
 
       const content = Array.isArray(msg?.content) ? msg.content : [];
 
+
       for (const c of content) {
         // 处理文本消息
         if (c?.type === 'text') {
@@ -138,33 +137,39 @@ export async function processSSEStream(
           if (!piece) continue;
 
           setMessages(prev => {
-            const lastMsg = prev[prev.length - 1];
+            // 检查是否已经有 streaming 状态的 assistant 消息（从最后往前找，找最新的）
+            const streamingAssistants = prev.filter(m => m.role === 'assistant' && m.status === 'streaming');
+            const streamingAssistant = streamingAssistants[streamingAssistants.length - 1];
 
             // 累加到当前 assistant 消息
-            if (lastMsg?.id === currentAssistantId) {
+            if (streamingAssistant) {
               return prev.map(m =>
-                m.id === currentAssistantId
+                m.id === streamingAssistant.id
                   ? { ...m, content: m.content + piece, status: 'streaming' as const }
                   : m
               );
             } else {
-              // 新的 assistant 消息开始，删除所有 tool_call loader
-              if (toolCallIds.length > 0) {
-                prev = prev.filter(m => !toolCallIds.includes(m.id));
-                toolCallIds.length = 0;
+              // 新的 assistant 消息开始
+              let updated = prev;
+
+              // 删除所有 tool_call loader
+              const toolCallMessages = updated.filter(m => m.role === 'tool_call');
+              if (toolCallMessages.length > 0) {
+                updated = updated.filter(m => m.role !== 'tool_call');
               }
 
-              // 检查是否有未使用的 typing 占位符
-              const typingPlaceholder = !typingPlaceholderUsed
-                ? prev.find(m => m.id.startsWith('typing_'))
-                : null;
+              // 检查是否有未使用的 typing 占位符（找最后一个，即最新的）
+              const typingPlaceholders = updated.filter(m => m.id.startsWith('typing_'));
+              const typingPlaceholder = typingPlaceholders[typingPlaceholders.length - 1];
 
               if (typingPlaceholder) {
                 // 复用 typing 占位符
                 const newId = `assistant_${Date.now()}_${Math.random()}`;
+                // 更新外部变量（注意：Strict Mode 会调用两次，但这是幂等的）
                 currentAssistantId = newId;
                 typingPlaceholderUsed = true;
-                return prev.map(m =>
+
+                return updated.map(m =>
                   m.id === typingPlaceholder.id
                     ? { ...m, id: newId, content: piece, status: 'streaming' as const }
                     : m
@@ -173,8 +178,9 @@ export async function processSSEStream(
                 // 创建新消息
                 const newId = `assistant_${Date.now()}_${Math.random()}`;
                 currentAssistantId = newId;
+
                 return [
-                  ...prev,
+                  ...updated,
                   {
                     id: newId,
                     role: 'assistant' as const,
@@ -192,29 +198,31 @@ export async function processSSEStream(
         else if (c?.type === 'tool_use') {
           const toolName = c?.name || 'unknown';
 
-          // 完成当前 assistant 消息
-          if (currentAssistantId) {
-            setMessages(prev =>
-              prev.map(m => (m.id === currentAssistantId ? { ...m, status: 'success' as const } : m))
+          setMessages(prev => {
+            // 完成当前 streaming 的 assistant 消息
+            let updated = prev.map(m =>
+              m.role === 'assistant' && m.status === 'streaming'
+                ? { ...m, status: 'success' as const }
+                : m
             );
-            currentAssistantId = null;
-          }
 
-          // 添加 tool_call 占位符
-          const toolId = `tool_${Date.now()}_${Math.random()}`;
-          toolCallIds.push(toolId);
+            // 添加 tool_call 占位符
+            return [
+              ...updated,
+              {
+                id: `tool_${Date.now()}_${Math.random()}`,
+                role: 'tool_call' as const,
+                content: `正在和${extractColleagueName(toolName)}沟通...`,
+                toolName: toolName,
+                status: 'loading' as const,
+                timestamp: Date.now(),
+              },
+            ];
+          });
 
-          setMessages(prev => [
-            ...prev,
-            {
-              id: toolId,
-              role: 'tool_call' as const,
-              content: `正在和${extractColleagueName(toolName)}沟通...`,
-              toolName: toolName,
-              status: 'loading' as const,
-              timestamp: Date.now(),
-            },
-          ]);
+          // 重置标志，以便下次可以复用新的 placeholder
+          currentAssistantId = null;
+          typingPlaceholderUsed = false;
         }
       }
     }
@@ -229,17 +237,17 @@ export async function processSSEStream(
       buffer += decoder.decode();
       flushBuffer();
 
-      // 完成最后一条 assistant 消息
-      if (currentAssistantId) {
-        setMessages(prev =>
-          prev.map(m => (m.id === currentAssistantId ? { ...m, status: 'success' as const } : m))
+      // 完成最后一条 streaming 消息，并删除所有 tool_call 占位符
+      setMessages(prev => {
+        let updated = prev.map(m =>
+          m.role === 'assistant' && m.status === 'streaming'
+            ? { ...m, status: 'success' as const }
+            : m
         );
-      }
-
-      // 删除所有 tool_call 占位符
-      if (toolCallIds.length > 0) {
-        setMessages(prev => prev.filter(m => !toolCallIds.includes(m.id)));
-      }
+        // 删除所有 tool_call 占位符
+        updated = updated.filter(m => m.role !== 'tool_call');
+        return updated;
+      });
 
       break;
     }

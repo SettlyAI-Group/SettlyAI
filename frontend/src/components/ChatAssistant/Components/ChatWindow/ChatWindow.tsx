@@ -341,7 +341,7 @@ const ChatWindow = ({ onClose, isClosing = false }: ChatWindowProps = {}) => {
               <ChatTitle>Tina</ChatTitle>
               <ChatStatus>
                 <StatusDot />
-                <span>{activeKey ? `Thread: ${activeKey}` : 'No conversation'}</span>
+                <span>{activeKey ? `Id: ${activeKey}` : 'No conversation'}</span>
               </ChatStatus>
             </ChatInfo>
           </ChatHeaderLeft>
