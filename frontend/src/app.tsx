@@ -17,7 +17,6 @@ import SuperPage from './pages/SuperPage';
 import FeaturesPage from './pages/FeaturesPage';
 import AboutPage from './pages/AboutPage';
 import ChatAssistant from './components/ChatAssistant';
-import ChatBotPage from './pages/ChatBotPage';
 import FavouritesPage from './pages/FavouritesPage';
 
 const queryClient = new QueryClient({
@@ -47,7 +46,6 @@ const App = () => {
           <Route path="/super" element={<SuperPage />} />
           <Route path="/favourites" element={<FavouritesPage />} />
           <Route path="/features" element={<FeaturesPage />} />
-          <Route path="/chat" element={<ChatBotPage />} />
           <Route path="/about" element={<AboutPage />} />
         </Routes>
         <ChatAssistant />
