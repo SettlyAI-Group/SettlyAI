@@ -197,12 +197,6 @@ export const ChatAvatar = styled('div')(() => ({
   boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
   flexShrink: 0, // 不允许缩小
   overflow: 'hidden',
-  animation: `${avatarGlow} 3s ease-in-out infinite, ${avatarFloat} 3s ease-in-out infinite`,
-  transition: 'transform 0.2s',
-
-  '&:hover': {
-    transform: 'scale(1.1)',
-  },
 }));
 
 export const ChatInfo = styled('div')(() => ({

@@ -37,12 +37,12 @@ const FloatingButton = styled('button')<{ $isOpen: boolean }>(({ $isOpen }) => (
   boxShadow: '0 4px 20px rgba(123, 97, 255, 0.35)',
   transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
   zIndex: 1000,
-  animation: `${pulse} 2s infinite`,
 
   '&:hover': {
     transform: 'scale(1.15) rotate(5deg)',
     boxShadow: '0 6px 30px rgba(123, 97, 255, 0.5)',
     borderColor: '#9B81FF',
+    animation: `${pulse} 2s infinite`,
   },
 
   ...$isOpen && {
@@ -67,13 +67,57 @@ const FloatingButtonContent = styled('div')(() => ({
   justifyContent: 'center',
   borderRadius: '50%',
   overflow: 'hidden',
-  animation: `${bounce} 1.5s infinite`,
+
+  'button:hover &': {
+    animation: `${bounce} 1.5s infinite`,
+  },
+}));
+
+const Tooltip = styled('div')<{ $visible: boolean }>(({ $visible }) => ({
+  position: 'fixed',
+  bottom: '36px',
+  right: '80px',
+  background: '#2D2D2D',
+  color: '#FFFFFF',
+  padding: '8px 14px',
+  borderRadius: '8px',
+  fontSize: '13px',
+  fontWeight: 500,
+  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+  whiteSpace: 'nowrap',
+  pointerEvents: 'none',
+  opacity: $visible ? 1 : 0,
+  transform: $visible ? 'translateX(0)' : 'translateX(10px)',
+  transition: 'opacity 0.3s, transform 0.3s',
+  zIndex: 999,
+
+  // 小箭头
+  '&::after': {
+    content: '""',
+    position: 'absolute',
+    top: '50%',
+    right: '-6px',
+    transform: 'translateY(-50%)',
+    width: 0,
+    height: 0,
+    borderLeft: '6px solid #2D2D2D',
+    borderTop: '6px solid transparent',
+    borderBottom: '6px solid transparent',
+  },
+
+  '@media (max-width: 480px)': {
+    bottom: '30px',
+    right: '90px',
+    fontSize: '12px',
+    padding: '6px 12px',
+  },
 }));
 
 // ============ Component ============
 const ChatAssistant = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
   const handleClose = () => {
     setIsClosing(true);
@@ -85,10 +129,15 @@ const ChatAssistant = () => {
 
   return (
     <ChatbotContainer>
+      {/* Tooltip */}
+      <Tooltip $visible={isHovered && !isOpen}>Ask me</Tooltip>
+
       {/* Floating trigger button */}
       <FloatingButton
         $isOpen={isOpen}
         onClick={() => setIsOpen(true)}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
         aria-label="Chat with Tina"
         title="Chat with Tina"
       >

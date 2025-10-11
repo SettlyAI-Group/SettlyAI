@@ -62,7 +62,6 @@ export const BUBBLE_ROLES: GetProp<typeof Bubble.List, 'roles'> = {
         backgroundColor: '#F5F3FF',
         border: '2px solid #7B61FF20',
         overflow: 'hidden',
-        transition: 'transform 0.2s, box-shadow 0.3s',
         boxShadow: '0 2px 8px rgba(123, 97, 255, 0.2)',
       },
     },
