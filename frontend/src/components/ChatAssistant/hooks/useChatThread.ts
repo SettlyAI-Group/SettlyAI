@@ -46,12 +46,16 @@ export const useChatThread = ({ userChatId }: UseChatThreadOptions) => {
           select: ['thread_id', 'created_at', 'updated_at', 'status', 'metadata', 'values'],
         });
 
-        const mapped: ConversationItem[] = threads.map(thread => ({
-          key: thread.thread_id,
-          label: 'New Chat',
-          updatedAt: new Date(thread.updated_at || thread.created_at || Date.now()).getTime(),
-          values: thread.values,
-        }));
+        const mapped: ConversationItem[] = threads.map(thread => {
+          // 优先读取 metadata.label，如果没有就显示 "New Chat"
+          const savedLabel = thread.metadata?.label as string | undefined;
+          return {
+            key: thread.thread_id,
+            label: savedLabel || 'New Chat',
+            updatedAt: new Date(thread.updated_at || thread.created_at || Date.now()).getTime(),
+            values: thread.values,
+          };
+        });
 
         setConversations(prev => {
           const previousMap = new Map(prev.map(item => [item.key, item]));
@@ -129,16 +133,23 @@ export const useChatThread = ({ userChatId }: UseChatThreadOptions) => {
       setErrorMessage(null);
 
       try {
-        // 先获取最新 values
+        // 先获取最新 values 和 metadata
         const threads = await searchThreads({
           ids: [key],
-          select: ['thread_id', 'values'],
+          select: ['thread_id', 'values', 'metadata'],
         });
 
         if (threads.length > 0) {
-          // 更新 conversation 的 values
+          const thread = threads[0];
+          const savedLabel = thread.metadata?.label as string | undefined;
+
+          // 更新 conversation 的 values 和 label
           setConversations(prev =>
-            prev.map(item => (item.key === key ? { ...item, values: threads[0].values } : item))
+            prev.map(item => (item.key === key ? {
+              ...item,
+              values: thread.values,
+              label: savedLabel || item.label, // 如果有 metadata.label 就更新，否则保留原 label
+            } : item))
           );
         }
 

@@ -21,7 +21,6 @@ interface ConversationItem {
   timestamp: number;
   isDisabled?: boolean;
   isTyping?: boolean;
-  preview?: string;
 }
 
 interface ChatSidebarProps {
@@ -162,13 +161,12 @@ const ChatSidebar = ({
             </HistoryItemHeader>
             {editingKey !== item.key && (
               <HistoryItemPreview>
-                {item.preview ||
-                  new Date(item.timestamp).toLocaleDateString('en-AU', {
-                    month: 'short',
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })}
+                {new Date(item.timestamp).toLocaleDateString('en-AU', {
+                  month: 'short',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })}
               </HistoryItemPreview>
             )}
           </HistoryItem>

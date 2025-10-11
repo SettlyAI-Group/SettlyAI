@@ -191,6 +191,15 @@ const ChatWindow = ({ onClose, isClosing = false }: ChatWindowProps = {}) => {
         if (currentIndex >= targetLabel.length) {
           clearInterval(typingInterval);
           updateConversation(activeKey, { isTyping: false });
+
+          // 打字完成后，保存到后端
+          import('@/api/chatBotApi').then(({ updateThread }) => {
+            updateThread(activeKey, {
+              metadata: { label: targetLabel },
+            }).catch(error => {
+              console.error('Failed to save auto-generated label to backend:', error);
+            });
+          });
         }
       }, 50); // 每 50ms 显示一个字符
     }
@@ -288,19 +297,6 @@ const ChatWindow = ({ onClose, isClosing = false }: ChatWindowProps = {}) => {
   const activeConversation = conversations.find(item => item.key === activeKey);
   const isActiveConversationDisabled = Boolean(activeConversation?.isDisabled);
 
-  /**
-   * 从 thread values 中提取第一条消息的文本作为预览
-   */
-  const extractPreview = (values: Record<string, unknown> | undefined): string => {
-    if (!values || !values.messages) return '';
-    const messages = values.messages as Array<{ type: string; content: Array<{ text?: string; type: string }> }>;
-    const firstMessage = messages.find(msg => msg.type === 'human');
-    if (firstMessage && firstMessage.content && firstMessage.content.length > 0) {
-      const textContent = firstMessage.content.find(c => c.type === 'text');
-      return textContent?.text?.slice(0, 30) || '';
-    }
-    return '';
-  };
 
   return (
     <ChatWindowContainer $isClosing={isClosing} $style={getChatWindowStyle()}>
@@ -313,7 +309,6 @@ const ChatWindow = ({ onClose, isClosing = false }: ChatWindowProps = {}) => {
             timestamp: item.updatedAt,
             isDisabled: item.isDisabled,
             isTyping: item.isTyping,
-            preview: extractPreview(item.values),
           }))}
           activeKey={activeKey}
           movingThreadId={movingThreadId}
@@ -347,7 +342,7 @@ const ChatWindow = ({ onClose, isClosing = false }: ChatWindowProps = {}) => {
               <ChatTitle>Tina</ChatTitle>
               <ChatStatus>
                 <StatusDot />
-                <span>{activeKey ? `Thread: ${activeKey.slice(0, 8)}...` : 'No conversation'}</span>
+                <span>{activeKey ? `Thread: ${activeKey}` : 'No conversation'}</span>
               </ChatStatus>
             </ChatInfo>
           </ChatHeaderLeft>

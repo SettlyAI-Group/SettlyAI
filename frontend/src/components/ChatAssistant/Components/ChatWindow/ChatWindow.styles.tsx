@@ -189,6 +189,15 @@ export const ChatStatus = styled('div')(() => ({
   gap: '5px',
   fontSize: '11px',
   opacity: 0.9,
+  maxWidth: '200px',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+
+  '@media (min-width: 1200px)': {
+    maxWidth: 'none',
+    overflow: 'visible',
+  },
 }));
 
 export const StatusDot = styled('span')(() => ({

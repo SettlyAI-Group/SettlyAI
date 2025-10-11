@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+import { updateThread } from '@/api/chatBotApi';
 import type { ConversationItem } from './useChatThread';
 
 export const useChatRename = (
@@ -23,10 +24,20 @@ export const useChatRename = (
   );
 
   const handleRenameSubmit = useCallback(
-    (key: string, value: string) => {
+    async (key: string, value: string) => {
       const nextLabel = value.trim();
       if (nextLabel) {
+        // 先更新本地状态
         updateConversation(key, { label: nextLabel });
+
+        // 再保存到后端 metadata.label
+        try {
+          await updateThread(key, {
+            metadata: { label: nextLabel },
+          });
+        } catch (error) {
+          console.error('Failed to save label to backend:', error);
+        }
       }
       cancelRename();
     },
