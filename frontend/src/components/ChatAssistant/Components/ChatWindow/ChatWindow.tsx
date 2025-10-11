@@ -300,7 +300,7 @@ const ChatWindow = ({ onClose, isClosing = false }: ChatWindowProps = {}) => {
         return {
           key: m.id,
           role: m.role,
-          content: <RotatingMessage messages={m.rotatingMessages} intervalMs={3000} typingSpeed={30} />,
+          content: <RotatingMessage messages={m.rotatingMessages} intervalMs={3000} typingSpeed={15} />,
           loading: false,
           typing: false,
         };
@@ -311,7 +311,7 @@ const ChatWindow = ({ onClose, isClosing = false }: ChatWindowProps = {}) => {
         role: m.role,
         content: m.content,
         loading: isTypingPlaceholder,
-        typing: isTyping ? { step: 5, interval: 20 } : false,
+        typing: isTyping ? { step: 2, interval: 10 } : false, // 更丝滑：每次显示2个字符，间隔10ms
       };
     });
 

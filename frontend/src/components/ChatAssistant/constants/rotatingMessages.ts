@@ -9,62 +9,62 @@ export type AgentName = 'tom' | 'ivy' | 'levin' | 'levan';
  */
 export const ROTATING_MESSAGES: Record<AgentName, string[]> = {
   // 👨 Tom – The Practical Tech Guy
-  // Tone: Reliable, slightly nerdy, with understated programmer humor
+  // 简短、口语化、带点技术宅幽默
   tom: [
-    "Summoning Tom, he's probably wrestling with another dataset.",
-    "Knocking on Tom's door, hope he's not buried in code again.",
-    "Connecting to Tom, signal's holding better than his patience.",
-    "Tom's checking the reports, whispering SQL under his breath.",
-    "Calling Tom, unless he's off fixing the server again.",
-    "Syncing with Tom, he said 'just one more script to run.'",
-    "Tom's staring at a graph, looking more serious than the trend line.",
-    "Reaching out to Tom, the coffee just kicked in.",
-    "Tom might be stuck in a debugging loop again.",
-    "Summoning Tom, status: loading…",
+    "Calling Tom... he's probably knee-deep in data",
+    "Tom's checking the numbers, coffee in hand",
+    "Reaching Tom... hope he's not debugging again",
+    "Tom's pulling up the reports now",
+    "Connecting to Tom, his dashboard just lit up",
+    "Tom's digging through the database...",
+    "Asking Tom for the latest data",
+    "Tom's running the query, one sec...",
+    "Tom says 'just loading the charts'",
+    "Pinging Tom... status: thinking",
   ],
 
   // 👩 Ivy – The Calm Archivist
-  // Tone: Smart, composed, meticulous, with a quiet sense of humor
+  // 简短、沉稳、细心
   ivy: [
-    "Summoning Ivy, her archive is basically a galaxy.",
-    "Ivy's digging through records, even the air feels like it's buffering.",
-    "Connecting to Ivy, she's dusting off some old folders.",
-    "Ivy's sorting through directories, counting softly under her breath.",
-    "Reaching Ivy, her mouse clicks with metronome precision.",
-    "Ivy got trapped in another subfolder spiral again.",
-    "Syncing with Ivy, she insists on checking every detail herself.",
-    "Ivy's wandering through data like she's chasing a lost star.",
-    "Connected to Ivy, she says 'hold on, I see something.'",
-    "Ivy's verifying the last page, the answer's almost here.",
+    "Calling Ivy... she's sorting through files",
+    "Ivy's searching her archives now",
+    "Reaching Ivy, she's checking the records",
+    "Ivy's pulling up the documents...",
+    "Connecting to Ivy, she's very thorough",
+    "Ivy says 'let me find that for you'",
+    "Ivy's going through her folders",
+    "Asking Ivy to verify the details",
+    "Ivy's double-checking everything",
+    "Ivy says 'almost there, hold on'",
   ],
 
   // 👩 Levin/Levan – The Elegant Financial Analyst
-  // Tone: Confident, analytical, a little theatrical about her math
+  // 简短、专业、自信
   levin: [
-    "Summoning Levin, her calculator just started warming up.",
-    "Levin's crunching numbers, and her coffee's getting cold.",
-    "Connecting to Levin, she's negotiating with the interest rate.",
-    "Levin's tuning her model, every decimal obeys her command.",
-    "Contacting Levin, she says 'the rate's being stubborn today.'",
-    "Levin's doing arithmetic gymnastics, precision like choreography.",
-    "Summoning Levin, she's lining up the numbers like soldiers.",
-    "Levin's cross-checking data, sharper than her calculator.",
-    "Syncing with Levin, she says 'two more seconds for perfection.'",
-    "Levin's running calculations, even the air smells like formulas.",
+    "Calling Levin... she's crunching numbers",
+    "Levin's running the calculations now",
+    "Reaching Levin, her calculator is ready",
+    "Levin's checking the interest rates...",
+    "Connecting to Levin, she loves math",
+    "Levin says 'let me calculate that'",
+    "Levin's analyzing the financials",
+    "Asking Levin for the price breakdown",
+    "Levin's verifying the numbers twice",
+    "Levin says 'numbers don't lie, almost done'",
   ],
 
-  // Levan 使用和 Levin 相同的消息（因为它们是同一个角色的不同拼写）
+  // Levan 使用和 Levin 相同的消息
   levan: [
-    "Summoning Levin, her calculator just started warming up.",
-    "Levin's crunching numbers, and her coffee's getting cold.",
-    "Connecting to Levin, she's negotiating with the interest rate.",
-    "Levin's tuning her model, every decimal obeys her command.",
-    "Contacting Levin, she says 'the rate's being stubborn today.'",
-    "Levin's doing arithmetic gymnastics, precision like choreography.",
-    "Summoning Levin, she's lining up the numbers like soldiers.",
-    "Levin's cross-checking data, sharper than her calculator.",
-    "Syncing with Levin, she says 'two more seconds for perfection.'",
-    "Levin's running calculations, even the air smells like formulas.",
+    "Calling Levin... she's crunching numbers",
+    "Levin's running the calculations now",
+    "Reaching Levin, her calculator is ready",
+    "Levin's checking the interest rates...",
+    "Connecting to Levin, she loves math",
+    "Levin says 'let me calculate that'",
+    "Levin's analyzing the financials",
+    "Asking Levin for the price breakdown",
+    "Levin's verifying the numbers twice",
+    "Levin says 'numbers don't lie, almost done'",
   ],
 };
 
