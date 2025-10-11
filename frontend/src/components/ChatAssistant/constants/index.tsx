@@ -67,6 +67,7 @@ export const BUBBLE_ROLES: GetProp<typeof Bubble.List, 'roles'> = {
     },
     messageRender: renderMarkdown,
     typing: { step: 5, interval: 20 },
+    loading: true, // 启用 loading 状态
     styles: {
       content: {
         background: '#FFFFFF',

@@ -113,7 +113,11 @@ const ChatWindow = ({ onClose, isClosing = false }: ChatWindowProps = {}) => {
    */
   const prevActiveKeyRef = useRef<string>('');
   useEffect(() => {
-    if (prevActiveKeyRef.current === activeKey) return;
+    // 只有 activeKey 改变时才加载历史消息
+    if (prevActiveKeyRef.current === activeKey) {
+      console.log(`⏭️ [ChatWindow] activeKey 未改变，跳过加载，thread: ${activeKey}`);
+      return;
+    }
 
     console.log(`🔀 [ChatWindow] 线程切换: ${prevActiveKeyRef.current} → ${activeKey}, isStreaming: ${isStreaming}`);
     prevActiveKeyRef.current = activeKey;
@@ -267,6 +271,12 @@ const ChatWindow = ({ onClose, isClosing = false }: ChatWindowProps = {}) => {
    */
   const bubbleItems = messages
     .filter(m => {
+      // 不过滤 typing placeholder（ID 以 typing_ 开头）
+      if (m.id.startsWith('typing_')) {
+        console.log('✅ 保留 typing placeholder:', m.id);
+        return true;
+      }
+
       // 过滤掉空内容的 loading 占位符（如果已经有实际回复了）
       if (m.role === 'assistant' && m.status === 'loading' && m.content.trim() === '') {
         // 检查是否已经有其他 assistant 消息
@@ -274,16 +284,21 @@ const ChatWindow = ({ onClose, isClosing = false }: ChatWindowProps = {}) => {
           msg => msg.role === 'assistant' && msg.id !== m.id && msg.content.trim() !== ''
         );
         if (hasOtherAssistantMsg) {
+          console.log('🗑️ 过滤掉 loading placeholder:', m.id);
           return false; // 过滤掉这个 placeholder
         }
       }
       return true;
     })
     .map(m => {
-      // 只有当是 assistant 且状态为 loading 且内容为空时，才显示 loading
-      const isTypingPlaceholder = m.role === 'assistant' && m.status === 'loading' && m.content.trim() === '';
-      // 只有当状态为 streaming 时，才显示 typing 效果
+      // typing placeholder: ID 以 typing_ 开头
+      const isTypingPlaceholder = m.id.startsWith('typing_');
+      // streaming: 正在接收内容的消息
       const isTyping = m.role === 'assistant' && m.status === 'streaming';
+
+      if (isTypingPlaceholder) {
+        console.log('⏳ bubbleItem 设置 loading=true:', m.id);
+      }
 
       return {
         key: m.id,

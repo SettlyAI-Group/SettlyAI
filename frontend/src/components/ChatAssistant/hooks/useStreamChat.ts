@@ -66,6 +66,9 @@ export const useStreamChat = (threadId: string) => {
           throw new Error('No response body');
         }
 
+        // 等待 100ms，确保 typing placeholder 有时间渲染
+        await new Promise(resolve => setTimeout(resolve, 100));
+
         await processSSEStream(res.body, setMessages, threadId, activeThreadRef, currentRunIdRef);
       } catch (e) {
         // 检查是否是中止错误
