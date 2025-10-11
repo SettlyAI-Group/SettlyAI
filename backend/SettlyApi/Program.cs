@@ -4,6 +4,9 @@ using Microsoft.OpenApi.Models;
 using SettlyApi.Configuration;
 using SettlyApi.Filters;
 using SettlyApi.Middlewares;
+using SettlyFinance.Calculators;
+using SettlyFinance.Calculators.Orchestrators;
+using SettlyFinance.Interfaces;
 using SettlyModels;
 using SettlyModels.OAutOptions;
 using SettlyService;
@@ -39,8 +42,13 @@ public class Program
         builder.Services.AddScoped<IVerificationCodeService, VerificationCodeService>();
         builder.Services.AddTransient<ICreateTokenService, CreateTokenService>();
         builder.Services.AddScoped<IAuthService, AuthService>();
+        builder.Services.AddScoped<ISuburbOverviewService, SuburbOverviewService>();
         //Register ISearchApi with SearchApiService
         builder.Services.AddScoped<ISettlyService.ISearchService, SettlyService.SearchService>();
+
+        // Super Estimate services
+        builder.Services.AddScoped<IProjectionService, ProjectionService>();
+        builder.Services.AddScoped<IFhssService, FhssService>();
 
         // Add your custom API behavior config
         builder.Services.AddCustomApiBehavior();
@@ -53,11 +61,18 @@ public class Program
         builder.Services.AddScoped<IPropertyService, PropertyService>();
         builder.Services.AddScoped<IFavouriteService, FavouriteService>();
         builder.Services.AddTransient<IPopulationSupplyService, PopulationSupplyService>();
+
         builder.Services.AddScoped<ILoanService, LoanService>();
         builder.Services.AddScoped<ITestimonialService, TestimonialService>();
+        builder.Services.AddScoped<IPdfExportService, PdfService>();
         builder.Services.AddScoped<IOAuthService, OAuthService>();
 
 
+        builder.Services.AddScoped<ILoanCalculatorFacade, LoanCalculatorFacade>();
+        builder.Services.AddScoped<IPiecewiseAmortizer, PiecewiseAmortizer>();
+        builder.Services.AddScoped<ILoanCalculatorService, LoanCalculatorService>();
+        builder.Services.AddSingleton<IFrequencyProvider, FrequencyProvider>();
+        builder.Services.AddSingleton<IAmortizationEngineFactory, AmortizationEngineFactory>();
         builder.Services.AddScoped<ILayoutNavService, LayoutNavService>();
         //Add Swagger
         builder.Services.AddSwaggerConfig();
