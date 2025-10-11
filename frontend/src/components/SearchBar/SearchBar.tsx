@@ -30,35 +30,42 @@ export const useDebouncedValue = <T,>(value: T, delay = 300): T => {
 //Set up the type of data return from Backend Search Suggest Api
 type Option = SuggestionOutputDto;
 
-//Styling for the Autocomplete & ReportButton Wrap
-const StyledAutocomplete = styled(Autocomplete<Option, false, false, true>)(() => ({
-  width: '100%',
+// Styling for the Autocomplete & ReportButton Wrap
+const StyledAutocomplete = styled(Autocomplete<Option, false, false, true>)(({ theme }) => ({
+  // Allow the input to share a row with the button
+  flex: 1,
+  minWidth: 0,
+  [theme.breakpoints.down(600)]: {
+    // Ensure full width on narrow screens when stacking
+    flexBasis: '100%',
+  },
 }));
 
-const SearchBarContainer = styled(Box)(() => ({
+const SearchBarContainer = styled(Box)(({ theme }) => ({
   width: '100%',
   marginLeft: 'auto',
-  marginright: 'auto',
-  position: 'relative',
-  minwidth: { md: 650 },
+  marginRight: 'auto',
+  // Lay out search and button together
+  display: 'flex',
+  alignItems: 'center',
+  gap: theme.spacing(3),
+  flexWrap: 'wrap',
+  // Keep a comfortable minimum width on larger screens
+  minWidth: 0,
 }));
 
 const ReportButton = styled(GlobalButton)<{ $breakpoint: number }>(({ theme, $breakpoint }) => ({
-  position: 'absolute',
-  left: '100%',
-  top: '50%',
-  transform: 'translateY(-50%)',
+  maxWidth: 160,
   height: 56,
   fontSize: theme.typography.subtitle1.fontSize,
   borderRadius: 14,
+  // Sit inline with the input on wide screens
+  flex: '0 0 auto',
+  // On smaller screens, make it full-width on its own row
   [theme.breakpoints.down($breakpoint)]: {
-    position: 'static',
-    transform: 'none',
     width: '100%',
-    marginTop: theme.spacing(4),
-  },
-  [theme.breakpoints.up($breakpoint)]: {
-    marginLeft: theme.spacing(6),
+    maxWidth: 'none',
+    flexBasis: '100%',
   },
 }));
 
@@ -67,7 +74,8 @@ type ISearchBarProps = {
   breakpoint?: number;
 };
 
-const SearchBar = ({ onSuburbSelected, breakpoint = 1200 }: ISearchBarProps) => {
+// Default to stack only on small screens (<600px)
+const SearchBar = ({ onSuburbSelected, breakpoint = 600 }: ISearchBarProps) => {
   const [query, setQuery] = useState('');
   const [focused, setFocused] = useState(false);
   const [selected, setSelected] = useState<Option | null>(null);
