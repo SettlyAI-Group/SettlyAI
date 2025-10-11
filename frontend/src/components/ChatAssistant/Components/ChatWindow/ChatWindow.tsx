@@ -116,11 +116,7 @@ const ChatWindow = ({ onClose, isClosing = false }: ChatWindowProps = {}) => {
   useEffect(() => {
     if (prevActiveKeyRef.current === activeKey) return;
 
-    // 如果正在流式输出，先中止
-    if (isStreaming && prevActiveKeyRef.current) {
-      abort();
-    }
-
+    console.log(`🔀 [ChatWindow] 线程切换: ${prevActiveKeyRef.current} → ${activeKey}, isStreaming: ${isStreaming}`);
     prevActiveKeyRef.current = activeKey;
 
     if (!activeKey) {
@@ -131,23 +127,28 @@ const ChatWindow = ({ onClose, isClosing = false }: ChatWindowProps = {}) => {
 
     const activeConv = conversations.find(c => c.key === activeKey);
     if (activeConv?.values) {
+      console.log(`📜 [ChatWindow] 加载历史消息，thread: ${activeKey}`);
       loadHistory(activeConv.values);
       setShowGuide(false);
     } else {
       // 新建的空对话，显示 Quick Start
+      console.log(`✨ [ChatWindow] 新建空对话，显示 Quick Start，thread: ${activeKey}`);
       setMessages([]);
       setShowGuide(true);
     }
-  }, [activeKey, conversations, loadHistory, setMessages, isStreaming, abort]);
+  }, [activeKey, conversations, loadHistory, setMessages, isStreaming]);
 
   /**
    * 组件卸载时中止请求
+   * 注意：这里使用空依赖数组，确保只在组件真正卸载时才调用 abort()
+   * 如果把 abort 放入依赖数组，会在 threadId 改变时触发 cleanup，导致切换线程时误中止
    */
   useEffect(() => {
     return () => {
+      console.log('🔚 [ChatWindow] 组件卸载，调用 abort()');
       abort();
     };
-  }, [abort]);
+  }, []); // 空依赖数组：只在组件真正卸载时执行
 
   /**
    * 自动滚动到最新消息（streaming 完成时）

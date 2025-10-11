@@ -89,7 +89,10 @@ export async function processSSEStream(
       if (!data || data === '[DONE]' || data.startsWith(':')) continue;
 
       // 检查线程是否切换
-      if (activeThreadRef.current !== threadId) continue;
+      if (activeThreadRef.current !== threadId) {
+        console.log(`🔄 [processSSEStream] 检测到线程切换，停止处理 SSE。当前线程: ${activeThreadRef.current}, SSE线程: ${threadId}`);
+        continue;
+      }
 
       // 捕获 run_id（从 metadata 事件）
       if (eventName === 'metadata' && runIdRef) {
