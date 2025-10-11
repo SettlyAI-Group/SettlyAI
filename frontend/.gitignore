@@ -33,3 +33,6 @@ storybook-static
 .env.test
 .env.production
 .env.staging
+
+src/assets/chatBoxTestFiles
+claude.md

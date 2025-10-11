@@ -1,16 +1,17 @@
 import NavBar from '../NavBar/NavBar';
 import Footer from '../Footer/Footer';
 import { Outlet } from 'react-router-dom';
+import { Box } from '@mui/material';
 
 const Layout = () => {
   return (
-    <div>
+    <Box sx={{ width: '100%', overflowX: 'hidden' }}>
       <NavBar />
-      <main>
+      <Box component="main" sx={{ width: '100%', overflowX: 'hidden' }}>
         <Outlet />
-      </main>
+      </Box>
       <Footer />
-    </div>
+    </Box>
   );
 };
 
