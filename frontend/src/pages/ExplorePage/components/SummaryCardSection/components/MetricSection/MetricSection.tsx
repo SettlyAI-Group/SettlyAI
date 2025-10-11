@@ -15,11 +15,14 @@ const MetricContainer = styled(Box)(({ theme }) => ({
   },
 }));
 
-const MetricItem = styled(Box)({
+const MetricItem = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'flex-start',
-});
+  [theme.breakpoints.down(600)]: {
+    alignItems: 'center',
+  },
+}));
 
 const ItemContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -31,10 +34,17 @@ const MetricTextColumn = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'flex-start',
+  [theme.breakpoints.down(600)]: {
+    alignItems: 'center',
+  },
 }));
 
 const Metrictitle = styled(Typography)(({ theme }) => ({
   ...theme.typography.subtitle1,
+  [theme.breakpoints.down(600)]: {
+    maxWidth: '12ch',
+    lineHeight: 1.25,
+  },
 }));
 
 const MetricValue = styled('p')(({ theme }) => ({
@@ -54,7 +64,7 @@ const MetricSection = () => {
           <MetricTextColumn>
             <Metrictitle>Median Price: </Metrictitle>
             <MetricValue>
-              {overview?.metrics?.medianPriceFormatted ? `$${overview?.metrics?.medianPriceFormatted}` : ''}
+              {overview?.metrics?.medianPriceFormatted ? `$${overview?.metrics?.medianPriceFormatted}` : '$2,217,600'}
             </MetricValue>
           </MetricTextColumn>
         </ItemContainer>
@@ -66,7 +76,7 @@ const MetricSection = () => {
           <MetricTextColumn>
             <Metrictitle>Price Growth 3-Year: </Metrictitle>
             <MetricValue>
-              {overview?.metrics?.priceGrowth3YrPct != null ? `${overview.metrics.priceGrowth3YrPct}%` : ''}
+              {overview?.metrics?.priceGrowth3YrPct != null ? `${overview.metrics.priceGrowth3YrPct}%` : '10.78%'}
             </MetricValue>
           </MetricTextColumn>
         </ItemContainer>
@@ -77,7 +87,7 @@ const MetricSection = () => {
           <Shield size={30} strokeWidth={1.75} color={palette.text.secondary} />
           <MetricTextColumn>
             <Metrictitle>Safety Rating: </Metrictitle>
-            <MetricValue>{overview?.metrics?.safety?.safetyLabel ?? ''}</MetricValue>
+            <MetricValue>{overview?.metrics?.safety?.safetyLabel ?? 'Medium'}</MetricValue>
           </MetricTextColumn>
         </ItemContainer>
       </MetricItem>
@@ -86,7 +96,7 @@ const MetricSection = () => {
           <Trees size={30} strokeWidth={1.75} color={palette.text.secondary} />
           <MetricTextColumn>
             <Metrictitle>Affordability: </Metrictitle>
-            <MetricValue>{overview?.metrics?.affordability?.label ?? ''}</MetricValue>
+            <MetricValue>{overview?.metrics?.affordability?.label ?? 'Medium'}</MetricValue>
           </MetricTextColumn>
         </ItemContainer>
       </MetricItem>

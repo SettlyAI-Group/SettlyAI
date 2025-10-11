@@ -11,6 +11,9 @@ const SectionContainer = styled('section')(({ theme }) => ({
   width: '100%',
   paddingTop: theme.spacing(6),
   backgroundColor: theme.palette.background.default,
+  [theme.breakpoints.down(1250)]: {
+    paddingInline: theme.spacing(8),
+  },
 }));
 
 const SummaryCardContainer = styled(Box)(({ theme }) => ({
@@ -22,6 +25,10 @@ const SummaryCardContainer = styled(Box)(({ theme }) => ({
   paddingInline: theme.spacing(8),
   paddingBlock: theme.spacing(8),
   backgroundColor: alpha(theme.palette.primary.light, 0.05),
+  borderRadius: theme.spacing(8),
+  [theme.breakpoints.down(1250)]: {
+    width: '100%',
+  },
 }));
 
 const TitleText = styled(Typography)(({ theme }) => ({
@@ -34,12 +41,14 @@ const SummaryText = styled(Typography)(({ theme }) => ({
   ...theme.typography.body2,
   alignSelf: 'flex-start',
   paddingBottom: 20,
+  textAlign: 'left',
 }));
 
 const SubtitleText = styled(Typography)(({ theme }) => ({
   ...theme.typography.h4,
   alignSelf: 'flex-start',
   paddingBottom: 20,
+  textAlign: 'left',
 }));
 
 const SummaryCardSection = () => {
@@ -50,11 +59,15 @@ const SummaryCardSection = () => {
         <TitleText>
           {overview?.suburb?.name
             ? `${overview.suburb.name}, ${overview.suburb.stateCode} ${overview.suburb.postcode}`
-            : 'Please select a suburb from the map'}
+            : 'Melbourne, VIC 3000'}
         </TitleText>
         <MetricSection />
-        <SummaryText>{overview?.summary?.text}</SummaryText>
-        <SubtitleText>{overview?.highlights?.length > 0 ? `What Makes This Suburb Stand Out` : ''}</SubtitleText>
+        <SummaryText>
+          {overview?.summary?.text
+            ? `${overview?.summary?.text}`
+            : "Melbourne's median price is $2.2M, with 10.78% growth over the past 3 years. Safety is rated Medium, and affordability is Medium."}
+        </SummaryText>
+        <SubtitleText>What Makes This Suburb Stand Out</SubtitleText>
         <HighlightSection />
       </SummaryCardContainer>
     </SectionContainer>

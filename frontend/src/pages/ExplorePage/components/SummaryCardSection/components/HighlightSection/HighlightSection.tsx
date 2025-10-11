@@ -56,34 +56,43 @@ const ReportButton = styled(GlobalButton)(({ theme }) => ({
   backgroundColor: theme.palette.primary.main,
   color: theme.palette.background.default,
   borderRadius: 8,
+  [theme.breakpoints.down(1000)]: {
+    width: 250,
+  },
+  [theme.breakpoints.down(600)]: {
+    width: '100%',
+  },
 }));
 
-const HighlightIcon = (label: string) => {
-  const { palette } = useTheme();
+const HighlightIcon = (label: string, color: string) => {
   switch (label.trim().toLowerCase()) {
     case 'low crime':
-      return <ShieldCheck size={30} strokeWidth={1.75} color={palette.primary.main} />;
+      return <ShieldCheck size={30} strokeWidth={1.75} color={color} />;
     case 'strong growth':
-      return <TrendingUp size={30} strokeWidth={1.75} color={palette.primary.main} />;
+      return <TrendingUp size={30} strokeWidth={1.75} color={color} />;
     case 'affordable choice':
-      return <BadgeDollarSign size={30} strokeWidth={1.75} color={palette.primary.main} />;
+      return <BadgeDollarSign size={30} strokeWidth={1.75} color={color} />;
     default:
-      return <Star size={30} strokeWidth={1.75} color={palette.primary.main} />;
+      return <Star size={30} strokeWidth={1.75} color={color} />;
   }
 };
 
 const HighlightSection = () => {
   const navigate = useNavigate();
+  const { palette } = useTheme();
   const overview = useSelector(selectSelectedOverview);
-  const suburbId = overview?.suburb?.id;
-  const highlights = useSelector(selectSelectedOverview)?.highlights.filter(Boolean) ?? [];
+  const suburbId = overview?.suburb?.id ? overview?.suburb?.id : 1;
+  const highlightFromRedux = overview?.highlights?.filter(Boolean) ?? [];
+  const highlights =
+    overview == null ? ['Strong Growth'] : highlightFromRedux && highlightFromRedux.length ? highlightFromRedux : [];
+
   return (
     <HighlightContainer>
       <LeftContainer>
         {highlights.length > 0 &&
           highlights.map((highlight, index) => (
             <ItemContainer key={highlight || index}>
-              {HighlightIcon(highlight)}
+              {HighlightIcon(highlight, palette.primary.main)}
               <HighlightTextColumn>
                 <Highlight variant="subtitle2">{highlight}</Highlight>
               </HighlightTextColumn>
