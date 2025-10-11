@@ -38,11 +38,34 @@ const mapPin = Leaflet.divIcon({
 
 const melbourneGeoData: [number, number] = [-37.8136, 144.9631];
 
-const MapZoomHandler = () => {
+const INITIAL_VIEW = { center: melbourneGeoData as [number, number], zoom: 11 };
+
+const ResetViewControl = () => {
   const map = useMap();
+
   useEffect(() => {
-    map.scrollWheelZoom.enable();
+    const Ctl = Leaflet.Control.extend({
+      onAdd() {
+        const wrap = Leaflet.DomUtil.create('div', 'leaflet-bar');
+        const btn = Leaflet.DomUtil.create('a', '', wrap);
+        btn.innerHTML = '⟲';
+        btn.title = 'Reset view';
+        btn.href = '#';
+        Leaflet.DomEvent.on(btn, 'click', e => {
+          Leaflet.DomEvent.preventDefault(e);
+          Leaflet.DomEvent.stop(e);
+          map.setView(INITIAL_VIEW.center, INITIAL_VIEW.zoom);
+        });
+        return wrap;
+      },
+    });
+    const ctl = new Ctl({ position: 'topleft' });
+    map.addControl(ctl);
+    return () => {
+      map.removeControl(ctl);
+    };
   }, [map]);
+
   return null;
 };
 
@@ -101,8 +124,8 @@ const Map = () => {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution="© OpenStreetMap contributors"
         />
-        <MapZoomHandler />
         <UserGeoData />
+        <ResetViewControl />
         {position && <Marker position={position} icon={mapPin} />}
       </LeafletMapContainer>
     </SectionContainer>
